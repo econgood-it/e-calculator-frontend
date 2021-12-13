@@ -1,0 +1,14 @@
+docs
+node_modules
+screenshots
+package-lock.json
+dist
+.idea
+.env-cmdrc.json
+coverage/
+combined.log
+error.log
+warn.log
+*.csv#
+documentation
+.vscode
