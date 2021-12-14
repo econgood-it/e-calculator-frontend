@@ -31,29 +31,21 @@ interface IStyledTabs {
 
 const StyledTabs = styled(Tabs)<IStyledTabs>`
   & .Mui-selected {
-    background-color: ${(props) => props.$highlightColor || 'inherit'};
-    opacity: ${(props) => props.$highlightColor || 0.6};
+    background-color: ${(props) => props.$highlightColor};
+    opacity: ${(props) => props.$highlightColor};
   }
   & .MuiTabs-indicator {
     background-color: transparent;
   }
 `;
 
-enum ToolbarItems {
-  HOME = 'HOME',
-  BALANCE_SHEET_TABS = 'BALANCE_SHEET_TABS',
-}
-
 type NavigationProps = {
   user: User;
 };
 
 const NavigationBar = ({ user }: NavigationProps) => {
-  const [value, setValue] = useState<number>(0);
+  const [value, setValue] = useState<number | boolean>(false);
   const [sheets, setSheets] = useState<number[]>([]);
-  const [highlightedItem, setHighlightedItem] = useState<ToolbarItems>(
-    ToolbarItems.HOME
-  );
 
   const addSheet = async () => {
     const result = await axios.post(
@@ -68,19 +60,20 @@ const NavigationBar = ({ user }: NavigationProps) => {
       }
     );
     const { id } = result.data;
-    const sheetsLength = sheets.length;
     setSheets((sheets) => sheets.concat(id));
-    setValue(sheetsLength);
-    setHighlightedItem(ToolbarItems.BALANCE_SHEET_TABS);
+    setValue(id);
+  };
+
+  const deleteSheet = (idToDelete: number) => {
+    setSheets((sheets) => sheets.filter((id) => id !== idToDelete));
   };
 
   const goToHome = () => {
-    setHighlightedItem(ToolbarItems.HOME);
+    setValue(false);
   };
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue);
-    setHighlightedItem(ToolbarItems.BALANCE_SHEET_TABS);
   };
 
   const highlightColor = `rgba(0, 0, 0, 0.3)`;
@@ -90,9 +83,7 @@ const NavigationBar = ({ user }: NavigationProps) => {
       <AppBar key={'navigation'} position="static">
         <SmallToolbar>
           <SquaredIconButton
-            $backgroundColor={
-              highlightedItem === ToolbarItems.HOME ? highlightColor : undefined
-            }
+            $backgroundColor={value === false ? highlightColor : undefined}
             onClick={goToHome}
             size="large"
             edge="start"
@@ -113,18 +104,14 @@ const NavigationBar = ({ user }: NavigationProps) => {
             <FontAwesomeIcon icon={faPlus} />
           </SquaredIconButton>
           <StyledTabs
-            $highlightColor={
-              highlightedItem === ToolbarItems.BALANCE_SHEET_TABS
-                ? highlightColor
-                : undefined
-            }
+            $highlightColor={highlightColor}
             textColor="inherit"
             value={value}
             onChange={handleChange}
             aria-label="basic tabs example"
           >
             {sheets.map((sheet) => (
-              <BalanceSheetTab index={sheet} />
+              <BalanceSheetTab value={sheet} onDelete={deleteSheet} />
             ))}
           </StyledTabs>
         </SmallToolbar>
