@@ -1,11 +1,11 @@
 import { createTheme, ThemeOptions, ThemeProvider } from '@mui/material';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { LoginPage } from './pages/LoginPage';
-import NotFound from './pages/NotFound';
 import { User } from './authentication/User';
 import RequiresAuth from './authentication/RequiresAuth';
 import { useState } from 'react';
 import { AlertContextProvider } from './alerts/AlertContext';
+import HomePage from './pages/HomePage';
+import { LoginPage } from './pages/LoginPage';
 import NotificationList from './alerts/NotificationList';
 
 export const themeOptions: ThemeOptions = {
@@ -38,16 +38,15 @@ function App() {
         <>
           <Router>
             <Routes>
-              <Route path="*" element={<NotFound />} />
+              <Route path="/login" element={<LoginPage setUser={setUser} />} />
               <Route
                 path="/"
                 element={
                   <RequiresAuth user={user}>
-                    <div>Home</div>
+                    <HomePage user={user} />
                   </RequiresAuth>
                 }
               />
-              <Route path="/login" element={<LoginPage setUser={setUser} />} />
             </Routes>
           </Router>
           <NotificationList />

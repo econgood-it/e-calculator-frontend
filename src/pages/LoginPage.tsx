@@ -55,6 +55,8 @@ export const LoginPage = ({ setUser }: LoginPageProps) => {
       window.localStorage.setItem('user', JSON.stringify(user));
       setUser(user);
       navigate('/');
+      // This refresh is currently needed since the styled components of root component are not applied on first render
+      window.location.reload();
     } catch (e) {
       addAlert({
         severity: 'error',
@@ -71,6 +73,7 @@ export const LoginPage = ({ setUser }: LoginPageProps) => {
         </Grid>
         <Grid item xs={12}>
           <TextField
+            required
             {...register('email')}
             id="outlined-required"
             label="Email"
@@ -83,6 +86,8 @@ export const LoginPage = ({ setUser }: LoginPageProps) => {
         </Grid>
         <Grid item xs={12}>
           <TextField
+            required
+            type={'password'}
             fullWidth
             {...register('password')}
             error={!!errors.password}

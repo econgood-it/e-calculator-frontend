@@ -1,16 +1,16 @@
-import { Navigate } from 'react-router-dom';
 import { User } from './User';
 import { FC, ReactElement } from 'react';
+import { Navigate } from 'react-router-dom';
 
-type ProtectedRouteProps = {
+type RequiresAuthProps = {
   user: User | undefined;
-  children: ReactElement;
+  children?: ReactElement;
 };
 
-const ProtectedRoute: FC<ProtectedRouteProps> = ({
+const RequiresAuth: FC<RequiresAuthProps> = ({
   user,
   children,
-}: ProtectedRouteProps) => {
+}: RequiresAuthProps) => {
   if (!user || !user.token || user.token === '') {
     return (
       <Navigate
@@ -21,7 +21,7 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({
     );
   }
 
-  return children;
+  return children || null;
 };
 
-export default ProtectedRoute;
+export default RequiresAuth;
