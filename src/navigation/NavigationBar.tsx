@@ -2,7 +2,7 @@ import { AppBar, IconButton, Tabs, Toolbar } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome } from '@fortawesome/free-solid-svg-icons/faHome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
-import { SyntheticEvent, useState } from 'react';
+import { Dispatch, SetStateAction, SyntheticEvent, useState } from 'react';
 import BalanceSheetTab from '../pages/BalanceSheetTab';
 import styled from 'styled-components';
 import axios from 'axios';
@@ -41,10 +41,15 @@ const StyledTabs = styled(Tabs)<IStyledTabs>`
 
 type NavigationProps = {
   user: User;
+  activeSheet: number | boolean;
+  setActiveSheet: Dispatch<SetStateAction<number | boolean>>;
 };
 
-const NavigationBar = ({ user }: NavigationProps) => {
-  const [value, setValue] = useState<number | boolean>(false);
+const NavigationBar = ({
+  user,
+  activeSheet,
+  setActiveSheet,
+}: NavigationProps) => {
   const [sheets, setSheets] = useState<number[]>([]);
 
   const addSheet = async () => {
@@ -61,7 +66,7 @@ const NavigationBar = ({ user }: NavigationProps) => {
     );
     const { id } = result.data;
     setSheets((sheets) => sheets.concat(id));
-    setValue(id);
+    setActiveSheet(id);
   };
 
   const deleteSheet = (idToDelete: number) => {
@@ -69,11 +74,11 @@ const NavigationBar = ({ user }: NavigationProps) => {
   };
 
   const goToHome = () => {
-    setValue(false);
+    setActiveSheet(false);
   };
 
-  const handleChange = (event: SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+  const handleTabChange = (event: SyntheticEvent, newValue: number) => {
+    setActiveSheet(newValue);
   };
 
   const highlightColor = `rgba(0, 0, 0, 0.3)`;
@@ -83,7 +88,9 @@ const NavigationBar = ({ user }: NavigationProps) => {
       <AppBar key={'navigation'} position="static">
         <SmallToolbar>
           <SquaredIconButton
-            $backgroundColor={value === false ? highlightColor : undefined}
+            $backgroundColor={
+              activeSheet === false ? highlightColor : undefined
+            }
             onClick={goToHome}
             size="large"
             edge="start"
@@ -106,8 +113,8 @@ const NavigationBar = ({ user }: NavigationProps) => {
           <StyledTabs
             $highlightColor={highlightColor}
             textColor="inherit"
-            value={value}
-            onChange={handleChange}
+            value={activeSheet}
+            onChange={handleTabChange}
             aria-label="basic tabs example"
           >
             {sheets.map((sheet) => (
