@@ -4,8 +4,8 @@ import { User } from './authentication/User';
 import RequiresAuth from './authentication/RequiresAuth';
 import { useState } from 'react';
 import { AlertContextProvider } from './alerts/AlertContext';
-import HomePage from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
+import HomePage from './pages/HomePage';
 import NotificationList from './alerts/NotificationList';
 
 export const themeOptions: ThemeOptions = {
@@ -43,7 +43,7 @@ function App() {
                 path="/"
                 element={
                   <RequiresAuth user={user}>
-                    <HomePage user={user} />
+                    {user && <HomePage user={user} />}
                   </RequiresAuth>
                 }
               />
