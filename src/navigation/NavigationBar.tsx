@@ -1,23 +1,25 @@
-import { AppBar, IconButton, Tabs, Toolbar } from '@mui/material';
+import { AppBar, IconButton, Toolbar } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome } from '@fortawesome/free-solid-svg-icons/faHome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
-import { Dispatch, SetStateAction, SyntheticEvent, useState } from 'react';
-import BalanceSheetTab from '../pages/BalanceSheetTab';
+import { Dispatch, SetStateAction, useState } from 'react';
+import BalanceSheetTab from './BalanceSheetTab';
 import styled from 'styled-components';
 import axios from 'axios';
 import { API_URL } from '../configuration';
 import { User } from '../authentication/User';
 
 interface ISquaredIconButton {
-  $backgroundColor?: string;
+  $selected?: boolean;
 }
 
 const SquaredIconButton = styled(IconButton)<ISquaredIconButton>`
   border-radius: 0px;
-  background-color: ${(props) => props.$backgroundColor || 'initial'};
+  background-color: ${(props) =>
+    props.$selected ? props.theme.palette.secondary.main : 'initial'};
   &.MuiIconButton-root:hover {
-    background-color: ${(props) => props.$backgroundColor || 'initial'};
+    background-color: ${(props) =>
+      props.$selected ? props.theme.palette.secondary.main : 'initial'};
   }
 `;
 
@@ -25,24 +27,10 @@ const SmallToolbar = styled(Toolbar)`
   min-height: 52px;
 `;
 
-interface IStyledTabs {
-  $highlightColor?: string;
-}
-
-const StyledTabs = styled(Tabs)<IStyledTabs>`
-  & .Mui-selected {
-    background-color: ${(props) => props.$highlightColor};
-    opacity: ${(props) => props.$highlightColor};
-  }
-  & .MuiTabs-indicator {
-    background-color: transparent;
-  }
-`;
-
 type NavigationProps = {
   user: User;
-  activeSheet: number | boolean;
-  setActiveSheet: Dispatch<SetStateAction<number | boolean>>;
+  activeSheet: number | undefined;
+  setActiveSheet: Dispatch<SetStateAction<number | undefined>>;
 };
 
 const NavigationBar = ({
@@ -74,23 +62,15 @@ const NavigationBar = ({
   };
 
   const goToHome = () => {
-    setActiveSheet(false);
+    setActiveSheet(undefined);
   };
-
-  const handleTabChange = (event: SyntheticEvent, newValue: number) => {
-    setActiveSheet(newValue);
-  };
-
-  const highlightColor = `rgba(0, 0, 0, 0.3)`;
 
   return (
     <>
       <AppBar key={'navigation'} position="static">
         <SmallToolbar>
           <SquaredIconButton
-            $backgroundColor={
-              activeSheet === false ? highlightColor : undefined
-            }
+            $selected={activeSheet === undefined}
             onClick={goToHome}
             size="large"
             edge="start"
@@ -110,20 +90,19 @@ const NavigationBar = ({
           >
             <FontAwesomeIcon icon={faPlus} />
           </SquaredIconButton>
-          <StyledTabs
-            $highlightColor={highlightColor}
-            textColor="inherit"
-            value={activeSheet}
-            onChange={handleTabChange}
-            aria-label="basic tabs example"
-          >
-            {sheets.map((sheet) => (
-              <BalanceSheetTab value={sheet} onDelete={deleteSheet} />
-            ))}
-          </StyledTabs>
+          {sheets.map((sheet) => (
+            <BalanceSheetTab
+              key={sheet}
+              sheetId={sheet}
+              onDelete={deleteSheet}
+              setActiveSheet={setActiveSheet}
+              activeSheet={activeSheet}
+            />
+          ))}
         </SmallToolbar>
       </AppBar>
     </>
   );
 };
+
 export default NavigationBar;

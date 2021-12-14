@@ -1,4 +1,8 @@
-import { createTheme, ThemeOptions, ThemeProvider } from '@mui/material';
+import {
+  createTheme,
+  ThemeOptions,
+  ThemeProvider as MuiThemeProvider,
+} from '@mui/material';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { User } from './authentication/User';
 import RequiresAuth from './authentication/RequiresAuth';
@@ -7,6 +11,7 @@ import { AlertContextProvider } from './alerts/AlertContext';
 import { LoginPage } from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import NotificationList from './alerts/NotificationList';
+import { ThemeProvider } from 'styled-components';
 
 export const themeOptions: ThemeOptions = {
   palette: {
@@ -15,7 +20,8 @@ export const themeOptions: ThemeOptions = {
       contrastText: 'rgba(255,255,255,0.8)',
     },
     secondary: {
-      main: '#f50057',
+      main: '#00828b',
+      contrastText: 'rgba(255,255,255,0.8)',
     },
   },
   shape: {
@@ -33,26 +39,31 @@ function App() {
   );
 
   return (
-    <ThemeProvider theme={theme}>
-      <AlertContextProvider>
-        <>
-          <Router>
-            <Routes>
-              <Route path="/login" element={<LoginPage setUser={setUser} />} />
-              <Route
-                path="/"
-                element={
-                  <RequiresAuth user={user}>
-                    {user && <HomePage user={user} />}
-                  </RequiresAuth>
-                }
-              />
-            </Routes>
-          </Router>
-          <NotificationList />
-        </>
-      </AlertContextProvider>
-    </ThemeProvider>
+    <MuiThemeProvider theme={theme}>
+      <ThemeProvider theme={theme}>
+        <AlertContextProvider>
+          <>
+            <Router>
+              <Routes>
+                <Route
+                  path="/login"
+                  element={<LoginPage setUser={setUser} />}
+                />
+                <Route
+                  path="/"
+                  element={
+                    <RequiresAuth user={user}>
+                      {user && <HomePage user={user} />}
+                    </RequiresAuth>
+                  }
+                />
+              </Routes>
+            </Router>
+            <NotificationList />
+          </>
+        </AlertContextProvider>
+      </ThemeProvider>
+    </MuiThemeProvider>
   );
 }
 
