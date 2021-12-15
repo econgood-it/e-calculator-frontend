@@ -21,7 +21,7 @@ const HomePage = ({ user }: HomePageProps) => {
         />
       </Grid>
       <Grid item xs={12}>
-        {activeSheet === undefined ? <div>Content</div> : <BalanceSheetView />}
+        {activeSheet === undefined ? <div>Home</div> : <BalanceSheetView />}
       </Grid>
     </Grid>
   );
