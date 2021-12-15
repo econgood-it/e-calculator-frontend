@@ -40,9 +40,11 @@ const BalanceSheetTab = ({
   return (
     <StyledDiv $selected={selected}>
       <StyledButton
+        disableRipple={true}
         onClick={() => setActiveSheet(sheetId)}
       >{`Balance sheet ${sheetId}`}</StyledButton>
       <StyledIconButton
+        disableRipple={true}
         onClick={() => onDelete(sheetId)}
         size="small"
         color={'inherit'}
