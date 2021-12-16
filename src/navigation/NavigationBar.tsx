@@ -67,7 +67,7 @@ const NavigationBar = ({
 
   return (
     <>
-      <AppBar key={'navigation'} position="static">
+      <AppBar key={'navigation'} position="fixed">
         <SmallToolbar>
           <SquaredIconButton
             $selected={activeSheet === undefined}

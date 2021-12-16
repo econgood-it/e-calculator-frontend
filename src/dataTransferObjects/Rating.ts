@@ -1,0 +1,23 @@
+import { z } from 'zod';
+
+const AspectSchema = z.object({
+  shortName: z.string(),
+  name: z.string(),
+  estimations: z.number(),
+  isPositive: z.boolean(),
+});
+
+const TopicSchema = z.object({
+  shortName: z.string(),
+  name: z.string(),
+  estimations: z.number(),
+  aspects: AspectSchema.array(),
+});
+
+export type Topic = z.infer<typeof TopicSchema>;
+
+export const RatingSchema = z.object({
+  topics: TopicSchema.array(),
+});
+
+export type Rating = z.infer<typeof RatingSchema>;

@@ -3,6 +3,12 @@ import NavigationBar from '../navigation/NavigationBar';
 import { Grid } from '@mui/material';
 import { useState } from 'react';
 import BalanceSheetView from '../balanceSheet/BalanceSheetView';
+import styled from 'styled-components';
+
+const BodyGrid = styled(Grid)`
+  position: relative;
+  top: 52px;
+`;
 
 type HomePageProps = {
   user: User;
@@ -20,9 +26,13 @@ const HomePage = ({ user }: HomePageProps) => {
           user={user}
         />
       </Grid>
-      <Grid item xs={12}>
-        {activeSheet === undefined ? <div>Home</div> : <BalanceSheetView />}
-      </Grid>
+      <BodyGrid item xs={12}>
+        {activeSheet === undefined ? (
+          <div>Home</div>
+        ) : (
+          <BalanceSheetView user={user} balanceSheetId={activeSheet} />
+        )}
+      </BodyGrid>
     </Grid>
   );
 };

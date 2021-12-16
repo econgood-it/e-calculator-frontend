@@ -1,9 +1,24 @@
 import Rating from '@mui/material/Rating';
 import { useState } from 'react';
 import { Box } from '@mui/material';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSeedling } from '@fortawesome/free-solid-svg-icons/faSeedling';
+import styled from 'styled-components';
 
-export default function HoverRating() {
-  const [value, setValue] = useState<number | null>(2);
+const StyledRating = styled(Rating)`
+  & .MuiRating-iconFilled {
+    color: ${(props) => props.theme.palette.primary.main};
+  }
+  & .MuiRating-iconHover {
+    color: ${(props) => props.theme.palette.primary.main};
+  }
+`;
+
+type PositiveRatingProps = {
+  val: number;
+};
+export default function PositiveRating({ val }: PositiveRatingProps) {
+  const [value, setValue] = useState<number | null>(val);
   const [hover, setHover] = useState(-1);
   const getLabel = (currentValue: number): string => {
     if (currentValue === 1) {
@@ -27,11 +42,13 @@ export default function HoverRating() {
         alignItems: 'center',
       }}
     >
-      <Rating
+      <StyledRating
         name="hover-feedback"
         value={value}
         max={10}
         precision={1}
+        icon={<FontAwesomeIcon icon={faSeedling} />}
+        emptyIcon={<FontAwesomeIcon icon={faSeedling} />}
         onChange={(event, newValue) => {
           setValue(newValue);
         }}
