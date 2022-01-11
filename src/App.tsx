@@ -13,6 +13,17 @@ import HomePage from './pages/HomePage';
 import NotificationList from './alerts/NotificationList';
 import { ThemeProvider } from 'styled-components';
 
+import axios from 'axios';
+
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response.status === 401) {
+      window.location.pathname = '/login';
+    }
+  }
+);
+
 export const themeOptions: ThemeOptions = {
   palette: {
     primary: {
