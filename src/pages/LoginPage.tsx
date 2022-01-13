@@ -4,11 +4,11 @@ import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { User } from '../authentication/User';
 import axios from 'axios';
-import { API_URL } from '../configuration';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertContext } from '../alerts/AlertContext';
+import { API_URL } from '../configuration';
 
 const CenteredDiv = styled.div`
   display: flex;

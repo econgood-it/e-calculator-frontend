@@ -3,6 +3,7 @@ node_modules
 screenshots
 package-lock.json
 dist
+build
 .idea
 .env-cmdrc.json
 coverage/

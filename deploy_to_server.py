@@ -1,0 +1,58 @@
+import argparse
+import logging
+import os
+import shutil
+import subprocess
+
+yarn = 'yarn'
+run = 'run'
+
+
+def install_dependencies():
+    cmd = [yarn, 'install']
+    subprocess.run(cmd, check=True)
+
+
+def check_linting():
+    subprocess.run([yarn, run, 'lint'], check=True)
+
+
+# def run_tests():
+#     subprocess.run([npm, run, 'test:prod'], check=True)
+
+
+def compile(backend_url: str):
+    subprocess.run([yarn, 'build'], env={'REACT_APP_BACKEND_DOMAIN': backend_url, 'GENERATE_SOURCEMAP': 'false'},
+                   check=True)
+
+
+def rsync(folder: str, server_domain: str, server_folder: str):
+    subprocess.run(['rsync', '-a', folder, f"{server_domain}:{server_folder}", '--delete'], check=True)
+
+
+def main(args):
+    logging.info(f"Start build and deployment process for the environment {args.environment}")
+    logging.info(f"Install dependencies")
+    node_module_folder = 'node_modules'
+    if os.path.exists(node_module_folder) and os.path.isdir(node_module_folder):
+        shutil.rmtree(node_module_folder)
+    install_dependencies()
+    logging.info(f"Check linting")
+    check_linting()
+    logging.info(f"Build and compile")
+    compile(backend_url='https://calculator.test.ecogood.org')
+    server_domain = 'ecg04-bcalcweb_test@ecg04.hostsharing.net'
+    server_folder = 'doms/ecalc.test.ecogood.org/htdocs-ssl'
+    logging.info(f"Copy build folder to {server_domain}")
+    rsync(folder='build/', server_domain=server_domain, server_folder=server_folder)
+    logging.info(f"Deployment finished")
+
+
+if __name__ == "__main__":
+    logging.basicConfig(level=logging.INFO)
+    parser = argparse.ArgumentParser(description='Deploy e calculator ui')
+    parser.add_argument('environment',
+                        choices=['test'],
+                        help='Deploy it either to the test environment')
+    args = parser.parse_args()
+    main(args)

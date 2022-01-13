@@ -2,7 +2,7 @@ import { AppBar, IconButton, Toolbar } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome } from '@fortawesome/free-solid-svg-icons/faHome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import BalanceSheetTab from './BalanceSheetTab';
 import styled from 'styled-components';
 import axios from 'axios';
@@ -29,6 +29,9 @@ const SmallToolbar = styled(Toolbar)`
 
 type NavigationProps = {
   user: User;
+  openSheets: number[];
+  addOpenSheet: (sheetId: number) => void;
+  deleteOpenSheet: (sheetId: number) => void;
   activeSheet: number | undefined;
   setActiveSheet: Dispatch<SetStateAction<number | undefined>>;
 };
@@ -37,9 +40,10 @@ const NavigationBar = ({
   user,
   activeSheet,
   setActiveSheet,
+  openSheets,
+  addOpenSheet,
+  deleteOpenSheet,
 }: NavigationProps) => {
-  const [sheets, setSheets] = useState<number[]>([]);
-
   const addSheet = async () => {
     const result = await axios.post(
       `${API_URL}/v1/balancesheets`,
@@ -53,12 +57,8 @@ const NavigationBar = ({
       }
     );
     const { id } = result.data;
-    setSheets((sheets) => sheets.concat(id));
+    addOpenSheet(id);
     setActiveSheet(id);
-  };
-
-  const deleteSheet = (idToDelete: number) => {
-    setSheets((sheets) => sheets.filter((id) => id !== idToDelete));
   };
 
   const goToHome = () => {
@@ -90,11 +90,11 @@ const NavigationBar = ({
           >
             <FontAwesomeIcon icon={faPlus} />
           </SquaredIconButton>
-          {sheets.map((sheet) => (
+          {openSheets.map((sheet) => (
             <BalanceSheetTab
               key={sheet}
               sheetId={sheet}
-              onDelete={deleteSheet}
+              onDelete={deleteOpenSheet}
               setActiveSheet={setActiveSheet}
               activeSheet={activeSheet}
             />
