@@ -33,6 +33,7 @@ const HomePage = ({ user }: HomePageProps) => {
 
   const deleteOpenSheet = (idToDelete: number) => {
     setOpenSheets((sheets) => sheets.filter((id) => id !== idToDelete));
+    setActiveSheet(undefined);
   };
 
   useEffect(() => {

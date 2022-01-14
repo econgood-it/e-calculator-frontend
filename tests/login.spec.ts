@@ -1,14 +1,10 @@
 import { expect, test } from '@playwright/test';
-
-const FRONTEND = process.env.FRONTEND_DOMAIN as string;
+import { FRONTEND } from './constants';
+import { LoginPage } from './pages/LoginPage';
 
 test('Test successful login', async ({ page }) => {
-  await page.goto(`${FRONTEND}/login`);
-  await page.fill('input[name="email"]', process.env.TEST_EMAIL as string);
-  await page.fill(
-    'input[name="password"]',
-    process.env.TEST_PASSWORD as string
-  );
-  await page.click('text=Login');
+  const loginPage = new LoginPage(page);
+  await loginPage.navigate();
+  await loginPage.login();
   await expect(page).toHaveURL(FRONTEND);
 });

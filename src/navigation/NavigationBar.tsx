@@ -75,7 +75,7 @@ const NavigationBar = ({
             size="large"
             edge="start"
             color="inherit"
-            aria-label="menu"
+            aria-label="home"
             sx={{ mr: 2 }}
           >
             <FontAwesomeIcon icon={faHome} />

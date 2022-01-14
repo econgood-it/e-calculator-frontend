@@ -1,25 +1,26 @@
-import { Page } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 import { FRONTEND } from '../constants';
 
-export class LoginPage {
+export class HomePage {
   /**
    * @param {import('playwright').Page} page
    */
   constructor(private page: Page) {}
 
   async navigate() {
-    await this.page.goto(`${FRONTEND}/login`);
+    await this.page.goto(`${FRONTEND}`);
   }
 
-  async login() {
-    await this.page.fill(
-      'input[name="email"]',
-      process.env.TEST_EMAIL as string
-    );
-    await this.page.fill(
-      'input[name="password"]',
-      process.env.TEST_PASSWORD as string
-    );
-    await this.page.click('text=Login');
+  async clickOnHomeButton() {
+    await this.page.click('button[aria-label="home"]');
+  }
+
+  async openFirstBalanceSheet() {
+    await this.page.locator('button:has-text("Open")').first().click();
+  }
+
+  async getBalanceSheetTabs(): Promise<Locator> {
+    const balanceSheetTabSelector = 'div[aria-label="balance sheet tab"]';
+    return this.page.locator(balanceSheetTabSelector);
   }
 }
