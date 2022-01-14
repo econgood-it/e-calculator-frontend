@@ -38,12 +38,13 @@ const BalanceSheetTab = ({
   const selected = activeSheet !== undefined && activeSheet === sheetId;
 
   return (
-    <StyledDiv $selected={selected}>
+    <StyledDiv $selected={selected} aria-label={'balance sheet tab'}>
       <StyledButton
         disableRipple={true}
         onClick={() => setActiveSheet(sheetId)}
       >{`Balance sheet ${sheetId}`}</StyledButton>
       <StyledIconButton
+        aria-label={'close balance sheet tab'}
         disableRipple={true}
         onClick={() => onDelete(sheetId)}
         size="small"

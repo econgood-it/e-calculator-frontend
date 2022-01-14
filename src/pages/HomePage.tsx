@@ -32,7 +32,21 @@ const HomePage = ({ user }: HomePageProps) => {
   };
 
   const deleteOpenSheet = (idToDelete: number) => {
+    let nextActiveSheet;
+    if (idToDelete === activeSheet) {
+      const index = openSheets.findIndex((id) => id === idToDelete);
+      if (openSheets.length > 1) {
+        if (index === 0) {
+          nextActiveSheet = openSheets[index + 1];
+        } else {
+          nextActiveSheet = openSheets[index - 1];
+        }
+      }
+    }
     setOpenSheets((sheets) => sheets.filter((id) => id !== idToDelete));
+    if (idToDelete === activeSheet) {
+      setActiveSheet(nextActiveSheet);
+    }
   };
 
   useEffect(() => {
