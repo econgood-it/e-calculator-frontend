@@ -5,6 +5,7 @@ import Notification from './Notification';
 import styled from 'styled-components';
 
 const FixedStack = styled(Stack)`
+  z-index: 9999;
   position: fixed;
   top: 0px;
   right: 50px;

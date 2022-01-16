@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import axios from 'axios';
 import { API_URL } from '../configuration';
 import { User } from '../authentication/User';
+import { BalanceSheetId } from '../pages/HomePage';
 
 interface ISquaredIconButton {
   $selected?: boolean;
@@ -34,6 +35,7 @@ type NavigationProps = {
   deleteOpenSheet: (sheetId: number) => void;
   activeSheet: number | undefined;
   setActiveSheet: Dispatch<SetStateAction<number | undefined>>;
+  addBalanceSheetId: (sheetId: BalanceSheetId) => void;
 };
 
 const NavigationBar = ({
@@ -43,6 +45,7 @@ const NavigationBar = ({
   openSheets,
   addOpenSheet,
   deleteOpenSheet,
+  addBalanceSheetId,
 }: NavigationProps) => {
   const addSheet = async () => {
     const result = await axios.post(
@@ -59,6 +62,7 @@ const NavigationBar = ({
     const { id } = result.data;
     addOpenSheet(id);
     setActiveSheet(id);
+    addBalanceSheetId({ id: id });
   };
 
   const goToHome = () => {

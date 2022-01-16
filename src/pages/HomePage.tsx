@@ -1,18 +1,22 @@
 import { User } from '../authentication/User';
 import NavigationBar from '../navigation/NavigationBar';
 import { Button, Card, CardActions, CardContent, Grid } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import BalanceSheetView from '../balanceSheet/BalanceSheetView';
 import styled from 'styled-components';
 import axios from 'axios';
 import { API_URL } from '../configuration';
+import { AlertContext } from '../alerts/AlertContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit } from '@fortawesome/free-solid-svg-icons/faEdit';
+import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash';
 
 const BodyGrid = styled(Grid)`
   position: relative;
   top: 52px;
 `;
 
-type BalanceSheetId = {
+export type BalanceSheetId = {
   id: number;
 };
 
@@ -21,6 +25,7 @@ type HomePageProps = {
 };
 
 const HomePage = ({ user }: HomePageProps) => {
+  const { addAlert } = useContext(AlertContext);
   const [activeSheet, setActiveSheet] = useState<number | undefined>(undefined);
   const [openSheets, setOpenSheets] = useState<number[]>([]);
   const [sheetIds, setSheetIds] = useState<BalanceSheetId[]>([]);
@@ -49,6 +54,29 @@ const HomePage = ({ user }: HomePageProps) => {
     }
   };
 
+  const addBalanceSheetId = (balanceSheetId: BalanceSheetId) => {
+    setSheetIds((sheets) => sheets.concat(balanceSheetId));
+  };
+
+  const deleteBalanceSheet = async (idToDelete: number) => {
+    try {
+      await axios.delete(`${API_URL}/v1/balancesheets/${idToDelete}`, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
+      setOpenSheets((sheets) => sheets.filter((id) => id !== idToDelete));
+      setSheetIds((sheetIds) => sheetIds.filter((b) => b.id !== idToDelete));
+      addAlert({
+        severity: 'success',
+        msg: `Bilanz ${idToDelete} erfolgreich gelöscht`,
+      });
+    } catch (e) {
+      addAlert({
+        severity: 'error',
+        msg: `Löschen der Bilanz ${idToDelete} fehlgeschlagen`,
+      });
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(`${API_URL}/v1/balancesheets`, {
@@ -71,15 +99,16 @@ const HomePage = ({ user }: HomePageProps) => {
           openSheets={openSheets}
           addOpenSheet={addOpenSheet}
           deleteOpenSheet={deleteOpenSheet}
+          addBalanceSheetId={addBalanceSheetId}
           user={user}
         />
       </Grid>
       <BodyGrid item xs={12}>
         {activeSheet === undefined ? (
-          <Grid container>
+          <Grid container spacing={2}>
             {sheetIds.map((b) => (
               <Grid key={b.id} item>
-                <Card title={`Balancesheet with id ${b.id}`}>
+                <Card variant="outlined" title={`Balancesheet with id ${b.id}`}>
                   <CardContent>{`Balancesheet with id ${b.id}`}</CardContent>
                   <CardActions>
                     <Button
@@ -87,9 +116,21 @@ const HomePage = ({ user }: HomePageProps) => {
                         setActiveSheet(b.id);
                         addOpenSheet(b.id);
                       }}
+                      variant="contained"
+                      startIcon={<FontAwesomeIcon icon={faEdit} />}
                       size="small"
                     >
-                      Open
+                      <div>Open</div>
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        deleteBalanceSheet(b.id);
+                      }}
+                      variant="contained"
+                      startIcon={<FontAwesomeIcon icon={faTrash} />}
+                      size="small"
+                    >
+                      Delete
                     </Button>
                   </CardActions>
                 </Card>
