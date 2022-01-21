@@ -47,7 +47,7 @@ const NegativeRating = ({ val }: NegativeRatingProps) => {
             min: -200,
             max: 0,
             type: 'number',
-            'aria-labelledby': 'input-slider',
+            'aria-label': 'negative-rating-input',
           }}
         />
       </Grid>
