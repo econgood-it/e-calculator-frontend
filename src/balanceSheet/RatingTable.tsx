@@ -47,7 +47,7 @@ const RatingTable = ({ topics }: RatingTableProps) => {
                       {a.isPositive ? (
                         <PositiveRating val={a.estimations} />
                       ) : (
-                        <NegativeRating val={a.estimations} />
+                        <NegativeRating initialValue={a.estimations} />
                       )}
                     </TableCell>
                   </TableRow>
