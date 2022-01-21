@@ -17,8 +17,8 @@ def check_linting():
     subprocess.run([yarn, run, 'lint'], check=True)
 
 
-# def run_tests():
-#     subprocess.run([npm, run, 'test:prod'], check=True)
+def run_tests():
+    subprocess.run([yarn, run, 'test'], env={'CI': 'true'}, check=True)
 
 
 def compile(backend_url: str):
@@ -39,6 +39,8 @@ def main(args):
     install_dependencies()
     logging.info(f"Check linting")
     check_linting()
+    logging.info(f"Run tests")
+    run_tests()
     logging.info(f"Build and compile")
     compile(backend_url='https://calculator.test.ecogood.org')
     server_domain = 'ecg04-bcalcweb_test@ecg04.hostsharing.net'
