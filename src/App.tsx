@@ -1,3 +1,4 @@
+import { Suspense, useState } from 'react';
 import {
   createTheme,
   ThemeOptions,
@@ -6,7 +7,6 @@ import {
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { User } from './authentication/User';
 import RequiresAuth from './authentication/RequiresAuth';
-import { useState } from 'react';
 import { AlertContextProvider } from './alerts/AlertContext';
 import { LoginPage } from './pages/LoginPage';
 import HomePage from './pages/HomePage';
@@ -24,7 +24,6 @@ axios.interceptors.response.use(
     }
   }
 );
-
 export const themeOptions: ThemeOptions = {
   palette: {
     primary: {
@@ -51,31 +50,33 @@ function App() {
   );
 
   return (
-    <MuiThemeProvider theme={theme}>
-      <ThemeProvider theme={theme}>
-        <AlertContextProvider>
-          <>
-            <Router>
-              <Routes>
-                <Route
-                  path="/login"
-                  element={<LoginPage setUser={setUser} />}
-                />
-                <Route
-                  path="/"
-                  element={
-                    <RequiresAuth user={user}>
-                      {user && <HomePage user={user} />}
-                    </RequiresAuth>
-                  }
-                />
-              </Routes>
-            </Router>
-            <NotificationList />
-          </>
-        </AlertContextProvider>
-      </ThemeProvider>
-    </MuiThemeProvider>
+    <Suspense fallback={'Loading'}>
+      <MuiThemeProvider theme={theme}>
+        <ThemeProvider theme={theme}>
+          <AlertContextProvider>
+            <>
+              <Router>
+                <Routes>
+                  <Route
+                    path="/login"
+                    element={<LoginPage setUser={setUser} />}
+                  />
+                  <Route
+                    path="/"
+                    element={
+                      <RequiresAuth user={user}>
+                        {user && <HomePage user={user} />}
+                      </RequiresAuth>
+                    }
+                  />
+                </Routes>
+              </Router>
+              <NotificationList />
+            </>
+          </AlertContextProvider>
+        </ThemeProvider>
+      </MuiThemeProvider>
+    </Suspense>
   );
 }
 

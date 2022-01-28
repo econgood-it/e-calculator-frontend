@@ -10,6 +10,7 @@ import { AlertContext } from '../alerts/AlertContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons/faEdit';
 import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash';
+import { useTranslation } from 'react-i18next';
 
 const BodyGrid = styled(Grid)`
   position: relative;
@@ -25,6 +26,7 @@ type HomePageProps = {
 };
 
 const HomePage = ({ user }: HomePageProps) => {
+  const { t } = useTranslation();
   const { addAlert } = useContext(AlertContext);
   const [activeSheet, setActiveSheet] = useState<number | undefined>(undefined);
   const [openSheets, setOpenSheets] = useState<number[]>([]);
@@ -109,7 +111,9 @@ const HomePage = ({ user }: HomePageProps) => {
             {sheetIds.map((b) => (
               <Grid key={b.id} item>
                 <Card variant="outlined" title={`Balancesheet with id ${b.id}`}>
-                  <CardContent>{`Balancesheet with id ${b.id}`}</CardContent>
+                  <CardContent>{`${t('welcome text')}ancesheet with id ${
+                    b.id
+                  }`}</CardContent>
                   <CardActions>
                     <Button
                       onClick={() => {
