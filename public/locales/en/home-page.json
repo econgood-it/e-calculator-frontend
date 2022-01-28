@@ -1,3 +1,5 @@
 {
-  "Balance sheet with id {{id}}": "Bilanz mit id {{ id }}"
+  "Balance sheet with id {{id}}": "Balance sheet with id {{id}}",
+  "Balance sheet {{idToDelete}} successfully deleted": "Balance sheet {{idToDelete}} successfully deleted",
+  "Deletion of balance sheet {{idToDelete}} fails": "Deletion of balance sheet {{idToDelete}} fails"
 }

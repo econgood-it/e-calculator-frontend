@@ -10,7 +10,7 @@ import { AlertContext } from '../alerts/AlertContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons/faEdit';
 import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 
 const BodyGrid = styled(Grid)`
   position: relative;
@@ -26,7 +26,7 @@ type HomePageProps = {
 };
 
 const HomePage = ({ user }: HomePageProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('home-page');
   const { addAlert } = useContext(AlertContext);
   const [activeSheet, setActiveSheet] = useState<number | undefined>(undefined);
   const [openSheets, setOpenSheets] = useState<number[]>([]);
@@ -69,12 +69,16 @@ const HomePage = ({ user }: HomePageProps) => {
       setSheetIds((sheetIds) => sheetIds.filter((b) => b.id !== idToDelete));
       addAlert({
         severity: 'success',
-        msg: `Bilanz ${idToDelete} erfolgreich gelöscht`,
+        msg: t('Balance sheet {{idToDelete}} successfully deleted', {
+          idToDelete: idToDelete,
+        }),
       });
     } catch (e) {
       addAlert({
         severity: 'error',
-        msg: `Löschen der Bilanz ${idToDelete} fehlgeschlagen`,
+        msg: t('Deletion of balance sheet {{idToDelete}} fails', {
+          idToDelete: idToDelete,
+        }),
       });
     }
   };
@@ -111,9 +115,9 @@ const HomePage = ({ user }: HomePageProps) => {
             {sheetIds.map((b) => (
               <Grid key={b.id} item>
                 <Card variant="outlined" title={`Balancesheet with id ${b.id}`}>
-                  <CardContent>{`${t('welcome text')}ancesheet with id ${
-                    b.id
-                  }`}</CardContent>
+                  <CardContent>
+                    <Trans t={t}>Balance sheet with id {{ id: b.id }}</Trans>
+                  </CardContent>
                   <CardActions>
                     <Button
                       onClick={() => {
