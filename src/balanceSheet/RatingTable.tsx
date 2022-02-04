@@ -14,12 +14,14 @@ import NegativeRating from './NegativeRating';
 import { Topic } from '../dataTransferObjects/Rating';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave } from '@fortawesome/free-solid-svg-icons/faSave';
+import { Trans, useTranslation } from 'react-i18next';
 
 type RatingTableProps = {
   topics: Topic[];
 };
 
 const RatingTable = ({ topics }: RatingTableProps) => {
+  const { t } = useTranslation('rating-table');
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
@@ -28,8 +30,12 @@ const RatingTable = ({ topics }: RatingTableProps) => {
             <TableHead>
               <TableRow>
                 <TableCell>No.</TableCell>
-                <TableCell>Einschätzung</TableCell>
-                <TableCell>Thema/ Aspekt</TableCell>
+                <TableCell>
+                  <Trans t={t}>Topic/ Aspect</Trans>
+                </TableCell>
+                <TableCell>
+                  <Trans t={t}>Estimation</Trans>
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

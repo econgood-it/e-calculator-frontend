@@ -1,14 +1,22 @@
-import { AppBar, IconButton, Toolbar } from '@mui/material';
+import {
+  AppBar,
+  Box,
+  IconButton,
+  MenuItem,
+  Select,
+  Toolbar,
+} from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome } from '@fortawesome/free-solid-svg-icons/faHome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import BalanceSheetTab from './BalanceSheetTab';
 import styled from 'styled-components';
 import axios from 'axios';
 import { API_URL } from '../configuration';
 import { User } from '../authentication/User';
 import { BalanceSheetId } from '../pages/HomePage';
+import { useTranslation } from 'react-i18next';
 
 interface ISquaredIconButton {
   $selected?: boolean;
@@ -21,6 +29,16 @@ const SquaredIconButton = styled(IconButton)<ISquaredIconButton>`
   &.MuiIconButton-root:hover {
     background-color: ${(props) =>
       props.$selected ? props.theme.palette.secondary.main : 'initial'};
+  }
+`;
+
+const LanguageSelector = styled(Select)`
+  color: ${(props) => props.theme.palette.primary.contrastText};
+  & .MuiOutlinedInput-notchedOutline {
+    border: none;
+  }
+  & .MuiSelect-iconOutlined {
+    color: ${(props) => props.theme.palette.primary.contrastText};
   }
 `;
 
@@ -47,6 +65,8 @@ const NavigationBar = ({
   deleteOpenSheet,
   addBalanceSheetId,
 }: NavigationProps) => {
+  const { i18n } = useTranslation();
+  const [language, setLanguage] = useState(i18n.language.split('-')[0]);
   const addSheet = async () => {
     const result = await axios.post(
       `${API_URL}/v1/balancesheets`,
@@ -103,6 +123,17 @@ const NavigationBar = ({
               activeSheet={activeSheet}
             />
           ))}
+          <Box sx={{ flexGrow: 1 }} />
+          <LanguageSelector
+            value={language}
+            onChange={(e) => {
+              setLanguage(e.target.value as string);
+              i18n.changeLanguage(e.target.value as string);
+            }}
+          >
+            <MenuItem value="de">de</MenuItem>
+            <MenuItem value="en">en</MenuItem>
+          </LanguageSelector>
         </SmallToolbar>
       </AppBar>
     </>

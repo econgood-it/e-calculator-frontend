@@ -10,7 +10,7 @@ i18n
   .use(Backend)
   .init({
     fallbackLng: 'en',
-    detection: { caches: [] },
+    detection: { caches: ['localStorage'] },
     debug: true,
   });
 

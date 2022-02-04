@@ -15,6 +15,7 @@ import {
   faUsers,
 } from '@fortawesome/free-solid-svg-icons';
 import { Drawer } from '@mui/material';
+import { Trans, useTranslation } from 'react-i18next';
 
 const StyledDrawer = styled(Drawer)`
   width: 400px;
@@ -56,6 +57,7 @@ const BalanceSheetNavigation = ({
   selected,
   setSelected,
 }: BalanceSheetNavigationProps) => {
+  const { t } = useTranslation('balance-sheet-navigation');
   return (
     <StyledDrawer variant="permanent">
       <nav aria-label="balance sheet menu">
@@ -67,7 +69,7 @@ const BalanceSheetNavigation = ({
             <ListItemIcon>
               <FontAwesomeIcon icon={faBuilding} />
             </ListItemIcon>
-            <ListItemText primary="Fakten zum Unternehmen" />
+            <ListItemText primary={<Trans t={t}>Company Facts</Trans>} />
           </StyledListItemButton>
           <StyledListItemButton
             selected={selected === NavigationItems.RATINGS}
@@ -76,7 +78,7 @@ const BalanceSheetNavigation = ({
             <ListItemIcon>
               <FontAwesomeIcon icon={faSeedling} />
             </ListItemIcon>
-            <ListItemText primary="Selbsteinschätzungen" />
+            <ListItemText primary={<Trans t={t}>Ratings</Trans>} />
           </StyledListItemButton>
           <List component="div" disablePadding>
             <StyledListItemButton
@@ -87,7 +89,7 @@ const BalanceSheetNavigation = ({
               <ListItemIcon>
                 <FontAwesomeIcon icon={faDolly} />
               </ListItemIcon>
-              <ListItemText secondary="Lieferanten" />
+              <ListItemText secondary={<Trans t={t}>Suppliers</Trans>} />
             </StyledListItemButton>
             <StyledListItemButton
               selected={selected === NavigationItems.OWNERS}
@@ -97,7 +99,13 @@ const BalanceSheetNavigation = ({
               <ListItemIcon>
                 <FontAwesomeIcon icon={faHandHoldingUsd} />
               </ListItemIcon>
-              <ListItemText secondary="Eigentümer*innen und Finanzpartner*innen" />
+              <ListItemText
+                secondary={
+                  <Trans t={t}>
+                    Owners, equity- and financial service providers
+                  </Trans>
+                }
+              />
             </StyledListItemButton>
             <StyledListItemButton
               selected={selected === NavigationItems.EMPLOYEES}
@@ -107,7 +115,7 @@ const BalanceSheetNavigation = ({
               <ListItemIcon>
                 <FontAwesomeIcon icon={faIdCard} />
               </ListItemIcon>
-              <ListItemText secondary="Mitarbeitende" />
+              <ListItemText secondary={<Trans t={t}>Employees</Trans>} />
             </StyledListItemButton>
             <StyledListItemButton
               selected={selected === NavigationItems.CUSTOMERS}
@@ -117,7 +125,9 @@ const BalanceSheetNavigation = ({
               <ListItemIcon>
                 <FontAwesomeIcon icon={faUsers} />
               </ListItemIcon>
-              <ListItemText secondary="Kund*nnen und Mitunternehmen" />
+              <ListItemText
+                secondary={<Trans t={t}>Customers and other companies</Trans>}
+              />
             </StyledListItemButton>
             <StyledListItemButton
               selected={selected === NavigationItems.SOCIETY}
@@ -127,7 +137,9 @@ const BalanceSheetNavigation = ({
               <ListItemIcon>
                 <FontAwesomeIcon icon={faGlobe} />
               </ListItemIcon>
-              <ListItemText secondary="Gesellschaftliches Umfeld" />
+              <ListItemText
+                secondary={<Trans t={t}>Social Environment</Trans>}
+              />
             </StyledListItemButton>
           </List>
         </List>

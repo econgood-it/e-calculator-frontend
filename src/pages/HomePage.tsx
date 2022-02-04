@@ -128,7 +128,7 @@ const HomePage = ({ user }: HomePageProps) => {
                       startIcon={<FontAwesomeIcon icon={faEdit} />}
                       size="small"
                     >
-                      <div>Open</div>
+                      <Trans t={t}>Edit</Trans>
                     </Button>
                     <Button
                       onClick={() => {
@@ -138,7 +138,7 @@ const HomePage = ({ user }: HomePageProps) => {
                       startIcon={<FontAwesomeIcon icon={faTrash} />}
                       size="small"
                     >
-                      Delete
+                      <Trans t={t}>Delete</Trans>
                     </Button>
                   </CardActions>
                 </Card>
