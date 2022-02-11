@@ -16,6 +16,7 @@ import axios from 'axios';
 import { API_URL } from '../configuration';
 import { User } from '../authentication/User';
 import { BalanceSheetId } from '../pages/HomePage';
+import { getLanguage } from '../i18n';
 import { useTranslation } from 'react-i18next';
 
 interface ISquaredIconButton {
@@ -66,7 +67,7 @@ const NavigationBar = ({
   addBalanceSheetId,
 }: NavigationProps) => {
   const { i18n } = useTranslation();
-  const [language, setLanguage] = useState(i18n.language.split('-')[0]);
+  const [language, setLanguage] = useState<string>(getLanguage(i18n));
   const addSheet = async () => {
     const result = await axios.post(
       `${API_URL}/v1/balancesheets`,
@@ -75,7 +76,7 @@ const NavigationBar = ({
         version: '5.06',
       },
       {
-        params: { lng: 'en', save: true },
+        params: { lng: language, save: true },
         headers: { Authorization: `Bearer ${user.token}` },
       }
     );
