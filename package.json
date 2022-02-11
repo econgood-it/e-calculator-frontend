@@ -28,7 +28,7 @@
     "lint": "eslint --ext .ts,.js .",
     "build": "react-scripts build",
     "eject": "react-scripts eject",
-    "test": "react-scripts test",
+    "test": "env-cmd -e development react-scripts test",
     "trans": "i18next 'src/**/*.{ts,tsx}'"
   },
   "devDependencies": {
