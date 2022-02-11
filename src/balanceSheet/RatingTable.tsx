@@ -70,7 +70,7 @@ const RatingTable = ({ topics }: RatingTableProps) => {
           variant={'contained'}
           startIcon={<FontAwesomeIcon icon={faSave} />}
         >
-          Speichern
+          <Trans t={t}>Save</Trans>
         </Button>
       </Grid>
     </Grid>

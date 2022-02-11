@@ -43,6 +43,7 @@ export default function PositiveRating({ val }: PositiveRatingProps) {
       }}
     >
       <StyledRating
+        aria-label="positive-rating-input"
         name="hover-feedback"
         value={value}
         max={10}

@@ -21,15 +21,30 @@ describe('BalanceSheetView', () => {
     expect(el).toHaveLength(2);
   });
 
-  it('renders suppliers ratings', async () => {
+  it('calls patch endpoint on save', async () => {
     mockedAxios.get.mockResolvedValueOnce({
       data: {
         rating: ratingMock,
       },
     });
+
     renderWithTheme(<BalanceSheetView balanceSheetId={1} user={user} />);
     const suppliersNavItem = await waitFor(() => screen.getByText('Suppliers'));
     fireEvent.click(suppliersNavItem);
     expect(screen.getByText('A1.1')).toBeInTheDocument();
+    const star3 = screen.getByRole('radio', { name: '3 Stars' });
+    // screen.debug(screen.getByLabelText('positive-rating-input'));
+    expect(star3).not.toBeChecked();
+    fireEvent.click(star3);
+    expect(star3).toBeChecked();
+    const saveButton = screen.getByText('Save');
+    fireEvent.click(saveButton);
+    // TODO: Go on here next time
+    expect(mockedAxios.patch).toHaveBeenCalledWith({
+      data: {
+        type: 'Full',
+        version: '5.06',
+      },
+    });
   });
 });
