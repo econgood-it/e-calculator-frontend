@@ -3,34 +3,12 @@ import { screen, waitFor } from '@testing-library/react';
 import BalanceSheetView from './BalanceSheetView';
 import axios from 'axios';
 import { renderWithTheme } from '../testUtils/rendering';
+import { ratingMock } from '../testUtils/balanceSheets';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 describe('BalanceSheetView', () => {
-  const ratingMock = {
-    topics: [
-      {
-        shortName: 'A1',
-        name: 'Menschenwürde in der Zulieferkette',
-        estimations: 0,
-        aspects: [
-          {
-            shortName: 'A1.1',
-            name: 'Arbeitsbedingungen und gesellschaftliche Auswirkungen in der Zulieferkette',
-            estimations: 0,
-            isPositive: true,
-          },
-          {
-            shortName: 'A1.2',
-            name: 'Negativ-Aspekt: Verletzung der Menschenwürde in der Zulieferkette',
-            estimations: 0,
-            isPositive: false,
-          },
-        ],
-      },
-    ],
-  };
   it('renders', async () => {
     const user = {
       token: 'fjdlksajrklejwlqjfkljkl',
