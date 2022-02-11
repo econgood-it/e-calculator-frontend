@@ -24,7 +24,6 @@ export type BalanceSheetId = {
 type HomePageProps = {
   user: User;
 };
-
 const HomePage = ({ user }: HomePageProps) => {
   const { t } = useTranslation('home-page');
   const { addAlert } = useContext(AlertContext);
@@ -82,7 +81,6 @@ const HomePage = ({ user }: HomePageProps) => {
       });
     }
   };
-
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(`${API_URL}/v1/balancesheets`, {

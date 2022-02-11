@@ -9,6 +9,7 @@ import { API_URL } from '../configuration';
 import { Rating, RatingSchema } from '../dataTransferObjects/Rating';
 import { User } from '../authentication/User';
 import styled from 'styled-components';
+import { useLanguage } from '../i18n';
 
 const CenteredDiv = styled.div`
   display: flex;
@@ -27,16 +28,19 @@ type BalanceSheetViewProps = {
 };
 
 const BalanceSheetView = ({ balanceSheetId, user }: BalanceSheetViewProps) => {
+  const language = useLanguage();
   const [selected, setSelected] = useState<NavigationItems>(
     NavigationItems.COMPANY_FACTS
   );
   const [rating, setRating] = useState<Rating | undefined>();
-
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(
         `${API_URL}/v1/balancesheets/${balanceSheetId}/`,
         {
+          params: {
+            lng: language,
+          },
           headers: {
             Authorization: `Bearer ${user.token}`,
           },
@@ -46,7 +50,7 @@ const BalanceSheetView = ({ balanceSheetId, user }: BalanceSheetViewProps) => {
       setRating(RatingSchema.parse(balanceSheet.rating));
     };
     fetchData();
-  }, [balanceSheetId]);
+  }, [balanceSheetId, language]);
 
   const getRatingTableOfStakeholder = (
     currentRating: Rating,
