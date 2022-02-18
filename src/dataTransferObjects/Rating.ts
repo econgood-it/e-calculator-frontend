@@ -7,7 +7,7 @@ const AspectSchema = z.object({
   isPositive: z.boolean(),
 });
 
-const TopicSchema = z.object({
+export const TopicSchema = z.object({
   shortName: z.string(),
   name: z.string(),
   estimations: z.number(),

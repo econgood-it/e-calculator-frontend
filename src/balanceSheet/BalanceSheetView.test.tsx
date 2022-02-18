@@ -5,6 +5,7 @@ import axios from 'axios';
 import { renderWithTheme } from '../testUtils/rendering';
 import { ratingMock } from '../testUtils/balanceSheets';
 import { user } from '../testUtils/user';
+import { API_URL } from '../configuration';
 
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -27,8 +28,12 @@ describe('BalanceSheetView', () => {
         rating: ratingMock,
       },
     });
+    mockedAxios.patch.mockResolvedValueOnce({ data: {} });
 
-    renderWithTheme(<BalanceSheetView balanceSheetId={1} user={user} />);
+    const balanceSheetId = 1;
+    renderWithTheme(
+      <BalanceSheetView balanceSheetId={balanceSheetId} user={user} />
+    );
     const suppliersNavItem = await waitFor(() => screen.getByText('Suppliers'));
     fireEvent.click(suppliersNavItem);
     expect(screen.getByText('A1.1')).toBeInTheDocument();
@@ -39,12 +44,21 @@ describe('BalanceSheetView', () => {
     expect(star3).toBeChecked();
     const saveButton = screen.getByText('Save');
     fireEvent.click(saveButton);
-    // TODO: Go on here next time
-    expect(mockedAxios.patch).toHaveBeenCalledWith({
-      data: {
-        type: 'Full',
-        version: '5.06',
-      },
-    });
+    // TODO: Update topics when changing the ui
+    expect(mockedAxios.patch).toHaveBeenCalledWith(
+      `${API_URL}/v1/balancesheets/${balanceSheetId}`,
+      {
+        ratings: [
+          {
+            shortName: 'A1.1',
+            estimations: 3,
+          },
+          {
+            shortName: 'A1.2',
+            estimations: 0,
+          },
+        ],
+      }
+    );
   });
 });
