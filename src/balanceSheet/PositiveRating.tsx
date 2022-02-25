@@ -16,11 +16,11 @@ const StyledRating = styled(Rating)`
 
 type PositiveRatingProps = {
   value: number;
-  setValue: (value: number) => void;
+  onChange: (value: number) => void;
 };
 export default function PositiveRating({
   value,
-  setValue,
+  onChange,
 }: PositiveRatingProps) {
   const [hover, setHover] = useState(-1);
   const getLabel = (currentValue: number): string => {
@@ -54,7 +54,7 @@ export default function PositiveRating({
         icon={<FontAwesomeIcon icon={faSeedling} />}
         emptyIcon={<FontAwesomeIcon icon={faSeedling} />}
         onChange={(event, newValue) => {
-          setValue(newValue as number);
+          onChange(newValue as number);
         }}
         onChangeActive={(event, newHover) => {
           setHover(newHover);

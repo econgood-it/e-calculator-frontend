@@ -4,7 +4,8 @@ import NegativeRating from './NegativeRating';
 
 describe('NegativeRating', () => {
   it('renders', () => {
-    render(<NegativeRating value={0} />);
+    const onChange = jest.fn();
+    render(<NegativeRating value={0} onChange={onChange} />);
     expect(screen.getByLabelText('negative-rating-input')).toHaveValue(0);
     expect(
       screen.getByText('Wert zwischen -200 und 0 eintragen')
@@ -12,17 +13,17 @@ describe('NegativeRating', () => {
   });
 
   it('renders value -20', async () => {
-    render(<NegativeRating value={0} />);
+    const onChange = jest.fn();
+    render(<NegativeRating value={0} onChange={onChange} />);
     fireEvent.change(screen.getByLabelText('negative-rating-input'), {
       target: { value: -20 },
     });
-    await waitFor(() =>
-      expect(screen.getByLabelText('negative-rating-input')).toHaveValue(-20)
-    );
+    expect(onChange).toHaveBeenCalledWith(-20);
   });
 
   it('renders validation error if value > 0', async () => {
-    render(<NegativeRating value={-2} />);
+    const onChange = jest.fn();
+    render(<NegativeRating value={-2} onChange={onChange} />);
     fireEvent.change(screen.getByLabelText('negative-rating-input'), {
       target: { value: 9 },
     });
@@ -35,7 +36,8 @@ describe('NegativeRating', () => {
   });
 
   it('renders validation error if value < -200', async () => {
-    render(<NegativeRating value={0} />);
+    const onChange = jest.fn();
+    render(<NegativeRating value={0} onChange={onChange} />);
     fireEvent.change(screen.getByLabelText('negative-rating-input'), {
       target: { value: -201 },
     });
@@ -48,7 +50,8 @@ describe('NegativeRating', () => {
   });
 
   it('renders validation error if value not a number', async () => {
-    render(<NegativeRating value={0} />);
+    const onChange = jest.fn();
+    render(<NegativeRating value={0} onChange={onChange} />);
     fireEvent.change(screen.getByLabelText('negative-rating-input'), {
       target: { value: '-2hallo' },
     });

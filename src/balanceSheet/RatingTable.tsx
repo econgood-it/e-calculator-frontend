@@ -106,7 +106,7 @@ const RatingTable = ({
                       {a.isPositive ? (
                         <PositiveRating
                           value={a.estimations}
-                          setValue={(value) =>
+                          onChange={(value) =>
                             updateAspectEstimation(
                               t.shortName,
                               a.shortName,
@@ -117,7 +117,7 @@ const RatingTable = ({
                       ) : (
                         <NegativeRating
                           value={a.estimations}
-                          setValue={(value) =>
+                          onChange={(value) =>
                             updateAspectEstimation(
                               t.shortName,
                               a.shortName,

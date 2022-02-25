@@ -21,10 +21,10 @@ type FormInput = z.infer<typeof FormInputSchema>;
 
 type NegativeRatingProps = {
   value: number;
-  setValue: (value: number) => void;
+  onChange: (value: number) => void;
 };
 
-const NegativeRating = ({ value, setValue }: NegativeRatingProps) => {
+const NegativeRating = ({ value, onChange }: NegativeRatingProps) => {
   const {
     register,
     formState: { errors },
@@ -38,7 +38,7 @@ const NegativeRating = ({ value, setValue }: NegativeRatingProps) => {
       <Grid item xs={2}>
         <Input
           value={value}
-          onChange={(e) => setValue(Number.parseFloat(e.target.value))}
+          onChange={(e) => onChange(Number.parseFloat(e.target.value))}
           size="small"
           error={!!errors.rating}
           inputProps={{
