@@ -59,7 +59,7 @@ const BalanceSheetView = ({ balanceSheetId, user }: BalanceSheetViewProps) => {
     return (
       <RatingTable
         user={user}
-        topics={currentRating.topics.filter((t) =>
+        initialTopics={currentRating.topics.filter((t) =>
           t.shortName.startsWith(stakeholder)
         )}
         balanceSheetId={balanceSheetId}

@@ -39,7 +39,6 @@ const reducer = (
       element = state.alerts.filter((e) => e.id !== alertAction.payload.id);
       return { alerts: element };
     default:
-      console.log('No valid action: ' + alertAction.type);
       return { alerts: state.alerts };
   }
 };

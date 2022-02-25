@@ -19,16 +19,44 @@ import axios from 'axios';
 import { API_URL } from '../configuration';
 import { useLanguage } from '../i18n';
 import { User } from '../authentication/User';
+import { useState } from 'react';
 
 type RatingTableProps = {
-  topics: Topic[];
+  initialTopics: Topic[];
   balanceSheetId: number;
   user: User;
 };
 
-const RatingTable = ({ topics, balanceSheetId, user }: RatingTableProps) => {
+const RatingTable = ({
+  initialTopics,
+  balanceSheetId,
+  user,
+}: RatingTableProps) => {
+  const [topics, setTopics] = useState<Topic[]>(initialTopics);
   const { t } = useTranslation('rating-table');
   const language = useLanguage();
+
+  const updateAspectEstimation = (
+    shortNameOfParentTopic: string,
+    shortName: string,
+    estimations: number
+  ) => {
+    setTopics((prevTopics) =>
+      prevTopics.map((t) =>
+        t.shortName === shortNameOfParentTopic
+          ? {
+              ...t,
+              aspects: t.aspects.map((a) =>
+                a.shortName === shortName
+                  ? { ...a, estimations: estimations }
+                  : a
+              ),
+            }
+          : t
+      )
+    );
+  };
+
   const onSave = async () => {
     await axios.patch(
       `${API_URL}/v1/balancesheets/${balanceSheetId}`,
@@ -76,9 +104,27 @@ const RatingTable = ({ topics, balanceSheetId, user }: RatingTableProps) => {
                     <TableCell>{a.name}</TableCell>
                     <TableCell>
                       {a.isPositive ? (
-                        <PositiveRating val={a.estimations} />
+                        <PositiveRating
+                          value={a.estimations}
+                          setValue={(value) =>
+                            updateAspectEstimation(
+                              t.shortName,
+                              a.shortName,
+                              value
+                            )
+                          }
+                        />
                       ) : (
-                        <NegativeRating initialValue={a.estimations} />
+                        <NegativeRating
+                          value={a.estimations}
+                          setValue={(value) =>
+                            updateAspectEstimation(
+                              t.shortName,
+                              a.shortName,
+                              value
+                            )
+                          }
+                        />
                       )}
                     </TableCell>
                   </TableRow>
