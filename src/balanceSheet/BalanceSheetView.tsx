@@ -6,7 +6,7 @@ import BalanceSheetNavigation, {
 import RatingTable from './RatingTable';
 import axios from 'axios';
 import { API_URL } from '../configuration';
-import { Rating, RatingSchema } from '../dataTransferObjects/Rating';
+import { Rating, RatingSchema, Topic } from '../dataTransferObjects/Rating';
 import { User } from '../authentication/User';
 import styled from 'styled-components';
 import { useLanguage } from '../i18n';
@@ -52,6 +52,17 @@ const BalanceSheetView = ({ balanceSheetId, user }: BalanceSheetViewProps) => {
     fetchData();
   }, [balanceSheetId, language]);
 
+  const updateTopics = (topics: Topic[]): void => {
+    setRating(
+      (r) =>
+        r && {
+          topics: r.topics.map(
+            (t) =>
+              topics.find((newTopic) => newTopic.shortName === t.shortName) || t
+          ),
+        }
+    );
+  };
   const getRatingTableOfStakeholder = (
     currentRating: Rating,
     stakeholder: string
@@ -59,9 +70,10 @@ const BalanceSheetView = ({ balanceSheetId, user }: BalanceSheetViewProps) => {
     return (
       <RatingTable
         user={user}
-        initialTopics={currentRating.topics.filter((t) =>
+        topics={currentRating.topics.filter((t) =>
           t.shortName.startsWith(stakeholder)
         )}
+        onTopicsUpdate={updateTopics}
         balanceSheetId={balanceSheetId}
       />
     );

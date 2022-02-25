@@ -86,6 +86,7 @@ describe('BalanceSheetView', () => {
       screen.getByText('A1.2').parentElement as HTMLElement
     ).getByRole('spinbutton', { name: 'negative-rating-input' });
     fireEvent.change(inputField, { target: { value: '-102' } });
+    fireEvent.focusOut(inputField);
     const saveButton = screen.getByText('Save');
     fireEvent.click(saveButton);
 

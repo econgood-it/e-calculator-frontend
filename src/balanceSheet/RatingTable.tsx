@@ -19,20 +19,20 @@ import axios from 'axios';
 import { API_URL } from '../configuration';
 import { useLanguage } from '../i18n';
 import { User } from '../authentication/User';
-import { useState } from 'react';
 
 type RatingTableProps = {
-  initialTopics: Topic[];
+  topics: Topic[];
+  onTopicsUpdate: (topics: Topic[]) => void;
   balanceSheetId: number;
   user: User;
 };
 
 const RatingTable = ({
-  initialTopics,
+  topics,
+  onTopicsUpdate,
   balanceSheetId,
   user,
 }: RatingTableProps) => {
-  const [topics, setTopics] = useState<Topic[]>(initialTopics);
   const { t } = useTranslation('rating-table');
   const language = useLanguage();
 
@@ -41,8 +41,8 @@ const RatingTable = ({
     shortName: string,
     estimations: number
   ) => {
-    setTopics((prevTopics) =>
-      prevTopics.map((t) =>
+    onTopicsUpdate(
+      topics.map((t) =>
         t.shortName === shortNameOfParentTopic
           ? {
               ...t,
@@ -57,7 +57,7 @@ const RatingTable = ({
     );
   };
 
-  const onSave = async () => {
+  const onSaveClick = async () => {
     await axios.patch(
       `${API_URL}/v1/balancesheets/${balanceSheetId}`,
       {
@@ -116,7 +116,7 @@ const RatingTable = ({
                         />
                       ) : (
                         <NegativeRating
-                          value={a.estimations}
+                          initialValue={a.estimations}
                           onChange={(value) =>
                             updateAspectEstimation(
                               t.shortName,
@@ -138,7 +138,7 @@ const RatingTable = ({
         <Button
           fullWidth={true}
           size={'large'}
-          onClick={onSave}
+          onClick={onSaveClick}
           variant={'contained'}
           startIcon={<FontAwesomeIcon icon={faSave} />}
         >

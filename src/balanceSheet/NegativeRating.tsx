@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import styled from 'styled-components';
+import { useState } from 'react';
 
 const GridWithFixedSize = styled(Grid)`
   width: 400px;
@@ -20,11 +21,13 @@ const FormInputSchema = z.object({
 type FormInput = z.infer<typeof FormInputSchema>;
 
 type NegativeRatingProps = {
-  value: number;
+  initialValue: number;
   onChange: (value: number) => void;
 };
 
-const NegativeRating = ({ value, onChange }: NegativeRatingProps) => {
+const NegativeRating = ({ initialValue, onChange }: NegativeRatingProps) => {
+  const [value, setValue] = useState(initialValue.toString());
+
   const {
     register,
     formState: { errors },
@@ -32,13 +35,13 @@ const NegativeRating = ({ value, onChange }: NegativeRatingProps) => {
     resolver: zodResolver(FormInputSchema),
     mode: 'onChange',
   });
-
   return (
     <GridWithFixedSize container spacing={1} alignItems={'center'}>
       <Grid item xs={2}>
         <Input
           value={value}
-          onChange={(e) => onChange(Number.parseFloat(e.target.value))}
+          onChange={(e) => setValue(e.target.value)}
+          onBlur={(e) => onChange(Number.parseFloat(e.target.value))}
           size="small"
           error={!!errors.rating}
           inputProps={{
