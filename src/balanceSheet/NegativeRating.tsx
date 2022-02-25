@@ -22,10 +22,12 @@ type FormInput = z.infer<typeof FormInputSchema>;
 
 type NegativeRatingProps = {
   initialValue: number;
+  onChange: (value: number) => void;
 };
 
-const NegativeRating = ({ initialValue }: NegativeRatingProps) => {
-  const [value, setValue] = useState<string>(initialValue.toString());
+const NegativeRating = ({ initialValue, onChange }: NegativeRatingProps) => {
+  const [value, setValue] = useState(initialValue.toString());
+
   const {
     register,
     formState: { errors },
@@ -33,13 +35,13 @@ const NegativeRating = ({ initialValue }: NegativeRatingProps) => {
     resolver: zodResolver(FormInputSchema),
     mode: 'onChange',
   });
-
   return (
     <GridWithFixedSize container spacing={1} alignItems={'center'}>
       <Grid item xs={2}>
         <Input
           value={value}
           onChange={(e) => setValue(e.target.value)}
+          onBlur={(e) => onChange(Number.parseFloat(e.target.value))}
           size="small"
           error={!!errors.rating}
           inputProps={{

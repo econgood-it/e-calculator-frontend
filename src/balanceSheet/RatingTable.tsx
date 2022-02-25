@@ -15,13 +15,66 @@ import { Topic } from '../dataTransferObjects/Rating';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave } from '@fortawesome/free-solid-svg-icons/faSave';
 import { Trans, useTranslation } from 'react-i18next';
+import axios from 'axios';
+import { API_URL } from '../configuration';
+import { useLanguage } from '../i18n';
+import { User } from '../authentication/User';
 
 type RatingTableProps = {
   topics: Topic[];
+  onTopicsUpdate: (topics: Topic[]) => void;
+  balanceSheetId: number;
+  user: User;
 };
 
-const RatingTable = ({ topics }: RatingTableProps) => {
+const RatingTable = ({
+  topics,
+  onTopicsUpdate,
+  balanceSheetId,
+  user,
+}: RatingTableProps) => {
   const { t } = useTranslation('rating-table');
+  const language = useLanguage();
+
+  const updateAspectEstimation = (
+    shortNameOfParentTopic: string,
+    shortName: string,
+    estimations: number
+  ) => {
+    onTopicsUpdate(
+      topics.map((t) =>
+        t.shortName === shortNameOfParentTopic
+          ? {
+              ...t,
+              aspects: t.aspects.map((a) =>
+                a.shortName === shortName
+                  ? { ...a, estimations: estimations }
+                  : a
+              ),
+            }
+          : t
+      )
+    );
+  };
+
+  const onSaveClick = async () => {
+    await axios.patch(
+      `${API_URL}/v1/balancesheets/${balanceSheetId}`,
+      {
+        ratings: topics
+          .map((t) =>
+            t.aspects.map((a) => {
+              return { shortName: a.shortName, estimations: a.estimations };
+            })
+          )
+          .flat(1),
+      },
+      {
+        params: { lng: language, save: true },
+        headers: { Authorization: `Bearer ${user.token}` },
+      }
+    );
+  };
   return (
     <Grid container spacing={2}>
       <Grid item xs={12}>
@@ -51,9 +104,27 @@ const RatingTable = ({ topics }: RatingTableProps) => {
                     <TableCell>{a.name}</TableCell>
                     <TableCell>
                       {a.isPositive ? (
-                        <PositiveRating val={a.estimations} />
+                        <PositiveRating
+                          value={a.estimations}
+                          onChange={(value) =>
+                            updateAspectEstimation(
+                              t.shortName,
+                              a.shortName,
+                              value
+                            )
+                          }
+                        />
                       ) : (
-                        <NegativeRating initialValue={a.estimations} />
+                        <NegativeRating
+                          initialValue={a.estimations}
+                          onChange={(value) =>
+                            updateAspectEstimation(
+                              t.shortName,
+                              a.shortName,
+                              value
+                            )
+                          }
+                        />
                       )}
                     </TableCell>
                   </TableRow>
@@ -67,10 +138,11 @@ const RatingTable = ({ topics }: RatingTableProps) => {
         <Button
           fullWidth={true}
           size={'large'}
+          onClick={onSaveClick}
           variant={'contained'}
           startIcon={<FontAwesomeIcon icon={faSave} />}
         >
-          Speichern
+          <Trans t={t}>Save</Trans>
         </Button>
       </Grid>
     </Grid>

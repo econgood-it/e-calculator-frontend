@@ -7,7 +7,9 @@ const AspectSchema = z.object({
   isPositive: z.boolean(),
 });
 
-const TopicSchema = z.object({
+export type Aspect = z.infer<typeof AspectSchema>;
+
+export const TopicSchema = z.object({
   shortName: z.string(),
   name: z.string(),
   estimations: z.number(),
