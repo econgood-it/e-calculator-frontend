@@ -3,7 +3,7 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import BalanceSheetView from './BalanceSheetView';
 import axios from 'axios';
 import { renderWithTheme } from '../testUtils/rendering';
-import { ratingMock } from '../testUtils/balanceSheets';
+import { ratingsMock } from '../testUtils/balanceSheets';
 import { user } from '../testUtils/user';
 import { API_URL } from '../configuration';
 import HTMLElement from 'react';
@@ -16,7 +16,7 @@ describe('BalanceSheetView', () => {
   it('renders text Company Facts', async () => {
     mockedAxios.get.mockResolvedValueOnce({
       data: {
-        rating: ratingMock,
+        ratings: [...ratingsMock.ratings],
       },
     });
     renderWithTheme(
@@ -29,7 +29,7 @@ describe('BalanceSheetView', () => {
   it('should update positive rating and send changes to the backend', async () => {
     mockedAxios.get.mockResolvedValueOnce({
       data: {
-        rating: ratingMock,
+        ratings: [...ratingsMock.ratings],
       },
     });
     mockedAxios.patch.mockResolvedValueOnce({ data: {} });
@@ -72,7 +72,7 @@ describe('BalanceSheetView', () => {
   it('should update negative rating and send changes to the backend', async () => {
     mockedAxios.get.mockResolvedValueOnce({
       data: {
-        rating: ratingMock,
+        ratings: [...ratingsMock.ratings],
       },
     });
     mockedAxios.patch.mockResolvedValueOnce({ data: {} });
