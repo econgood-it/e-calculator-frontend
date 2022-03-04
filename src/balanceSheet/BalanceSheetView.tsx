@@ -6,7 +6,7 @@ import BalanceSheetNavigation, {
 import RatingTable from './RatingTable';
 import axios from 'axios';
 import { API_URL } from '../configuration';
-import { Rating, RatingSchema, Topic } from '../dataTransferObjects/Rating';
+import { Rating, RatingSchema } from '../dataTransferObjects/Rating';
 import { User } from '../authentication/User';
 import styled from 'styled-components';
 import { useLanguage } from '../i18n';
@@ -32,7 +32,7 @@ const BalanceSheetView = ({ balanceSheetId, user }: BalanceSheetViewProps) => {
   const [selected, setSelected] = useState<NavigationItems>(
     NavigationItems.COMPANY_FACTS
   );
-  const [rating, setRating] = useState<Rating | undefined>();
+  const [ratings, setRatings] = useState<Rating[]>([]);
   useEffect(() => {
     const fetchData = async () => {
       const response = await axios.get(
@@ -40,6 +40,7 @@ const BalanceSheetView = ({ balanceSheetId, user }: BalanceSheetViewProps) => {
         {
           params: {
             lng: language,
+            responseFormat: 'short',
           },
           headers: {
             Authorization: `Bearer ${user.token}`,
@@ -47,54 +48,49 @@ const BalanceSheetView = ({ balanceSheetId, user }: BalanceSheetViewProps) => {
         }
       );
       const balanceSheet = await response.data;
-      setRating(RatingSchema.parse(balanceSheet.rating));
+      setRatings(RatingSchema.array().parse(balanceSheet.ratings));
     };
     fetchData();
   }, [balanceSheetId, language]);
 
-  const updateTopics = (topics: Topic[]): void => {
-    setRating(
-      (r) =>
-        r && {
-          topics: r.topics.map(
-            (t) =>
-              topics.find((newTopic) => newTopic.shortName === t.shortName) || t
-          ),
-        }
+  const updateRatings = (newRatings: Rating[]): void => {
+    setRatings((prevRatings: Rating[]) =>
+      prevRatings.map(
+        (r) =>
+          newRatings.find((newRating) => newRating.shortName === r.shortName) ||
+          r
+      )
     );
   };
-  const getRatingTableOfStakeholder = (
-    currentRating: Rating,
-    stakeholder: string
-  ): ReactElement => {
+  const getRatingTableOfStakeholder = (stakeholder: string): ReactElement => {
     return (
       <RatingTable
         user={user}
-        topics={currentRating.topics.filter((t) =>
-          t.shortName.startsWith(stakeholder)
+        ratings={ratings.filter(
+          (t) => t.shortName.length > 2 && t.shortName.startsWith(stakeholder)
         )}
-        onTopicsUpdate={updateTopics}
+        onRatingsUpdate={updateRatings}
         balanceSheetId={balanceSheetId}
       />
     );
   };
 
-  const getContent = (currentRating: Rating): ReactElement => {
+  const getContent = (): ReactElement => {
     switch (selected) {
       case NavigationItems.COMPANY_FACTS:
         return <>Company Facts</>;
       case NavigationItems.RATINGS:
         return <>Rating description</>;
       case NavigationItems.SUPPLIERS:
-        return getRatingTableOfStakeholder(currentRating, 'A');
+        return getRatingTableOfStakeholder('A');
       case NavigationItems.OWNERS:
-        return getRatingTableOfStakeholder(currentRating, 'B');
+        return getRatingTableOfStakeholder('B');
       case NavigationItems.EMPLOYEES:
-        return getRatingTableOfStakeholder(currentRating, 'C');
+        return getRatingTableOfStakeholder('C');
       case NavigationItems.CUSTOMERS:
-        return getRatingTableOfStakeholder(currentRating, 'D');
+        return getRatingTableOfStakeholder('D');
       case NavigationItems.SOCIETY:
-        return getRatingTableOfStakeholder(currentRating, 'E');
+        return getRatingTableOfStakeholder('E');
       default:
         return <>Default</>;
     }
@@ -102,7 +98,7 @@ const BalanceSheetView = ({ balanceSheetId, user }: BalanceSheetViewProps) => {
 
   return (
     <>
-      {rating ? (
+      {ratings.length > 0 ? (
         <Grid container spacing={4}>
           <Grid item xs={3}>
             <BalanceSheetNavigation
@@ -111,7 +107,7 @@ const BalanceSheetView = ({ balanceSheetId, user }: BalanceSheetViewProps) => {
             />
           </Grid>
           <GridWithBottomMargin item xs={8}>
-            {getContent(rating)}
+            {getContent()}
           </GridWithBottomMargin>
         </Grid>
       ) : (

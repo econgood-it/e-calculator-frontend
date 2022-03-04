@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import PositiveRating from './PositiveRating';
 import NegativeRating from './NegativeRating';
-import { Topic } from '../dataTransferObjects/Rating';
+import { Rating } from '../dataTransferObjects/Rating';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave } from '@fortawesome/free-solid-svg-icons/faSave';
 import { Trans, useTranslation } from 'react-i18next';
@@ -21,38 +21,30 @@ import { useLanguage } from '../i18n';
 import { User } from '../authentication/User';
 
 type RatingTableProps = {
-  topics: Topic[];
-  onTopicsUpdate: (topics: Topic[]) => void;
+  ratings: Rating[];
+  onRatingsUpdate: (ratings: Rating[]) => void;
   balanceSheetId: number;
   user: User;
 };
 
 const RatingTable = ({
-  topics,
-  onTopicsUpdate,
+  ratings,
+  onRatingsUpdate,
   balanceSheetId,
   user,
 }: RatingTableProps) => {
   const { t } = useTranslation('rating-table');
   const language = useLanguage();
 
-  const updateAspectEstimation = (
-    shortNameOfParentTopic: string,
-    shortName: string,
-    estimations: number
-  ) => {
-    onTopicsUpdate(
-      topics.map((t) =>
-        t.shortName === shortNameOfParentTopic
+  const updateAspectEstimation = (shortName: string, estimations: number) => {
+    onRatingsUpdate(
+      ratings.map((r) =>
+        r.shortName === shortName
           ? {
-              ...t,
-              aspects: t.aspects.map((a) =>
-                a.shortName === shortName
-                  ? { ...a, estimations: estimations }
-                  : a
-              ),
+              ...r,
+              estimations: estimations,
             }
-          : t
+          : r
       )
     );
   };
@@ -61,13 +53,9 @@ const RatingTable = ({
     await axios.patch(
       `${API_URL}/v1/balancesheets/${balanceSheetId}`,
       {
-        ratings: topics
-          .map((t) =>
-            t.aspects.map((a) => {
-              return { shortName: a.shortName, estimations: a.estimations };
-            })
-          )
-          .flat(1),
+        ratings: ratings.map((r) => {
+          return { shortName: r.shortName, estimations: r.estimations };
+        }),
       },
       {
         params: { lng: language, save: true },
@@ -92,44 +80,34 @@ const RatingTable = ({
               </TableRow>
             </TableHead>
             <TableBody>
-              {topics.map((t) =>
-                t.aspects.map((a) => (
-                  <TableRow
-                    key={a.shortName}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {a.shortName}
-                    </TableCell>
-                    <TableCell>{a.name}</TableCell>
-                    <TableCell>
-                      {a.isPositive ? (
-                        <PositiveRating
-                          value={a.estimations}
-                          onChange={(value) =>
-                            updateAspectEstimation(
-                              t.shortName,
-                              a.shortName,
-                              value
-                            )
-                          }
-                        />
-                      ) : (
-                        <NegativeRating
-                          initialValue={a.estimations}
-                          onChange={(value) =>
-                            updateAspectEstimation(
-                              t.shortName,
-                              a.shortName,
-                              value
-                            )
-                          }
-                        />
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
+              {ratings.map((r) => (
+                <TableRow
+                  key={r.shortName}
+                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                >
+                  <TableCell component="th" scope="row">
+                    {r.shortName}
+                  </TableCell>
+                  <TableCell>{r.name}</TableCell>
+                  <TableCell>
+                    {r.isPositive ? (
+                      <PositiveRating
+                        value={r.estimations}
+                        onChange={(value) =>
+                          updateAspectEstimation(r.shortName, value)
+                        }
+                      />
+                    ) : (
+                      <NegativeRating
+                        initialValue={r.estimations}
+                        onChange={(value) =>
+                          updateAspectEstimation(r.shortName, value)
+                        }
+                      />
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </TableContainer>
