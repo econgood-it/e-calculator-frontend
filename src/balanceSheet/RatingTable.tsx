@@ -18,21 +18,20 @@ import { Trans, useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { API_URL } from '../configuration';
 import { useLanguage } from '../i18n';
-import { User } from '../authentication/User';
+import { useUser } from '../authentication/UserContext';
 
 type RatingTableProps = {
   ratings: Rating[];
   onRatingsUpdate: (ratings: Rating[]) => void;
   balanceSheetId: number;
-  user: User;
 };
 
 const RatingTable = ({
   ratings,
   onRatingsUpdate,
   balanceSheetId,
-  user,
 }: RatingTableProps) => {
+  const { user } = useUser();
   const { t } = useTranslation('rating-table');
   const language = useLanguage();
 

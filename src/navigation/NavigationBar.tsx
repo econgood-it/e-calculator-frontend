@@ -14,10 +14,10 @@ import BalanceSheetTab from './BalanceSheetTab';
 import styled from 'styled-components';
 import axios from 'axios';
 import { API_URL } from '../configuration';
-import { User } from '../authentication/User';
 import { BalanceSheetId } from '../pages/HomePage';
 import { getLanguage } from '../i18n';
 import { useTranslation } from 'react-i18next';
+import { useUser } from '../authentication/UserContext';
 
 interface ISquaredIconButton {
   $selected?: boolean;
@@ -48,7 +48,6 @@ const SmallToolbar = styled(Toolbar)`
 `;
 
 type NavigationProps = {
-  user: User;
   openSheets: number[];
   addOpenSheet: (sheetId: number) => void;
   deleteOpenSheet: (sheetId: number) => void;
@@ -58,7 +57,6 @@ type NavigationProps = {
 };
 
 const NavigationBar = ({
-  user,
   activeSheet,
   setActiveSheet,
   openSheets,
@@ -67,6 +65,7 @@ const NavigationBar = ({
   addBalanceSheetId,
 }: NavigationProps) => {
   const { i18n } = useTranslation();
+  const { user } = useUser();
   const [language, setLanguage] = useState<string>(getLanguage(i18n));
   const addSheet = async () => {
     const result = await axios.post(

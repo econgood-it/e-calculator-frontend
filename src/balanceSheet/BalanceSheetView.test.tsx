@@ -4,24 +4,32 @@ import BalanceSheetView from './BalanceSheetView';
 import axios from 'axios';
 import { renderWithTheme } from '../testUtils/rendering';
 import { ratingsMock } from '../testUtils/balanceSheets';
-import { user } from '../testUtils/user';
+import { exampleUser } from '../testUtils/user';
 import { API_URL } from '../configuration';
 import HTMLElement from 'react';
+import { useUser } from '../authentication/UserContext';
 
 jest.mock('axios');
+jest.mock('../authentication/UserContext');
 const mockedAxios = axios as jest.Mocked<typeof axios>;
+const mockedUseUser = useUser as jest.Mock;
 
 describe('BalanceSheetView', () => {
   const balanceSheetId = 1;
+
+  beforeEach(() => {
+    mockedUseUser.mockReturnValue({
+      user: exampleUser,
+    });
+  });
+
   it('renders text Company Facts', async () => {
     mockedAxios.get.mockResolvedValueOnce({
       data: {
         ratings: [...ratingsMock.ratings],
       },
     });
-    renderWithTheme(
-      <BalanceSheetView balanceSheetId={balanceSheetId} user={user} />
-    );
+    renderWithTheme(<BalanceSheetView balanceSheetId={balanceSheetId} />);
     const el = await waitFor(() => screen.getAllByText('Company Facts'));
     expect(el).toHaveLength(2);
   });
@@ -33,9 +41,7 @@ describe('BalanceSheetView', () => {
       },
     });
     mockedAxios.patch.mockResolvedValueOnce({ data: {} });
-    renderWithTheme(
-      <BalanceSheetView balanceSheetId={balanceSheetId} user={user} />
-    );
+    renderWithTheme(<BalanceSheetView balanceSheetId={balanceSheetId} />);
     const suppliersNavItem = await waitFor(() => screen.getByText('Suppliers'));
     // Update positive rating
     fireEvent.click(suppliersNavItem);
@@ -76,9 +82,7 @@ describe('BalanceSheetView', () => {
       },
     });
     mockedAxios.patch.mockResolvedValueOnce({ data: {} });
-    renderWithTheme(
-      <BalanceSheetView balanceSheetId={balanceSheetId} user={user} />
-    );
+    renderWithTheme(<BalanceSheetView balanceSheetId={balanceSheetId} />);
     const suppliersNavItem = await waitFor(() => screen.getByText('Suppliers'));
     // Update positive rating
     fireEvent.click(suppliersNavItem);

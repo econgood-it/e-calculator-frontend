@@ -1,18 +1,26 @@
-import { render, RenderOptions, RenderResult } from '@testing-library/react';
+import { render, RenderResult } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
 import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material';
 import { themeOptions } from '../App';
 import { ReactElement } from 'react';
+import { BrowserRouter } from 'react-router-dom';
 
 const theme = createTheme(themeOptions);
 
+const renderWithRouter = (ui: ReactElement, { route = '/' } = {}) => {
+  window.history.pushState({}, 'Test page', route);
+
+  return render(ui, { wrapper: BrowserRouter });
+};
+
 export const renderWithTheme = (
   ui: ReactElement,
-  options?: Omit<RenderOptions, 'queries'>
+  route: string = '/'
 ): RenderResult => {
-  return render(
+  return renderWithRouter(
     <MuiThemeProvider theme={theme}>
       <ThemeProvider theme={theme}>{ui}</ThemeProvider>
-    </MuiThemeProvider>
+    </MuiThemeProvider>,
+    { route: route }
   );
 };

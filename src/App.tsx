@@ -1,19 +1,16 @@
-import { Suspense, useState } from 'react';
+import { Suspense } from 'react';
 import {
   createTheme,
   ThemeOptions,
   ThemeProvider as MuiThemeProvider,
 } from '@mui/material';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { User } from './authentication/User';
-import RequiresAuth from './authentication/RequiresAuth';
 import { AlertContextProvider } from './alerts/AlertContext';
-import { LoginPage } from './pages/LoginPage';
-import HomePage from './pages/HomePage';
 import NotificationList from './alerts/NotificationList';
 import { ThemeProvider } from 'styled-components';
 
 import axios from 'axios';
+import AppRoutes from './routing/AppRoutes';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 axios.interceptors.response.use(
   function (response) {
@@ -49,13 +46,6 @@ export const themeOptions: ThemeOptions = {
 const theme = createTheme(themeOptions);
 
 function App() {
-  // we get the user from the localStorage because that's where we will save their account on the login process
-  const userString = window.localStorage.getItem('user');
-
-  const [user, setUser] = useState<User | undefined>(
-    userString ? JSON.parse(userString) : undefined
-  );
-
   return (
     <Suspense fallback={'Loading'}>
       <MuiThemeProvider theme={theme}>
@@ -63,20 +53,7 @@ function App() {
           <AlertContextProvider>
             <>
               <Router>
-                <Routes>
-                  <Route
-                    path="/login"
-                    element={<LoginPage setUser={setUser} />}
-                  />
-                  <Route
-                    path="/"
-                    element={
-                      <RequiresAuth user={user}>
-                        {user && <HomePage user={user} />}
-                      </RequiresAuth>
-                    }
-                  />
-                </Routes>
+                <AppRoutes />
               </Router>
               <NotificationList />
             </>

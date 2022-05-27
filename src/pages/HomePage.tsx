@@ -1,4 +1,3 @@
-import { User } from '../authentication/User';
 import NavigationBar from '../navigation/NavigationBar';
 import { Button, Card, CardActions, CardContent, Grid } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
@@ -11,6 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons/faEdit';
 import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash';
 import { Trans, useTranslation } from 'react-i18next';
+import { useUser } from '../authentication/UserContext';
 
 const BodyGrid = styled(Grid)`
   position: relative;
@@ -21,12 +21,10 @@ export type BalanceSheetId = {
   id: number;
 };
 
-type HomePageProps = {
-  user: User;
-};
-const HomePage = ({ user }: HomePageProps) => {
+const HomePage = () => {
   const { t } = useTranslation('home-page');
   const { addAlert } = useContext(AlertContext);
+  const { user } = useUser();
   const [activeSheet, setActiveSheet] = useState<number | undefined>(undefined);
   const [openSheets, setOpenSheets] = useState<number[]>([]);
   const [sheetIds, setSheetIds] = useState<BalanceSheetId[]>([]);
@@ -104,7 +102,6 @@ const HomePage = ({ user }: HomePageProps) => {
           addOpenSheet={addOpenSheet}
           deleteOpenSheet={deleteOpenSheet}
           addBalanceSheetId={addBalanceSheetId}
-          user={user}
         />
       </Grid>
       <BodyGrid item xs={12}>
@@ -144,7 +141,7 @@ const HomePage = ({ user }: HomePageProps) => {
             ))}
           </Grid>
         ) : (
-          <BalanceSheetView user={user} balanceSheetId={activeSheet} />
+          <BalanceSheetView balanceSheetId={activeSheet} />
         )}
       </BodyGrid>
     </Grid>

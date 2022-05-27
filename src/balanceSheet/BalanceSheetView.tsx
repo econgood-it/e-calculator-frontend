@@ -7,9 +7,9 @@ import RatingTable from './RatingTable';
 import axios from 'axios';
 import { API_URL } from '../configuration';
 import { Rating, RatingSchema } from '../dataTransferObjects/Rating';
-import { User } from '../authentication/User';
 import styled from 'styled-components';
 import { useLanguage } from '../i18n';
+import { useUser } from '../authentication/UserContext';
 
 const CenteredDiv = styled.div`
   display: flex;
@@ -24,11 +24,11 @@ const GridWithBottomMargin = styled(Grid)`
 `;
 type BalanceSheetViewProps = {
   balanceSheetId: number;
-  user: User;
 };
 
-const BalanceSheetView = ({ balanceSheetId, user }: BalanceSheetViewProps) => {
+const BalanceSheetView = ({ balanceSheetId }: BalanceSheetViewProps) => {
   const language = useLanguage();
+  const { user } = useUser();
   const [selected, setSelected] = useState<NavigationItems>(
     NavigationItems.COMPANY_FACTS
   );
@@ -65,7 +65,6 @@ const BalanceSheetView = ({ balanceSheetId, user }: BalanceSheetViewProps) => {
   const getRatingTableOfStakeholder = (stakeholder: string): ReactElement => {
     return (
       <RatingTable
-        user={user}
         ratings={ratings.filter(
           (t) => t.shortName.length > 2 && t.shortName.startsWith(stakeholder)
         )}
