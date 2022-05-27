@@ -4,6 +4,7 @@ import RequiresAuth from './RequiresAuth';
 import HomePage from '../pages/HomePage';
 import { useState } from 'react';
 import { User } from '../authentication/User';
+import MiniDrawer from '../pages/MiniDrawer';
 
 const AppRoutes = () => {
   // we get the user from the localStorage because that's where we will save their account on the login process
@@ -12,11 +13,14 @@ const AppRoutes = () => {
   const [user, setUser] = useState<User | undefined>(
     userString ? JSON.parse(userString) : undefined
   );
+
   return (
     <Routes>
       <Route path="/login" element={<LoginPage setUser={setUser} />} />
       <Route path="/" element={<RequiresAuth user={user} />}>
-        <Route index element={<HomePage />} />
+        <Route element={<MiniDrawer />}>
+          <Route index element={<HomePage />} />
+        </Route>
       </Route>
     </Routes>
   );
