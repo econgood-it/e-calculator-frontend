@@ -12,12 +12,10 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
 import { Dispatch, SetStateAction, useState } from 'react';
 import BalanceSheetTab from './BalanceSheetTab';
 import styled from 'styled-components';
-import axios from 'axios';
-import { API_URL } from '../configuration';
 import { BalanceSheetId } from '../pages/HomePage';
 import { getLanguage } from '../i18n';
 import { useTranslation } from 'react-i18next';
-import { useUser } from '../authentication/UserContext';
+import { useApi } from '../api/ApiContext';
 
 interface ISquaredIconButton {
   $selected?: boolean;
@@ -65,18 +63,17 @@ const NavigationBar = ({
   addBalanceSheetId,
 }: NavigationProps) => {
   const { i18n } = useTranslation();
-  const { user } = useUser();
+  const api = useApi();
   const [language, setLanguage] = useState<string>(getLanguage(i18n));
   const addSheet = async () => {
-    const result = await axios.post(
-      `${API_URL}/v1/balancesheets`,
+    const result = await api.post(
+      `v1/balancesheets`,
       {
         type: 'Full',
         version: '5.06',
       },
       {
-        params: { lng: language, save: true },
-        headers: { Authorization: `Bearer ${user.token}` },
+        params: { save: true },
       }
     );
     const { id } = result.data;

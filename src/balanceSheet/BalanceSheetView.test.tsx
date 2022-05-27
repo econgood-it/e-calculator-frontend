@@ -1,46 +1,45 @@
 import '@testing-library/jest-dom';
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import BalanceSheetView from './BalanceSheetView';
-import axios from 'axios';
 import { renderWithTheme } from '../testUtils/rendering';
 import { ratingsMock } from '../testUtils/balanceSheets';
-import { exampleUser } from '../testUtils/user';
-import { API_URL } from '../configuration';
 import HTMLElement from 'react';
-import { useUser } from '../authentication/UserContext';
+import { useApi } from '../api/ApiContext';
 
-jest.mock('axios');
-jest.mock('../authentication/UserContext');
-const mockedAxios = axios as jest.Mocked<typeof axios>;
-const mockedUseUser = useUser as jest.Mock;
+jest.mock('../api/ApiContext');
+const apiMock = {
+  get: jest.fn(),
+  patch: jest.fn(),
+};
 
 describe('BalanceSheetView', () => {
   const balanceSheetId = 1;
 
   beforeEach(() => {
-    mockedUseUser.mockReturnValue({
-      user: exampleUser,
+    apiMock.get.mockImplementation((path: string) => {
+      if (path === `v1/balancesheets/${balanceSheetId}/`) {
+        return Promise.resolve({
+          data: {
+            ratings: [...ratingsMock.ratings],
+          },
+        });
+      }
     });
+    apiMock.patch.mockImplementation((path: string) => {
+      if (path === `v1/balancesheets/${balanceSheetId}/`) {
+        return Promise.resolve({ data: {} });
+      }
+    });
+    (useApi as jest.Mock).mockImplementation(() => apiMock);
   });
 
   it('renders text Company Facts', async () => {
-    mockedAxios.get.mockResolvedValueOnce({
-      data: {
-        ratings: [...ratingsMock.ratings],
-      },
-    });
     renderWithTheme(<BalanceSheetView balanceSheetId={balanceSheetId} />);
     const el = await waitFor(() => screen.getAllByText('Company Facts'));
     expect(el).toHaveLength(2);
   });
 
   it('should update positive rating and send changes to the backend', async () => {
-    mockedAxios.get.mockResolvedValueOnce({
-      data: {
-        ratings: [...ratingsMock.ratings],
-      },
-    });
-    mockedAxios.patch.mockResolvedValueOnce({ data: {} });
     renderWithTheme(<BalanceSheetView balanceSheetId={balanceSheetId} />);
     const suppliersNavItem = await waitFor(() => screen.getByText('Suppliers'));
     // Update positive rating
@@ -57,8 +56,8 @@ describe('BalanceSheetView', () => {
     fireEvent.click(saveButton);
 
     // Check if changes are sent to backend
-    expect(mockedAxios.patch).toHaveBeenCalledWith(
-      `${API_URL}/v1/balancesheets/${balanceSheetId}`,
+    expect(apiMock.patch).toHaveBeenCalledWith(
+      `v1/balancesheets/${balanceSheetId}`,
       {
         ratings: [
           {
@@ -76,12 +75,6 @@ describe('BalanceSheetView', () => {
   });
 
   it('should update negative rating and send changes to the backend', async () => {
-    mockedAxios.get.mockResolvedValueOnce({
-      data: {
-        ratings: [...ratingsMock.ratings],
-      },
-    });
-    mockedAxios.patch.mockResolvedValueOnce({ data: {} });
     renderWithTheme(<BalanceSheetView balanceSheetId={balanceSheetId} />);
     const suppliersNavItem = await waitFor(() => screen.getByText('Suppliers'));
     // Update positive rating
@@ -95,8 +88,8 @@ describe('BalanceSheetView', () => {
     fireEvent.click(saveButton);
 
     // Check if changes are sent to backend
-    expect(mockedAxios.patch).toHaveBeenCalledWith(
-      `${API_URL}/v1/balancesheets/${balanceSheetId}`,
+    expect(apiMock.patch).toHaveBeenCalledWith(
+      `v1/balancesheets/${balanceSheetId}`,
       {
         ratings: [
           {

@@ -3,14 +3,12 @@ import { Button, Card, CardActions, CardContent, Grid } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import BalanceSheetView from '../balanceSheet/BalanceSheetView';
 import styled from 'styled-components';
-import axios from 'axios';
-import { API_URL } from '../configuration';
 import { AlertContext } from '../alerts/AlertContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons/faEdit';
 import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash';
 import { Trans, useTranslation } from 'react-i18next';
-import { useUser } from '../authentication/UserContext';
+import { useApi } from '../api/ApiContext';
 
 const BodyGrid = styled(Grid)`
   position: relative;
@@ -24,7 +22,7 @@ export type BalanceSheetId = {
 const HomePage = () => {
   const { t } = useTranslation('home-page');
   const { addAlert } = useContext(AlertContext);
-  const { user } = useUser();
+  const api = useApi();
   const [activeSheet, setActiveSheet] = useState<number | undefined>(undefined);
   const [openSheets, setOpenSheets] = useState<number[]>([]);
   const [sheetIds, setSheetIds] = useState<BalanceSheetId[]>([]);
@@ -59,9 +57,7 @@ const HomePage = () => {
 
   const deleteBalanceSheet = async (idToDelete: number) => {
     try {
-      await axios.delete(`${API_URL}/v1/balancesheets/${idToDelete}`, {
-        headers: { Authorization: `Bearer ${user.token}` },
-      });
+      await api.delete(`v1/balancesheets/${idToDelete}`);
       setOpenSheets((sheets) => sheets.filter((id) => id !== idToDelete));
       setSheetIds((sheetIds) => sheetIds.filter((b) => b.id !== idToDelete));
       addAlert({
@@ -81,11 +77,7 @@ const HomePage = () => {
   };
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get(`${API_URL}/v1/balancesheets`, {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      });
+      const response = await api.get(`v1/balancesheets`);
       const balanceSheets = await response.data;
       setSheetIds(balanceSheets);
     };

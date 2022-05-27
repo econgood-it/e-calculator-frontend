@@ -15,10 +15,7 @@ import { Rating } from '../dataTransferObjects/Rating';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave } from '@fortawesome/free-solid-svg-icons/faSave';
 import { Trans, useTranslation } from 'react-i18next';
-import axios from 'axios';
-import { API_URL } from '../configuration';
-import { useLanguage } from '../i18n';
-import { useUser } from '../authentication/UserContext';
+import { useApi } from '../api/ApiContext';
 
 type RatingTableProps = {
   ratings: Rating[];
@@ -31,9 +28,8 @@ const RatingTable = ({
   onRatingsUpdate,
   balanceSheetId,
 }: RatingTableProps) => {
-  const { user } = useUser();
+  const api = useApi();
   const { t } = useTranslation('rating-table');
-  const language = useLanguage();
 
   const updateAspectEstimation = (shortName: string, estimations: number) => {
     onRatingsUpdate(
@@ -49,16 +45,15 @@ const RatingTable = ({
   };
 
   const onSaveClick = async () => {
-    await axios.patch(
-      `${API_URL}/v1/balancesheets/${balanceSheetId}`,
+    await api.patch(
+      `v1/balancesheets/${balanceSheetId}`,
       {
         ratings: ratings.map((r) => {
           return { shortName: r.shortName, estimations: r.estimations };
         }),
       },
       {
-        params: { lng: language, save: true },
-        headers: { Authorization: `Bearer ${user.token}` },
+        params: { save: true },
       }
     );
   };

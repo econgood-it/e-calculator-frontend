@@ -4,12 +4,10 @@ import BalanceSheetNavigation, {
   NavigationItems,
 } from './BalanceSheetNavigation';
 import RatingTable from './RatingTable';
-import axios from 'axios';
-import { API_URL } from '../configuration';
 import { Rating, RatingSchema } from '../dataTransferObjects/Rating';
 import styled from 'styled-components';
 import { useLanguage } from '../i18n';
-import { useUser } from '../authentication/UserContext';
+import { useApi } from '../api/ApiContext';
 
 const CenteredDiv = styled.div`
   display: flex;
@@ -28,25 +26,14 @@ type BalanceSheetViewProps = {
 
 const BalanceSheetView = ({ balanceSheetId }: BalanceSheetViewProps) => {
   const language = useLanguage();
-  const { user } = useUser();
+  const api = useApi();
   const [selected, setSelected] = useState<NavigationItems>(
     NavigationItems.COMPANY_FACTS
   );
   const [ratings, setRatings] = useState<Rating[]>([]);
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get(
-        `${API_URL}/v1/balancesheets/${balanceSheetId}/`,
-        {
-          params: {
-            lng: language,
-            responseFormat: 'short',
-          },
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
-      );
+      const response = await api.get(`v1/balancesheets/${balanceSheetId}/`);
       const balanceSheet = await response.data;
       setRatings(RatingSchema.array().parse(balanceSheet.ratings));
     };
