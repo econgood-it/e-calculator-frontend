@@ -2,6 +2,22 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+
+## Configuration
+Afterwards you have to create in the root directory a file _.env-cmdrc.json_. This file holds the configuration
+for the application.
+
+```json
+{
+  "development": {
+    "FRONTEND_DOMAIN": "http://localhost:3000",
+    "REACT_APP_BACKEND_DOMAIN": "https://calculator.test.ecogood.org",
+    "TEST_EMAIL": "Replace this by your email",
+    "TEST_PASSWORD": "Replace this by your password"
+  }
+}
+```
+
 ## Available Scripts
 
 In the project directory, you can run:
