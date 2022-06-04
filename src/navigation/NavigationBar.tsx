@@ -12,7 +12,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
 import { Dispatch, SetStateAction, useState } from 'react';
 import BalanceSheetTab from './BalanceSheetTab';
 import styled from 'styled-components';
-import { BalanceSheetId } from '../pages/HomePage';
+import { BalanceSheetItem } from '../pages/BalanceSheetOverviewPage';
 import { getLanguage } from '../i18n';
 import { useTranslation } from 'react-i18next';
 import { useApi } from '../api/ApiContext';
@@ -51,7 +51,7 @@ type NavigationProps = {
   deleteOpenSheet: (sheetId: number) => void;
   activeSheet: number | undefined;
   setActiveSheet: Dispatch<SetStateAction<number | undefined>>;
-  addBalanceSheetId: (sheetId: BalanceSheetId) => void;
+  addBalanceSheetId: (sheetId: BalanceSheetItem) => void;
 };
 
 const NavigationBar = ({

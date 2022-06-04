@@ -9,15 +9,12 @@ import { faEdit } from '@fortawesome/free-solid-svg-icons/faEdit';
 import { faTrash } from '@fortawesome/free-solid-svg-icons/faTrash';
 import { Trans, useTranslation } from 'react-i18next';
 import { useApi } from '../api/ApiContext';
+import { BalanceSheetItem } from './BalanceSheetOverviewPage';
 
 const BodyGrid = styled(Grid)`
   position: relative;
   top: 52px;
 `;
-
-export type BalanceSheetId = {
-  id: number;
-};
 
 const HomePage = () => {
   const { t } = useTranslation('home-page');
@@ -25,7 +22,7 @@ const HomePage = () => {
   const api = useApi();
   const [activeSheet, setActiveSheet] = useState<number | undefined>(undefined);
   const [openSheets, setOpenSheets] = useState<number[]>([]);
-  const [sheetIds, setSheetIds] = useState<BalanceSheetId[]>([]);
+  const [sheetIds, setSheetIds] = useState<BalanceSheetItem[]>([]);
 
   const addOpenSheet = (sheetId: number) => {
     if (openSheets.find((id) => id === sheetId) === undefined) {
@@ -51,7 +48,7 @@ const HomePage = () => {
     }
   };
 
-  const addBalanceSheetId = (balanceSheetId: BalanceSheetId) => {
+  const addBalanceSheetId = (balanceSheetId: BalanceSheetItem) => {
     setSheetIds((sheets) => sheets.concat(balanceSheetId));
   };
 

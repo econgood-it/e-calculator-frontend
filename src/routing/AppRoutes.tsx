@@ -1,10 +1,11 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { LoginPage } from '../pages/LoginPage';
 import RequiresAuth from './RequiresAuth';
-import HomePage from '../pages/HomePage';
 import { useState } from 'react';
 import { User } from '../authentication/User';
-import MiniDrawer from '../pages/MiniDrawer';
+import BalanceSheetOverviewPage from '../pages/BalanceSheetOverviewPage';
+import Sidebar from '../pages/Sidebar';
+import BalanceSheetPage from '../pages/BalanceSheetPage';
 
 const AppRoutes = () => {
   // we get the user from the localStorage because that's where we will save their account on the login process
@@ -17,9 +18,11 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage setUser={setUser} />} />
-      <Route path="/" element={<RequiresAuth user={user} />}>
-        <Route element={<MiniDrawer />}>
-          <Route index element={<HomePage />} />
+      <Route path="/" element={<Navigate to={'balancesheets'} />} />
+      <Route path="/balancesheets" element={<RequiresAuth user={user} />}>
+        <Route element={<Sidebar />}>
+          <Route index element={<BalanceSheetOverviewPage />} />
+          <Route path=":balancesheetId" element={<BalanceSheetPage />} />
         </Route>
       </Route>
     </Routes>
