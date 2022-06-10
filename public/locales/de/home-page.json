@@ -1,7 +1,0 @@
-{
-  "Balance sheet {{idToDelete}} successfully deleted": "Bilanz {{idToDelete}} erfolgreich gelöscht",
-  "Deletion of balance sheet {{idToDelete}} fails": "Löschung der Bilanz {{idToDelete}} ist fehlgeschlagen",
-  "Balance sheet with id {{id}}": "Bilanz mit id {{id}}",
-  "Edit": "Bearbeiten",
-  "Delete": "Löschen"
-}
