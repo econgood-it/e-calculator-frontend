@@ -19,6 +19,10 @@ const FixedAppBar = styled(AppBar)`
   z-index: ${(props) => props.theme.zIndex.drawer + 1};
 `;
 
+const StyledToolbar = styled(Toolbar)`
+  padding-left: 0px;
+`;
+
 const Content = styled.div<{ $open: boolean; $drawerWidth: number }>`
   margin-top: 16px;
   margin-left: ${(props) => (props.$open ? props.$drawerWidth : 16)}px;
@@ -42,14 +46,14 @@ export default function Sidebar() {
   return (
     <>
       <FixedAppBar>
-        <Toolbar>
+        <StyledToolbar>
           <IconButton aria-label="toogle sidebar" onClick={toogleSidebar}>
             <FontAwesomeIcon icon={faBars} />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
             Persistent drawer
           </Typography>
-        </Toolbar>
+        </StyledToolbar>
       </FixedAppBar>
       <DrawerWithFixedWidth
         variant="persistent"
