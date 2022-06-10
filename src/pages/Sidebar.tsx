@@ -8,12 +8,16 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faFolderOpen } from '@fortawesome/free-solid-svg-icons';
+import {
+  faBars,
+  faBuilding,
+  faFolderOpen,
+} from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { AppBar, Box, ListSubheader } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
 
 const FixedAppBar = styled(AppBar)`
   z-index: ${(props) => props.theme.zIndex.drawer + 1};
@@ -25,27 +29,30 @@ const StyledToolbar = styled(Toolbar)`
 
 const Content = styled.div<{ $open: boolean; $drawerWidth: number }>`
   margin-top: 16px;
-  margin-left: ${(props) => (props.$open ? props.$drawerWidth : 16)}px;
+  margin-left: ${(props) => (props.$open ? props.$drawerWidth + 16 : 16)}px;
 `;
 
 const DrawerWithFixedWidth = styled(Drawer)<{ $drawerWidth: number }>`
-  &.MuiDrawer-paper {
+  & .MuiDrawer-paper {
     width: ${(props) => props.$drawerWidth}px;
   }
 `;
 
 export default function Sidebar() {
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(true);
   const { t } = useTranslation('sidebar');
   const navigate = useNavigate();
+  const { balanceSheetId } = useParams();
 
   const drawerWidth = 240;
   const toogleSidebar = () => {
     setOpen(!open);
   };
 
-  const navigateToBalanceSheets = () => {
-    navigate('/balancesheets');
+  const navigateWithinActiveBalanceSheet = (path: string) => {
+    if (balanceSheetId) {
+      navigate(`/balancesheets/${balanceSheetId}/${path}`);
+    }
   };
 
   return (
@@ -56,7 +63,7 @@ export default function Sidebar() {
             <FontAwesomeIcon icon={faBars} />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            <Trans>ECG Calculator</Trans>
+            <Trans t={t}>ECG Calculator</Trans>
           </Typography>
         </StyledToolbar>
       </FixedAppBar>
@@ -64,6 +71,7 @@ export default function Sidebar() {
         variant="persistent"
         anchor="left"
         open={open}
+        sx={{ width: drawerWidth }}
         $drawerWidth={drawerWidth}
       >
         <Toolbar />
@@ -73,7 +81,7 @@ export default function Sidebar() {
           </ListSubheader>
           <List>
             <ListItem key={'balancesheets'} disablePadding>
-              <ListItemButton onClick={navigateToBalanceSheets}>
+              <ListItemButton onClick={() => navigate('/balancesheets')}>
                 <ListItemIcon>
                   <FontAwesomeIcon icon={faFolderOpen} />
                 </ListItemIcon>
@@ -81,6 +89,29 @@ export default function Sidebar() {
               </ListItemButton>
             </ListItem>
           </List>
+          {balanceSheetId && (
+            <>
+              <ListSubheader>
+                <Trans t={t}>Active Balance Sheet</Trans>
+              </ListSubheader>
+              <List>
+                <ListItem key={'company-facts'} disablePadding>
+                  <ListItemButton
+                    onClick={() =>
+                      navigateWithinActiveBalanceSheet('company-facts')
+                    }
+                  >
+                    <ListItemIcon>
+                      <FontAwesomeIcon icon={faBuilding} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={<Trans t={t}>Company Facts</Trans>}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </>
+          )}
         </Box>
       </DrawerWithFixedWidth>
       <Box>

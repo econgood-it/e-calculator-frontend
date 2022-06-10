@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { User } from '../authentication/User';
 import BalanceSheetOverviewPage from '../pages/BalanceSheetOverviewPage';
 import Sidebar from '../pages/Sidebar';
-import BalanceSheetPage from '../pages/BalanceSheetPage';
+import WithActiveBalanceSheet from '../components/balanceSheet/WithActiveBalanceSheet';
 
 const AppRoutes = () => {
   // we get the user from the localStorage because that's where we will save their account on the login process
@@ -22,7 +22,7 @@ const AppRoutes = () => {
       <Route path="/balancesheets" element={<RequiresAuth user={user} />}>
         <Route element={<Sidebar />}>
           <Route index element={<BalanceSheetOverviewPage />} />
-          <Route path=":balancesheetId" element={<BalanceSheetPage />} />
+          <Route path=":balanceSheetId" element={<WithActiveBalanceSheet />} />
         </Route>
       </Route>
     </Routes>

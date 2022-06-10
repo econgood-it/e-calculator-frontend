@@ -7,7 +7,7 @@ import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertContext } from '../alerts/AlertContext';
+import { AlertContext } from '../contexts/AlertContext';
 import { API_URL } from '../configuration';
 
 const CenteredDiv = styled.div`

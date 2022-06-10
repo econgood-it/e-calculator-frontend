@@ -4,8 +4,8 @@ import {
   ThemeOptions,
   ThemeProvider as MuiThemeProvider,
 } from '@mui/material';
-import { AlertContextProvider } from './alerts/AlertContext';
-import NotificationList from './alerts/NotificationList';
+import { AlertContextProvider } from './contexts/AlertContext';
+import NotificationList from './components/alerts/NotificationList';
 import { ThemeProvider } from 'styled-components';
 import AppRoutes from './routing/AppRoutes';
 import { BrowserRouter as Router } from 'react-router-dom';

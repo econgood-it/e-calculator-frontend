@@ -1,7 +1,7 @@
 import { User } from '../authentication/User';
 import { FC } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { ApiProvider } from '../api/ApiContext';
+import { ApiProvider } from '../contexts/ApiContext';
 
 type RequiresAuthProps = {
   user: User | undefined;

@@ -47,7 +47,7 @@ function ApiProvider({ user, children }: ApiProviderProps) {
 export const useApi = () => {
   const context = useContext(ApiContext);
   if (context === undefined) {
-    throw new Error('useUser must be within ApiProvider');
+    throw new Error('useApi must be within ApiProvider');
   }
 
   return context;

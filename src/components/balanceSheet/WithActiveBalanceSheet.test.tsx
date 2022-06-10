@@ -1,17 +1,17 @@
 import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
-import { renderWithTheme } from '../testUtils/rendering';
-import BalanceSheetPage from './BalanceSheetPage';
+import { renderWithTheme } from '../../testUtils/rendering';
+import WithActiveBalanceSheet from './WithActiveBalanceSheet';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-describe('BalanceSheetPage', () => {
-  it('renders correct balance sheet', async () => {
+describe('WithActiveBalanceSheet', () => {
+  it('renders correct balance sheet and setActiveBalanceSheet', async () => {
     renderWithTheme(
       <MemoryRouter initialEntries={['/balancesheets/2']}>
         <Routes>
           <Route
-            path="/balancesheets/:balancesheetId"
-            element={<BalanceSheetPage />}
+            path="/balancesheets/:balanceSheetId"
+            element={<WithActiveBalanceSheet />}
           />
         </Routes>
       </MemoryRouter>

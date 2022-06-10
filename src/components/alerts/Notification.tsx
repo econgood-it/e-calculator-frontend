@@ -1,5 +1,5 @@
 import { Alert } from '@mui/material';
-import { AlertContext, AlertMsg } from './AlertContext';
+import { AlertContext, AlertMsg } from '../../contexts/AlertContext';
 import { SyntheticEvent, useContext, useEffect } from 'react';
 
 type NotificationProps = {

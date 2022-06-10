@@ -2,11 +2,11 @@ import '@testing-library/jest-dom';
 import { act, screen, waitFor } from '@testing-library/react';
 import { renderWithTheme } from '../testUtils/rendering';
 import BalanceSheetOverviewPage from './BalanceSheetOverviewPage';
-import { useApi } from '../api/ApiContext';
+import { useApi } from '../contexts/ApiContext';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 
-jest.mock('../api/ApiContext');
+jest.mock('../contexts/ApiContext');
 const apiMock = {
   get: jest.fn(),
 };

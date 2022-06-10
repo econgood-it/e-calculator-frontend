@@ -1,6 +1,6 @@
 import { Stack } from '@mui/material';
 import { useContext } from 'react';
-import { AlertContext } from './AlertContext';
+import { AlertContext } from '../../contexts/AlertContext';
 import Notification from './Notification';
 import styled from 'styled-components';
 
