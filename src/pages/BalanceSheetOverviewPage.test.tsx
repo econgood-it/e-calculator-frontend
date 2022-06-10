@@ -1,8 +1,10 @@
 import '@testing-library/jest-dom';
-import { screen } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import { renderWithTheme } from '../testUtils/rendering';
 import BalanceSheetOverviewPage from './BalanceSheetOverviewPage';
 import { useApi } from '../api/ApiContext';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import userEvent from '@testing-library/user-event';
 
 jest.mock('../api/ApiContext');
 const apiMock = {
@@ -22,8 +24,33 @@ describe('BalanceSheetOverviewPage', () => {
     (useApi as jest.Mock).mockImplementation(() => apiMock);
   });
 
-  it('renders balance sheet items', async () => {
-    renderWithTheme(<BalanceSheetOverviewPage />);
+  it('renders balance sheet items and navigates on click', async () => {
+    await act(async () => {
+      renderWithTheme(
+        <MemoryRouter initialEntries={['/balancesheets']}>
+          <Routes>
+            <Route
+              path={'/balancesheets'}
+              element={<BalanceSheetOverviewPage />}
+            />
+            <Route
+              path={'/balancesheets/2'}
+              element={<div>Page of Balance sheet 2</div>}
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+    });
+    await waitFor(() => expect(apiMock.get).toHaveBeenCalled());
     expect(await screen.findAllByRole('link')).toHaveLength(2);
+    const linkToBalanceSheet2 = screen.getByRole('link', {
+      name: 'Balance sheet 2',
+    });
+
+    await userEvent.click(linkToBalanceSheet2);
+
+    await waitFor(() =>
+      expect(screen.getByText('Page of Balance sheet 2')).toBeInTheDocument()
+    );
   });
 });
