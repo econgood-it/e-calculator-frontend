@@ -13,7 +13,7 @@ import { useState } from 'react';
 import { AppBar, Box, ListSubheader } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 
 const FixedAppBar = styled(AppBar)`
   z-index: ${(props) => props.theme.zIndex.drawer + 1};
@@ -37,10 +37,15 @@ const DrawerWithFixedWidth = styled(Drawer)<{ $drawerWidth: number }>`
 export default function Sidebar() {
   const [open, setOpen] = useState<boolean>(false);
   const { t } = useTranslation('sidebar');
+  const navigate = useNavigate();
 
   const drawerWidth = 240;
   const toogleSidebar = () => {
     setOpen(!open);
+  };
+
+  const navigateToBalanceSheets = () => {
+    navigate('/balancesheets');
   };
 
   return (
@@ -51,7 +56,7 @@ export default function Sidebar() {
             <FontAwesomeIcon icon={faBars} />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Persistent drawer
+            <Trans>ECG Calculator</Trans>
           </Typography>
         </StyledToolbar>
       </FixedAppBar>
@@ -68,7 +73,7 @@ export default function Sidebar() {
           </ListSubheader>
           <List>
             <ListItem key={'balancesheets'} disablePadding>
-              <ListItemButton>
+              <ListItemButton onClick={navigateToBalanceSheets}>
                 <ListItemIcon>
                   <FontAwesomeIcon icon={faFolderOpen} />
                 </ListItemIcon>
