@@ -1,9 +1,13 @@
+// eslint-disable-next-line no-use-before-define
+import React from 'react';
+import './i18n';
+import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import './i18n';
 
-import { createRoot } from 'react-dom/client';
-
-const container = document.getElementById('root');
-const root = createRoot(container!);
-root.render(<App />);
+const root = ReactDOM.createRoot(document.getElementById('root')!);
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
