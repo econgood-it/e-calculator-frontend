@@ -1,7 +1,6 @@
 {
+  "Balance sheet {{id}}": "Bilanz {{id}}",
+  "Company Facts": "Fakten zum Unternehmen",
   "ECG Calculator": "GWÖ Rechner",
-  "Overview": "Überblick",
-  "Balance sheets": "Bilanzen",
-  "Active Balance Sheet": "Aktive Bilanz",
-  "Company Facts": "Fakten zum Unternehmen"
+  "Create balance sheet": "Bilanz erstellen"
 }

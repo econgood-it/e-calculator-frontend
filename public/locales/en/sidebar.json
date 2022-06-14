@@ -1,7 +1,6 @@
 {
+  "Balance sheet {{id}}": "Balance sheet {{id}}",
+  "Company Facts": "Company Facts",
   "ECG Calculator": "ECG Calculator",
-  "Overview": "Overview",
-  "Balance sheets": "Balance sheets",
-  "Active Balance Sheet": "Active Balance Sheet",
-  "Company Facts": "Company Facts"
+  "Create balance sheet": "Create balance sheet"
 }

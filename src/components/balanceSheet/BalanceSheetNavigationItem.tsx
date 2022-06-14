@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -26,6 +26,15 @@ export const BalanceSheetNavigationItem = ({
   const { t } = useTranslation('sidebar');
   const [open, setOpen] = useState(false);
   const location = useLocation();
+
+  const isSelected =
+    `/balancesheets/${balanceSheetItem.id}` === location.pathname;
+
+  useEffect(() => {
+    if (!isSelected) {
+      setOpen(false);
+    }
+  }, [isSelected]);
   const handleClick = () => {
     setOpen(!open);
   };
@@ -37,9 +46,7 @@ export const BalanceSheetNavigationItem = ({
           component={Link}
           to={`balancesheets/${balanceSheetItem.id}`}
           onClick={handleClick}
-          selected={
-            `/balancesheets/${balanceSheetItem.id}` === location.pathname
-          }
+          selected={isSelected}
         >
           <ListItemIcon>
             <FontAwesomeIcon icon={faFile} />
