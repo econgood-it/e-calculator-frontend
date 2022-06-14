@@ -8,12 +8,12 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faBuilding, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faFile, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
 import { AppBar, Box } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Outlet } from 'react-router-dom';
+import { Link, Outlet, useLocation } from 'react-router-dom';
 import { BalanceSheetItem } from '../dataTransferObjects/BalanceSheet';
 import { useApi } from '../contexts/ApiContext';
 
@@ -40,6 +40,8 @@ export default function Sidebar() {
   const [open, setOpen] = useState<boolean>(true);
   const { t } = useTranslation('sidebar');
   const api = useApi();
+  const location = useLocation();
+
   const [balanceSheets, setBalanceSheets] = useState<BalanceSheetItem[]>([]);
 
   useEffect(() => {
@@ -49,7 +51,7 @@ export default function Sidebar() {
       setBalanceSheets(newData);
     };
     fetchBalanceSheets();
-  });
+  }, []);
 
   const drawerWidth = 240;
   const toogleSidebar = () => {
@@ -92,9 +94,13 @@ export default function Sidebar() {
           <List>
             {balanceSheets.map((b) => (
               <ListItem key={b.id} disablePadding>
-                <ListItemButton>
+                <ListItemButton
+                  component={Link}
+                  to={`balancesheets/${b.id}`}
+                  selected={`/balancesheets/${b.id}` === location.pathname}
+                >
                   <ListItemIcon>
-                    <FontAwesomeIcon icon={faBuilding} />
+                    <FontAwesomeIcon icon={faFile} />
                   </ListItemIcon>
                   <ListItemText
                     primary={<Trans t={t}>Balance sheet {{ id: b.id }}</Trans>}

@@ -13,6 +13,7 @@ const apiMock = {
 
 describe('Sidebar', () => {
   const balanceSheetsJson = [{ id: 1 }, { id: 2 }];
+  const initialPathForRouting = '/';
   beforeEach(() => {
     apiMock.get.mockImplementation((path: string) => {
       if (path === `/v1/balancesheets`) {
@@ -26,9 +27,9 @@ describe('Sidebar', () => {
 
   it('renders Create balance sheet navigation item', async () => {
     renderWithTheme(
-      <MemoryRouter initialEntries={['/']}>
+      <MemoryRouter initialEntries={[initialPathForRouting]}>
         <Routes>
-          <Route path={'/'} element={<Sidebar />} />
+          <Route path={initialPathForRouting} element={<Sidebar />} />
         </Routes>
       </MemoryRouter>
     );
@@ -37,9 +38,9 @@ describe('Sidebar', () => {
 
   it('renders each balance sheet as a navigation item', async () => {
     renderWithTheme(
-      <MemoryRouter initialEntries={['/']}>
+      <MemoryRouter initialEntries={[initialPathForRouting]}>
         <Routes>
-          <Route path={'/'} element={<Sidebar />} />
+          <Route path={initialPathForRouting} element={<Sidebar />} />
         </Routes>
       </MemoryRouter>
     );
@@ -48,23 +49,22 @@ describe('Sidebar', () => {
     expect(screen.getByText('Balance sheet 2')).toBeInTheDocument();
   });
 
-  it('navigates to company facts of active balance sheet', async () => {
+  it('navigates to balance sheet if user click on balance sheet navigation item', async () => {
     renderWithTheme(
-      <MemoryRouter initialEntries={['/balancesheets/2']}>
+      <MemoryRouter initialEntries={[initialPathForRouting]}>
         <Routes>
+          <Route path={initialPathForRouting} element={<Sidebar />} />
           <Route
-            path={'/balancesheets/:balanceSheetId'}
-            element={<Sidebar />}
-          />
-          <Route
-            path={'/balancesheets/2/company-facts'}
-            element={<div>Navigated to Company Facts</div>}
+            path={'/balancesheets/2'}
+            element={<div>Navigated to Balance sheet 2</div>}
           />
         </Routes>
       </MemoryRouter>
     );
-    const balanceSheetsNavButton = screen.getByText('Company Facts');
+    const balanceSheetsNavButton = await screen.findByText('Balance sheet 2');
     await userEvent.click(balanceSheetsNavButton);
-    expect(screen.getByText('Navigated to Company Facts')).toBeInTheDocument();
+    expect(
+      screen.getByText('Navigated to Balance sheet 2')
+    ).toBeInTheDocument();
   });
 });

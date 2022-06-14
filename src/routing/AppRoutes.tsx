@@ -21,7 +21,10 @@ const AppRoutes = () => {
       <Route path="/" element={<RequiresAuth user={user} />}>
         <Route element={<Sidebar />}>
           <Route index element={<BalanceSheetOverviewPage />} />
-          <Route path=":balanceSheetId" element={<WithActiveBalanceSheet />} />
+          <Route
+            path="/balancesheets/:balanceSheetId"
+            element={<WithActiveBalanceSheet />}
+          />
         </Route>
       </Route>
     </Routes>
