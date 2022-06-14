@@ -8,14 +8,15 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faFile, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faBars, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useEffect, useState } from 'react';
 import { AppBar, Box } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { BalanceSheetItem } from '../dataTransferObjects/BalanceSheet';
 import { useApi } from '../contexts/ApiContext';
+import { BalanceSheetNavigationItem } from '../components/balanceSheet/BalanceSheetNavigationItem';
 
 const FixedAppBar = styled(AppBar)`
   z-index: ${(props) => props.theme.zIndex.drawer + 1};
@@ -40,7 +41,6 @@ export default function Sidebar() {
   const [open, setOpen] = useState<boolean>(true);
   const { t } = useTranslation('sidebar');
   const api = useApi();
-  const location = useLocation();
 
   const [balanceSheets, setBalanceSheets] = useState<BalanceSheetItem[]>([]);
 
@@ -93,20 +93,7 @@ export default function Sidebar() {
           </List>
           <List>
             {balanceSheets.map((b) => (
-              <ListItem key={b.id} disablePadding>
-                <ListItemButton
-                  component={Link}
-                  to={`balancesheets/${b.id}`}
-                  selected={`/balancesheets/${b.id}` === location.pathname}
-                >
-                  <ListItemIcon>
-                    <FontAwesomeIcon icon={faFile} />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={<Trans t={t}>Balance sheet {{ id: b.id }}</Trans>}
-                  />
-                </ListItemButton>
-              </ListItem>
+              <BalanceSheetNavigationItem key={b.id} balanceSheetItem={b} />
             ))}
           </List>
         </Box>
