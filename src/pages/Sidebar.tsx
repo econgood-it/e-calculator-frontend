@@ -8,16 +8,14 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faBars,
-  faBuilding,
-  faFolderOpen,
-} from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
-import { AppBar, Box, ListSubheader } from '@mui/material';
+import { faBars, faBuilding, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { useEffect, useState } from 'react';
+import { AppBar, Box } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
+import { BalanceSheetItem } from '../dataTransferObjects/BalanceSheet';
+import { useApi } from '../contexts/ApiContext';
 
 const FixedAppBar = styled(AppBar)`
   z-index: ${(props) => props.theme.zIndex.drawer + 1};
@@ -41,18 +39,21 @@ const DrawerWithFixedWidth = styled(Drawer)<{ $drawerWidth: number }>`
 export default function Sidebar() {
   const [open, setOpen] = useState<boolean>(true);
   const { t } = useTranslation('sidebar');
-  const navigate = useNavigate();
-  const { balanceSheetId } = useParams();
+  const api = useApi();
+  const [balanceSheets, setBalanceSheets] = useState<BalanceSheetItem[]>([]);
+
+  useEffect(() => {
+    const fetchBalanceSheets = async () => {
+      const response = await api.get('/v1/balancesheets');
+      const newData = await response.data;
+      setBalanceSheets(newData);
+    };
+    fetchBalanceSheets();
+  });
 
   const drawerWidth = 240;
   const toogleSidebar = () => {
     setOpen(!open);
-  };
-
-  const navigateWithinActiveBalanceSheet = (path: string) => {
-    if (balanceSheetId) {
-      navigate(`/balancesheets/${balanceSheetId}/${path}`);
-    }
   };
 
   return (
@@ -76,42 +77,32 @@ export default function Sidebar() {
       >
         <Toolbar />
         <Box>
-          <ListSubheader>
-            <Trans t={t}>Overview</Trans>
-          </ListSubheader>
           <List>
-            <ListItem key={'balancesheets'} disablePadding>
-              <ListItemButton onClick={() => navigate('/balancesheets')}>
+            <ListItem key={'create-balance-sheet'} disablePadding>
+              <ListItemButton>
                 <ListItemIcon>
-                  <FontAwesomeIcon icon={faFolderOpen} />
+                  <FontAwesomeIcon icon={faPlus} />
                 </ListItemIcon>
-                <ListItemText primary={<Trans t={t}>Balance sheets</Trans>} />
+                <ListItemText
+                  primary={<Trans t={t}>Create balance sheet</Trans>}
+                />
               </ListItemButton>
             </ListItem>
           </List>
-          {balanceSheetId && (
-            <>
-              <ListSubheader>
-                <Trans t={t}>Active Balance Sheet</Trans>
-              </ListSubheader>
-              <List>
-                <ListItem key={'company-facts'} disablePadding>
-                  <ListItemButton
-                    onClick={() =>
-                      navigateWithinActiveBalanceSheet('company-facts')
-                    }
-                  >
-                    <ListItemIcon>
-                      <FontAwesomeIcon icon={faBuilding} />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={<Trans t={t}>Company Facts</Trans>}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              </List>
-            </>
-          )}
+          <List>
+            {balanceSheets.map((b) => (
+              <ListItem key={b.id} disablePadding>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <FontAwesomeIcon icon={faBuilding} />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={<Trans t={t}>Balance sheet {{ id: b.id }}</Trans>}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
         </Box>
       </DrawerWithFixedWidth>
       <Box>

@@ -1,8 +1,8 @@
 import { createContext, ReactElement, useContext } from 'react';
-import { BalanceSheet } from '../dataTransferObjects/BalanceSheet';
+import { BalanceSheetItem } from '../dataTransferObjects/BalanceSheet';
 
 interface IBalanceSheetContext {
-  activeBalanceSheet: BalanceSheet;
+  activeBalanceSheet: BalanceSheetItem;
 }
 
 const BalanceSheetContext = createContext<IBalanceSheetContext | undefined>(
@@ -10,7 +10,7 @@ const BalanceSheetContext = createContext<IBalanceSheetContext | undefined>(
 );
 
 type BalanceSheetContextProviderProps = {
-  activeBalanceSheet: BalanceSheet;
+  activeBalanceSheet: BalanceSheetItem;
   children: ReactElement;
 };
 

@@ -1,12 +1,12 @@
 import { Outlet, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { BalanceSheetProvider } from '../../contexts/BalanceSheetContext';
-import { BalanceSheet } from '../../dataTransferObjects/BalanceSheet';
+import { BalanceSheetItem } from '../../dataTransferObjects/BalanceSheet';
 
 const WithActiveBalanceSheet = () => {
   const { balanceSheetId } = useParams();
   const [activeBalanceSheet, setActiveBalanceSheet] = useState<
-    BalanceSheet | undefined
+    BalanceSheetItem | undefined
   >();
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { LoginPage } from '../pages/LoginPage';
 import RequiresAuth from './RequiresAuth';
 import { useState } from 'react';
@@ -18,8 +18,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage setUser={setUser} />} />
-      <Route path="/" element={<Navigate to={'balancesheets'} />} />
-      <Route path="/balancesheets" element={<RequiresAuth user={user} />}>
+      <Route path="/" element={<RequiresAuth user={user} />}>
         <Route element={<Sidebar />}>
           <Route index element={<BalanceSheetOverviewPage />} />
           <Route path=":balanceSheetId" element={<WithActiveBalanceSheet />} />
