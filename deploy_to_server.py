@@ -18,12 +18,16 @@ def check_linting():
 
 
 def run_tests():
-    subprocess.run([yarn, run, 'test'], env={'CI': 'true'}, check=True)
+    my_env = os.environ.copy()
+    my_env["CI"] = 'true'
+    subprocess.run([yarn, run, 'test'], env=my_env, check=True)
 
 
 def compile_typescript_to_javascript(backend_url: str):
-    subprocess.run([yarn, 'build'], env={'REACT_APP_BACKEND_DOMAIN': backend_url, 'GENERATE_SOURCEMAP': 'false'},
-                   check=True)
+    my_env = os.environ.copy()
+    my_env["REACT_APP_BACKEND_DOMAIN"] = backend_url
+    my_env["GENERATE_SOURCEMAP"] = 'false'
+    subprocess.run([yarn, 'build'], env=my_env, check=True)
 
 
 def rsync(folder: str, server_domain: str, server_folder: str):
