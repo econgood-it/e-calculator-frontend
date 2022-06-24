@@ -13,10 +13,18 @@ import { useEffect, useState } from 'react';
 import { AppBar, Box } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Outlet } from 'react-router-dom';
-import { BalanceSheetItem } from '../dataTransferObjects/BalanceSheet';
+import { Outlet, useNavigate } from 'react-router-dom';
+import {
+  BalanceSheetItem,
+  BalanceSheetRequest,
+  BalanceSheetResponse,
+  BalanceSheetResponseSchema,
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from '../dataTransferObjects/BalanceSheet';
 import { useApi } from '../contexts/ApiContext';
 import { BalanceSheetNavigationItem } from '../components/balanceSheet/BalanceSheetNavigationItem';
+import { AxiosResponse } from 'axios';
 
 const FixedAppBar = styled(AppBar)`
   z-index: ${(props) => props.theme.zIndex.drawer + 1};
@@ -41,6 +49,7 @@ export default function Sidebar() {
   const [open, setOpen] = useState<boolean>(true);
   const { t } = useTranslation('sidebar');
   const api = useApi();
+  const navigate = useNavigate();
 
   const [balanceSheets, setBalanceSheets] = useState<BalanceSheetItem[]>([]);
 
@@ -56,6 +65,24 @@ export default function Sidebar() {
   const drawerWidth = 240;
   const toogleSidebar = () => {
     setOpen(!open);
+  };
+
+  const createBalanceSheet = async () => {
+    const response = await api.post<
+      BalanceSheetResponse,
+      AxiosResponse<BalanceSheetResponse>,
+      BalanceSheetRequest
+    >('/v1/balancesheets', {
+      type: BalanceSheetType.Full,
+      version: BalanceSheetVersion.v5_0_8,
+    });
+    const newBalanceSheet = BalanceSheetResponseSchema.parse(
+      await response.data
+    );
+    setBalanceSheets((prevBalanceSheets) =>
+      prevBalanceSheets.concat({ id: newBalanceSheet.id })
+    );
+    navigate(`balancesheets/${newBalanceSheet.id}`);
   };
 
   return (
@@ -81,7 +108,7 @@ export default function Sidebar() {
         <Box>
           <List>
             <ListItem key={'create-balance-sheet'} disablePadding>
-              <ListItemButton>
+              <ListItemButton onClick={createBalanceSheet}>
                 <ListItemIcon>
                   <FontAwesomeIcon icon={faPlus} />
                 </ListItemIcon>

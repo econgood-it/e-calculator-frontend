@@ -25,7 +25,7 @@ const BalanceSheetOverviewPage = () => {
     <>
       {balanceSheetItems.map((b) => (
         <div key={b.id}>
-          <Link to={b.id.toString()}>
+          <Link to={`balancesheets/${b.id}`}>
             <Trans t={t}>Balance sheet</Trans> {b.id}
           </Link>
         </div>

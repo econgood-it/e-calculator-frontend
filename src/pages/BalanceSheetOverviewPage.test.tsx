@@ -26,13 +26,10 @@ describe('BalanceSheetOverviewPage', () => {
 
   it('renders balance sheet items and navigates on click', async () => {
     await act(async () => {
-      renderWithTheme(
-        <MemoryRouter initialEntries={['/balancesheets']}>
+      await renderWithTheme(
+        <MemoryRouter initialEntries={['/']}>
           <Routes>
-            <Route
-              path={'/balancesheets'}
-              element={<BalanceSheetOverviewPage />}
-            />
+            <Route path={'/'} element={<BalanceSheetOverviewPage />} />
             <Route
               path={'/balancesheets/2'}
               element={<div>Page of Balance sheet 2</div>}
@@ -47,7 +44,7 @@ describe('BalanceSheetOverviewPage', () => {
       name: 'Balance sheet 2',
     });
 
-    await userEvent.click(linkToBalanceSheet2);
+    await act(() => userEvent.click(linkToBalanceSheet2));
 
     await waitFor(() =>
       expect(screen.getByText('Page of Balance sheet 2')).toBeInTheDocument()

@@ -31,9 +31,7 @@ export const BalanceSheetNavigationItem = ({
     `/balancesheets/${balanceSheetItem.id}` === location.pathname;
 
   useEffect(() => {
-    if (!isSelected) {
-      setOpen(false);
-    }
+    setOpen(isSelected);
   }, [isSelected]);
   const handleClick = () => {
     setOpen(!open);
