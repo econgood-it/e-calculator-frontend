@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
-import { screen } from '@testing-library/react';
-import { renderWithTheme } from '../../testUtils/rendering';
+import { act, screen } from '@testing-library/react';
+import renderWithTheme from '../../testUtils/rendering';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { BalanceSheetNavigationItem } from './BalanceSheetNavigationItem';
@@ -27,7 +27,10 @@ describe('BalanceSheetNavigationItem', () => {
     );
     expect(await screen.queryByText('Company facts')).not.toBeInTheDocument();
     const balanceSheetsNavButton = await screen.findByText('Balance sheet 2');
-    await userEvent.click(balanceSheetsNavButton);
+    await act(async () => {
+      await userEvent.click(balanceSheetsNavButton);
+    });
+
     expect(
       screen.getByText('Navigated to balance sheet 2')
     ).toBeInTheDocument();

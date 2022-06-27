@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import { act, screen, waitFor } from '@testing-library/react';
-import { renderWithTheme } from '../testUtils/rendering';
+import renderWithTheme from '../testUtils/rendering';
 import BalanceSheetOverviewPage from './BalanceSheetOverviewPage';
 import { useApi } from '../contexts/ApiContext';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -25,6 +25,14 @@ describe('BalanceSheetOverviewPage', () => {
   });
 
   it('renders balance sheet items and navigates on click', async () => {
+    apiMock.get.mockImplementation((path: string) => {
+      if (path === `v1/balancesheets`) {
+        return Promise.resolve({
+          data: balanceSheetsJson,
+        });
+      }
+    });
+    (useApi as jest.Mock).mockImplementation(() => apiMock);
     await act(async () => {
       await renderWithTheme(
         <MemoryRouter initialEntries={['/']}>
@@ -44,7 +52,9 @@ describe('BalanceSheetOverviewPage', () => {
       name: 'Balance sheet 2',
     });
 
-    await act(() => userEvent.click(linkToBalanceSheet2));
+    await act(async () => {
+      await userEvent.click(linkToBalanceSheet2);
+    });
 
     await waitFor(() =>
       expect(screen.getByText('Page of Balance sheet 2')).toBeInTheDocument()

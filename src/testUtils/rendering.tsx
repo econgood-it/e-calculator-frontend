@@ -1,15 +1,22 @@
-import { render, RenderResult } from '@testing-library/react';
+import { render, RenderOptions } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
 import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material';
 import { themeOptions } from '../App';
-import { ReactElement } from 'react';
+import { FC, ReactElement, ReactNode } from 'react';
 
-const theme = createTheme(themeOptions);
+const theme = createTheme({ ...themeOptions });
 
-export const renderWithTheme = (ui: ReactElement): RenderResult => {
-  return render(
+const AllTheProviders: FC<{ children: ReactNode }> = ({ children }) => {
+  return (
     <MuiThemeProvider theme={theme}>
-      <ThemeProvider theme={theme}>{ui}</ThemeProvider>
+      <ThemeProvider theme={theme}>{children}</ThemeProvider>
     </MuiThemeProvider>
   );
 };
+
+const renderWithTheme = (
+  ui: ReactElement,
+  options?: Omit<RenderOptions, 'wrapper'>
+) => render(ui, { wrapper: AllTheProviders, ...options });
+
+export default renderWithTheme;
