@@ -6,9 +6,9 @@ import { BalanceSheetNavigationItem } from './BalanceSheetNavigationItem';
 import { screen } from '@testing-library/react';
 
 describe('BalanceSheetNavigationItem', () => {
-  const initialPathForRouting = '/';
+  const initialPathForRouting = '/balancesheets';
 
-  it('renders navigates to balance sheet when item is clicked', async () => {
+  it('navigates to balance sheet when item is clicked', async () => {
     const user = userEvent.setup();
     renderWithTheme(
       <MemoryRouter initialEntries={[initialPathForRouting]}>
@@ -20,7 +20,7 @@ describe('BalanceSheetNavigationItem', () => {
             }
           />
           <Route
-            path={'/balancesheets/2'}
+            path={`${initialPathForRouting}/2`}
             element={<div>Navigated to balance sheet 2</div>}
           />
         </Routes>

@@ -10,7 +10,7 @@ jest.mock('../contexts/ApiContext');
 
 describe('Sidebar', () => {
   const balanceSheetsJson = [{ id: 1 }, { id: 2 }];
-  const initialPathForRouting = '/';
+  const initialPathForRouting = '/balancesheets';
   const apiMock = {
     get: jest.fn(),
     post: jest.fn(),
@@ -68,7 +68,7 @@ describe('Sidebar', () => {
         <Routes>
           <Route path={initialPathForRouting} element={<Sidebar />} />
           <Route
-            path={'/balancesheets/2'}
+            path={`/${initialPathForRouting}/2`}
             element={<div>Navigated to Balance sheet 2</div>}
           />
         </Routes>
@@ -93,7 +93,7 @@ describe('Sidebar', () => {
           <Routes>
             <Route path={initialPathForRouting} element={<Sidebar />} />
             <Route
-              path={'/balancesheets/3'}
+              path={`/${initialPathForRouting}/3`}
               element={<div>Navigated to Balance sheet 3</div>}
             />
           </Routes>

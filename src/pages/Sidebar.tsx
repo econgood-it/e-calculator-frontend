@@ -34,15 +34,15 @@ const StyledToolbar = styled(Toolbar)`
   padding-left: 0px;
 `;
 
-const Content = styled.div<{ $open: boolean; $drawerWidth: number }>`
-  margin-top: 16px;
-  margin-left: ${(props) => (props.$open ? props.$drawerWidth + 16 : 16)}px;
-`;
-
 const DrawerWithFixedWidth = styled(Drawer)<{ $drawerWidth: number }>`
   & .MuiDrawer-paper {
     width: ${(props) => props.$drawerWidth}px;
   }
+`;
+
+const Content = styled.div<{ $open: boolean; $drawerWidth: number }>`
+  margin-top: 16px;
+  margin-left: ${(props) => (props.$open ? props.$drawerWidth + 16 : 16)}px;
 `;
 
 export default function Sidebar() {
@@ -50,6 +50,7 @@ export default function Sidebar() {
   const { t } = useTranslation('sidebar');
   const api = useApi();
   const navigate = useNavigate();
+  const drawerWidth = 240;
 
   const [balanceSheets, setBalanceSheets] = useState<BalanceSheetItem[]>([]);
 
@@ -60,7 +61,6 @@ export default function Sidebar() {
     })();
   }, [api]);
 
-  const drawerWidth = 240;
   const toogleSidebar = () => {
     setOpen(!open);
   };
@@ -80,7 +80,7 @@ export default function Sidebar() {
     setBalanceSheets((prevBalanceSheets) =>
       prevBalanceSheets.concat({ id: newBalanceSheet.id })
     );
-    navigate(`balancesheets/${newBalanceSheet.id}`);
+    navigate(`${newBalanceSheet.id}`);
   };
 
   return (

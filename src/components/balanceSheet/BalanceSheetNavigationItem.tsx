@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  faBuilding,
   faChevronDown,
   faChevronUp,
   faFile,
@@ -13,8 +12,8 @@ import {
 import ListItemText from '@mui/material/ListItemText';
 import { Trans, useTranslation } from 'react-i18next';
 import Collapse from '@mui/material/Collapse';
-import List from '@mui/material/List';
 import { BalanceSheetItem } from '../../dataTransferObjects/BalanceSheet';
+import BalanceSheetSubNavigation from './BalanceSheetSubNavigation';
 
 type BalanceSheetNavigationItemProps = {
   balanceSheetItem: BalanceSheetItem;
@@ -25,10 +24,9 @@ export const BalanceSheetNavigationItem = ({
 }: BalanceSheetNavigationItemProps) => {
   const { t } = useTranslation('sidebar');
   const [open, setOpen] = useState(false);
-  const location = useLocation();
+  const { balanceSheetId } = useParams();
 
-  const isSelected =
-    `/balancesheets/${balanceSheetItem.id}` === location.pathname;
+  const isSelected = Number(balanceSheetId) === balanceSheetItem.id;
 
   useEffect(() => {
     setOpen(isSelected);
@@ -42,7 +40,7 @@ export const BalanceSheetNavigationItem = ({
       <ListItem disablePadding>
         <ListItemButton
           component={Link}
-          to={`balancesheets/${balanceSheetItem.id}`}
+          to={`${balanceSheetItem.id}`}
           onClick={handleClick}
           selected={isSelected}
         >
@@ -67,16 +65,7 @@ export const BalanceSheetNavigationItem = ({
         timeout="auto"
         unmountOnExit
       >
-        <List disablePadding>
-          <ListItem key={`company-facts-${balanceSheetItem.id}`} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                <FontAwesomeIcon icon={faBuilding} />
-              </ListItemIcon>
-              <ListItemText primary={<Trans t={t}>Company Facts</Trans>} />
-            </ListItemButton>
-          </ListItem>
-        </List>
+        <BalanceSheetSubNavigation balanceSheetItem={balanceSheetItem} />
       </Collapse>
     </div>
   );

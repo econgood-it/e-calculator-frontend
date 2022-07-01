@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import { act, screen, waitFor } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
-import BalanceSheetOverviewPage from './BalanceSheetOverviewPage';
+import BalanceSheetListPage from './BalanceSheetListPage';
 import { useApi } from '../contexts/ApiContext';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
@@ -11,7 +11,8 @@ const apiMock = {
   get: jest.fn(),
 };
 
-describe('BalanceSheetOverviewPage', () => {
+describe('BalanceSheetListPage', () => {
+  const initialPathForRouting = '/balancesheets';
   const balanceSheetsJson = [{ id: 1 }, { id: 2 }];
   beforeEach(() => {
     apiMock.get.mockImplementation((path: string) => {
@@ -27,11 +28,14 @@ describe('BalanceSheetOverviewPage', () => {
   it('renders balance sheet items and navigates on click', async () => {
     act(() => {
       renderWithTheme(
-        <MemoryRouter initialEntries={['/']}>
+        <MemoryRouter initialEntries={[initialPathForRouting]}>
           <Routes>
-            <Route path={'/'} element={<BalanceSheetOverviewPage />} />
             <Route
-              path={'/balancesheets/2'}
+              path={initialPathForRouting}
+              element={<BalanceSheetListPage />}
+            />
+            <Route
+              path={`${initialPathForRouting}/2`}
               element={<div>Page of Balance sheet 2</div>}
             />
           </Routes>

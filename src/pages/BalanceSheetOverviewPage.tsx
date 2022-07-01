@@ -1,35 +1,9 @@
-import { useEffect, useState } from 'react';
-import { useApi } from '../contexts/ApiContext';
-import { Trans, useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
-export type BalanceSheetItem = {
-  id: number;
-};
 const BalanceSheetOverviewPage = () => {
-  const [balanceSheetItems, setBalanceSheetItems] = useState<
-    BalanceSheetItem[]
-  >([{ id: 1 }, { id: 2 }]);
-  const { t } = useTranslation('balance-sheet-overview');
-  const api = useApi();
-  useEffect(() => {
-    (async () => {
-      const response = await api.get(`v1/balancesheets`);
-      setBalanceSheetItems(response.data);
-    })();
-  }, [api, balanceSheetItems]);
+  const { balanceSheetId } = useParams();
 
-  return (
-    <>
-      {balanceSheetItems.map((b) => (
-        <div key={b.id}>
-          <Link to={`balancesheets/${b.id}`}>
-            <Trans t={t}>Balance sheet</Trans> {b.id}
-          </Link>
-        </div>
-      ))}
-    </>
-  );
+  return <>{`Balance sheet ${balanceSheetId}`}</>;
 };
 
 export default BalanceSheetOverviewPage;
