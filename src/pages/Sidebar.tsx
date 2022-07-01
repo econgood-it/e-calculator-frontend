@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { AppBar, Box } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   BalanceSheetItem,
   BalanceSheetRequest,
@@ -51,15 +51,18 @@ export default function Sidebar() {
   const api = useApi();
   const navigate = useNavigate();
   const drawerWidth = 240;
+  const location = useLocation();
 
   const [balanceSheets, setBalanceSheets] = useState<BalanceSheetItem[]>([]);
 
   useEffect(() => {
     (async () => {
-      const response = await api.get('/v1/balancesheets');
-      setBalanceSheets(response.data);
+      if (location.pathname === '/balancesheets') {
+        const response = await api.get('/v1/balancesheets');
+        setBalanceSheets(response.data);
+      }
     })();
-  }, [api]);
+  }, [api, location.pathname]);
 
   const toogleSidebar = () => {
     setOpen(!open);

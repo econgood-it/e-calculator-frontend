@@ -9,7 +9,7 @@ export type BalanceSheetItem = {
 const BalanceSheetListPage = () => {
   const [balanceSheetItems, setBalanceSheetItems] = useState<
     BalanceSheetItem[]
-  >([{ id: 1 }, { id: 2 }]);
+  >([]);
   const { t } = useTranslation('balance-sheet-overview');
   const api = useApi();
   useEffect(() => {
@@ -17,7 +17,7 @@ const BalanceSheetListPage = () => {
       const response = await api.get(`v1/balancesheets`);
       setBalanceSheetItems(response.data);
     })();
-  }, [api, balanceSheetItems]);
+  }, [api]);
 
   return (
     <>
