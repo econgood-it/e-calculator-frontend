@@ -54,13 +54,11 @@ export default function Sidebar() {
   const [balanceSheets, setBalanceSheets] = useState<BalanceSheetItem[]>([]);
 
   useEffect(() => {
-    const fetchBalanceSheets = async () => {
+    (async () => {
       const response = await api.get('/v1/balancesheets');
-      const newData = await response.data;
-      setBalanceSheets(newData);
-    };
-    fetchBalanceSheets();
-  }, []);
+      setBalanceSheets(response.data);
+    })();
+  }, [api]);
 
   const drawerWidth = 240;
   const toogleSidebar = () => {

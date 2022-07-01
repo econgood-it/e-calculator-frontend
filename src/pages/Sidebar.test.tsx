@@ -7,14 +7,14 @@ import userEvent from '@testing-library/user-event';
 import { useApi } from '../contexts/ApiContext';
 
 jest.mock('../contexts/ApiContext');
-const apiMock = {
-  get: jest.fn(),
-  post: jest.fn(),
-};
 
 describe('Sidebar', () => {
   const balanceSheetsJson = [{ id: 1 }, { id: 2 }];
   const initialPathForRouting = '/';
+  const apiMock = {
+    get: jest.fn(),
+    post: jest.fn(),
+  };
   beforeEach(() => {
     apiMock.get.mockImplementation((path: string) => {
       if (path === `/v1/balancesheets`) {
@@ -34,8 +34,8 @@ describe('Sidebar', () => {
   });
 
   it('renders Create balance sheet navigation item', async () => {
-    await act(async () => {
-      await renderWithTheme(
+    act(() => {
+      renderWithTheme(
         <MemoryRouter initialEntries={[initialPathForRouting]}>
           <Routes>
             <Route path={initialPathForRouting} element={<Sidebar />} />
@@ -43,6 +43,7 @@ describe('Sidebar', () => {
         </MemoryRouter>
       );
     });
+
     expect(await screen.findByText('Create balance sheet')).toBeInTheDocument();
   });
 
@@ -59,7 +60,9 @@ describe('Sidebar', () => {
     expect(screen.getByText('Balance sheet 2')).toBeInTheDocument();
   });
 
-  it.skip('navigates to balance sheet if user click on balance sheet navigation item', async () => {
+  it('navigates to balance sheet if user click on balance sheet navigation item', async () => {
+    const user = userEvent.setup();
+
     renderWithTheme(
       <MemoryRouter initialEntries={[initialPathForRouting]}>
         <Routes>
@@ -71,26 +74,21 @@ describe('Sidebar', () => {
         </Routes>
       </MemoryRouter>
     );
-    await waitFor(() =>
-      expect(screen.getByText('Balance sheet 2')).toBeInTheDocument()
-    );
-    const balanceSheetsNavButton = screen.getByRole('link', {
+
+    const balanceSheetsNavButton = await screen.findByRole('link', {
       name: /Balance sheet 2/i,
     });
-    await act(async () => {
-      await userEvent.click(balanceSheetsNavButton);
-    });
 
-    await waitFor(() =>
-      expect(
-        screen.getByText('Navigated to Balance sheet 2')
-      ).toBeInTheDocument()
-    );
+    await user.click(balanceSheetsNavButton);
+
+    expect(
+      await screen.findByText('Navigated to Balance sheet 2')
+    ).toBeInTheDocument();
   });
 
   it('creates and navigates to new balance sheet if user clicks on Create balance sheet', async () => {
-    await act(async () => {
-      await renderWithTheme(
+    act(() => {
+      renderWithTheme(
         <MemoryRouter initialEntries={[initialPathForRouting]}>
           <Routes>
             <Route path={initialPathForRouting} element={<Sidebar />} />
