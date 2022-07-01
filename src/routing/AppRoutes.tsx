@@ -14,6 +14,7 @@ const AppRoutes = () => {
   const [user, setUser] = useState<User | undefined>(
     userString ? JSON.parse(userString) : undefined
   );
+
   return (
     <>
       <Routes>

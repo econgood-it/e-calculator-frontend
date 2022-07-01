@@ -5,10 +5,15 @@ import { screen } from '@testing-library/react';
 import BalanceSheetSubNavigation from './BalanceSheetSubNavigation';
 import userEvent from '@testing-library/user-event';
 import { useApi } from '../../contexts/ApiContext';
+import { useBalanceSheetItems } from '../../contexts/BalanceSheetContext';
 jest.mock('../../contexts/ApiContext');
+jest.mock('../../contexts/BalanceSheetContext');
 
 describe('BalanceSheetSubNavigation', () => {
   const balanceSheetItem = { id: 2 };
+
+  const balanceSheetItems = [{ id: 1 }, { id: 2 }];
+  const setBalanceSheetItems = jest.fn();
 
   const apiMock = {
     delete: jest.fn(),
@@ -19,6 +24,10 @@ describe('BalanceSheetSubNavigation', () => {
         return Promise.resolve();
       }
     });
+    (useBalanceSheetItems as jest.Mock).mockReturnValue([
+      balanceSheetItems,
+      setBalanceSheetItems,
+    ]);
     (useApi as jest.Mock).mockImplementation(() => apiMock);
   });
 

@@ -1,8 +1,18 @@
-import { createContext, ReactElement, useContext } from 'react';
+import {
+  createContext,
+  Dispatch,
+  ReactElement,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { BalanceSheetItem } from '../dataTransferObjects/BalanceSheet';
+import { useApi } from './ApiContext';
 
 interface IBalanceSheetContext {
-  activeBalanceSheet: BalanceSheetItem;
+  balanceSheetItems: BalanceSheetItem[];
+  setBalanceSheetItems: Dispatch<SetStateAction<BalanceSheetItem[]>>;
 }
 
 const BalanceSheetContext = createContext<IBalanceSheetContext | undefined>(
@@ -10,18 +20,26 @@ const BalanceSheetContext = createContext<IBalanceSheetContext | undefined>(
 );
 
 type BalanceSheetContextProviderProps = {
-  activeBalanceSheet: BalanceSheetItem;
   children: ReactElement;
 };
 
-function BalanceSheetProvider({
-  activeBalanceSheet,
-  children,
-}: BalanceSheetContextProviderProps) {
+function BalanceSheetProvider({ children }: BalanceSheetContextProviderProps) {
+  const [balanceSheetItems, setBalanceSheetItems] = useState<
+    BalanceSheetItem[]
+  >([]);
+  const api = useApi();
+  useEffect(() => {
+    (async () => {
+      const response = await api.get(`v1/balancesheets`);
+      setBalanceSheetItems(response.data);
+    })();
+  }, []);
+
   return (
     <BalanceSheetContext.Provider
       value={{
-        activeBalanceSheet: activeBalanceSheet,
+        balanceSheetItems,
+        setBalanceSheetItems,
       }}
     >
       {children}
@@ -29,13 +47,16 @@ function BalanceSheetProvider({
   );
 }
 
-export const useBalanceSheetContext = () => {
+export const useBalanceSheetItems = (): [
+  BalanceSheetItem[],
+  Dispatch<SetStateAction<BalanceSheetItem[]>>
+] => {
   const context = useContext(BalanceSheetContext);
   if (context === undefined) {
     throw new Error(
       'useBalanceSheetContext must be within BalanceSheetProvider'
     );
   }
-  return context;
+  return [context.balanceSheetItems, context.setBalanceSheetItems];
 };
 export { BalanceSheetProvider };

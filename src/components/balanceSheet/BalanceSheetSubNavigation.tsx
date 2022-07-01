@@ -9,6 +9,7 @@ import List from '@mui/material/List';
 import { Link, useNavigate } from 'react-router-dom';
 import { BalanceSheetItem } from '../../dataTransferObjects/BalanceSheet';
 import { useApi } from '../../contexts/ApiContext';
+import { useBalanceSheetItems } from '../../contexts/BalanceSheetContext';
 
 type BalanceSheetSubNavigationProps = {
   balanceSheetItem: BalanceSheetItem;
@@ -20,15 +21,19 @@ const BalanceSheetSubNavigation = ({
   const { t } = useTranslation('sidebar');
   const api = useApi();
   const navigate = useNavigate();
+  const [, setBalanceSheetItems] = useBalanceSheetItems();
 
   const deleteBalanceSheet = async () => {
     await api.delete(`/v1/balancesheets/${balanceSheetItem.id}`);
+    setBalanceSheetItems((prevState) =>
+      prevState.filter((b) => b.id !== balanceSheetItem.id)
+    );
     navigate('/balancesheets');
   };
 
   return (
-    <List disablePadding>
-      <ListItem key="company-facts" disablePadding>
+    <List component="div" disablePadding>
+      <ListItem key="company-facts" sx={{ pl: 4 }}>
         <ListItemButton
           component={Link}
           to={`${balanceSheetItem.id}/companyfacts`}
@@ -39,7 +44,7 @@ const BalanceSheetSubNavigation = ({
           <ListItemText primary={<Trans t={t}>Company Facts</Trans>} />
         </ListItemButton>
       </ListItem>
-      <ListItem key="delete" disablePadding>
+      <ListItem key="delete" sx={{ pl: 4 }}>
         <ListItemButton onClick={deleteBalanceSheet}>
           <ListItemIcon>
             <FontAwesomeIcon icon={faTrash} />

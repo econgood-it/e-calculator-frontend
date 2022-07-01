@@ -5,24 +5,20 @@ import Sidebar from './Sidebar';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { useApi } from '../contexts/ApiContext';
+import { useBalanceSheetItems } from '../contexts/BalanceSheetContext';
 
 jest.mock('../contexts/ApiContext');
+jest.mock('../contexts/BalanceSheetContext');
 
 describe('Sidebar', () => {
-  const balanceSheetsJson = [{ id: 1 }, { id: 2 }];
   const initialPathForRouting = '/balancesheets';
+  const balanceSheetItems = [{ id: 1 }, { id: 2 }];
+  const setBalanceSheetItems = jest.fn();
   const apiMock = {
     get: jest.fn(),
     post: jest.fn(),
   };
   beforeEach(() => {
-    apiMock.get.mockImplementation((path: string) => {
-      if (path === `/v1/balancesheets`) {
-        return Promise.resolve({
-          data: balanceSheetsJson,
-        });
-      }
-    });
     apiMock.post.mockImplementation((path: string) => {
       if (path === `/v1/balancesheets`) {
         return Promise.resolve({
@@ -30,6 +26,10 @@ describe('Sidebar', () => {
         });
       }
     });
+    (useBalanceSheetItems as jest.Mock).mockReturnValue([
+      balanceSheetItems,
+      setBalanceSheetItems,
+    ]);
     (useApi as jest.Mock).mockImplementation(() => apiMock);
   });
 
@@ -101,7 +101,6 @@ describe('Sidebar', () => {
       );
     });
 
-    await waitFor(() => expect(apiMock.get).toHaveBeenCalled());
     fireEvent.click(
       screen.getByRole('button', { name: /Create balance sheet/i })
     );

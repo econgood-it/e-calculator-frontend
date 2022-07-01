@@ -9,13 +9,12 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { AppBar, Box } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
 import styled from 'styled-components';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import {
-  BalanceSheetItem,
   BalanceSheetRequest,
   BalanceSheetResponse,
   BalanceSheetResponseSchema,
@@ -25,6 +24,7 @@ import {
 import { useApi } from '../contexts/ApiContext';
 import { BalanceSheetNavigationItem } from '../components/balanceSheet/BalanceSheetNavigationItem';
 import { AxiosResponse } from 'axios';
+import { useBalanceSheetItems } from '../contexts/BalanceSheetContext';
 
 const FixedAppBar = styled(AppBar)`
   z-index: ${(props) => props.theme.zIndex.drawer + 1};
@@ -48,21 +48,10 @@ const Content = styled.div<{ $open: boolean; $drawerWidth: number }>`
 export default function Sidebar() {
   const [open, setOpen] = useState<boolean>(true);
   const { t } = useTranslation('sidebar');
-  const api = useApi();
+  const [balanceSheetItems, setBalanceSheetItems] = useBalanceSheetItems();
   const navigate = useNavigate();
   const drawerWidth = 240;
-  const location = useLocation();
-
-  const [balanceSheets, setBalanceSheets] = useState<BalanceSheetItem[]>([]);
-
-  useEffect(() => {
-    (async () => {
-      if (location.pathname === '/balancesheets') {
-        const response = await api.get('/v1/balancesheets');
-        setBalanceSheets(response.data);
-      }
-    })();
-  }, [api, location.pathname]);
+  const api = useApi();
 
   const toogleSidebar = () => {
     setOpen(!open);
@@ -80,7 +69,7 @@ export default function Sidebar() {
     const newBalanceSheet = BalanceSheetResponseSchema.parse(
       await response.data
     );
-    setBalanceSheets((prevBalanceSheets) =>
+    setBalanceSheetItems((prevBalanceSheets) =>
       prevBalanceSheets.concat({ id: newBalanceSheet.id })
     );
     navigate(`${newBalanceSheet.id}`);
@@ -119,8 +108,8 @@ export default function Sidebar() {
               </ListItemButton>
             </ListItem>
           </List>
-          <List>
-            {balanceSheets.map((b) => (
+          <List component="nav">
+            {balanceSheetItems.map((b) => (
               <BalanceSheetNavigationItem key={b.id} balanceSheetItem={b} />
             ))}
           </List>

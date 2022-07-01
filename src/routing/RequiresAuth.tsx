@@ -2,6 +2,7 @@ import { User } from '../authentication/User';
 import { FC } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { ApiProvider } from '../contexts/ApiContext';
+import { BalanceSheetProvider } from '../contexts/BalanceSheetContext';
 
 type RequiresAuthProps = {
   user: User | undefined;
@@ -20,7 +21,9 @@ const RequiresAuth: FC<RequiresAuthProps> = ({ user }: RequiresAuthProps) => {
 
   return (
     <ApiProvider user={user}>
-      <Outlet />
+      <BalanceSheetProvider>
+        <Outlet />
+      </BalanceSheetProvider>
     </ApiProvider>
   );
 };
