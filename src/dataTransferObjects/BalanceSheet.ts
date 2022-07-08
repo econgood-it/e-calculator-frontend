@@ -26,9 +26,11 @@ export enum BalanceSheetVersion {
 
 export const BalanceSheetResponseSchema = z.object({
   id: z.number(),
+  ratings: z.object({ shortName: z.string() }).array(),
 });
 
 export type BalanceSheetResponse = z.infer<typeof BalanceSheetResponseSchema>;
+export type BalanceSheet = z.infer<typeof BalanceSheetResponseSchema>;
 
 export const BalanceSheetRequestSchema = z.object({
   type: z.nativeEnum(BalanceSheetType),

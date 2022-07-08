@@ -5,7 +5,7 @@ import { screen } from '@testing-library/react';
 import BalanceSheetSubNavigation from './BalanceSheetSubNavigation';
 import userEvent from '@testing-library/user-event';
 import { useApi } from '../../contexts/ApiContext';
-import { useBalanceSheetItems } from '../../contexts/BalanceSheetContext';
+import { useBalanceSheetItems } from '../../contexts/BalanceSheetListContext';
 jest.mock('../../contexts/ApiContext');
 jest.mock('../../contexts/BalanceSheetContext');
 
@@ -57,6 +57,35 @@ describe('BalanceSheetSubNavigation', () => {
 
     expect(
       screen.getByText('Navigated to company facts of balance sheet 2')
+    ).toBeInTheDocument();
+  });
+
+  it('navigates to ratings when Ratings item is clicked', async () => {
+    const initialPathForRouting = '/balancesheets';
+    const user = userEvent.setup();
+    renderWithTheme(
+      <MemoryRouter initialEntries={[initialPathForRouting]}>
+        <Routes>
+          <Route
+            path={initialPathForRouting}
+            element={
+              <BalanceSheetSubNavigation balanceSheetItem={balanceSheetItem} />
+            }
+          />
+          <Route
+            path={`${initialPathForRouting}/${balanceSheetItem.id}/ratings`}
+            element={<div>Navigated to ratings of balance sheet 2</div>}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const companyFactsButton = await screen.findByText('Ratings');
+
+    await user.click(companyFactsButton);
+
+    expect(
+      screen.getByText('Navigated to ratings of balance sheet 2')
     ).toBeInTheDocument();
   });
 

@@ -5,7 +5,7 @@ import Sidebar from './Sidebar';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { useApi } from '../contexts/ApiContext';
-import { useBalanceSheetItems } from '../contexts/BalanceSheetContext';
+import { useBalanceSheetItems } from '../contexts/BalanceSheetListContext';
 
 jest.mock('../contexts/ApiContext');
 jest.mock('../contexts/BalanceSheetContext');

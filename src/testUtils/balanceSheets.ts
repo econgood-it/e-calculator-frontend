@@ -1,4 +1,4 @@
-export const ratingsMock = {
+export const balanceSheetMock = {
   ratings: [
     {
       shortName: 'A1',

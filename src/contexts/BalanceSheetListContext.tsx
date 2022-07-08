@@ -10,20 +10,19 @@ import {
 import { BalanceSheetItem } from '../dataTransferObjects/BalanceSheet';
 import { useApi } from './ApiContext';
 
-interface IBalanceSheetContext {
+interface IBalanceSheetListContext {
   balanceSheetItems: BalanceSheetItem[];
   setBalanceSheetItems: Dispatch<SetStateAction<BalanceSheetItem[]>>;
 }
 
-const BalanceSheetContext = createContext<IBalanceSheetContext | undefined>(
-  undefined
-);
+const BalanceSheetListContext = createContext<
+  IBalanceSheetListContext | undefined
+>(undefined);
 
-type BalanceSheetContextProviderProps = {
+type BalanceSheetListProviderProps = {
   children: ReactElement;
 };
-
-function BalanceSheetProvider({ children }: BalanceSheetContextProviderProps) {
+function BalanceSheetListProvider({ children }: BalanceSheetListProviderProps) {
   const [balanceSheetItems, setBalanceSheetItems] = useState<
     BalanceSheetItem[]
   >([]);
@@ -36,14 +35,14 @@ function BalanceSheetProvider({ children }: BalanceSheetContextProviderProps) {
   }, []);
 
   return (
-    <BalanceSheetContext.Provider
+    <BalanceSheetListContext.Provider
       value={{
         balanceSheetItems,
         setBalanceSheetItems,
       }}
     >
       {children}
-    </BalanceSheetContext.Provider>
+    </BalanceSheetListContext.Provider>
   );
 }
 
@@ -51,12 +50,12 @@ export const useBalanceSheetItems = (): [
   BalanceSheetItem[],
   Dispatch<SetStateAction<BalanceSheetItem[]>>
 ] => {
-  const context = useContext(BalanceSheetContext);
+  const context = useContext(BalanceSheetListContext);
   if (context === undefined) {
     throw new Error(
-      'useBalanceSheetContext must be within BalanceSheetProvider'
+      'useBalanceSheetListContext must be within BalanceSheetListProvider'
     );
   }
   return [context.balanceSheetItems, context.setBalanceSheetItems];
 };
-export { BalanceSheetProvider };
+export { BalanceSheetListProvider };

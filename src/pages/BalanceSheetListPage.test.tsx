@@ -4,7 +4,7 @@ import renderWithTheme from '../testUtils/rendering';
 import BalanceSheetListPage from './BalanceSheetListPage';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { useBalanceSheetItems } from '../contexts/BalanceSheetContext';
+import { useBalanceSheetItems } from '../contexts/BalanceSheetListContext';
 
 jest.mock('../contexts/BalanceSheetContext');
 

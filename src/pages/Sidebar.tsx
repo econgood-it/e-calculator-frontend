@@ -24,7 +24,7 @@ import {
 import { useApi } from '../contexts/ApiContext';
 import { BalanceSheetNavigationItem } from '../components/balanceSheet/BalanceSheetNavigationItem';
 import { AxiosResponse } from 'axios';
-import { useBalanceSheetItems } from '../contexts/BalanceSheetContext';
+import { useBalanceSheetItems } from '../contexts/BalanceSheetListContext';
 
 const FixedAppBar = styled(AppBar)`
   z-index: ${(props) => props.theme.zIndex.drawer + 1};

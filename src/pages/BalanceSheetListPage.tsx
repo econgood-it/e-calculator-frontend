@@ -1,6 +1,6 @@
 import { Trans, useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { useBalanceSheetItems } from '../contexts/BalanceSheetContext';
+import { useBalanceSheetItems } from '../contexts/BalanceSheetListContext';
 
 const BalanceSheetListPage = () => {
   const { t } = useTranslation('balance-sheet-overview');
