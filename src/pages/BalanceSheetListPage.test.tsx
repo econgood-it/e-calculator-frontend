@@ -6,7 +6,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { useBalanceSheetItems } from '../contexts/BalanceSheetListContext';
 
-jest.mock('../contexts/BalanceSheetContext');
+jest.mock('../contexts/BalanceSheetListContext');
 
 describe('BalanceSheetListPage', () => {
   const initialPathForRouting = '/balancesheets';

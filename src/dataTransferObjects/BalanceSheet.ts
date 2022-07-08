@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { RatingSchema } from './Rating';
 
 export const BalanceSheetItemSchema = z.object({
   id: z.number(),
@@ -26,7 +27,7 @@ export enum BalanceSheetVersion {
 
 export const BalanceSheetResponseSchema = z.object({
   id: z.number(),
-  ratings: z.object({ shortName: z.string() }).array(),
+  ratings: RatingSchema.array(),
 });
 
 export type BalanceSheetResponse = z.infer<typeof BalanceSheetResponseSchema>;

@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import { useApi } from '../../contexts/ApiContext';
 import { useBalanceSheetItems } from '../../contexts/BalanceSheetListContext';
 jest.mock('../../contexts/ApiContext');
-jest.mock('../../contexts/BalanceSheetContext');
+jest.mock('../../contexts/BalanceSheetListContext');
 
 describe('BalanceSheetSubNavigation', () => {
   const balanceSheetItem = { id: 2 };

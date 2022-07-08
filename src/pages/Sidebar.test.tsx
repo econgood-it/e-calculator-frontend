@@ -1,14 +1,15 @@
 import '@testing-library/jest-dom';
-import { act, fireEvent, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
 import Sidebar from './Sidebar';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { useApi } from '../contexts/ApiContext';
 import { useBalanceSheetItems } from '../contexts/BalanceSheetListContext';
+import { balanceSheetMock } from '../testUtils/balanceSheets';
 
 jest.mock('../contexts/ApiContext');
-jest.mock('../contexts/BalanceSheetContext');
+jest.mock('../contexts/BalanceSheetListContext');
 
 describe('Sidebar', () => {
   const initialPathForRouting = '/balancesheets';
@@ -22,7 +23,7 @@ describe('Sidebar', () => {
     apiMock.post.mockImplementation((path: string) => {
       if (path === `/v1/balancesheets`) {
         return Promise.resolve({
-          data: { id: 3 },
+          data: { ...balanceSheetMock, id: 3 },
         });
       }
     });
