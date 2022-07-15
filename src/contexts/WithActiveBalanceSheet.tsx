@@ -1,30 +1,73 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useReducer } from 'react';
 import { Outlet, useOutletContext, useParams } from 'react-router-dom';
-import { BalanceSheet } from '../dataTransferObjects/BalanceSheet';
+import {
+  BalanceSheet,
+  BalanceSheetResponseSchema,
+} from '../dataTransferObjects/BalanceSheet';
 import { useApi } from './ApiContext';
+
+import { Rating } from '../dataTransferObjects/Rating';
 
 type ContextType = {
   balanceSheet?: BalanceSheet;
-  setBalanceSheet: Dispatch<SetStateAction<BalanceSheet>>;
+  updateRating: (rating: Rating) => void;
+};
+
+enum Kind {
+  SetBalanceSheet,
+  UpdateRating,
+}
+
+type Action =
+  | {
+      type: Kind.UpdateRating;
+      rating: Rating;
+    }
+  | { type: Kind.SetBalanceSheet; balanceSheet: BalanceSheet };
+
+const reducer = (
+  balanceSheet: BalanceSheet | undefined,
+  action: Action
+): BalanceSheet | undefined => {
+  if (action.type === Kind.UpdateRating) {
+    return (
+      balanceSheet && {
+        ...balanceSheet,
+        ratings: balanceSheet.ratings.map((r) => {
+          return r.shortName === action.rating.shortName ? action.rating : r;
+        }),
+      }
+    );
+  }
+  if (action.type === Kind.SetBalanceSheet) {
+    return { ...action.balanceSheet };
+  }
+  return balanceSheet;
 };
 
 export default function WithActiveBalanceSheet() {
-  const [balanceSheet, setBalanceSheet] = useState<BalanceSheet | undefined>(
-    undefined
-  );
+  const [balanceSheet, dispatch] = useReducer(reducer, undefined);
 
   const api = useApi();
   const { balanceSheetId } = useParams();
+
+  const updateRating = async (rating: Rating) => {
+    dispatch({ type: Kind.UpdateRating, rating: rating });
+  };
+
   useEffect(() => {
     (async () => {
       const response = await api.get(`v1/balancesheets/${balanceSheetId}`);
-      setBalanceSheet(response.data);
+      dispatch({
+        type: Kind.SetBalanceSheet,
+        balanceSheet: BalanceSheetResponseSchema.parse(response.data),
+      });
     })();
   }, [balanceSheetId]);
 
   return (
     <div>
-      <Outlet context={{ balanceSheet, setBalanceSheet }} />
+      <Outlet context={{ balanceSheet, updateRating }} />
     </div>
   );
 }

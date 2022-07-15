@@ -9,12 +9,12 @@ import userEvent from '@testing-library/user-event';
 jest.mock('../contexts/WithActiveBalanceSheet');
 
 describe('RatingsPage', () => {
-  const setBalanceSheet = jest.fn();
+  const updateRating = jest.fn();
 
   beforeEach(() => {
     (useActiveBalanceSheet as jest.Mock).mockReturnValue({
       balanceSheet: { ...balanceSheetMock },
-      setBalanceSheet: setBalanceSheet,
+      updateRating: updateRating,
     });
   });
 
@@ -33,6 +33,6 @@ describe('RatingsPage', () => {
       .find((div) => div.innerHTML.includes('A1.1'));
 
     await user.click(within(input!).getByLabelText('9 Stars'));
-    expect(setBalanceSheet).toHaveBeenCalled();
+    expect(updateRating).toHaveBeenCalled();
   });
 });
