@@ -1,4 +1,4 @@
-import { useActiveBalanceSheet } from '../contexts/WithActiveBalanceSheet';
+import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
 import RatingCard from '../components/balanceSheet/RatingCard';
 
 const RatingsPage = () => {

@@ -1,5 +1,11 @@
-import { useEffect, useReducer } from 'react';
-import { Outlet, useOutletContext, useParams } from 'react-router-dom';
+import {
+  createContext,
+  ReactElement,
+  useContext,
+  useEffect,
+  useReducer,
+} from 'react';
+import { useParams } from 'react-router-dom';
 import {
   BalanceSheet,
   BalanceSheetResponseSchema,
@@ -8,10 +14,14 @@ import { useApi } from './ApiContext';
 
 import { Rating } from '../dataTransferObjects/Rating';
 
-type ContextType = {
+interface IActiveBalanceSheetContext {
   balanceSheet?: BalanceSheet;
   updateRating: (rating: Rating) => void;
-};
+}
+
+const ActiveBalanceSheetContext = createContext<
+  IActiveBalanceSheetContext | undefined
+>(undefined);
 
 enum Kind {
   SetBalanceSheet,
@@ -45,7 +55,13 @@ const reducer = (
   return balanceSheet;
 };
 
-export default function WithActiveBalanceSheet() {
+type ActiveBalanceSheetProviderProps = {
+  children: ReactElement;
+};
+
+export default function ActiveBalanceSheetProvider({
+  children,
+}: ActiveBalanceSheetProviderProps) {
   const [balanceSheet, dispatch] = useReducer(reducer, undefined);
 
   const api = useApi();
@@ -66,12 +82,24 @@ export default function WithActiveBalanceSheet() {
   }, [balanceSheetId]);
 
   return (
-    <div>
-      <Outlet context={{ balanceSheet, updateRating }} />
-    </div>
+    <ActiveBalanceSheetContext.Provider
+      value={{
+        balanceSheet,
+        updateRating,
+      }}
+    >
+      {children}
+    </ActiveBalanceSheetContext.Provider>
   );
 }
 
-export function useActiveBalanceSheet() {
-  return useOutletContext<ContextType>();
-}
+export const useActiveBalanceSheet = (): IActiveBalanceSheetContext => {
+  const context = useContext(ActiveBalanceSheetContext);
+  if (context === undefined) {
+    throw new Error(
+      'useActiveBalanceSheet must be within ActiveBalanceSheetProvider'
+    );
+  }
+  return context;
+};
+export { ActiveBalanceSheetProvider };

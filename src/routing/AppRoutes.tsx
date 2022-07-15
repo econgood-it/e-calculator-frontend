@@ -7,7 +7,7 @@ import BalanceSheetListPage from '../pages/BalanceSheetListPage';
 import Sidebar from '../pages/Sidebar';
 import BalanceSheetOverviewPage from '../pages/BalanceSheetOverviewPage';
 import RatingsPage from '../pages/RatingsPage';
-import WithActiveBalanceSheet from '../contexts/WithActiveBalanceSheet';
+import WithActiveBalanceSheet from '../components/balanceSheet/WithActiveBalanceSheet';
 
 const AppRoutes = () => {
   // we get the user from the localStorage because that's where we will save their account on the login process
