@@ -4,7 +4,7 @@ import {
   ThemeOptions,
   ThemeProvider as MuiThemeProvider,
 } from '@mui/material';
-import { AlertContextProvider } from './contexts/AlertContext';
+import { AlertProvider } from './contexts/AlertContext';
 import NotificationList from './components/alerts/NotificationList';
 import { ThemeProvider } from 'styled-components';
 import AppRoutes from './routing/AppRoutes';
@@ -32,14 +32,14 @@ function App() {
     <Suspense fallback={'Loading'}>
       <MuiThemeProvider theme={theme}>
         <ThemeProvider theme={theme}>
-          <AlertContextProvider>
+          <AlertProvider>
             <>
               <Router>
                 <AppRoutes />
               </Router>
               <NotificationList />
             </>
-          </AlertContextProvider>
+          </AlertProvider>
         </ThemeProvider>
       </MuiThemeProvider>
     </Suspense>

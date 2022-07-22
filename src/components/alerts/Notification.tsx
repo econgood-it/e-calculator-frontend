@@ -1,14 +1,13 @@
 import { Alert } from '@mui/material';
-import { AlertContext, AlertMsg } from '../../contexts/AlertContext';
-import { SyntheticEvent, useContext, useEffect } from 'react';
+import { AlertMsg, useAlert } from '../../contexts/AlertContext';
+import { SyntheticEvent, useEffect } from 'react';
 
 type NotificationProps = {
   alertMsg: AlertMsg;
 };
 
 const Notification = ({ alertMsg }: NotificationProps) => {
-  const { removeAlert } = useContext(AlertContext);
-
+  const { removeAlert } = useAlert();
   useEffect(() => {
     setTimeout(() => {
       removeAlert(alertMsg);

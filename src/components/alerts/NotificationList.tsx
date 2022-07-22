@@ -1,8 +1,8 @@
 import { Stack } from '@mui/material';
-import { useContext } from 'react';
-import { AlertContext } from '../../contexts/AlertContext';
+
 import Notification from './Notification';
 import styled from 'styled-components';
+import { useAlert } from '../../contexts/AlertContext';
 
 const FixedStack = styled(Stack)`
   z-index: 9999;
@@ -12,7 +12,7 @@ const FixedStack = styled(Stack)`
 `;
 
 const NotificationList = () => {
-  const { state } = useContext(AlertContext);
+  const { state } = useAlert();
 
   return (
     <FixedStack>

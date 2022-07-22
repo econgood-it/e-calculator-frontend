@@ -1,4 +1,4 @@
-import { createContext, ReactElement, useReducer } from 'react';
+import { createContext, ReactElement, useContext, useReducer } from 'react';
 import { AlertColor } from '@mui/material';
 
 export type AlertMsg = {
@@ -7,24 +7,24 @@ export type AlertMsg = {
   id: number;
 };
 
+enum AlertType {
+  ADD_ALERT,
+  REMOVE_ALERT,
+}
+
 type AlertAction = {
-  type: string;
+  type: AlertType;
   payload: AlertMsg;
 };
 
 interface IAlertContext {
   state: { alerts: AlertMsg[] };
-  addAlert: (payload: { severity: AlertColor; msg: string }) => void;
+  addSuccessAlert: (message: string) => void;
+  addErrorAlert: (message: string) => void;
   removeAlert: (payload: AlertMsg) => void;
 }
 
-const defaultState = {
-  state: { alerts: [] },
-  addAlert: () => null,
-  removeAlert: () => null,
-};
-
-const AlertContext = createContext<IAlertContext>(defaultState);
+const AlertContext = createContext<IAlertContext | undefined>(undefined);
 
 const reducer = (
   state: { alerts: AlertMsg[] },
@@ -32,10 +32,10 @@ const reducer = (
 ): { alerts: AlertMsg[] } => {
   let newAlerts, element;
   switch (alertAction.type) {
-    case 'ADD_ALERT':
+    case AlertType.ADD_ALERT:
       newAlerts = [...state.alerts, alertAction.payload];
       return { ...state.alerts, alerts: newAlerts };
-    case 'REMOVE_ALERT':
+    case AlertType.REMOVE_ALERT:
       element = state.alerts.filter((e) => e.id !== alertAction.payload.id);
       return { alerts: element };
     default:
@@ -47,28 +47,41 @@ type AlertContextProviderProps = {
   children: ReactElement;
 };
 
-function AlertContextProvider({ children }: AlertContextProviderProps) {
+function AlertProvider({ children }: AlertContextProviderProps) {
   const [state, dispatch] = useReducer(reducer, { alerts: [] });
 
-  const addAlert = (payload: { severity: AlertColor; msg: string }) => {
+  const addSuccessAlert = (msg: string) => {
     dispatch({
-      type: 'ADD_ALERT',
+      type: AlertType.ADD_ALERT,
       payload: {
-        ...payload,
+        severity: 'success',
+        msg: msg,
+        id: Date.now(),
+      },
+    });
+  };
+
+  const addErrorAlert = (msg: string) => {
+    dispatch({
+      type: AlertType.ADD_ALERT,
+      payload: {
+        severity: 'error',
+        msg: msg,
         id: Date.now(),
       },
     });
   };
   const removeAlert = (payload: AlertMsg) => {
-    dispatch({ type: 'REMOVE_ALERT', payload: payload });
+    dispatch({ type: AlertType.REMOVE_ALERT, payload: payload });
   };
 
   return (
     <AlertContext.Provider
       value={{
         state: state,
-        addAlert: addAlert,
-        removeAlert: removeAlert,
+        addSuccessAlert,
+        addErrorAlert,
+        removeAlert,
       }}
     >
       {children}
@@ -76,4 +89,13 @@ function AlertContextProvider({ children }: AlertContextProviderProps) {
   );
 }
 
-export { AlertContext, AlertContextProvider };
+export const useAlert = () => {
+  const context = useContext(AlertContext);
+  if (context === undefined) {
+    throw new Error('useAlert must be within AlertProvider');
+  }
+
+  return context;
+};
+
+export { AlertProvider };

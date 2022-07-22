@@ -13,6 +13,8 @@ import {
 import { useApi } from './ApiContext';
 
 import { Rating } from '../dataTransferObjects/Rating';
+import { useAlert } from './AlertContext';
+import { useTranslation } from 'react-i18next';
 
 interface IActiveBalanceSheetContext {
   balanceSheet?: BalanceSheet;
@@ -30,7 +32,9 @@ type ActiveBalanceSheetProviderProps = {
 export default function ActiveBalanceSheetProvider({
   children,
 }: ActiveBalanceSheetProviderProps) {
+  const { t } = useTranslation();
   const [balanceSheet, setBalanceSheet] = useState<BalanceSheet | undefined>();
+  const { addSuccessAlert } = useAlert();
 
   const api = useApi();
   const { balanceSheetId } = useParams();
@@ -42,6 +46,7 @@ export default function ActiveBalanceSheetProvider({
       ],
     });
     setBalanceSheet(BalanceSheetResponseSchema.parse(response.data));
+    addSuccessAlert(t`Modifications saved`);
   };
 
   useEffect(() => {

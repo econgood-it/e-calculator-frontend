@@ -1,5 +1,5 @@
 import { Button, Grid, TextField } from '@mui/material';
-import { Dispatch, SetStateAction, useContext } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { User } from '../authentication/User';
@@ -7,8 +7,10 @@ import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertContext } from '../contexts/AlertContext';
+
 import { API_URL } from '../configuration';
+import { useAlert } from '../contexts/AlertContext';
+import { useTranslation } from 'react-i18next';
 
 const CenteredDiv = styled.div`
   display: flex;
@@ -36,7 +38,8 @@ const FormInputSchema = z.object({
 type FormInput = z.infer<typeof FormInputSchema>;
 
 export const LoginPage = ({ setUser }: LoginPageProps) => {
-  const { addAlert } = useContext(AlertContext);
+  const { t } = useTranslation();
+  const { addErrorAlert } = useAlert();
   const navigate = useNavigate();
   const {
     register,
@@ -56,10 +59,7 @@ export const LoginPage = ({ setUser }: LoginPageProps) => {
       setUser(user);
       navigate('/');
     } catch (e) {
-      addAlert({
-        severity: 'error',
-        msg: 'Login fehlgeschlagen',
-      });
+      addErrorAlert(t`Login failed`);
     }
   };
 
