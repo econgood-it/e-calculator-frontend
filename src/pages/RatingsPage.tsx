@@ -1,5 +1,6 @@
 import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
 import RatingCard from '../components/balanceSheet/RatingCard';
+import { RatingType } from '../dataTransferObjects/Rating';
 
 const RatingsPage = () => {
   const { balanceSheet, updateRating } = useActiveBalanceSheet();
@@ -7,13 +8,15 @@ const RatingsPage = () => {
   return (
     <>
       <div>Rating Page</div>
-      {balanceSheet?.ratings.map((rating) => (
-        <RatingCard
-          key={rating.shortName}
-          rating={rating}
-          onChange={(rating) => updateRating(rating)}
-        />
-      ))}
+      {balanceSheet?.ratings
+        .filter((rating) => rating.type === RatingType.aspect)
+        .map((rating) => (
+          <RatingCard
+            key={rating.shortName}
+            rating={rating}
+            onChange={(rating) => updateRating(rating)}
+          />
+        ))}
     </>
   );
 };

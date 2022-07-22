@@ -9,6 +9,7 @@ import ActiveBalanceSheetProvider, {
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Button } from '@mui/material';
 import userEvent from '@testing-library/user-event';
+import { RatingType } from '../dataTransferObjects/Rating';
 
 jest.mock('../contexts/ApiContext');
 
@@ -19,9 +20,10 @@ const TestComponent = () => {
       <Button
         onClick={() =>
           updateRating({
-            shortName: 'A1',
+            shortName: 'A1.1',
             name: 'Menschenwürde in der Zulieferkette',
             estimations: 7,
+            type: RatingType.aspect,
           })
         }
       >
@@ -37,12 +39,28 @@ const TestComponent = () => {
 describe('WithActiveBalanceSheet', () => {
   const apiMock = {
     get: jest.fn(),
+    patch: jest.fn(),
   };
   beforeEach(() => {
     apiMock.get.mockImplementation((path: string) => {
       if (path === `v1/balancesheets/3`) {
         return Promise.resolve({
-          data: { ...balanceSheetMock, id: 3 },
+          data: { ...balanceSheetMock },
+        });
+      }
+    });
+    apiMock.patch.mockImplementation((path: string, data) => {
+      if (path === `v1/balancesheets/3`) {
+        const updatedRating = data.ratings[0];
+        return Promise.resolve({
+          data: {
+            ...balanceSheetMock,
+            ratings: balanceSheetMock.ratings.map((r) =>
+              r.shortName === updatedRating.shortName
+                ? { ...r, estimations: updatedRating.estimations }
+                : r
+            ),
+          },
         });
       }
     });
@@ -66,8 +84,11 @@ describe('WithActiveBalanceSheet', () => {
         </Routes>
       </MemoryRouter>
     );
-    expect(await screen.findByText(/Rating A1, 0/)).toBeInTheDocument();
+    expect(await screen.findByText(/Rating A1.1, 0/)).toBeInTheDocument();
     await user.click(screen.getByText('Update Rating'));
-    expect(screen.getByText(/Rating A1, 7/)).toBeInTheDocument();
+    expect(apiMock.patch).toHaveBeenCalledWith('v1/balancesheets/3', {
+      ratings: [{ estimations: 7, shortName: 'A1.1' }],
+    });
+    expect(screen.getByText(/Rating A1.1, 7/)).toBeInTheDocument();
   });
 });

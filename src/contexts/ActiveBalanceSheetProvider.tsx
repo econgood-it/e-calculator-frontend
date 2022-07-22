@@ -3,7 +3,7 @@ import {
   ReactElement,
   useContext,
   useEffect,
-  useReducer,
+  useState,
 } from 'react';
 import { useParams } from 'react-router-dom';
 import {
@@ -23,38 +23,6 @@ const ActiveBalanceSheetContext = createContext<
   IActiveBalanceSheetContext | undefined
 >(undefined);
 
-enum Kind {
-  SetBalanceSheet,
-  UpdateRating,
-}
-
-type Action =
-  | {
-      type: Kind.UpdateRating;
-      rating: Rating;
-    }
-  | { type: Kind.SetBalanceSheet; balanceSheet: BalanceSheet };
-
-const reducer = (
-  balanceSheet: BalanceSheet | undefined,
-  action: Action
-): BalanceSheet | undefined => {
-  if (action.type === Kind.UpdateRating) {
-    return (
-      balanceSheet && {
-        ...balanceSheet,
-        ratings: balanceSheet.ratings.map((r) => {
-          return r.shortName === action.rating.shortName ? action.rating : r;
-        }),
-      }
-    );
-  }
-  if (action.type === Kind.SetBalanceSheet) {
-    return { ...action.balanceSheet };
-  }
-  return balanceSheet;
-};
-
 type ActiveBalanceSheetProviderProps = {
   children: ReactElement;
 };
@@ -62,22 +30,24 @@ type ActiveBalanceSheetProviderProps = {
 export default function ActiveBalanceSheetProvider({
   children,
 }: ActiveBalanceSheetProviderProps) {
-  const [balanceSheet, dispatch] = useReducer(reducer, undefined);
+  const [balanceSheet, setBalanceSheet] = useState<BalanceSheet | undefined>();
 
   const api = useApi();
   const { balanceSheetId } = useParams();
 
   const updateRating = async (rating: Rating) => {
-    dispatch({ type: Kind.UpdateRating, rating: rating });
+    const response = await api.patch(`v1/balancesheets/${balanceSheetId}`, {
+      ratings: [
+        { shortName: rating.shortName, estimations: rating.estimations },
+      ],
+    });
+    setBalanceSheet(BalanceSheetResponseSchema.parse(response.data));
   };
 
   useEffect(() => {
     (async () => {
       const response = await api.get(`v1/balancesheets/${balanceSheetId}`);
-      dispatch({
-        type: Kind.SetBalanceSheet,
-        balanceSheet: BalanceSheetResponseSchema.parse(response.data),
-      });
+      setBalanceSheet(BalanceSheetResponseSchema.parse(response.data));
     })();
   }, [balanceSheetId]);
 

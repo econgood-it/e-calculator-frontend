@@ -5,6 +5,7 @@ import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
 import { balanceSheetMock } from '../testUtils/balanceSheets';
 import RatingsPage from './RatingsPage';
 import userEvent from '@testing-library/user-event';
+import { RatingType } from '../dataTransferObjects/Rating';
 
 jest.mock('../contexts/ActiveBalanceSheetProvider');
 
@@ -20,9 +21,16 @@ describe('RatingsPage', () => {
 
   it('renders balance sheet items and navigates on click', () => {
     renderWithTheme(<RatingsPage />);
-    balanceSheetMock.ratings.forEach((r, index) => {
-      expect(screen.getByText(r.shortName)).toBeInTheDocument();
-    });
+    balanceSheetMock.ratings
+      .filter((r) => r.type === RatingType.aspect)
+      .forEach((r, index) => {
+        expect(screen.getByText(r.shortName)).toBeInTheDocument();
+      });
+    balanceSheetMock.ratings
+      .filter((r) => r.type === RatingType.topic)
+      .forEach((r, index) => {
+        expect(screen.queryByText(r.shortName)).not.toBeInTheDocument();
+      });
   });
 
   it('calls onRatingChange if rating changes', async () => {
