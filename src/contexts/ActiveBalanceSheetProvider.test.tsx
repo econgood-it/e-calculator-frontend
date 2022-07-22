@@ -10,8 +10,10 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Button } from '@mui/material';
 import userEvent from '@testing-library/user-event';
 import { RatingType } from '../dataTransferObjects/Rating';
+import { useAlert } from './AlertContext';
 
 jest.mock('../contexts/ApiContext');
+jest.mock('../contexts/AlertContext');
 
 const TestComponent = () => {
   const { balanceSheet, updateRating } = useActiveBalanceSheet();
@@ -41,6 +43,11 @@ describe('WithActiveBalanceSheet', () => {
     get: jest.fn(),
     patch: jest.fn(),
   };
+
+  const alertMock = {
+    addSuccessAlert: jest.fn(),
+  };
+
   beforeEach(() => {
     apiMock.get.mockImplementation((path: string) => {
       if (path === `v1/balancesheets/3`) {
@@ -65,6 +72,7 @@ describe('WithActiveBalanceSheet', () => {
       }
     });
     (useApi as jest.Mock).mockImplementation(() => apiMock);
+    (useAlert as jest.Mock).mockImplementation(() => alertMock);
   });
 
   it('updates active balance sheet', async () => {

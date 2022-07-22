@@ -14,9 +14,8 @@ const RatingsPage = () => {
         {balanceSheet?.ratings
           .filter((rating) => rating.type === RatingType.aspect)
           .map((rating) => (
-            <GridItem>
+            <GridItem key={rating.shortName}>
               <RatingCard
-                key={rating.shortName}
                 rating={rating}
                 onChange={(rating) => updateRating(rating)}
               />

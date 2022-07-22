@@ -40,7 +40,9 @@ describe('RatingsPage', () => {
       .getAllByLabelText('rating-card')
       .find((div) => div.innerHTML.includes('A1.1'));
 
+    await user.click(within(input!).getByLabelText('edit rating'));
     await user.click(within(input!).getByLabelText('9 Stars'));
+    await user.click(within(input!).getByLabelText('save rating'));
     expect(updateRating).toHaveBeenCalled();
   });
 });
