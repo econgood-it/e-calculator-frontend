@@ -7,14 +7,18 @@ import userEvent from '@testing-library/user-event';
 describe('PositiveRating', () => {
   it('renders Erfahren', () => {
     const onChange = jest.fn();
-    renderWithTheme(<PositiveRating value={5} onChange={onChange} />);
+    renderWithTheme(
+      <PositiveRating value={5} onChange={onChange} readOnly={false} />
+    );
     expect(screen.getByText('Erfahren')).toBeInTheDocument();
   });
 
   it('renders calls onChange if value is changed', async () => {
     const user = userEvent.setup();
     const onChange = jest.fn();
-    renderWithTheme(<PositiveRating value={5} onChange={onChange} />);
+    renderWithTheme(
+      <PositiveRating value={5} onChange={onChange} readOnly={false} />
+    );
     const input = screen.getByLabelText('9 Stars');
     await user.click(input);
     expect(onChange).toHaveBeenCalled();

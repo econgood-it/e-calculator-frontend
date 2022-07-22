@@ -36,8 +36,8 @@ const BalanceSheetSubNavigation = ({
   };
 
   return (
-    <List component="div" disablePadding>
-      <ListItem key="company-facts" sx={{ pl: 4 }}>
+    <List component="div">
+      <ListItem key="company-facts">
         <ListItemButton
           component={Link}
           to={`${balanceSheetItem.id}/companyfacts`}
@@ -48,7 +48,7 @@ const BalanceSheetSubNavigation = ({
           <ListItemText primary={<Trans t={t}>Company Facts</Trans>} />
         </ListItemButton>
       </ListItem>
-      <ListItem key="ratings" sx={{ pl: 4 }}>
+      <ListItem key="ratings">
         <ListItemButton component={Link} to={`${balanceSheetItem.id}/ratings`}>
           <ListItemIcon>
             <FontAwesomeIcon icon={faSeedling} />
@@ -56,7 +56,7 @@ const BalanceSheetSubNavigation = ({
           <ListItemText primary={<Trans t={t}>Ratings</Trans>} />
         </ListItemButton>
       </ListItem>
-      <ListItem key="delete" sx={{ pl: 4 }}>
+      <ListItem key="delete">
         <ListItemButton onClick={deleteBalanceSheet}>
           <ListItemIcon>
             <FontAwesomeIcon icon={faTrash} />

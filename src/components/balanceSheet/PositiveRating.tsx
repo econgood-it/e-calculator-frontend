@@ -16,12 +16,14 @@ const StyledRating = styled(Rating)`
 
 type PositiveRatingProps = {
   value: number;
+  readOnly: boolean;
   onChange: (value: number) => void;
 };
 
 export default function PositiveRating({
   value,
   onChange,
+  readOnly,
 }: PositiveRatingProps) {
   const [hover, setHover] = useState(-1);
   const getLabel = (currentValue: number): string => {
@@ -50,12 +52,13 @@ export default function PositiveRating({
         aria-label="positive-rating-input"
         name="hover-feedback"
         value={value}
+        readOnly={readOnly}
         max={10}
         precision={1}
         icon={<FontAwesomeIcon icon={faSeedling} />}
         emptyIcon={<FontAwesomeIcon icon={faSeedling} />}
         onChange={(event, newValue) => {
-          onChange(newValue as number);
+          onChange(Number(newValue));
         }}
         onChangeActive={(event, newHover) => {
           setHover(newHover);

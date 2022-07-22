@@ -1,6 +1,8 @@
 import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
 import RatingCard from '../components/balanceSheet/RatingCard';
 import { RatingType } from '../dataTransferObjects/Rating';
+import GridContainer from '../components/layout/GridContainer';
+import GridItem from '../components/layout/GridItem';
 
 const RatingsPage = () => {
   const { balanceSheet, updateRating } = useActiveBalanceSheet();
@@ -8,15 +10,19 @@ const RatingsPage = () => {
   return (
     <>
       <div>Rating Page</div>
-      {balanceSheet?.ratings
-        .filter((rating) => rating.type === RatingType.aspect)
-        .map((rating) => (
-          <RatingCard
-            key={rating.shortName}
-            rating={rating}
-            onChange={(rating) => updateRating(rating)}
-          />
-        ))}
+      <GridContainer spacing={2}>
+        {balanceSheet?.ratings
+          .filter((rating) => rating.type === RatingType.aspect)
+          .map((rating) => (
+            <GridItem>
+              <RatingCard
+                key={rating.shortName}
+                rating={rating}
+                onChange={(rating) => updateRating(rating)}
+              />
+            </GridItem>
+          ))}
+      </GridContainer>
     </>
   );
 };
