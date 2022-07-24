@@ -21,5 +21,12 @@ export const balanceSheetMock = {
       isPositive: false,
       type: 'aspect',
     },
+    {
+      shortName: 'B1.1',
+      name: 'Financial independence through equity financing',
+      estimations: 0,
+      isPositive: false,
+      type: 'aspect',
+    },
   ],
 };

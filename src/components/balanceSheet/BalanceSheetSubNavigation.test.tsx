@@ -60,10 +60,12 @@ describe('BalanceSheetSubNavigation', () => {
     ).toBeInTheDocument();
   });
 
-  it('navigates to ratings when Ratings item is clicked', async () => {
+  it('navigates to ratings page of clicked stakeholder', async () => {
     const initialPathForRouting = '/balancesheets';
     const user = userEvent.setup();
-    renderWithTheme(
+    const stakeholders = ['Suppliers', 'Financial service providers'];
+
+    const ComponentWithRouting = () => (
       <MemoryRouter initialEntries={[initialPathForRouting]}>
         <Routes>
           <Route
@@ -73,20 +75,23 @@ describe('BalanceSheetSubNavigation', () => {
             }
           />
           <Route
-            path={`${initialPathForRouting}/${balanceSheetItem.id}/ratings`}
-            element={<div>Navigated to ratings of balance sheet 2</div>}
+            path={`${initialPathForRouting}/${balanceSheetItem.id}/ratings/suppliers`}
+            element={<div>{stakeholders[0]}</div>}
+          />
+          <Route
+            path={`${initialPathForRouting}/${balanceSheetItem.id}/ratings/finance`}
+            element={<div>{stakeholders[1]}</div>}
           />
         </Routes>
       </MemoryRouter>
     );
 
-    const companyFactsButton = await screen.findByText('Ratings');
-
-    await user.click(companyFactsButton);
-
-    expect(
-      screen.getByText('Navigated to ratings of balance sheet 2')
-    ).toBeInTheDocument();
+    for (const stakeholder of stakeholders) {
+      renderWithTheme(<ComponentWithRouting />);
+      const ratingButton = await screen.findByText(stakeholder);
+      await user.click(ratingButton);
+      expect(screen.getByText(stakeholder)).toBeInTheDocument();
+    }
   });
 
   it('deletes balance sheet and navigates balancesheets list page when user clicks on Delete', async () => {

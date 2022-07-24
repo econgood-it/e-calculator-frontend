@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 import { LoginPage } from '../pages/LoginPage';
 import RequiresAuth from './RequiresAuth';
 import { useState } from 'react';
@@ -8,6 +8,7 @@ import Sidebar from '../pages/Sidebar';
 import BalanceSheetOverviewPage from '../pages/BalanceSheetOverviewPage';
 import RatingsPage from '../pages/RatingsPage';
 import WithActiveBalanceSheet from '../components/balanceSheet/WithActiveBalanceSheet';
+import { StakholderShortNames } from '../dataTransferObjects/Rating';
 
 const AppRoutes = () => {
   // we get the user from the localStorage because that's where we will save their account on the login process
@@ -28,7 +29,31 @@ const AppRoutes = () => {
             <Route path=":balanceSheetId" element={<WithActiveBalanceSheet />}>
               <Route index element={<BalanceSheetOverviewPage />} />
               <Route path="companyfacts" element={<div>Company Facts</div>} />
-              <Route path="ratings" element={<RatingsPage />} />
+              <Route
+                path="ratings"
+                element={
+                  <>
+                    <Outlet />
+                  </>
+                }
+              >
+                <Route
+                  path="suppliers"
+                  element={
+                    <RatingsPage
+                      stakeholderToFilterBy={StakholderShortNames.Suppliers}
+                    />
+                  }
+                />
+                <Route
+                  path="finance"
+                  element={
+                    <RatingsPage
+                      stakeholderToFilterBy={StakholderShortNames.Finance}
+                    />
+                  }
+                />
+              </Route>
             </Route>
           </Route>
         </Route>

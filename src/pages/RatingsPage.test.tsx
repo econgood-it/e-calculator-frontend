@@ -5,7 +5,10 @@ import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
 import { balanceSheetMock } from '../testUtils/balanceSheets';
 import RatingsPage from './RatingsPage';
 import userEvent from '@testing-library/user-event';
-import { RatingType } from '../dataTransferObjects/Rating';
+import {
+  RatingType,
+  StakholderShortNames,
+} from '../dataTransferObjects/Rating';
 
 jest.mock('../contexts/ActiveBalanceSheetProvider');
 
@@ -20,8 +23,11 @@ describe('RatingsPage', () => {
   });
 
   it('renders balance sheet items and navigates on click', () => {
-    renderWithTheme(<RatingsPage />);
+    renderWithTheme(
+      <RatingsPage stakeholderToFilterBy={StakholderShortNames.Suppliers} />
+    );
     balanceSheetMock.ratings
+      .filter((r) => r.shortName.startsWith(StakholderShortNames.Suppliers))
       .filter((r) => r.type === RatingType.aspect)
       .forEach((r, index) => {
         expect(screen.getByText(r.shortName)).toBeInTheDocument();
@@ -35,7 +41,9 @@ describe('RatingsPage', () => {
 
   it('calls onRatingChange if rating changes', async () => {
     const user = userEvent.setup();
-    renderWithTheme(<RatingsPage />);
+    renderWithTheme(
+      <RatingsPage stakeholderToFilterBy={StakholderShortNames.Suppliers} />
+    );
     const input = screen
       .getAllByLabelText('rating-card')
       .find((div) => div.innerHTML.includes('A1.1'));

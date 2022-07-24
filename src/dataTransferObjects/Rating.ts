@@ -1,5 +1,10 @@
 import { z } from 'zod';
 
+export enum StakholderShortNames {
+  Suppliers = 'A',
+  Finance = 'B',
+}
+
 export enum RatingType {
   topic = 'topic',
   aspect = 'aspect',
