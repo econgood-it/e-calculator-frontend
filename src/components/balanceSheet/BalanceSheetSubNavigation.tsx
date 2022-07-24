@@ -8,7 +8,7 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import ListItemText from '@mui/material/ListItemText';
-import { Trans, useTranslation } from 'react-i18next';
+import { Trans } from 'react-i18next';
 import List from '@mui/material/List';
 import { Link, useNavigate } from 'react-router-dom';
 import { BalanceSheetItem } from '../../dataTransferObjects/BalanceSheet';
@@ -22,7 +22,6 @@ type BalanceSheetSubNavigationProps = {
 const BalanceSheetSubNavigation = ({
   balanceSheetItem,
 }: BalanceSheetSubNavigationProps) => {
-  const { t } = useTranslation('sidebar');
   const api = useApi();
   const navigate = useNavigate();
   const [, setBalanceSheetItems] = useBalanceSheetItems();
@@ -45,7 +44,7 @@ const BalanceSheetSubNavigation = ({
           <ListItemIcon>
             <FontAwesomeIcon icon={faBuilding} />
           </ListItemIcon>
-          <ListItemText primary={<Trans t={t}>Company Facts</Trans>} />
+          <ListItemText primary={<Trans>Company Facts</Trans>} />
         </ListItemButton>
       </ListItem>
       <ListItem key="ratings">
@@ -53,7 +52,7 @@ const BalanceSheetSubNavigation = ({
           <ListItemIcon>
             <FontAwesomeIcon icon={faSeedling} />
           </ListItemIcon>
-          <ListItemText primary={<Trans t={t}>Ratings</Trans>} />
+          <ListItemText primary={<Trans>Ratings</Trans>} />
         </ListItemButton>
       </ListItem>
       <ListItem key="delete">
@@ -61,7 +60,7 @@ const BalanceSheetSubNavigation = ({
           <ListItemIcon>
             <FontAwesomeIcon icon={faTrash} />
           </ListItemIcon>
-          <ListItemText primary={<Trans t={t}>Delete</Trans>} />
+          <ListItemText primary={<Trans>Delete</Trans>} />
         </ListItemButton>
       </ListItem>
     </List>

@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
 import { AppBar, Box } from '@mui/material';
-import { Trans, useTranslation } from 'react-i18next';
+import { Trans } from 'react-i18next';
 import styled from 'styled-components';
 import { Outlet, useNavigate } from 'react-router-dom';
 import {
@@ -47,7 +47,6 @@ const Content = styled.div<{ $open: boolean; $drawerWidth: number }>`
 
 export default function Sidebar() {
   const [open, setOpen] = useState<boolean>(true);
-  const { t } = useTranslation('sidebar');
   const [balanceSheetItems, setBalanceSheetItems] = useBalanceSheetItems();
   const navigate = useNavigate();
   const drawerWidth = 240;
@@ -83,7 +82,7 @@ export default function Sidebar() {
             <FontAwesomeIcon icon={faBars} />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            <Trans t={t}>ECG Calculator</Trans>
+            <Trans>ECG Calculator</Trans>
           </Typography>
         </StyledToolbar>
       </FixedAppBar>
@@ -102,9 +101,7 @@ export default function Sidebar() {
                 <ListItemIcon>
                   <FontAwesomeIcon icon={faPlus} />
                 </ListItemIcon>
-                <ListItemText
-                  primary={<Trans t={t}>Create balance sheet</Trans>}
-                />
+                <ListItemText primary={<Trans>Create balance sheet</Trans>} />
               </ListItemButton>
             </ListItem>
           </List>

@@ -5,7 +5,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import ListItemText from '@mui/material/ListItemText';
-import { Trans, useTranslation } from 'react-i18next';
+import { Trans } from 'react-i18next';
 import Collapse from '@mui/material/Collapse';
 import { BalanceSheetItem } from '../../dataTransferObjects/BalanceSheet';
 import BalanceSheetSubNavigation from './BalanceSheetSubNavigation';
@@ -17,7 +17,6 @@ type BalanceSheetNavigationItemProps = {
 export const BalanceSheetNavigationItem = ({
   balanceSheetItem,
 }: BalanceSheetNavigationItemProps) => {
-  const { t } = useTranslation('sidebar');
   const [open, setOpen] = useState(false);
   const { balanceSheetId } = useParams();
 
@@ -40,9 +39,7 @@ export const BalanceSheetNavigationItem = ({
           selected={isSelected}
         >
           <ListItemText
-            primary={
-              <Trans t={t}>Balance sheet {{ id: balanceSheetItem.id }}</Trans>
-            }
+            primary={<Trans>Balance sheet {{ id: balanceSheetItem.id }}</Trans>}
           />
           {open ? (
             <FontAwesomeIcon icon={faChevronUp} />
