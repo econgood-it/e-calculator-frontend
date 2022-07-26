@@ -53,6 +53,30 @@ const AppRoutes = () => {
                     />
                   }
                 />
+                <Route
+                  path="employees"
+                  element={
+                    <RatingsPage
+                      stakeholderToFilterBy={StakholderShortNames.Employees}
+                    />
+                  }
+                />
+                <Route
+                  path="customers"
+                  element={
+                    <RatingsPage
+                      stakeholderToFilterBy={StakholderShortNames.Customers}
+                    />
+                  }
+                />
+                <Route
+                  path="society"
+                  element={
+                    <RatingsPage
+                      stakeholderToFilterBy={StakholderShortNames.Society}
+                    />
+                  }
+                />
               </Route>
             </Route>
           </Route>

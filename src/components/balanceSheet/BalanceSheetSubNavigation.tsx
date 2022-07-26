@@ -7,6 +7,9 @@ import {
   faTrash,
   faTruckRampBox,
   faCoins,
+  faPeopleGroup,
+  faUserGroup,
+  faGlobe,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
 import ListItemText from '@mui/material/ListItemText';
@@ -93,6 +96,24 @@ const BalanceSheetSubNavigation = ({
         pathName={'finance'}
         iconDefinition={faCoins}
         navItemText={t`Financial service providers`}
+      />
+      <StakeholderRatingNavigationItem
+        balanceSheetId={balanceSheetItem.id}
+        pathName={'employees'}
+        iconDefinition={faPeopleGroup}
+        navItemText={t`Employees`}
+      />
+      <StakeholderRatingNavigationItem
+        balanceSheetId={balanceSheetItem.id}
+        pathName={'customers'}
+        iconDefinition={faUserGroup}
+        navItemText={t`Customers and other companies`}
+      />
+      <StakeholderRatingNavigationItem
+        balanceSheetId={balanceSheetItem.id}
+        pathName={'society'}
+        iconDefinition={faGlobe}
+        navItemText={t`Social environment`}
       />
       <ListItem key="delete">
         <ListItemButton onClick={deleteBalanceSheet}>

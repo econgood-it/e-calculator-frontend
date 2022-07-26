@@ -63,7 +63,13 @@ describe('BalanceSheetSubNavigation', () => {
   it('navigates to ratings page of clicked stakeholder', async () => {
     const initialPathForRouting = '/balancesheets';
     const user = userEvent.setup();
-    const stakeholders = ['Suppliers', 'Financial service providers'];
+    const stakeholders = [
+      'Suppliers',
+      'Financial service providers',
+      'Employees',
+      'Customers and other companies',
+      'Social environment',
+    ];
 
     const ComponentWithRouting = () => (
       <MemoryRouter initialEntries={[initialPathForRouting]}>
@@ -81,6 +87,18 @@ describe('BalanceSheetSubNavigation', () => {
           <Route
             path={`${initialPathForRouting}/${balanceSheetItem.id}/ratings/finance`}
             element={<div>{stakeholders[1]}</div>}
+          />
+          <Route
+            path={`${initialPathForRouting}/${balanceSheetItem.id}/ratings/employees`}
+            element={<div>{stakeholders[2]}</div>}
+          />
+          <Route
+            path={`${initialPathForRouting}/${balanceSheetItem.id}/ratings/customers`}
+            element={<div>{stakeholders[3]}</div>}
+          />
+          <Route
+            path={`${initialPathForRouting}/${balanceSheetItem.id}/ratings/society`}
+            element={<div>{stakeholders[4]}</div>}
           />
         </Routes>
       </MemoryRouter>

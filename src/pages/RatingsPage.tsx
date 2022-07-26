@@ -16,7 +16,6 @@ const RatingsPage = ({ stakeholderToFilterBy }: RatingsPageProps) => {
 
   return (
     <>
-      <div>Rating Page</div>
       <GridContainer spacing={2}>
         {balanceSheet?.ratings
           .filter((rating) =>
