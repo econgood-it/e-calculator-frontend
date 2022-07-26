@@ -11,6 +11,7 @@ import { useState } from 'react';
 import Typography from '@mui/material/Typography';
 import { Trans } from 'react-i18next';
 import { CallToActionButton } from '../buttons/CallToActionButton';
+import NegativeRating from './NegativeRating';
 
 type RatingCardProps = {
   rating: Rating;
@@ -40,13 +41,22 @@ export default function RatingCard({ rating, onChange }: RatingCardProps) {
         }
       />
       <CardContent>
-        <PositiveRating
-          readOnly={!inEditMode}
-          value={estimations}
-          onChange={(newValue) => {
-            setEstimations(newValue);
-          }}
-        />
+        {rating.isPositive ? (
+          <PositiveRating
+            readOnly={!inEditMode}
+            value={estimations}
+            onChange={(newValue) => {
+              setEstimations(newValue);
+            }}
+          />
+        ) : (
+          <NegativeRating
+            value={estimations}
+            onChange={(newValue) => {
+              setEstimations(newValue);
+            }}
+          />
+        )}
       </CardContent>
       <CardActions>
         {inEditMode ? (

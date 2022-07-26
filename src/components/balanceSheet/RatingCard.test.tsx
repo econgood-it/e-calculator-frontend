@@ -30,4 +30,19 @@ describe('RatingCard', () => {
       screen.getByRole('button', { name: 'edit rating' })
     ).toBeInTheDocument();
   });
+
+  it('renders positve or negative rating depending on value of isPositive', async () => {
+    const onSave = jest.fn().mockImplementation((rating: Rating) => {});
+    const rating: Rating = {
+      shortName: 'A1.1',
+      estimations: 0,
+      name: 'A1.1 name',
+      type: RatingType.aspect,
+    };
+    renderWithTheme(<RatingCard rating={rating} onChange={onSave} />);
+    expect(screen.getByLabelText('positive-rating-input')).toBeInTheDocument();
+
+    renderWithTheme(<RatingCard rating={rating} onChange={onSave} />);
+    expect(screen.getByLabelText('negative-rating-input')).toBeInTheDocument();
+  });
 });

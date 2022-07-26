@@ -22,16 +22,17 @@ describe('RatingsPage', () => {
     });
   });
 
-  it('renders balance sheet items and navigates on click', () => {
+  it('renders ratings of given stakeholder', () => {
     renderWithTheme(
       <RatingsPage stakeholderToFilterBy={StakholderShortNames.Suppliers} />
     );
-    balanceSheetMock.ratings
+    const aspectsOfStakeholderSuppliers = balanceSheetMock.ratings
       .filter((r) => r.shortName.startsWith(StakholderShortNames.Suppliers))
-      .filter((r) => r.type === RatingType.aspect)
-      .forEach((r, index) => {
-        expect(screen.getByText(r.shortName)).toBeInTheDocument();
-      });
+      .filter((r) => r.type === RatingType.aspect);
+    aspectsOfStakeholderSuppliers.forEach((r, index) => {
+      screen.debug(screen.getByText(r.shortName));
+      expect(screen.getByText(r.shortName)).toBeInTheDocument();
+    });
     balanceSheetMock.ratings
       .filter((r) => r.type === RatingType.topic)
       .forEach((r, index) => {
