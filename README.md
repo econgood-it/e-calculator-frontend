@@ -11,9 +11,7 @@ for the application.
 {
   "development": {
     "FRONTEND_DOMAIN": "http://localhost:3000",
-    "REACT_APP_BACKEND_DOMAIN": "https://calculator.test.ecogood.org",
-    "TEST_EMAIL": "Replace this by your email",
-    "TEST_PASSWORD": "Replace this by your password"
+    "REACT_APP_BACKEND_DOMAIN": "https://calculator.test.ecogood.org"
   }
 }
 ```
