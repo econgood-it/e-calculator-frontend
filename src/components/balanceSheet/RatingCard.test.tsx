@@ -6,16 +6,19 @@ import { Rating, RatingType } from '../../dataTransferObjects/Rating';
 import { screen } from '@testing-library/react';
 
 describe('RatingCard', () => {
+  const onRatingSaved = jest.fn().mockImplementation((rating: Rating) => {});
   it('renders and triggers onSave if user modifies rating', async () => {
-    const onSave = jest.fn().mockImplementation((rating: Rating) => {});
     const rating: Rating = {
       shortName: 'A1.1',
       estimations: 0,
       name: 'A1.1 name',
       type: RatingType.aspect,
+      isPositive: true,
     };
     const user = userEvent.setup();
-    renderWithTheme(<RatingCard rating={rating} onChange={onSave} />);
+    renderWithTheme(
+      <RatingCard rating={rating} onRatingSaved={onRatingSaved} />
+    );
     expect(screen.getByLabelText('positive-rating-input')).toHaveClass(
       'MuiRating-readyOnly'
     );
@@ -25,24 +28,31 @@ describe('RatingCard', () => {
     await user.click(nineStars);
     const saveButton = screen.getByRole('button', { name: 'save rating' });
     await user.click(saveButton);
-    expect(onSave).toHaveBeenCalled();
+    expect(onRatingSaved).toHaveBeenCalled();
     expect(
       screen.getByRole('button', { name: 'edit rating' })
     ).toBeInTheDocument();
   });
 
-  it('renders positve or negative rating depending on value of isPositive', async () => {
-    const onSave = jest.fn().mockImplementation((rating: Rating) => {});
-    const rating: Rating = {
+  it('renders positive or negative rating depending on value of isPositive', async () => {
+    const rating = {
       shortName: 'A1.1',
       estimations: 0,
       name: 'A1.1 name',
       type: RatingType.aspect,
+      isPositive: true,
     };
-    renderWithTheme(<RatingCard rating={rating} onChange={onSave} />);
+    renderWithTheme(
+      <RatingCard rating={rating} onRatingSaved={onRatingSaved} />
+    );
     expect(screen.getByLabelText('positive-rating-input')).toBeInTheDocument();
 
-    renderWithTheme(<RatingCard rating={rating} onChange={onSave} />);
+    renderWithTheme(
+      <RatingCard
+        rating={{ ...rating, isPositive: false }}
+        onRatingSaved={onRatingSaved}
+      />
+    );
     expect(screen.getByLabelText('negative-rating-input')).toBeInTheDocument();
   });
 });

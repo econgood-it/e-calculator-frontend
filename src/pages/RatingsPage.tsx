@@ -26,7 +26,7 @@ const RatingsPage = ({ stakeholderToFilterBy }: RatingsPageProps) => {
             <GridItem key={rating.shortName}>
               <RatingCard
                 rating={rating}
-                onChange={(rating) => updateRating(rating)}
+                onRatingSaved={(rating) => updateRating(rating)}
               />
             </GridItem>
           ))}

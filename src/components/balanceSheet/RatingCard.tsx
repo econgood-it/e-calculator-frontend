@@ -15,15 +15,16 @@ import NegativeRating from './NegativeRating';
 
 type RatingCardProps = {
   rating: Rating;
-  onChange: (rating: Rating) => void;
+  onRatingSaved: (rating: Rating) => void;
 };
-export default function RatingCard({ rating, onChange }: RatingCardProps) {
+export default function RatingCard({ rating, onRatingSaved }: RatingCardProps) {
   const theme = useTheme();
   const [inEditMode, setInEditMode] = useState<boolean>(false);
+  const [validToSave, setValidToSave] = useState<boolean>(true);
   const [estimations, setEstimations] = useState<number>(rating.estimations);
 
   const onSaveClicked = () => {
-    onChange({ ...rating, estimations: estimations });
+    onRatingSaved({ ...rating, estimations: estimations });
     setInEditMode(false);
   };
 
@@ -51,16 +52,23 @@ export default function RatingCard({ rating, onChange }: RatingCardProps) {
           />
         ) : (
           <NegativeRating
-            value={estimations}
-            onChange={(newValue) => {
+            readOnly={!inEditMode}
+            estimations={estimations}
+            onError={() => setValidToSave(false)}
+            onEstimationsChange={(newValue) => {
               setEstimations(newValue);
+              setValidToSave(true);
             }}
           />
         )}
       </CardContent>
       <CardActions>
         {inEditMode ? (
-          <CallToActionButton onClick={onSaveClicked} aria-label="save rating">
+          <CallToActionButton
+            disabled={!validToSave}
+            onClick={onSaveClicked}
+            aria-label="save rating"
+          >
             <Trans>Save</Trans>
           </CallToActionButton>
         ) : (

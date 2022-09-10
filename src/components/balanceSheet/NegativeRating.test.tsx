@@ -3,10 +3,21 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import NegativeRating from './NegativeRating';
 
 describe('NegativeRating', () => {
-  const onChange = jest.fn().mockImplementation((value: number) => {});
+  const onEstimationsChange = jest
+    .fn()
+    .mockImplementation((value: number) => {});
+
+  const onError = jest.fn();
 
   it('renders', () => {
-    render(<NegativeRating value={0} onChange={onChange} />);
+    render(
+      <NegativeRating
+        readOnly={false}
+        estimations={0}
+        onEstimationsChange={onEstimationsChange}
+        onError={onError}
+      />
+    );
     expect(screen.getByLabelText('negative-rating-input')).toHaveValue(0);
     expect(
       screen.getByText('Wert zwischen -200 und 0 eintragen')
@@ -14,15 +25,29 @@ describe('NegativeRating', () => {
   });
 
   it('triggers onChange if user changes value', async () => {
-    render(<NegativeRating value={0} onChange={onChange} />);
+    render(
+      <NegativeRating
+        readOnly={false}
+        estimations={0}
+        onEstimationsChange={onEstimationsChange}
+        onError={onError}
+      />
+    );
     fireEvent.change(screen.getByLabelText('negative-rating-input'), {
       target: { value: -20 },
     });
-    await waitFor(() => expect(onChange).toHaveBeenCalledWith(-20));
+    await waitFor(() => expect(onEstimationsChange).toHaveBeenCalledWith(-20));
   });
 
   it('renders validation error if value > 0', async () => {
-    render(<NegativeRating value={-2} onChange={onChange} />);
+    render(
+      <NegativeRating
+        readOnly={false}
+        estimations={-2}
+        onEstimationsChange={onEstimationsChange}
+        onError={onError}
+      />
+    );
     fireEvent.change(screen.getByLabelText('negative-rating-input'), {
       target: { value: 9 },
     });
@@ -32,11 +57,19 @@ describe('NegativeRating', () => {
         screen.getByText('Wert sollte kleiner oder gleich 0 sein')
       ).toBeInTheDocument()
     );
-    expect(onChange).not.toHaveBeenCalled();
+    expect(onError).toHaveBeenCalled();
+    expect(onEstimationsChange).not.toHaveBeenCalled();
   });
 
   it('renders validation error if value < -200', async () => {
-    render(<NegativeRating value={0} onChange={onChange} />);
+    render(
+      <NegativeRating
+        readOnly={false}
+        estimations={0}
+        onEstimationsChange={onEstimationsChange}
+        onError={onError}
+      />
+    );
     fireEvent.change(screen.getByLabelText('negative-rating-input'), {
       target: { value: -201 },
     });
@@ -46,10 +79,19 @@ describe('NegativeRating', () => {
         screen.getByText('Wert sollte größer oder gleich -200 sein')
       ).toBeInTheDocument()
     );
+    expect(onError).toHaveBeenCalled();
+    expect(onEstimationsChange).not.toHaveBeenCalled();
   });
 
   it('renders validation error if value not a number', async () => {
-    render(<NegativeRating value={0} onChange={onChange} />);
+    render(
+      <NegativeRating
+        readOnly={false}
+        estimations={0}
+        onEstimationsChange={onEstimationsChange}
+        onError={onError}
+      />
+    );
     fireEvent.change(screen.getByLabelText('negative-rating-input'), {
       target: { value: '-2hallo' },
     });
@@ -57,5 +99,7 @@ describe('NegativeRating', () => {
     await waitFor(() =>
       expect(screen.getByText('Zahl erwartet')).toBeInTheDocument()
     );
+    expect(onError).toHaveBeenCalled();
+    expect(onEstimationsChange).not.toHaveBeenCalled();
   });
 });

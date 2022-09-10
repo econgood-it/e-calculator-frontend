@@ -1,60 +1,59 @@
 import { Grid, Input } from '@mui/material';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { z, ZodError } from 'zod';
 import styled from 'styled-components';
 import { useState } from 'react';
 
 const GridWithFixedSize = styled(Grid)`
   width: 400px;
 `;
+type NegativeRatingProps = {
+  readOnly: boolean;
+  estimations: number;
+  onError: () => void;
+  onEstimationsChange: (value: number) => void;
+};
 
-const FormInputSchema = z.object({
-  rating: z
+const NegativeRating = ({
+  readOnly,
+  estimations,
+  onError,
+  onEstimationsChange,
+}: NegativeRatingProps) => {
+  const [value, setValue] = useState<string>(estimations.toString());
+  const [error, setError] = useState<ZodError | undefined>(undefined);
+
+  const ValidNumberSchema = z
     .number({
       invalid_type_error: 'Zahl erwartet',
       required_error: 'Zahl erwartet',
     })
     .min(-200, 'Wert sollte größer oder gleich -200 sein')
-    .max(0, 'Wert sollte kleiner oder gleich 0 sein'),
-});
-type FormInput = z.infer<typeof FormInputSchema>;
+    .max(0, 'Wert sollte kleiner oder gleich 0 sein');
 
-type NegativeRatingProps = {
-  value: number;
-  onChange: (value: number) => void;
-};
-
-const NegativeRating = ({ value, onChange }: NegativeRatingProps) => {
-  const [internalValue, setInternalValue] = useState<string>(value.toString());
-  const {
-    register,
-    formState: { errors },
-  } = useForm<FormInput>({
-    resolver: zodResolver(FormInputSchema),
-    mode: 'onChange',
-  });
-  const onChangeTrigger = (newValue: string) => {
-    setInternalValue(newValue);
-    if (!errors.rating) {
-      onChange(Number(newValue));
+  const onChange = (newValue: string) => {
+    setValue(newValue);
+    const valueAsNumber = Number.parseFloat(newValue);
+    const result = ValidNumberSchema.safeParse(valueAsNumber);
+    if (result.success) {
+      setError(undefined);
+      onEstimationsChange(valueAsNumber);
+    } else {
+      setError(result.error);
+      onError();
     }
   };
-
   return (
     <GridWithFixedSize container spacing={1} alignItems={'center'}>
       <Grid item xs={2}>
         <Input
-          value={internalValue}
+          readOnly={readOnly}
+          value={value}
           onChange={(e) => {
-            onChangeTrigger(e.target.value);
+            onChange(e.target.value);
           }}
           size="small"
-          error={!!errors.rating}
+          error={error !== undefined}
           inputProps={{
-            ...register('rating', {
-              valueAsNumber: true,
-            }),
             step: 1,
             min: -200,
             max: 0,
@@ -64,8 +63,8 @@ const NegativeRating = ({ value, onChange }: NegativeRatingProps) => {
         />
       </Grid>
       <Grid item xs={10}>
-        {errors.rating ? (
-          <p>{errors.rating.message}</p>
+        {error ? (
+          <p>{error.errors[0].message}</p>
         ) : (
           <p>Wert zwischen -200 und 0 eintragen</p>
         )}
