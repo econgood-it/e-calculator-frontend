@@ -9,6 +9,7 @@ import BalanceSheetOverviewPage from '../pages/BalanceSheetOverviewPage';
 import RatingsPage from '../pages/RatingsPage';
 import WithActiveBalanceSheet from '../components/balanceSheet/WithActiveBalanceSheet';
 import { StakholderShortNames } from '../dataTransferObjects/Rating';
+import SuppliersForm from '../components/balanceSheet/companyFacts/SuppliersForm';
 
 const AppRoutes = () => {
   // we get the user from the localStorage because that's where we will save their account on the login process
@@ -28,7 +29,7 @@ const AppRoutes = () => {
             <Route index element={<BalanceSheetListPage />} />
             <Route path=":balanceSheetId" element={<WithActiveBalanceSheet />}>
               <Route index element={<BalanceSheetOverviewPage />} />
-              <Route path="companyfacts" element={<div>Company Facts</div>} />
+              <Route path="companyfacts" element={<SuppliersForm />} />
               <Route
                 path="ratings"
                 element={
