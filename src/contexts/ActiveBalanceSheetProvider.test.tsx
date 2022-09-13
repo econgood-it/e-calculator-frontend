@@ -1,4 +1,4 @@
-import { balanceSheetMock } from '../testUtils/balanceSheets';
+import { balanceSheetMock, companyFactsMock } from '../testUtils/balanceSheets';
 import renderWithTheme from '../testUtils/rendering';
 import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -15,25 +15,50 @@ import { useAlert } from './AlertContext';
 jest.mock('../contexts/ApiContext');
 jest.mock('../contexts/AlertContext');
 
-const TestComponent = () => {
+const TestComponentUpdateRating = () => {
   const { balanceSheet, updateRating } = useActiveBalanceSheet();
   return (
     <>
       <Button
-        onClick={() =>
+        onClick={() => {
           updateRating({
             shortName: 'A1.1',
             name: 'Menschenwürde in der Zulieferkette',
             estimations: 7,
             type: RatingType.aspect,
-          })
-        }
+          });
+        }}
       >
-        Update Rating
+        Update Ratings
       </Button>
       {balanceSheet?.ratings.map((r) => (
         <div key={r.shortName}>{`Rating ${r.shortName}, ${r.estimations}`}</div>
       ))}
+    </>
+  );
+};
+
+const TestComponentUpdateCompanyFacts = () => {
+  const { balanceSheet, updateCompanyFacts } = useActiveBalanceSheet();
+  return (
+    <>
+      <Button
+        onClick={() => {
+          updateCompanyFacts({
+            totalPurchaseFromSuppliers: 9,
+            supplyFractions: [
+              {
+                countryCode: 'GER',
+                industryCode: 'Ce',
+                costs: 38,
+              },
+            ],
+          });
+        }}
+      >
+        Update CompanyFacts
+      </Button>
+      <div>{`Total purchase from suppliers, ${balanceSheet?.companyFacts.totalPurchaseFromSuppliers}`}</div>
     </>
   );
 };
@@ -56,26 +81,27 @@ describe('WithActiveBalanceSheet', () => {
         });
       }
     });
+    (useAlert as jest.Mock).mockImplementation(() => alertMock);
+  });
+
+  it('updates ratings', async () => {
     apiMock.patch.mockImplementation((path: string, data) => {
       if (path === `v1/balancesheets/3`) {
         const updatedRating = data.ratings[0];
+        const responseData = {
+          ...balanceSheetMock,
+          ratings: balanceSheetMock.ratings.map((r) =>
+            r.shortName === updatedRating.shortName
+              ? { ...r, estimations: updatedRating.estimations }
+              : r
+          ),
+        };
         return Promise.resolve({
-          data: {
-            ...balanceSheetMock,
-            ratings: balanceSheetMock.ratings.map((r) =>
-              r.shortName === updatedRating.shortName
-                ? { ...r, estimations: updatedRating.estimations }
-                : r
-            ),
-          },
+          data: responseData,
         });
       }
     });
     (useApi as jest.Mock).mockImplementation(() => apiMock);
-    (useAlert as jest.Mock).mockImplementation(() => alertMock);
-  });
-
-  it('updates active balance sheet', async () => {
     const initialPathForRouting = '/balancesheets/3';
     const user = userEvent.setup();
     renderWithTheme(
@@ -85,7 +111,7 @@ describe('WithActiveBalanceSheet', () => {
             path={'/balancesheets/:balanceSheetId'}
             element={
               <ActiveBalanceSheetProvider>
-                <TestComponent />
+                <TestComponentUpdateRating />
               </ActiveBalanceSheetProvider>
             }
           />
@@ -93,10 +119,51 @@ describe('WithActiveBalanceSheet', () => {
       </MemoryRouter>
     );
     expect(await screen.findByText(/Rating A1.1, 0/)).toBeInTheDocument();
-    await user.click(screen.getByText('Update Rating'));
+    await user.click(screen.getByText('Update Ratings'));
     expect(apiMock.patch).toHaveBeenCalledWith('v1/balancesheets/3', {
       ratings: [{ estimations: 7, shortName: 'A1.1' }],
     });
     expect(screen.getByText(/Rating A1.1, 7/)).toBeInTheDocument();
+  });
+
+  it('updates companyfacts', async () => {
+    apiMock.patch.mockImplementation((path: string, data) => {
+      if (path === `v1/balancesheets/3`) {
+        const updatedCompanyFacts = data.companyFacts;
+        const responseData = {
+          ...balanceSheetMock,
+          companyFacts: updatedCompanyFacts,
+        };
+        return Promise.resolve({
+          data: responseData,
+        });
+      }
+    });
+    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    const initialPathForRouting = '/balancesheets/3';
+    const user = userEvent.setup();
+    renderWithTheme(
+      <MemoryRouter initialEntries={[initialPathForRouting]}>
+        <Routes>
+          <Route
+            path={'/balancesheets/:balanceSheetId'}
+            element={
+              <ActiveBalanceSheetProvider>
+                <TestComponentUpdateCompanyFacts />
+              </ActiveBalanceSheetProvider>
+            }
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+    expect(
+      await screen.findByText(
+        `Total purchase from suppliers, ${companyFactsMock.totalPurchaseFromSuppliers}`
+      )
+    ).toBeInTheDocument();
+    await user.click(screen.getByText('Update CompanyFacts'));
+    expect(
+      screen.getByText(`Total purchase from suppliers, 9`)
+    ).toBeInTheDocument();
   });
 });

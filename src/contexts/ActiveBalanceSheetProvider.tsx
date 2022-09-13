@@ -9,6 +9,7 @@ import { useParams } from 'react-router-dom';
 import {
   BalanceSheet,
   BalanceSheetResponseSchema,
+  CompanyFactsRequestBody,
 } from '../dataTransferObjects/BalanceSheet';
 import { useApi } from './ApiContext';
 
@@ -19,6 +20,7 @@ import { useTranslation } from 'react-i18next';
 interface IActiveBalanceSheetContext {
   balanceSheet?: BalanceSheet;
   updateRating: (rating: Rating) => void;
+  updateCompanyFacts: (companyFacts: CompanyFactsRequestBody) => void;
 }
 
 const ActiveBalanceSheetContext = createContext<
@@ -49,6 +51,14 @@ export default function ActiveBalanceSheetProvider({
     addSuccessAlert(t`Modifications saved`);
   };
 
+  const updateCompanyFacts = async (companyFacts: CompanyFactsRequestBody) => {
+    const response = await api.patch(`v1/balancesheets/${balanceSheetId}`, {
+      companyFacts: companyFacts,
+    });
+    setBalanceSheet(BalanceSheetResponseSchema.parse(response.data));
+    addSuccessAlert(t`Modifications saved`);
+  };
+
   useEffect(() => {
     (async () => {
       const response = await api.get(`v1/balancesheets/${balanceSheetId}`);
@@ -61,6 +71,7 @@ export default function ActiveBalanceSheetProvider({
       value={{
         balanceSheet,
         updateRating,
+        updateCompanyFacts,
       }}
     >
       {children}

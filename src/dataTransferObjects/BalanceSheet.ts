@@ -19,7 +19,11 @@ export const CompanyFactsSchema = z.object({
     })
     .array(),
 });
+export const CompanyFactsRequestBodySchema = CompanyFactsSchema.deepPartial();
 
+export type CompanyFactsRequestBody = z.infer<
+  typeof CompanyFactsRequestBodySchema
+>;
 export type CompanyFacts = z.infer<typeof CompanyFactsSchema>;
 
 export const BalanceSheetItemSchema = z.object({
