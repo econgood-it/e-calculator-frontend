@@ -1,5 +1,26 @@
 import { z } from 'zod';
 import { RatingSchema } from './Rating';
+import i18n from '../i18n';
+
+const CurrenySchema = z
+  .number({
+    invalid_type_error: i18n.t('Number expected'),
+    required_error: i18n.t('Number expected'),
+  })
+  .positive(i18n.t('Number should be positive'));
+
+export const CompanyFactsSchema = z.object({
+  totalPurchaseFromSuppliers: CurrenySchema,
+  supplyFractions: z
+    .object({
+      countryCode: z.string(),
+      costs: z.number(),
+      industryCode: z.string(),
+    })
+    .array(),
+});
+
+export type CompanyFacts = z.infer<typeof CompanyFactsSchema>;
 
 export const BalanceSheetItemSchema = z.object({
   id: z.number(),
@@ -28,6 +49,7 @@ export enum BalanceSheetVersion {
 export const BalanceSheetResponseSchema = z.object({
   id: z.number(),
   ratings: RatingSchema.array(),
+  companyFacts: CompanyFactsSchema,
 });
 
 export type BalanceSheetResponse = z.infer<typeof BalanceSheetResponseSchema>;
