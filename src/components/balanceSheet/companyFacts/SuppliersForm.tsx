@@ -2,13 +2,14 @@ import { z } from 'zod';
 import { Trans, useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  FormControl,
-  FormHelperText,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
-} from '@mui/material';
+import CurrencyInput from './CurrencyInput';
+import GridContainer from '../../layout/GridContainer';
+import GridItem from '../../layout/GridItem';
+import styled from 'styled-components';
+
+const FormContainer = styled(GridContainer)`
+  padding: 10px;
+`;
 
 const SuppliersForm = () => {
   const { t } = useTranslation('company-facts-view');
@@ -22,34 +23,30 @@ const SuppliersForm = () => {
       .positive(t('Number should be positive')),
   });
 
+  type FormInput = z.infer<typeof FormInputSchema>;
+
   const {
     register,
     formState: { errors },
-  } = useForm<z.infer<typeof FormInputSchema>>({
+  } = useForm<FormInput>({
     resolver: zodResolver(FormInputSchema),
     mode: 'onChange',
   });
 
   return (
-    <>
-      <FormControl>
-        <InputLabel htmlFor="outlined-adornment-amount">
-          <Trans>Total purchases from suppliers</Trans>
-        </InputLabel>
-        <OutlinedInput
-          id="outlined-adornment-amount"
-          {...register('totalPurchaseFromSuppliers', {
-            valueAsNumber: true,
-          })}
-          startAdornment={<InputAdornment position="start">€</InputAdornment>}
+    <FormContainer spacing={2}>
+      <GridItem xs={12}>
+        <CurrencyInput<FormInput>
+          fullWidth
+          label={<Trans>Total purchases from suppliers</Trans>}
           error={!!errors.totalPurchaseFromSuppliers}
-          label={t`Total purchases from suppliers`}
+          errorMessage={errors.totalPurchaseFromSuppliers?.message}
+          register={register}
+          registerKey={'totalPurchaseFromSuppliers'}
+          required={true}
         />
-        <FormHelperText>
-          {errors.totalPurchaseFromSuppliers?.message}
-        </FormHelperText>
-      </FormControl>
-    </>
+      </GridItem>
+    </FormContainer>
   );
 };
 

@@ -5,39 +5,44 @@ import {
   InputLabel,
   OutlinedInput,
 } from '@mui/material';
-import { Trans } from 'react-i18next';
 import { Path, UseFormRegister } from 'react-hook-form';
+import { ReactElement } from 'react';
 
 type CurrencyInputProps<T> = {
-  label: Path<T>;
+  label: ReactElement;
+  error: boolean;
+  errorMessage?: string;
+  registerKey: Path<T>;
   register: UseFormRegister<T>;
   required: boolean;
+  fullWidth: boolean;
 };
 
 // https://medium.com/reactbrasil/make-your-react-component-generic-with-typescript-497378515667
 
 const CurrencyInput = <T extends unknown>({
+  fullWidth,
   label,
+  registerKey,
   register,
   required,
+  error,
+  errorMessage,
 }: CurrencyInputProps<T>) => {
   return (
-    <FormControl>
-      <InputLabel htmlFor="outlined-adornment-amount">
-        <Trans>Total purchases from suppliers</Trans>
-      </InputLabel>
+    <FormControl fullWidth={fullWidth}>
+      <InputLabel htmlFor="outlined-adornment-amount">{label}</InputLabel>
       <OutlinedInput
         id="outlined-adornment-amount"
-        {...register(label, {
+        {...register(registerKey, {
           valueAsNumber: true,
+          required: required,
         })}
         startAdornment={<InputAdornment position="start">€</InputAdornment>}
-        error={!!errors.totalPurchaseFromSuppliers}
-        label={t`Total purchases from suppliers`}
+        error={error}
+        label={label}
       />
-      <FormHelperText>
-        {errors.totalPurchaseFromSuppliers?.message}
-      </FormHelperText>
+      <FormHelperText>{errorMessage}</FormHelperText>
     </FormControl>
   );
 };
