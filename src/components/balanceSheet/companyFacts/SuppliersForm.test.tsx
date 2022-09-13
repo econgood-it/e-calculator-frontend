@@ -3,9 +3,23 @@ import { screen, waitFor } from '@testing-library/react';
 import SuppliersForm from './SuppliersForm';
 import userEvent from '@testing-library/user-event';
 import renderWithTheme from '../../../testUtils/rendering';
-import { companyFactsMock } from '../../../testUtils/balanceSheets';
+import {
+  balanceSheetMock,
+  companyFactsMock,
+} from '../../../testUtils/balanceSheets';
+import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
+jest.mock('../../../contexts/ActiveBalanceSheetProvider');
 
 describe('SuppliersForm', () => {
+  const updateCompanyFacts = jest.fn();
+
+  beforeEach(() => {
+    (useActiveBalanceSheet as jest.Mock).mockReturnValue({
+      balanceSheet: { ...balanceSheetMock },
+      updateCompanyFacts: updateCompanyFacts,
+    });
+  });
+
   it('should set default value and validate all modifications for the field total purchase from suppliers', async () => {
     const user = userEvent.setup();
     renderWithTheme(<SuppliersForm companyFacts={{ ...companyFactsMock }} />);
@@ -31,6 +45,14 @@ describe('SuppliersForm', () => {
     await user.clear(input);
     await user.type(input, '7');
     expect(input).toHaveValue('7');
+  });
+
+  it('calls updateCompanyFacts if user clicks on save button', async () => {
+    const user = userEvent.setup();
+    renderWithTheme(<SuppliersForm companyFacts={{ ...companyFactsMock }} />);
+    const saveButton = screen.getByRole('button', { name: 'Save' });
+    await user.click(saveButton);
+    expect(updateCompanyFacts).toHaveBeenCalled();
   });
 
   it('renders supply fractions', async () => {
