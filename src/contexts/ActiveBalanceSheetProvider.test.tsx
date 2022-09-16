@@ -1,4 +1,7 @@
-import { balanceSheetMock, companyFactsMock } from '../testUtils/balanceSheets';
+import {
+  BalanceSheetMocks,
+  CompanyFactsMocks,
+} from '../testUtils/balanceSheets';
 import renderWithTheme from '../testUtils/rendering';
 import { screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -77,7 +80,7 @@ describe('WithActiveBalanceSheet', () => {
     apiMock.get.mockImplementation((path: string) => {
       if (path === `v1/balancesheets/3`) {
         return Promise.resolve({
-          data: { ...balanceSheetMock },
+          data: BalanceSheetMocks.balanceSheet1(),
         });
       }
     });
@@ -89,8 +92,8 @@ describe('WithActiveBalanceSheet', () => {
       if (path === `v1/balancesheets/3`) {
         const updatedRating = data.ratings[0];
         const responseData = {
-          ...balanceSheetMock,
-          ratings: balanceSheetMock.ratings.map((r) =>
+          ...BalanceSheetMocks.balanceSheet1(),
+          ratings: BalanceSheetMocks.balanceSheet1().ratings.map((r) =>
             r.shortName === updatedRating.shortName
               ? { ...r, estimations: updatedRating.estimations }
               : r
@@ -131,7 +134,7 @@ describe('WithActiveBalanceSheet', () => {
       if (path === `v1/balancesheets/3`) {
         const updatedCompanyFacts = data.companyFacts;
         const responseData = {
-          ...balanceSheetMock,
+          ...BalanceSheetMocks.balanceSheet1(),
           companyFacts: updatedCompanyFacts,
         };
         return Promise.resolve({
@@ -158,7 +161,9 @@ describe('WithActiveBalanceSheet', () => {
     );
     expect(
       await screen.findByText(
-        `Total purchase from suppliers, ${companyFactsMock.totalPurchaseFromSuppliers}`
+        `Total purchase from suppliers, ${
+          CompanyFactsMocks.companyFacts1().totalPurchaseFromSuppliers
+        }`
       )
     ).toBeInTheDocument();
     await user.click(screen.getByText('Update CompanyFacts'));

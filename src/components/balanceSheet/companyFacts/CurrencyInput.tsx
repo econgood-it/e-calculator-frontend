@@ -18,8 +18,6 @@ type CurrencyInputProps<T> = {
   fullWidth: boolean;
 };
 
-// https://medium.com/reactbrasil/make-your-react-component-generic-with-typescript-497378515667
-
 const CurrencyInput = <T extends unknown>({
   fullWidth,
   label,
@@ -38,6 +36,7 @@ const CurrencyInput = <T extends unknown>({
           valueAsNumber: true,
           required: required,
         })}
+        aria-label={registerKey}
         startAdornment={<InputAdornment position="start">€</InputAdornment>}
         error={error}
         label={label}

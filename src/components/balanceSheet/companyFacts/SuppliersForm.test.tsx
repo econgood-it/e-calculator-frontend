@@ -4,8 +4,8 @@ import SuppliersForm from './SuppliersForm';
 import userEvent from '@testing-library/user-event';
 import renderWithTheme from '../../../testUtils/rendering';
 import {
-  balanceSheetMock,
-  companyFactsMock,
+  BalanceSheetMocks,
+  CompanyFactsMocks,
 } from '../../../testUtils/balanceSheets';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 jest.mock('../../../contexts/ActiveBalanceSheetProvider');
@@ -15,19 +15,19 @@ describe('SuppliersForm', () => {
 
   beforeEach(() => {
     (useActiveBalanceSheet as jest.Mock).mockReturnValue({
-      balanceSheet: { ...balanceSheetMock },
+      balanceSheet: { ...BalanceSheetMocks.balanceSheet1() },
       updateCompanyFacts: updateCompanyFacts,
     });
   });
 
   it('should set default value and validate all modifications for the field total purchase from suppliers', async () => {
     const user = userEvent.setup();
-    renderWithTheme(<SuppliersForm companyFacts={{ ...companyFactsMock }} />);
-    const input = screen.getByRole('textbox', {
-      name: 'Total purchases from suppliers',
-    });
+    renderWithTheme(
+      <SuppliersForm companyFacts={CompanyFactsMocks.companyFacts1()} />
+    );
+    const input = screen.getByLabelText('Total purchases from suppliers');
     expect(input).toHaveValue(
-      companyFactsMock.totalPurchaseFromSuppliers.toString()
+      CompanyFactsMocks.companyFacts1().totalPurchaseFromSuppliers.toString()
     );
 
     await user.clear(input);
@@ -47,18 +47,29 @@ describe('SuppliersForm', () => {
     expect(input).toHaveValue('7');
   });
 
-  it('calls updateCompanyFacts if user clicks on save button', async () => {
+  it('saves changes on total purchase from suppliers field', async () => {
     const user = userEvent.setup();
-    renderWithTheme(<SuppliersForm companyFacts={{ ...companyFactsMock }} />);
+    renderWithTheme(
+      <SuppliersForm companyFacts={CompanyFactsMocks.companyFacts1()} />
+    );
+    const input = screen.getByLabelText('Total purchases from suppliers');
+    await user.clear(input);
+    await user.type(input, '20');
+    expect(input).toHaveValue('20');
     const saveButton = screen.getByRole('button', { name: 'Save' });
     await user.click(saveButton);
-    expect(updateCompanyFacts).toHaveBeenCalled();
+    expect(updateCompanyFacts).toHaveBeenCalledWith({
+      ...CompanyFactsMocks.companyFacts1(),
+      totalPurchaseFromSuppliers: 20,
+    });
   });
 
   it('renders supply fractions', async () => {
-    renderWithTheme(<SuppliersForm companyFacts={{ ...companyFactsMock }} />);
+    renderWithTheme(
+      <SuppliersForm companyFacts={{ ...CompanyFactsMocks.companyFacts1() }} />
+    );
 
-    for (const index in companyFactsMock.supplyFractions) {
+    for (const index in CompanyFactsMocks.companyFacts1().supplyFractions) {
       // expect(
       //   screen.getByLabelText(`supplyFractions.${index}.countryCode`)
       // ).toBeInTheDocument();

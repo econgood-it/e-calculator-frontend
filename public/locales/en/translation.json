@@ -9,13 +9,15 @@
   "Social environment": "Social environment",
   "Delete": "Delete",
   "Total purchases from suppliers": "Total purchases from suppliers",
+  "Enter the 5 most important industry sectors whose products or services you use": "Enter the 5 most important industry sectors whose products or services you use.",
+  "Costs": "Costs",
   "Save": "Save",
   "Edit": "Edit",
   "Modifications saved": "Modifications saved",
-  "Number expected": "Number expected",
-  "Number should be positive": "Number should be positive",
   "Balance sheet": "Balance sheet",
   "Login failed": "Login failed",
   "ECG Calculator": "ECG Calculator",
-  "Create balance sheet": "Create balance sheet"
+  "Create balance sheet": "Create balance sheet",
+  "Number expected": "Number expected",
+  "Number should be positive": "Number should be positive"
 }

@@ -13,7 +13,7 @@ export const CompanyFactsSchema = z.object({
   supplyFractions: z
     .object({
       countryCode: z.string(),
-      costs: z.number(),
+      costs: CurrencySchema,
       industryCode: z.string(),
     })
     .array(),

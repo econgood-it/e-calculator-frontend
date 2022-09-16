@@ -6,7 +6,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { useApi } from '../contexts/ApiContext';
 import { useBalanceSheetItems } from '../contexts/BalanceSheetListContext';
-import { balanceSheetMock } from '../testUtils/balanceSheets';
+import { BalanceSheetMocks } from '../testUtils/balanceSheets';
 
 jest.mock('../contexts/ApiContext');
 jest.mock('../contexts/BalanceSheetListContext');
@@ -19,11 +19,12 @@ describe('Sidebar', () => {
     get: jest.fn(),
     post: jest.fn(),
   };
+  const balanceSheet = BalanceSheetMocks.balanceSheet1();
   beforeEach(() => {
     apiMock.post.mockImplementation((path: string) => {
       if (path === `/v1/balancesheets`) {
         return Promise.resolve({
-          data: { ...balanceSheetMock, id: 3 },
+          data: { ...balanceSheet, id: 3 },
         });
       }
     });

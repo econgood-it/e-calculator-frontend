@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { screen, within } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
 import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
-import { balanceSheetMock } from '../testUtils/balanceSheets';
+import { BalanceSheetMocks } from '../testUtils/balanceSheets';
 import RatingsPage from './RatingsPage';
 import userEvent from '@testing-library/user-event';
 import {
@@ -17,7 +17,7 @@ describe('RatingsPage', () => {
 
   beforeEach(() => {
     (useActiveBalanceSheet as jest.Mock).mockReturnValue({
-      balanceSheet: { ...balanceSheetMock },
+      balanceSheet: BalanceSheetMocks.balanceSheet1(),
       updateRating: updateRating,
     });
   });
@@ -26,15 +26,17 @@ describe('RatingsPage', () => {
     renderWithTheme(
       <RatingsPage stakeholderToFilterBy={StakholderShortNames.Suppliers} />
     );
-    const aspectsOfStakeholderSuppliers = balanceSheetMock.ratings
-      .filter((r) => r.shortName.startsWith(StakholderShortNames.Suppliers))
+    const aspectsOfStakeholderSuppliers = BalanceSheetMocks.balanceSheet1()
+      .ratings.filter((r) =>
+        r.shortName.startsWith(StakholderShortNames.Suppliers)
+      )
       .filter((r) => r.type === RatingType.aspect);
     aspectsOfStakeholderSuppliers.forEach((r, index) => {
       screen.debug(screen.getByText(r.shortName));
       expect(screen.getByText(r.shortName)).toBeInTheDocument();
     });
-    balanceSheetMock.ratings
-      .filter((r) => r.type === RatingType.topic)
+    BalanceSheetMocks.balanceSheet1()
+      .ratings.filter((r) => r.type === RatingType.topic)
       .forEach((r, index) => {
         expect(screen.queryByText(r.shortName)).not.toBeInTheDocument();
       });

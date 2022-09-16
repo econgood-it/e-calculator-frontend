@@ -1,5 +1,5 @@
 import { Trans, useTranslation } from 'react-i18next';
-import { useForm } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import CurrencyInput from './CurrencyInput';
 import GridContainer from '../../layout/GridContainer';
@@ -9,7 +9,7 @@ import {
   CompanyFacts,
   CompanyFactsSchema,
 } from '../../../dataTransferObjects/BalanceSheet';
-import { Button } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave } from '@fortawesome/free-solid-svg-icons';
 import { z } from 'zod';
@@ -25,6 +25,7 @@ type SuppliersFormProps = {
 
 const SuppliersFormInputSchema = CompanyFactsSchema.pick({
   totalPurchaseFromSuppliers: true,
+  supplyFractions: true,
 });
 
 type SuppliersFormInput = z.infer<typeof SuppliersFormInputSchema>;
@@ -36,10 +37,16 @@ const SuppliersForm = ({ companyFacts }: SuppliersFormProps) => {
     register,
     formState: { errors },
     handleSubmit,
+    control,
   } = useForm<CompanyFacts>({
     resolver: zodResolver(SuppliersFormInputSchema),
     mode: 'onChange',
     defaultValues: companyFacts,
+  });
+
+  const { fields } = useFieldArray({
+    control, // control props comes from useForm (optional: if you are using FormContext)
+    name: 'supplyFractions', // unique name for your Field Array
   });
 
   const onSaveClick = async (data: SuppliersFormInput) => {
@@ -62,6 +69,34 @@ const SuppliersForm = ({ companyFacts }: SuppliersFormProps) => {
           registerKey={'totalPurchaseFromSuppliers'}
           required={true}
         />
+      </GridItem>
+      <GridItem xs={12}>
+        <Typography variant={'h6'}>
+          <Trans>
+            Enter the 5 most important industry sectors whose products or
+            services you use.
+          </Trans>
+        </Typography>
+      </GridItem>
+      <GridItem xs={12}>
+        <GridContainer spacing={3}>
+          {fields.map((field, index) => (
+            <GridItem key={index} xs={12}>
+              <CurrencyInput<CompanyFacts>
+                fullWidth
+                label={<Trans>Costs</Trans>}
+                error={!!errors.supplyFractions?.[index]?.costs}
+                errorMessage={
+                  !!errors.supplyFractions?.[index]?.costs &&
+                  t(`${errors.supplyFractions?.[index]?.costs?.message}`)
+                }
+                register={register}
+                registerKey={`supplyFractions.${index}.costs`}
+                required={true}
+              />
+            </GridItem>
+          ))}
+        </GridContainer>
       </GridItem>
       <GridItem xs={12}>
         <Button
