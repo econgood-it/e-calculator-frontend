@@ -1,16 +1,15 @@
 import { z } from 'zod';
 import { RatingSchema } from './Rating';
-import i18n from '../i18n';
 
-const CurrenySchema = z
+const CurrencySchema = z
   .number({
-    invalid_type_error: i18n.t('Number expected'),
-    required_error: i18n.t('Number expected'),
+    invalid_type_error: 'Number expected',
+    required_error: 'Number expected',
   })
-  .positive(i18n.t('Number should be positive'));
+  .positive('Number should be positive');
 
 export const CompanyFactsSchema = z.object({
-  totalPurchaseFromSuppliers: CurrenySchema,
+  totalPurchaseFromSuppliers: CurrencySchema,
   supplyFractions: z
     .object({
       countryCode: z.string(),

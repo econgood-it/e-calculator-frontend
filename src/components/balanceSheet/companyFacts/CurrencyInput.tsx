@@ -11,7 +11,7 @@ import { ReactElement } from 'react';
 type CurrencyInputProps<T> = {
   label: ReactElement;
   error: boolean;
-  errorMessage?: string;
+  errorMessage?: string | boolean;
   registerKey: Path<T>;
   register: UseFormRegister<T>;
   required: boolean;

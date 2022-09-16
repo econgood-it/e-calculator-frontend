@@ -1,4 +1,4 @@
-import { Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import CurrencyInput from './CurrencyInput';
@@ -31,6 +31,7 @@ type SuppliersFormInput = z.infer<typeof SuppliersFormInputSchema>;
 
 const SuppliersForm = ({ companyFacts }: SuppliersFormProps) => {
   const { updateCompanyFacts } = useActiveBalanceSheet();
+  const { t } = useTranslation();
   const {
     register,
     formState: { errors },
@@ -53,7 +54,10 @@ const SuppliersForm = ({ companyFacts }: SuppliersFormProps) => {
           fullWidth
           label={<Trans>Total purchases from suppliers</Trans>}
           error={!!errors.totalPurchaseFromSuppliers}
-          errorMessage={errors.totalPurchaseFromSuppliers?.message}
+          errorMessage={
+            !!errors.totalPurchaseFromSuppliers &&
+            t(`${errors.totalPurchaseFromSuppliers?.message}`)
+          }
           register={register}
           registerKey={'totalPurchaseFromSuppliers'}
           required={true}
