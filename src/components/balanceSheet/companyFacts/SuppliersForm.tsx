@@ -5,15 +5,17 @@ import CurrencyInput from './CurrencyInput';
 import GridContainer from '../../layout/GridContainer';
 import GridItem from '../../layout/GridItem';
 import styled from 'styled-components';
-import {
-  CompanyFacts,
-  CompanyFactsSchema,
-} from '../../../dataTransferObjects/BalanceSheet';
 import { Button, Typography } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave } from '@fortawesome/free-solid-svg-icons';
 import { z } from 'zod';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
+import {
+  CompanyFacts,
+  CompanyFactsSchema,
+} from '../../../dataTransferObjects/CompanyFacts';
+import { Region } from '../../../dataTransferObjects/Region';
+import { RegionSelect } from './AutocompleteSelect';
 
 const FormContainer = styled(GridContainer)`
   padding: 10px;
@@ -21,6 +23,7 @@ const FormContainer = styled(GridContainer)`
 
 type SuppliersFormProps = {
   companyFacts: CompanyFacts;
+  regions: Region[];
 };
 
 const SuppliersFormInputSchema = CompanyFactsSchema.pick({
@@ -30,7 +33,7 @@ const SuppliersFormInputSchema = CompanyFactsSchema.pick({
 
 type SuppliersFormInput = z.infer<typeof SuppliersFormInputSchema>;
 
-const SuppliersForm = ({ companyFacts }: SuppliersFormProps) => {
+const SuppliersForm = ({ companyFacts, regions }: SuppliersFormProps) => {
   const { updateCompanyFacts } = useActiveBalanceSheet();
   const { t } = useTranslation();
   const {
@@ -82,18 +85,29 @@ const SuppliersForm = ({ companyFacts }: SuppliersFormProps) => {
         <GridContainer spacing={3}>
           {fields.map((field, index) => (
             <GridItem key={index} xs={12}>
-              <CurrencyInput<CompanyFacts>
-                fullWidth
-                label={<Trans>Costs</Trans>}
-                error={!!errors.supplyFractions?.[index]?.costs}
-                errorMessage={
-                  !!errors.supplyFractions?.[index]?.costs &&
-                  t(`${errors.supplyFractions?.[index]?.costs?.message}`)
-                }
-                register={register}
-                registerKey={`supplyFractions.${index}.costs`}
-                required={true}
-              />
+              <GridContainer spacing={3}>
+                <GridItem xs={12} sm={6}>
+                  <RegionSelect
+                    control={control}
+                    regions={regions}
+                    name={`supplyFractions.${index}.countryCode`}
+                  />
+                </GridItem>
+                <GridItem xs={12} sm={6}>
+                  <CurrencyInput<CompanyFacts>
+                    fullWidth
+                    label={<Trans>Costs</Trans>}
+                    error={!!errors.supplyFractions?.[index]?.costs}
+                    errorMessage={
+                      !!errors.supplyFractions?.[index]?.costs &&
+                      t(`${errors.supplyFractions?.[index]?.costs?.message}`)
+                    }
+                    register={register}
+                    registerKey={`supplyFractions.${index}.costs`}
+                    required={true}
+                  />
+                </GridItem>
+              </GridContainer>
             </GridItem>
           ))}
         </GridContainer>

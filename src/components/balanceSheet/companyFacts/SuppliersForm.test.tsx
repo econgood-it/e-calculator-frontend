@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import SuppliersForm from './SuppliersForm';
 import userEvent from '@testing-library/user-event';
 import renderWithTheme from '../../../testUtils/rendering';
@@ -8,6 +8,7 @@ import {
   CompanyFactsMocks,
 } from '../../../testUtils/balanceSheets';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
+import { regionsMocks } from '../../../testUtils/regions';
 jest.mock('../../../contexts/ActiveBalanceSheetProvider');
 
 describe('SuppliersForm', () => {
@@ -23,7 +24,10 @@ describe('SuppliersForm', () => {
   it('should set default value and validate all modifications for the field total purchase from suppliers', async () => {
     const user = userEvent.setup();
     renderWithTheme(
-      <SuppliersForm companyFacts={CompanyFactsMocks.companyFacts1()} />
+      <SuppliersForm
+        companyFacts={CompanyFactsMocks.companyFacts1()}
+        regions={regionsMocks.regions1()}
+      />
     );
     const input = screen.getByLabelText('Total purchases from suppliers');
     expect(input).toHaveValue(
@@ -50,7 +54,10 @@ describe('SuppliersForm', () => {
   it('saves changes on total purchase from suppliers field', async () => {
     const user = userEvent.setup();
     renderWithTheme(
-      <SuppliersForm companyFacts={CompanyFactsMocks.companyFacts1()} />
+      <SuppliersForm
+        companyFacts={CompanyFactsMocks.companyFacts1()}
+        regions={regionsMocks.regions1()}
+      />
     );
     const input = screen.getByLabelText('Total purchases from suppliers');
     await user.clear(input);
@@ -66,16 +73,44 @@ describe('SuppliersForm', () => {
 
   it('renders supply fractions', async () => {
     renderWithTheme(
-      <SuppliersForm companyFacts={{ ...CompanyFactsMocks.companyFacts1() }} />
+      <SuppliersForm
+        companyFacts={{ ...CompanyFactsMocks.companyFacts1() }}
+        regions={regionsMocks.regions1()}
+      />
     );
 
     for (const index in CompanyFactsMocks.companyFacts1().supplyFractions) {
-      // expect(
-      //   screen.getByLabelText(`supplyFractions.${index}.countryCode`)
-      // ).toBeInTheDocument();
       expect(
         screen.getByLabelText(`supplyFractions.${index}.costs`)
       ).toBeInTheDocument();
+      expect(
+        screen.getByLabelText(`supplyFractions.${index}.countryCode`)
+      ).toBeInTheDocument();
     }
+  });
+
+  it('saves changes of the supply fractions costs', async () => {
+    const user = userEvent.setup();
+    renderWithTheme(
+      <SuppliersForm
+        companyFacts={{ ...CompanyFactsMocks.companyFacts1() }}
+        regions={regionsMocks.regions1()}
+      />
+    );
+    for (const index in CompanyFactsMocks.companyFacts1().supplyFractions) {
+      const costsInputField = within(
+        screen.getByLabelText(`supplyFractions.${index}.costs`)
+      ).getByRole('textbox');
+      await user.clear(costsInputField);
+      await user.type(costsInputField, '20');
+    }
+    const saveButton = screen.getByRole('button', { name: 'Save' });
+    await user.click(saveButton);
+    expect(updateCompanyFacts).toHaveBeenCalledWith({
+      ...CompanyFactsMocks.companyFacts1(),
+      supplyFractions: CompanyFactsMocks.companyFacts1().supplyFractions.map(
+        (s) => ({ ...s, costs: 20 })
+      ),
+    });
   });
 });

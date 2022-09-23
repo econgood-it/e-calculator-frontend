@@ -9,13 +9,13 @@ import { useParams } from 'react-router-dom';
 import {
   BalanceSheet,
   BalanceSheetResponseSchema,
-  CompanyFactsRequestBody,
 } from '../dataTransferObjects/BalanceSheet';
 import { useApi } from './ApiContext';
 
 import { Rating } from '../dataTransferObjects/Rating';
 import { useAlert } from './AlertContext';
 import { useTranslation } from 'react-i18next';
+import { CompanyFactsRequestBody } from '../dataTransferObjects/CompanyFacts';
 
 interface IActiveBalanceSheetContext {
   balanceSheet?: BalanceSheet;

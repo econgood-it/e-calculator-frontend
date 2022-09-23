@@ -1,8 +1,6 @@
-import {
-  BalanceSheet,
-  CompanyFacts,
-} from '../dataTransferObjects/BalanceSheet';
+import { BalanceSheet } from '../dataTransferObjects/BalanceSheet';
 import { RatingType } from '../dataTransferObjects/Rating';
+import { CompanyFacts } from '../dataTransferObjects/CompanyFacts';
 
 export const CompanyFactsMocks = {
   companyFacts1: (): CompanyFacts => ({
