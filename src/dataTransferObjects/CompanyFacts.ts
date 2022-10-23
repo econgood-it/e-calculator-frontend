@@ -5,7 +5,7 @@ const CurrencySchema = z
     invalid_type_error: 'Number expected',
     required_error: 'Number expected',
   })
-  .positive('Number should be positive');
+  .nonnegative('Number should be positive');
 
 export const CompanyFactsSchema = z.object({
   totalPurchaseFromSuppliers: CurrencySchema,
