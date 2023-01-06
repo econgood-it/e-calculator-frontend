@@ -19,8 +19,8 @@ import { CompanyFactsRequestBody } from '../dataTransferObjects/CompanyFacts';
 
 interface IActiveBalanceSheetContext {
   balanceSheet?: BalanceSheet;
-  updateRating: (rating: Rating) => void;
-  updateCompanyFacts: (companyFacts: CompanyFactsRequestBody) => void;
+  updateRating: (rating: Rating) => Promise<void>;
+  updateCompanyFacts: (companyFacts: CompanyFactsRequestBody) => Promise<void>;
 }
 
 const ActiveBalanceSheetContext = createContext<

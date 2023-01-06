@@ -9,21 +9,27 @@ type AutocompleteSelectProps = {
   getOptionLabel: (option: any) => string;
   name: string;
   label: string;
+  defaultValue: string;
 };
 export default function AutocompleteSelect({
   control,
   options,
   getOptionLabel,
+  defaultValue,
   name,
   label,
 }: AutocompleteSelectProps) {
   return (
     <Controller
+      defaultValue={defaultValue}
       render={({ field }) => (
         <Autocomplete
           {...field}
           options={options}
           getOptionLabel={getOptionLabel}
+          isOptionEqualToValue={(option, value) =>
+            value === defaultValue ? true : option === value
+          }
           aria-label={name}
           renderInput={(params) => (
             <TextField {...params} label={label} variant="outlined" />
@@ -41,20 +47,32 @@ type RegionSelectProps = {
   control: any;
   regions: Region[];
   name: string;
+  defaultValue: string;
 };
 
-export function RegionSelect({ control, regions, name }: RegionSelectProps) {
+export function RegionSelect({
+  control,
+  regions,
+  name,
+  defaultValue,
+}: RegionSelectProps) {
   const { t } = useTranslation();
-  const getOptionLabel = (option: any) =>
-    `${option} ${regions.find((r) => r.countryCode === option)?.countryName}`;
+  const defaultLabel = t`Choose a region`;
+  const getOptionLabel = (option: string) =>
+    option === defaultValue
+      ? defaultLabel.toString()
+      : `${option} ${
+          regions.find((r) => r.countryCode === option)?.countryName
+        }`;
 
   return (
     <AutocompleteSelect
+      defaultValue={defaultValue}
       control={control}
       options={regions.map((r) => r.countryCode)}
       getOptionLabel={getOptionLabel}
       name={name}
-      label={t`Choose a region`}
+      label={defaultLabel}
     />
   );
 }

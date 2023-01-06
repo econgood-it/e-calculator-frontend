@@ -11,7 +11,7 @@ export const CompanyFactsSchema = z.object({
   totalPurchaseFromSuppliers: CurrencySchema,
   supplyFractions: z
     .object({
-      countryCode: z.string(),
+      countryCode: z.string().optional(),
       costs: CurrencySchema,
       industryCode: z.string(),
     })

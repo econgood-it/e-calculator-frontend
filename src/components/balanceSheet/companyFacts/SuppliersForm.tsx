@@ -26,16 +26,25 @@ type SuppliersFormProps = {
   regions: Region[];
 };
 
+const DEFAULT_COUNTRY_CODE = 'DEFAULT_COUNTRY_CODE';
 const SuppliersFormInputSchema = CompanyFactsSchema.pick({
   totalPurchaseFromSuppliers: true,
   supplyFractions: true,
-});
+}).transform((cf) => ({
+  ...cf,
+  supplyFractions: cf.supplyFractions.map((sf) =>
+    sf.countryCode === DEFAULT_COUNTRY_CODE
+      ? { ...sf, countryCode: undefined }
+      : sf
+  ),
+}));
 
 type SuppliersFormInput = z.infer<typeof SuppliersFormInputSchema>;
 
 const SuppliersForm = ({ companyFacts, regions }: SuppliersFormProps) => {
   const { updateCompanyFacts } = useActiveBalanceSheet();
   const { t } = useTranslation();
+
   const {
     register,
     formState: { errors },
@@ -47,7 +56,7 @@ const SuppliersForm = ({ companyFacts, regions }: SuppliersFormProps) => {
     defaultValues: companyFacts,
   });
 
-  const { fields } = useFieldArray({
+  const { fields, append } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
     name: 'supplyFractions', // unique name for your Field Array
   });
@@ -55,6 +64,10 @@ const SuppliersForm = ({ companyFacts, regions }: SuppliersFormProps) => {
   const onSaveClick = async (data: SuppliersFormInput) => {
     const newCompanyFacts = SuppliersFormInputSchema.parse(data);
     await updateCompanyFacts(newCompanyFacts);
+  };
+
+  const addSupplierFraction = () => {
+    append({ countryCode: undefined, industryCode: 'A', costs: 0 });
   };
 
   return (
@@ -82,6 +95,11 @@ const SuppliersForm = ({ companyFacts, regions }: SuppliersFormProps) => {
         </Typography>
       </GridItem>
       <GridItem xs={12}>
+        <Button onClick={() => addSupplierFraction()}>
+          <Trans>Add supplier</Trans>
+        </Button>
+      </GridItem>
+      <GridItem xs={12}>
         <GridContainer spacing={3}>
           {fields.map((field, index) => (
             <GridItem key={index} xs={12}>
@@ -90,6 +108,7 @@ const SuppliersForm = ({ companyFacts, regions }: SuppliersFormProps) => {
                   <RegionSelect
                     control={control}
                     regions={regions}
+                    defaultValue={DEFAULT_COUNTRY_CODE}
                     name={`supplyFractions.${index}.countryCode`}
                   />
                 </GridItem>

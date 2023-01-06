@@ -113,4 +113,37 @@ describe('SuppliersForm', () => {
       ),
     });
   });
+
+  it('adds supply fraction and saves changes', async () => {
+    const user = userEvent.setup();
+    renderWithTheme(
+      <SuppliersForm
+        companyFacts={{ ...CompanyFactsMocks.companyFacts1() }}
+        regions={regionsMocks.regions1()}
+      />
+    );
+    const addSupplierButton = screen.getByRole('button', {
+      name: 'Add supplier',
+    });
+    await user.click(addSupplierButton);
+
+    const costsInputField = within(
+      screen.getByLabelText(
+        `supplyFractions.${
+          CompanyFactsMocks.companyFacts1().supplyFractions.length
+        }.costs`
+      )
+    ).getByRole('textbox');
+    await user.clear(costsInputField);
+    await user.type(costsInputField, '20');
+    const saveButton = screen.getByRole('button', { name: 'Save' });
+    await user.click(saveButton);
+    expect(updateCompanyFacts).toHaveBeenCalledWith({
+      ...CompanyFactsMocks.companyFacts1(),
+      supplyFractions: [
+        ...CompanyFactsMocks.companyFacts1().supplyFractions,
+        { countryCode: undefined, industryCode: 'A', costs: 20 },
+      ],
+    });
+  });
 });
