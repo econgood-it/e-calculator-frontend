@@ -32,7 +32,6 @@ describe('RatingsPage', () => {
       )
       .filter((r) => r.type === RatingType.aspect);
     aspectsOfStakeholderSuppliers.forEach((r, index) => {
-      screen.debug(screen.getByText(r.shortName));
       expect(screen.getByText(r.shortName)).toBeInTheDocument();
     });
     BalanceSheetMocks.balanceSheet1()
