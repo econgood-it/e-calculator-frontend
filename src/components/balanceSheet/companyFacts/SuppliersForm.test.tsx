@@ -146,4 +146,26 @@ describe('SuppliersForm', () => {
       ],
     });
   });
+
+  it('removes supply fraction and saves changes', async () => {
+    const user = userEvent.setup();
+    renderWithTheme(
+      <SuppliersForm
+        companyFacts={{ ...CompanyFactsMocks.companyFacts1() }}
+        regions={regionsMocks.regions1()}
+      />
+    );
+    const removeSupplierButton = screen.getByRole('button', {
+      name: `Remove supply fraction with 0`,
+    });
+    await user.click(removeSupplierButton);
+    const saveButton = screen.getByRole('button', { name: 'Save' });
+    await user.click(saveButton);
+    expect(updateCompanyFacts).toHaveBeenCalledWith({
+      ...CompanyFactsMocks.companyFacts1(),
+      supplyFractions: [
+        ...CompanyFactsMocks.companyFacts1().supplyFractions.slice(1),
+      ],
+    });
+  });
 });

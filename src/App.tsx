@@ -20,6 +20,7 @@ export const themeOptions: ThemeOptions = {
       main: '#00828b',
       contrastText: 'rgba(255,255,255,0.8)',
     },
+    error: { main: '#C2887C' },
   },
   shape: {
     borderRadius: 0,

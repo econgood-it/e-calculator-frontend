@@ -5,9 +5,9 @@ import CurrencyInput from './CurrencyInput';
 import GridContainer from '../../layout/GridContainer';
 import GridItem from '../../layout/GridItem';
 import styled from 'styled-components';
-import { Button, Typography } from '@mui/material';
+import { Button, IconButton, Typography } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSave } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { z } from 'zod';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import {
@@ -56,7 +56,7 @@ const SuppliersForm = ({ companyFacts, regions }: SuppliersFormProps) => {
     defaultValues: companyFacts,
   });
 
-  const { fields, append } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
     name: 'supplyFractions', // unique name for your Field Array
   });
@@ -69,9 +69,12 @@ const SuppliersForm = ({ companyFacts, regions }: SuppliersFormProps) => {
   const addSupplierFraction = () => {
     append({ countryCode: undefined, industryCode: 'A', costs: 0 });
   };
+  const removeSupplierFraction = (index: number) => {
+    remove(index);
+  };
 
   return (
-    <FormContainer spacing={2}>
+    <FormContainer spacing={3}>
       <GridItem xs={12}>
         <CurrencyInput<CompanyFacts>
           fullWidth
@@ -95,7 +98,11 @@ const SuppliersForm = ({ companyFacts, regions }: SuppliersFormProps) => {
         </Typography>
       </GridItem>
       <GridItem xs={12}>
-        <Button onClick={() => addSupplierFraction()}>
+        <Button
+          variant={'contained'}
+          startIcon={<FontAwesomeIcon icon={faPlus} />}
+          onClick={() => addSupplierFraction()}
+        >
           <Trans>Add supplier</Trans>
         </Button>
       </GridItem>
@@ -103,8 +110,8 @@ const SuppliersForm = ({ companyFacts, regions }: SuppliersFormProps) => {
         <GridContainer spacing={3}>
           {fields.map((field, index) => (
             <GridItem key={index} xs={12}>
-              <GridContainer spacing={3}>
-                <GridItem xs={12} sm={6}>
+              <GridContainer spacing={3} alignItems="center">
+                <GridItem xs={12} sm={10}>
                   <RegionSelect
                     control={control}
                     regions={regions}
@@ -112,7 +119,7 @@ const SuppliersForm = ({ companyFacts, regions }: SuppliersFormProps) => {
                     name={`supplyFractions.${index}.countryCode`}
                   />
                 </GridItem>
-                <GridItem xs={12} sm={6}>
+                <GridItem xs={12} sm={1}>
                   <CurrencyInput<CompanyFacts>
                     fullWidth
                     label={<Trans>Costs</Trans>}
@@ -125,6 +132,15 @@ const SuppliersForm = ({ companyFacts, regions }: SuppliersFormProps) => {
                     registerKey={`supplyFractions.${index}.costs`}
                     required={true}
                   />
+                </GridItem>
+                <GridItem xs={12} sm={1}>
+                  <IconButton
+                    onClick={() => removeSupplierFraction(index)}
+                    aria-label={`Remove supply fraction with ${index}`}
+                    color="error"
+                  >
+                    <FontAwesomeIcon icon={faTrash} />
+                  </IconButton>
                 </GridItem>
               </GridContainer>
             </GridItem>

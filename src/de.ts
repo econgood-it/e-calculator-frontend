@@ -1,0 +1,28 @@
+export const DE_TRANSLATIONS = {
+  'Balance sheet {{id}}': 'Bilanz {{id}}',
+  'Company Facts': 'Fakten zum Unternehmen',
+  Ratings: 'Selbsteinschätzung',
+  Suppliers: 'Lieferanten',
+  'Financial service providers': 'Finanzdienstleister',
+  Employees: 'Mitarbeiter*innen',
+  'Customers and other companies': 'Kunden und andere Firmen',
+  'Social environment': 'Gesellschaft',
+  Delete: 'Löschen',
+  'Total purchases from suppliers': 'Gesamt-Ausgaben an Lieferanten',
+  'Enter the 5 most important industry sectors whose products or services you use':
+    'Geben Sie die 5 wichtigsten Wirtschaftszweige an, deren Produkte oder Dienstleistungen Sie nutzen.',
+  Costs: 'Kosten',
+  Save: 'Speichern',
+  Edit: 'Bearbeiten',
+  'Modifications saved': 'Änderungen gespeichert',
+  'Balance sheet': 'Bilanz',
+  'Login failed': 'Login fehlgeschlagen',
+  'ECG Calculator': 'GWÖ Rechner',
+  'Create balance sheet': 'Bilanz erstellen',
+  'Number expected': 'Zahl erwartet',
+  'Number should be positive': 'Zahl sollte positiv sein',
+  'Choose a region': 'Wählen Sie eine Region',
+  'Add supplier': 'Lieferant hinzufügen',
+  'Enter the 5 most important industry sectors whose products or services you use.':
+    'Tragen Sie nachstehend, bitte die 5 wichtigsten Branchen ein, aus denen Sie Produkte/Dienstleistungen beziehen.',
+};
