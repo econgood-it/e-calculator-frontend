@@ -24,7 +24,7 @@ function AutocompleteSelect({
   return (
     <Controller
       defaultValue={defaultValue}
-      render={({ field }) => (
+      render={({ field, fieldState }) => (
         <Autocomplete
           {...field}
           options={options}
@@ -34,7 +34,12 @@ function AutocompleteSelect({
           }
           aria-label={name}
           renderInput={(params) => (
-            <TextField {...params} label={label} variant="outlined" />
+            <TextField
+              error={!!fieldState.error}
+              {...params}
+              label={label}
+              variant="outlined"
+            />
           )}
           onChange={(_, data) => field.onChange(data)}
         />
