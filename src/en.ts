@@ -22,6 +22,7 @@ export const EN_TRANSLATIONS = {
   'Number expected': 'Number expected',
   'Number should be positive': 'Number should be positive',
   'Choose a region': 'Choose a region',
+  'Choose an industry sector': 'Choose an industry sector',
   'Add supplier': 'Add supplier',
   'Enter the 5 most important industry sectors whose products or services you use.':
     'Enter the 5 most important industry sectors whose products or services you use.',

@@ -9,6 +9,7 @@ import {
 } from '../../../testUtils/balanceSheets';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { regionsMocks } from '../../../testUtils/regions';
+import { industriesMocks } from '../../../testUtils/industries';
 jest.mock('../../../contexts/ActiveBalanceSheetProvider');
 
 describe('SuppliersForm', () => {
@@ -27,6 +28,7 @@ describe('SuppliersForm', () => {
       <SuppliersForm
         companyFacts={CompanyFactsMocks.companyFacts1()}
         regions={regionsMocks.regions1()}
+        industries={industriesMocks.industries1()}
       />
     );
     const input = screen.getByLabelText('Total purchases from suppliers');
@@ -57,6 +59,7 @@ describe('SuppliersForm', () => {
       <SuppliersForm
         companyFacts={CompanyFactsMocks.companyFacts1()}
         regions={regionsMocks.regions1()}
+        industries={industriesMocks.industries1()}
       />
     );
     const input = screen.getByLabelText('Total purchases from suppliers');
@@ -76,6 +79,7 @@ describe('SuppliersForm', () => {
       <SuppliersForm
         companyFacts={{ ...CompanyFactsMocks.companyFacts1() }}
         regions={regionsMocks.regions1()}
+        industries={industriesMocks.industries1()}
       />
     );
 
@@ -86,6 +90,9 @@ describe('SuppliersForm', () => {
       expect(
         screen.getByLabelText(`supplyFractions.${index}.countryCode`)
       ).toBeInTheDocument();
+      expect(
+        screen.getByLabelText(`supplyFractions.${index}.industryCode`)
+      ).toBeInTheDocument();
     }
   });
 
@@ -95,6 +102,7 @@ describe('SuppliersForm', () => {
       <SuppliersForm
         companyFacts={{ ...CompanyFactsMocks.companyFacts1() }}
         regions={regionsMocks.regions1()}
+        industries={industriesMocks.industries1()}
       />
     );
     for (const index in CompanyFactsMocks.companyFacts1().supplyFractions) {
@@ -120,29 +128,20 @@ describe('SuppliersForm', () => {
       <SuppliersForm
         companyFacts={{ ...CompanyFactsMocks.companyFacts1() }}
         regions={regionsMocks.regions1()}
+        industries={industriesMocks.industries1()}
       />
     );
     const addSupplierButton = screen.getByRole('button', {
       name: 'Add supplier',
     });
     await user.click(addSupplierButton);
-
-    const costsInputField = within(
-      screen.getByLabelText(
-        `supplyFractions.${
-          CompanyFactsMocks.companyFacts1().supplyFractions.length
-        }.costs`
-      )
-    ).getByRole('textbox');
-    await user.clear(costsInputField);
-    await user.type(costsInputField, '20');
     const saveButton = screen.getByRole('button', { name: 'Save' });
     await user.click(saveButton);
     expect(updateCompanyFacts).toHaveBeenCalledWith({
       ...CompanyFactsMocks.companyFacts1(),
       supplyFractions: [
         ...CompanyFactsMocks.companyFacts1().supplyFractions,
-        { countryCode: undefined, industryCode: 'A', costs: 20 },
+        { countryCode: undefined, industryCode: undefined, costs: 0 },
       ],
     });
   });
@@ -153,6 +152,7 @@ describe('SuppliersForm', () => {
       <SuppliersForm
         companyFacts={{ ...CompanyFactsMocks.companyFacts1() }}
         regions={regionsMocks.regions1()}
+        industries={industriesMocks.industries1()}
       />
     );
     const removeSupplierButton = screen.getByRole('button', {

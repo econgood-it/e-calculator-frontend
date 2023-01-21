@@ -1,15 +1,12 @@
 import '@testing-library/jest-dom';
-import { act, screen, waitFor } from '@testing-library/react';
+import { waitFor } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
-import BalanceSheetListPage from './BalanceSheetListPage';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import userEvent from '@testing-library/user-event';
-import { useBalanceSheetItems } from '../contexts/BalanceSheetListContext';
 import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
 import { BalanceSheetMocks } from '../testUtils/balanceSheets';
 import { regionsMocks } from '../testUtils/regions';
 import CompanyFactsPage from './CompanyFactsPage';
 import { useApi } from '../contexts/ApiContext';
+import { industriesMocks } from '../testUtils/industries';
 
 jest.mock('../contexts/ActiveBalanceSheetProvider');
 
@@ -28,6 +25,11 @@ describe('CompanyFactsPage', () => {
           data: regionsMocks.regions1(),
         });
       }
+      if (path === `/v1/industries`) {
+        return Promise.resolve({
+          data: industriesMocks.industries1(),
+        });
+      }
     });
     (useApi as jest.Mock).mockImplementation(() => apiMock);
   });
@@ -36,6 +38,9 @@ describe('CompanyFactsPage', () => {
     renderWithTheme(<CompanyFactsPage />);
     await waitFor(() =>
       expect(apiMock.get).toHaveBeenCalledWith('/v1/regions')
+    );
+    await waitFor(() =>
+      expect(apiMock.get).toHaveBeenCalledWith('/v1/industries')
     );
   });
 });

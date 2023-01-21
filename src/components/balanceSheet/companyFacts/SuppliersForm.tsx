@@ -15,7 +15,8 @@ import {
   CompanyFactsSchema,
 } from '../../../dataTransferObjects/CompanyFacts';
 import { Region } from '../../../dataTransferObjects/Region';
-import { RegionSelect } from './AutocompleteSelect';
+import { RegionSelect, IndustrySelect } from './AutocompleteSelects';
+import { Industry } from '../../../dataTransferObjects/Industry';
 
 const FormContainer = styled(GridContainer)`
   padding: 10px;
@@ -24,24 +25,21 @@ const FormContainer = styled(GridContainer)`
 type SuppliersFormProps = {
   companyFacts: CompanyFacts;
   regions: Region[];
+  industries: Industry[];
 };
 
-const DEFAULT_COUNTRY_CODE = 'DEFAULT_COUNTRY_CODE';
+const DEFAULT_CODE = 'DEFAULT_CODE';
 const SuppliersFormInputSchema = CompanyFactsSchema.pick({
   totalPurchaseFromSuppliers: true,
   supplyFractions: true,
-}).transform((cf) => ({
-  ...cf,
-  supplyFractions: cf.supplyFractions.map((sf) =>
-    sf.countryCode === DEFAULT_COUNTRY_CODE
-      ? { ...sf, countryCode: undefined }
-      : sf
-  ),
-}));
-
+});
 type SuppliersFormInput = z.infer<typeof SuppliersFormInputSchema>;
 
-const SuppliersForm = ({ companyFacts, regions }: SuppliersFormProps) => {
+const SuppliersForm = ({
+  companyFacts,
+  regions,
+  industries,
+}: SuppliersFormProps) => {
   const { updateCompanyFacts } = useActiveBalanceSheet();
   const { t } = useTranslation();
 
@@ -63,11 +61,20 @@ const SuppliersForm = ({ companyFacts, regions }: SuppliersFormProps) => {
 
   const onSaveClick = async (data: SuppliersFormInput) => {
     const newCompanyFacts = SuppliersFormInputSchema.parse(data);
-    await updateCompanyFacts(newCompanyFacts);
+    await updateCompanyFacts({
+      ...newCompanyFacts,
+      supplyFractions: newCompanyFacts.supplyFractions.map((sf) => {
+        const countryCode =
+          sf.countryCode === DEFAULT_CODE ? undefined : sf.countryCode;
+        const industryCode =
+          sf.industryCode === DEFAULT_CODE ? undefined : sf.industryCode;
+        return { ...sf, countryCode: countryCode, industryCode: industryCode };
+      }),
+    });
   };
 
   const addSupplierFraction = () => {
-    append({ countryCode: undefined, industryCode: 'A', costs: 0 });
+    append({ countryCode: undefined, industryCode: undefined, costs: 0 });
   };
   const removeSupplierFraction = (index: number) => {
     remove(index);
@@ -111,11 +118,19 @@ const SuppliersForm = ({ companyFacts, regions }: SuppliersFormProps) => {
           {fields.map((field, index) => (
             <GridItem key={index} xs={12}>
               <GridContainer spacing={3} alignItems="center">
-                <GridItem xs={12} sm={10}>
+                <GridItem xs={12} sm={5}>
+                  <IndustrySelect
+                    control={control}
+                    industries={industries}
+                    defaultValue={DEFAULT_CODE}
+                    name={`supplyFractions.${index}.industryCode`}
+                  />
+                </GridItem>
+                <GridItem xs={12} sm={5}>
                   <RegionSelect
                     control={control}
                     regions={regions}
-                    defaultValue={DEFAULT_COUNTRY_CODE}
+                    defaultValue={DEFAULT_CODE}
                     name={`supplyFractions.${index}.countryCode`}
                   />
                 </GridItem>

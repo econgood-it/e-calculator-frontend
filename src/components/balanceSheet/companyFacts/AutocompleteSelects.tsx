@@ -2,6 +2,7 @@ import { Controller } from 'react-hook-form';
 import { Autocomplete, TextField } from '@mui/material';
 import { Region } from '../../../dataTransferObjects/Region';
 import { useTranslation } from 'react-i18next';
+import { Industry } from '../../../dataTransferObjects/Industry';
 
 type AutocompleteSelectProps = {
   control: any;
@@ -11,7 +12,8 @@ type AutocompleteSelectProps = {
   label: string;
   defaultValue: string;
 };
-export default function AutocompleteSelect({
+
+function AutocompleteSelect({
   control,
   options,
   getOptionLabel,
@@ -70,6 +72,40 @@ export function RegionSelect({
       defaultValue={defaultValue}
       control={control}
       options={regions.map((r) => r.countryCode)}
+      getOptionLabel={getOptionLabel}
+      name={name}
+      label={defaultLabel}
+    />
+  );
+}
+
+type IndustrySelectProps = {
+  control: any;
+  industries: Industry[];
+  name: string;
+  defaultValue: string;
+};
+
+export function IndustrySelect({
+  control,
+  industries,
+  name,
+  defaultValue,
+}: IndustrySelectProps) {
+  const { t } = useTranslation();
+  const defaultLabel = t`Choose an industry sector`;
+  const getOptionLabel = (option: string) =>
+    option === defaultValue
+      ? defaultLabel.toString()
+      : `${option} - ${
+          industries.find((i) => i.industryCode === option)?.industryName
+        }`;
+
+  return (
+    <AutocompleteSelect
+      defaultValue={defaultValue}
+      control={control}
+      options={industries.map((i) => i.industryCode)}
       getOptionLabel={getOptionLabel}
       name={name}
       label={defaultLabel}

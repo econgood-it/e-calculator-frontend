@@ -5,9 +5,11 @@ import { regionsMocks } from '../../../testUtils/regions';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { RegionSelect } from './AutocompleteSelect';
+import { RegionSelect, IndustrySelect } from './AutocompleteSelects';
 import { Region } from '../../../dataTransferObjects/Region';
 import { screen } from '@testing-library/react';
+import { Industry } from '../../../dataTransferObjects/Industry';
+import { industriesMocks } from '../../../testUtils/industries';
 describe('RegionSelect', () => {
   const defaultValue = 'defaultValue';
   function TestComponent({
@@ -62,6 +64,69 @@ describe('RegionSelect', () => {
     expect(
       screen.getByRole('combobox', {
         name: 'Choose a region',
+      })
+    );
+  });
+});
+
+describe('IndustrySelect', () => {
+  const defaultValue = 'defaultValue';
+  const defaultLabel = 'Choose an industry sector';
+  function TestComponent({
+    industries,
+    industryCode,
+  }: {
+    industries: Industry[];
+    industryCode: string | undefined;
+  }) {
+    const FormInputSchema = z.object({
+      industryCode: z.string(),
+    });
+    const { control } = useForm<z.infer<typeof FormInputSchema>>({
+      resolver: zodResolver(FormInputSchema),
+      mode: 'onChange',
+      defaultValues: { industryCode: industryCode },
+    });
+    return (
+      <IndustrySelect
+        name={`industryCode`}
+        industries={industries}
+        control={control}
+        defaultValue={defaultValue}
+      />
+    );
+  }
+
+  it('shows found industry when searching for a industry name', async () => {
+    const user = userEvent.setup();
+    renderWithTheme(
+      <TestComponent
+        industries={industriesMocks.industries1()}
+        industryCode={'B'}
+      />
+    );
+    const searchField = screen.getByRole('combobox', {
+      name: defaultLabel,
+    });
+    const industry = industriesMocks.industries1()[0];
+    await user.type(searchField, industry.industryName);
+    expect(
+      screen.getByRole('option', {
+        name: `${industry.industryCode} - ${industry.industryName}`,
+      })
+    );
+  });
+
+  it(`shows ${defaultLabel} when industry code is undefined`, async () => {
+    renderWithTheme(
+      <TestComponent
+        industries={industriesMocks.industries1()}
+        industryCode={undefined}
+      />
+    );
+    expect(
+      screen.getByRole('combobox', {
+        name: defaultLabel,
       })
     );
   });

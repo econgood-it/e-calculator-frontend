@@ -22,6 +22,7 @@ export const DE_TRANSLATIONS = {
   'Number expected': 'Zahl erwartet',
   'Number should be positive': 'Zahl sollte positiv sein',
   'Choose a region': 'Wählen Sie eine Region',
+  'Choose an industry sector': 'Wählen Sie eine Branche',
   'Add supplier': 'Lieferant hinzufügen',
   'Enter the 5 most important industry sectors whose products or services you use.':
     'Tragen Sie nachstehend, bitte die 5 wichtigsten Branchen ein, aus denen Sie Produkte/Dienstleistungen beziehen.',
