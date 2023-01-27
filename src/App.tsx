@@ -11,7 +11,15 @@ import AppRoutes from './routing/AppRoutes';
 import { BrowserRouter as Router } from 'react-router-dom';
 
 export const themeOptions: ThemeOptions = {
+  typography: {
+    allVariants: {
+      color: '#747474',
+    },
+  },
   palette: {
+    text: {
+      primary: '#747474',
+    },
     primary: {
       main: '#94a231',
       contrastText: 'rgba(255,255,255,0.8)',

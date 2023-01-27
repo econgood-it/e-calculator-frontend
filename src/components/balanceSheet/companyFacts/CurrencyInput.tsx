@@ -16,6 +16,7 @@ type CurrencyInputProps<T> = {
   register: UseFormRegister<T>;
   required: boolean;
   fullWidth: boolean;
+  readOnly?: boolean;
 };
 
 const CurrencyInput = <T extends unknown>({
@@ -26,11 +27,13 @@ const CurrencyInput = <T extends unknown>({
   required,
   error,
   errorMessage,
+  readOnly,
 }: CurrencyInputProps<T>) => {
   return (
     <FormControl fullWidth={fullWidth}>
       <InputLabel htmlFor="outlined-adornment-amount">{label}</InputLabel>
       <OutlinedInput
+        readOnly={readOnly}
         id="outlined-adornment-amount"
         {...register(registerKey, {
           valueAsNumber: true,

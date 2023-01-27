@@ -10,7 +10,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import { AppBar, Box } from '@mui/material';
+import { AppBar, Box, useTheme } from '@mui/material';
 import { Trans } from 'react-i18next';
 import styled from 'styled-components';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -46,6 +46,7 @@ const Content = styled.div<{ $open: boolean; $drawerWidth: number }>`
 `;
 
 export default function Sidebar() {
+  const theme = useTheme();
   const [open, setOpen] = useState<boolean>(true);
   const [balanceSheetItems, setBalanceSheetItems] = useBalanceSheetItems();
   const navigate = useNavigate();
@@ -81,7 +82,12 @@ export default function Sidebar() {
           <IconButton aria-label="toogle sidebar" onClick={toogleSidebar}>
             <FontAwesomeIcon icon={faBars} />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
+          <Typography
+            variant="h6"
+            color={theme.palette.primary.contrastText}
+            noWrap
+            component="div"
+          >
             <Trans>ECG Calculator</Trans>
           </Typography>
         </StyledToolbar>

@@ -48,7 +48,7 @@ const TestComponentUpdateCompanyFacts = () => {
       <Button
         onClick={() => {
           updateCompanyFacts({
-            totalPurchaseFromSuppliers: 9,
+            totalPurchaseFromSuppliers: 40,
             supplyFractions: [
               {
                 countryCode: 'GER',
@@ -56,6 +56,7 @@ const TestComponentUpdateCompanyFacts = () => {
                 costs: 38,
               },
             ],
+            mainOriginOfOtherSuppliers: 'DEU',
           });
         }}
       >
@@ -132,7 +133,14 @@ describe('WithActiveBalanceSheet', () => {
   it('updates companyfacts', async () => {
     apiMock.patch.mockImplementation((path: string, data) => {
       if (path === `v1/balancesheets/3`) {
-        const updatedCompanyFacts = data.companyFacts;
+        const updatedCompanyFacts = {
+          ...data.companyFacts,
+          mainOriginOfOtherSuppliers: {
+            countryCode:
+              data.companyFacts.mainOriginOfOtherSuppliers.countryCode,
+            costs: 40,
+          },
+        };
         const responseData = {
           ...BalanceSheetMocks.balanceSheet1(),
           companyFacts: updatedCompanyFacts,
@@ -168,7 +176,7 @@ describe('WithActiveBalanceSheet', () => {
     ).toBeInTheDocument();
     await user.click(screen.getByText('Update CompanyFacts'));
     expect(
-      screen.getByText(`Total purchase from suppliers, 9`)
+      screen.getByText(`Total purchase from suppliers, 40`)
     ).toBeInTheDocument();
   });
 });

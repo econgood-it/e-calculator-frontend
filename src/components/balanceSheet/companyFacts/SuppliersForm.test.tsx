@@ -10,6 +10,7 @@ import {
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { regionsMocks } from '../../../testUtils/regions';
 import { industriesMocks } from '../../../testUtils/industries';
+
 jest.mock('../../../contexts/ActiveBalanceSheetProvider');
 
 describe('SuppliersForm', () => {
@@ -63,14 +64,18 @@ describe('SuppliersForm', () => {
       />
     );
     const input = screen.getByLabelText('Total purchases from suppliers');
+    expect(input).toHaveValue('900');
     await user.clear(input);
-    await user.type(input, '20');
-    expect(input).toHaveValue('20');
+    await user.type(input, '800');
+    expect(input).toHaveValue('800');
     const saveButton = screen.getByRole('button', { name: 'Save' });
     await user.click(saveButton);
     expect(updateCompanyFacts).toHaveBeenCalledWith({
       ...CompanyFactsMocks.companyFacts1(),
-      totalPurchaseFromSuppliers: 20,
+      totalPurchaseFromSuppliers: 800,
+      mainOriginOfOtherSuppliers:
+        CompanyFactsMocks.companyFacts1().mainOriginOfOtherSuppliers
+          .countryCode,
     });
   });
 
@@ -119,14 +124,20 @@ describe('SuppliersForm', () => {
       supplyFractions: CompanyFactsMocks.companyFacts1().supplyFractions.map(
         (s) => ({ ...s, costs: 20 })
       ),
+      mainOriginOfOtherSuppliers:
+        CompanyFactsMocks.companyFacts1().mainOriginOfOtherSuppliers
+          .countryCode,
     });
   });
 
-  it('adds supply fraction and saves changes', async () => {
+  it('adding supply fraction without region selected leads to form error', async () => {
     const user = userEvent.setup();
     renderWithTheme(
       <SuppliersForm
-        companyFacts={{ ...CompanyFactsMocks.companyFacts1() }}
+        companyFacts={{
+          ...CompanyFactsMocks.companyFacts1(),
+          supplyFractions: [],
+        }}
         regions={regionsMocks.regions1()}
         industries={industriesMocks.industries1()}
       />
@@ -137,12 +148,36 @@ describe('SuppliersForm', () => {
     await user.click(addSupplierButton);
     const saveButton = screen.getByRole('button', { name: 'Save' });
     await user.click(saveButton);
+
+    expect(updateCompanyFacts).not.toHaveBeenCalled();
+  });
+
+  it('saves changes of main origin region', async () => {
+    const user = userEvent.setup();
+    renderWithTheme(
+      <SuppliersForm
+        companyFacts={{ ...CompanyFactsMocks.companyFacts1() }}
+        regions={regionsMocks.regions1()}
+        industries={industriesMocks.industries1()}
+      />
+    );
+    const searchField = screen.getByLabelText(
+      'mainOriginOfOtherSuppliers.countryCode'
+    );
+    const region = regionsMocks.regions1()[3];
+    await user.type(searchField, region.countryCode);
+
+    const foundRegion = screen.getByRole('option', {
+      name: `${region.countryCode} ${region.countryName}`,
+    });
+    await user.click(foundRegion);
+
+    const saveButton = screen.getByRole('button', { name: 'Save' });
+    await user.click(saveButton);
+
     expect(updateCompanyFacts).toHaveBeenCalledWith({
       ...CompanyFactsMocks.companyFacts1(),
-      supplyFractions: [
-        ...CompanyFactsMocks.companyFacts1().supplyFractions,
-        { countryCode: undefined, industryCode: undefined, costs: 0 },
-      ],
+      mainOriginOfOtherSuppliers: region.countryCode,
     });
   });
 
@@ -161,11 +196,65 @@ describe('SuppliersForm', () => {
     await user.click(removeSupplierButton);
     const saveButton = screen.getByRole('button', { name: 'Save' });
     await user.click(saveButton);
+    const expectedSupplyFractions = [
+      ...CompanyFactsMocks.companyFacts1().supplyFractions.slice(1),
+    ];
     expect(updateCompanyFacts).toHaveBeenCalledWith({
       ...CompanyFactsMocks.companyFacts1(),
-      supplyFractions: [
-        ...CompanyFactsMocks.companyFacts1().supplyFractions.slice(1),
-      ],
+      supplyFractions: expectedSupplyFractions,
+      mainOriginOfOtherSuppliers:
+        CompanyFactsMocks.companyFacts1().mainOriginOfOtherSuppliers
+          .countryCode,
     });
+  });
+
+  it('main origin of other suppliers field is readonly', async () => {
+    renderWithTheme(
+      <SuppliersForm
+        companyFacts={{ ...CompanyFactsMocks.companyFacts1() }}
+        regions={regionsMocks.regions1()}
+        industries={industriesMocks.industries1()}
+      />
+    );
+    const mainOriginOfOtherSuppliersFieldBeforeUpdate = screen.getByLabelText(
+      `mainOriginOfOtherSuppliers.costs`
+    );
+
+    expect(
+      within(mainOriginOfOtherSuppliersFieldBeforeUpdate).getByRole('textbox')
+    ).toHaveAttribute('readonly');
+  });
+
+  it('main origin of other suppliers updates if costs of supply fraction change', async () => {
+    const user = userEvent.setup();
+    renderWithTheme(
+      <SuppliersForm
+        companyFacts={{ ...CompanyFactsMocks.companyFacts1() }}
+        regions={regionsMocks.regions1()}
+        industries={industriesMocks.industries1()}
+      />
+    );
+    const mainOriginOfOtherSuppliersFieldBeforeUpdate = screen.getByLabelText(
+      `mainOriginOfOtherSuppliers.costs`
+    );
+
+    expect(
+      within(mainOriginOfOtherSuppliersFieldBeforeUpdate).getByRole('textbox')
+    ).toHaveValue((900 - 388 - 54).toString());
+
+    for (const index in CompanyFactsMocks.companyFacts1().supplyFractions) {
+      const costsInputField = within(
+        screen.getByLabelText(`supplyFractions.${index}.costs`)
+      ).getByRole('textbox');
+      await user.clear(costsInputField);
+      await user.type(costsInputField, '20');
+    }
+    const mainOriginOfOtherSuppliersField = screen.getByLabelText(
+      `mainOriginOfOtherSuppliers.costs`
+    );
+
+    expect(
+      within(mainOriginOfOtherSuppliersField).getByRole('textbox')
+    ).toHaveValue((900 - 20 - 20).toString());
   });
 });

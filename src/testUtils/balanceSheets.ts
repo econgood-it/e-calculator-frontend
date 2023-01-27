@@ -4,7 +4,7 @@ import { CompanyFacts } from '../dataTransferObjects/CompanyFacts';
 
 export const CompanyFactsMocks = {
   companyFacts1: (): CompanyFacts => ({
-    totalPurchaseFromSuppliers: 4,
+    totalPurchaseFromSuppliers: 900,
     supplyFractions: [
       {
         countryCode: 'EGY',
@@ -17,6 +17,7 @@ export const CompanyFactsMocks = {
         costs: 54,
       },
     ],
+    mainOriginOfOtherSuppliers: { costs: 388 + 54, countryCode: 'BEL' },
   }),
 };
 

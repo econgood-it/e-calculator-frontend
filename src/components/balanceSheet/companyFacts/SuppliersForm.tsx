@@ -1,5 +1,5 @@
 import { Trans, useTranslation } from 'react-i18next';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import CurrencyInput from './CurrencyInput';
 import GridContainer from '../../layout/GridContainer';
@@ -15,8 +15,9 @@ import {
   CompanyFactsSchema,
 } from '../../../dataTransferObjects/CompanyFacts';
 import { Region } from '../../../dataTransferObjects/Region';
-import { RegionSelect, IndustrySelect } from './AutocompleteSelects';
+import { IndustrySelect, RegionSelect } from './AutocompleteSelects';
 import { Industry } from '../../../dataTransferObjects/Industry';
+import { useEffect } from 'react';
 
 const FormContainer = styled(GridContainer)`
   padding: 10px;
@@ -32,6 +33,7 @@ const DEFAULT_CODE = 'DEFAULT_CODE';
 const SuppliersFormInputSchema = CompanyFactsSchema.pick({
   totalPurchaseFromSuppliers: true,
   supplyFractions: true,
+  mainOriginOfOtherSuppliers: true,
 });
 type SuppliersFormInput = z.infer<typeof SuppliersFormInputSchema>;
 
@@ -48,6 +50,7 @@ const SuppliersForm = ({
     formState: { errors },
     handleSubmit,
     control,
+    setValue,
   } = useForm<CompanyFacts>({
     resolver: zodResolver(SuppliersFormInputSchema),
     mode: 'onChange',
@@ -58,6 +61,19 @@ const SuppliersForm = ({
     control, // control props comes from useForm (optional: if you are using FormContext)
     name: 'supplyFractions', // unique name for your Field Array
   });
+
+  const watchedTotalPurchaseFromSuppliers = useWatch({
+    control,
+    name: 'totalPurchaseFromSuppliers',
+  });
+  const watchedSupplyFractions = useWatch({ control, name: 'supplyFractions' });
+
+  useEffect(() => {
+    const sum: number =
+      watchedTotalPurchaseFromSuppliers -
+      watchedSupplyFractions.reduce((sum, current) => sum + current.costs, 0);
+    setValue('mainOriginOfOtherSuppliers.costs', sum);
+  }, [watchedTotalPurchaseFromSuppliers, watchedSupplyFractions]);
 
   const onSaveClick = async (data: SuppliersFormInput) => {
     const newCompanyFacts = SuppliersFormInputSchema.parse(data);
@@ -70,6 +86,8 @@ const SuppliersForm = ({
           sf.industryCode === DEFAULT_CODE ? undefined : sf.industryCode;
         return { ...sf, countryCode: countryCode, industryCode: industryCode };
       }),
+      mainOriginOfOtherSuppliers:
+        newCompanyFacts.mainOriginOfOtherSuppliers.countryCode,
     });
   };
 
@@ -82,6 +100,11 @@ const SuppliersForm = ({
 
   return (
     <FormContainer spacing={3}>
+      <GridItem>
+        <Typography variant={'h3'}>
+          <Trans>Suppliers</Trans>
+        </Typography>
+      </GridItem>
       <GridItem xs={12}>
         <CurrencyInput<CompanyFacts>
           fullWidth
@@ -160,6 +183,34 @@ const SuppliersForm = ({
               </GridContainer>
             </GridItem>
           ))}
+        </GridContainer>
+      </GridItem>
+      <GridItem xs={12}>
+        <GridContainer spacing={3} alignItems="center">
+          <GridItem xs={12} sm={5}>
+            <Typography variant="body1">
+              <Trans>Main origin of the other suppliers</Trans>
+            </Typography>
+          </GridItem>
+          <GridItem xs={12} sm={5}>
+            <RegionSelect
+              control={control}
+              regions={regions}
+              defaultValue={DEFAULT_CODE}
+              name={`mainOriginOfOtherSuppliers.countryCode`}
+            />
+          </GridItem>
+          <GridItem xs={12} sm={1}>
+            <CurrencyInput
+              fullWidth
+              label={<Trans>Costs</Trans>}
+              error={false}
+              readOnly={true}
+              register={register}
+              registerKey={'mainOriginOfOtherSuppliers.costs'}
+              required={true}
+            />
+          </GridItem>
         </GridContainer>
       </GridItem>
       <GridItem xs={12}>
