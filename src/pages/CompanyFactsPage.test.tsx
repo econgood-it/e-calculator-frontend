@@ -7,8 +7,10 @@ import { regionsMocks } from '../testUtils/regions';
 import CompanyFactsPage from './CompanyFactsPage';
 import { useApi } from '../contexts/ApiContext';
 import { industriesMocks } from '../testUtils/industries';
+import { useAlert } from '../contexts/AlertContext';
 
 jest.mock('../contexts/ActiveBalanceSheetProvider');
+jest.mock('../contexts/AlertContext');
 
 jest.mock('../contexts/ApiContext');
 describe('CompanyFactsPage', () => {
@@ -16,6 +18,7 @@ describe('CompanyFactsPage', () => {
     get: jest.fn(),
   };
   beforeEach(() => {
+    (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
     (useActiveBalanceSheet as jest.Mock).mockReturnValue({
       balanceSheet: BalanceSheetMocks.balanceSheet1(),
     });

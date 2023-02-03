@@ -10,13 +10,16 @@ import {
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { regionsMocks } from '../../../testUtils/regions';
 import { industriesMocks } from '../../../testUtils/industries';
+import { useAlert } from '../../../contexts/AlertContext';
 
 jest.mock('../../../contexts/ActiveBalanceSheetProvider');
+jest.mock('../../../contexts/AlertContext');
 
 describe('SuppliersForm', () => {
   const updateCompanyFacts = jest.fn();
 
   beforeEach(() => {
+    (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
     (useActiveBalanceSheet as jest.Mock).mockReturnValue({
       balanceSheet: { ...BalanceSheetMocks.balanceSheet1() },
       updateCompanyFacts: updateCompanyFacts,

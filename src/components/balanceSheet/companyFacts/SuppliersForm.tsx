@@ -18,6 +18,7 @@ import { Region } from '../../../dataTransferObjects/Region';
 import { IndustrySelect, RegionSelect } from './AutocompleteSelects';
 import { Industry } from '../../../dataTransferObjects/Industry';
 import { useEffect } from 'react';
+import { useAlert } from '../../../contexts/AlertContext';
 
 const FormContainer = styled(GridContainer)`
   padding: 10px;
@@ -43,6 +44,7 @@ const SuppliersForm = ({
   industries,
 }: SuppliersFormProps) => {
   const { updateCompanyFacts } = useActiveBalanceSheet();
+  const { addErrorAlert } = useAlert();
   const { t } = useTranslation();
 
   const {
@@ -217,7 +219,9 @@ const SuppliersForm = ({
         <Button
           fullWidth={true}
           size={'large'}
-          onClick={handleSubmit(onSaveClick)}
+          onClick={handleSubmit(onSaveClick, () =>
+            addErrorAlert(t`Form data is invalid`)
+          )}
           variant={'contained'}
           startIcon={<FontAwesomeIcon icon={faSave} />}
         >
