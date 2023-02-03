@@ -143,7 +143,10 @@ describe('WithActiveBalanceSheet', () => {
         };
         const responseData = {
           ...BalanceSheetMocks.balanceSheet1(),
-          companyFacts: updatedCompanyFacts,
+          companyFacts: {
+            ...BalanceSheetMocks.balanceSheet1().companyFacts,
+            ...updatedCompanyFacts,
+          },
         };
         return Promise.resolve({
           data: responseData,

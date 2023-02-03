@@ -1,4 +1,5 @@
 import { Grid, GridProps } from '@mui/material';
+import styled from 'styled-components';
 
 const GridContainer = ({ children, ...props }: GridProps) => {
   return (
@@ -9,3 +10,7 @@ const GridContainer = ({ children, ...props }: GridProps) => {
 };
 
 export default GridContainer;
+
+export const FormContainer = styled(GridContainer)`
+  padding: 10px;
+`;

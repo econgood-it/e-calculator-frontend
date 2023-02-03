@@ -29,12 +29,13 @@ const CurrencyInput = <T extends unknown>({
   errorMessage,
   readOnly,
 }: CurrencyInputProps<T>) => {
+  const id = `outlined-adornment-amount_${registerKey}`;
   return (
     <FormControl fullWidth={fullWidth}>
-      <InputLabel htmlFor="outlined-adornment-amount">{label}</InputLabel>
+      <InputLabel htmlFor={id}>{label}</InputLabel>
       <OutlinedInput
         readOnly={readOnly}
-        id="outlined-adornment-amount"
+        id={id}
         {...register(registerKey, {
           valueAsNumber: true,
           required: required,

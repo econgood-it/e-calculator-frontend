@@ -6,6 +6,7 @@ import renderWithTheme from '../../../testUtils/rendering';
 import {
   BalanceSheetMocks,
   CompanyFactsMocks,
+  SuppliersMocks,
 } from '../../../testUtils/balanceSheets';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { regionsMocks } from '../../../testUtils/regions';
@@ -21,7 +22,6 @@ describe('SuppliersForm', () => {
   beforeEach(() => {
     (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
     (useActiveBalanceSheet as jest.Mock).mockReturnValue({
-      balanceSheet: { ...BalanceSheetMocks.balanceSheet1() },
       updateCompanyFacts: updateCompanyFacts,
     });
   });
@@ -30,7 +30,7 @@ describe('SuppliersForm', () => {
     const user = userEvent.setup();
     renderWithTheme(
       <SuppliersForm
-        companyFacts={CompanyFactsMocks.companyFacts1()}
+        formData={CompanyFactsMocks.companyFacts1()}
         regions={regionsMocks.regions1()}
         industries={industriesMocks.industries1()}
       />
@@ -59,9 +59,10 @@ describe('SuppliersForm', () => {
 
   it('saves changes on total purchase from suppliers field', async () => {
     const user = userEvent.setup();
+    const formData = SuppliersMocks.suppliers1();
     renderWithTheme(
       <SuppliersForm
-        companyFacts={CompanyFactsMocks.companyFacts1()}
+        formData={formData}
         regions={regionsMocks.regions1()}
         industries={industriesMocks.industries1()}
       />
@@ -74,24 +75,24 @@ describe('SuppliersForm', () => {
     const saveButton = screen.getByRole('button', { name: 'Save' });
     await user.click(saveButton);
     expect(updateCompanyFacts).toHaveBeenCalledWith({
-      ...CompanyFactsMocks.companyFacts1(),
+      ...formData,
       totalPurchaseFromSuppliers: 800,
       mainOriginOfOtherSuppliers:
-        CompanyFactsMocks.companyFacts1().mainOriginOfOtherSuppliers
-          .countryCode,
+        formData.mainOriginOfOtherSuppliers.countryCode,
     });
   });
 
   it('renders supply fractions', async () => {
+    const formData = CompanyFactsMocks.companyFacts1();
     renderWithTheme(
       <SuppliersForm
-        companyFacts={{ ...CompanyFactsMocks.companyFacts1() }}
+        formData={formData}
         regions={regionsMocks.regions1()}
         industries={industriesMocks.industries1()}
       />
     );
 
-    for (const index in CompanyFactsMocks.companyFacts1().supplyFractions) {
+    for (const index in formData.supplyFractions) {
       expect(
         screen.getByLabelText(`supplyFractions.${index}.costs`)
       ).toBeInTheDocument();
@@ -106,14 +107,15 @@ describe('SuppliersForm', () => {
 
   it('saves changes of the supply fractions costs', async () => {
     const user = userEvent.setup();
+    const formData = SuppliersMocks.suppliers1();
     renderWithTheme(
       <SuppliersForm
-        companyFacts={{ ...CompanyFactsMocks.companyFacts1() }}
+        formData={formData}
         regions={regionsMocks.regions1()}
         industries={industriesMocks.industries1()}
       />
     );
-    for (const index in CompanyFactsMocks.companyFacts1().supplyFractions) {
+    for (const index in formData.supplyFractions) {
       const costsInputField = within(
         screen.getByLabelText(`supplyFractions.${index}.costs`)
       ).getByRole('textbox');
@@ -123,7 +125,7 @@ describe('SuppliersForm', () => {
     const saveButton = screen.getByRole('button', { name: 'Save' });
     await user.click(saveButton);
     expect(updateCompanyFacts).toHaveBeenCalledWith({
-      ...CompanyFactsMocks.companyFacts1(),
+      totalPurchaseFromSuppliers: formData.totalPurchaseFromSuppliers,
       supplyFractions: CompanyFactsMocks.companyFacts1().supplyFractions.map(
         (s) => ({ ...s, costs: 20 })
       ),
@@ -137,8 +139,8 @@ describe('SuppliersForm', () => {
     const user = userEvent.setup();
     renderWithTheme(
       <SuppliersForm
-        companyFacts={{
-          ...CompanyFactsMocks.companyFacts1(),
+        formData={{
+          ...SuppliersMocks.suppliers1(),
           supplyFractions: [],
         }}
         regions={regionsMocks.regions1()}
@@ -157,9 +159,10 @@ describe('SuppliersForm', () => {
 
   it('saves changes of main origin region', async () => {
     const user = userEvent.setup();
+    const formData = SuppliersMocks.suppliers1();
     renderWithTheme(
       <SuppliersForm
-        companyFacts={{ ...CompanyFactsMocks.companyFacts1() }}
+        formData={formData}
         regions={regionsMocks.regions1()}
         industries={industriesMocks.industries1()}
       />
@@ -177,18 +180,18 @@ describe('SuppliersForm', () => {
 
     const saveButton = screen.getByRole('button', { name: 'Save' });
     await user.click(saveButton);
-
     expect(updateCompanyFacts).toHaveBeenCalledWith({
-      ...CompanyFactsMocks.companyFacts1(),
+      ...formData,
       mainOriginOfOtherSuppliers: region.countryCode,
     });
   });
 
   it('removes supply fraction and saves changes', async () => {
     const user = userEvent.setup();
+    const formData = SuppliersMocks.suppliers1();
     renderWithTheme(
       <SuppliersForm
-        companyFacts={{ ...CompanyFactsMocks.companyFacts1() }}
+        formData={formData}
         regions={regionsMocks.regions1()}
         industries={industriesMocks.industries1()}
       />
@@ -199,22 +202,20 @@ describe('SuppliersForm', () => {
     await user.click(removeSupplierButton);
     const saveButton = screen.getByRole('button', { name: 'Save' });
     await user.click(saveButton);
-    const expectedSupplyFractions = [
-      ...CompanyFactsMocks.companyFacts1().supplyFractions.slice(1),
-    ];
+    const expectedSupplyFractions = [...formData.supplyFractions.slice(1)];
     expect(updateCompanyFacts).toHaveBeenCalledWith({
-      ...CompanyFactsMocks.companyFacts1(),
+      totalPurchaseFromSuppliers: 900,
       supplyFractions: expectedSupplyFractions,
       mainOriginOfOtherSuppliers:
-        CompanyFactsMocks.companyFacts1().mainOriginOfOtherSuppliers
-          .countryCode,
+        formData.mainOriginOfOtherSuppliers.countryCode,
     });
   });
 
   it('main origin of other suppliers field is readonly', async () => {
+    const formData = SuppliersMocks.suppliers1();
     renderWithTheme(
       <SuppliersForm
-        companyFacts={{ ...CompanyFactsMocks.companyFacts1() }}
+        formData={formData}
         regions={regionsMocks.regions1()}
         industries={industriesMocks.industries1()}
       />
@@ -230,9 +231,10 @@ describe('SuppliersForm', () => {
 
   it('main origin of other suppliers updates if costs of supply fraction change', async () => {
     const user = userEvent.setup();
+    const formData = SuppliersMocks.suppliers1();
     renderWithTheme(
       <SuppliersForm
-        companyFacts={{ ...CompanyFactsMocks.companyFacts1() }}
+        formData={formData}
         regions={regionsMocks.regions1()}
         industries={industriesMocks.industries1()}
       />
@@ -245,7 +247,7 @@ describe('SuppliersForm', () => {
       within(mainOriginOfOtherSuppliersFieldBeforeUpdate).getByRole('textbox')
     ).toHaveValue((900 - 388 - 54).toString());
 
-    for (const index in CompanyFactsMocks.companyFacts1().supplyFractions) {
+    for (const index in formData.supplyFractions) {
       const costsInputField = within(
         screen.getByLabelText(`supplyFractions.${index}.costs`)
       ).getByRole('textbox');

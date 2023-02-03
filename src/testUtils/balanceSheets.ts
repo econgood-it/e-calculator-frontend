@@ -2,8 +2,19 @@ import { BalanceSheet } from '../dataTransferObjects/BalanceSheet';
 import { RatingType } from '../dataTransferObjects/Rating';
 import { CompanyFacts } from '../dataTransferObjects/CompanyFacts';
 
-export const CompanyFactsMocks = {
-  companyFacts1: (): CompanyFacts => ({
+export const OwnersAndFinancialServicesMocks = {
+  ownersAndFinancialServices1: () => ({
+    profit: 90,
+    financialCosts: 120,
+    incomeFromFinancialInvestments: 10,
+    totalAssets: 1,
+    additionsToFixedAssets: 2,
+    financialAssetsAndCashBalance: 23,
+  }),
+};
+
+export const SuppliersMocks = {
+  suppliers1: () => ({
     totalPurchaseFromSuppliers: 900,
     supplyFractions: [
       {
@@ -18,6 +29,13 @@ export const CompanyFactsMocks = {
       },
     ],
     mainOriginOfOtherSuppliers: { costs: 388 + 54, countryCode: 'BEL' },
+  }),
+};
+
+export const CompanyFactsMocks = {
+  companyFacts1: (): CompanyFacts => ({
+    ...SuppliersMocks.suppliers1(),
+    ...OwnersAndFinancialServicesMocks.ownersAndFinancialServices1(),
   }),
 };
 

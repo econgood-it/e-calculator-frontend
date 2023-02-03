@@ -1,6 +1,7 @@
 import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
 import SuppliersForm from '../components/balanceSheet/companyFacts/SuppliersForm';
 import { useApi } from '../contexts/ApiContext';
+import { OwnersAndFinancialServicesForm } from '../components/balanceSheet/companyFacts/OwnersAndFinancialServicesForm';
 import { useEffect, useState } from 'react';
 import { Region, RegionSchema } from '../dataTransferObjects/Region';
 import { Industry, IndustrySchema } from '../dataTransferObjects/Industry';
@@ -28,11 +29,32 @@ const CompanyFactsPage = () => {
   return (
     <>
       {balanceSheet && (
-        <SuppliersForm
-          companyFacts={balanceSheet.companyFacts}
-          regions={regions}
-          industries={industries}
-        />
+        <>
+          <SuppliersForm
+            formData={{
+              totalPurchaseFromSuppliers:
+                balanceSheet.companyFacts.totalPurchaseFromSuppliers,
+              supplyFractions: balanceSheet.companyFacts.supplyFractions,
+              mainOriginOfOtherSuppliers:
+                balanceSheet.companyFacts.mainOriginOfOtherSuppliers,
+            }}
+            regions={regions}
+            industries={industries}
+          />
+          <OwnersAndFinancialServicesForm
+            formData={{
+              financialCosts: balanceSheet.companyFacts.financialCosts,
+              profit: balanceSheet.companyFacts.profit,
+              incomeFromFinancialInvestments:
+                balanceSheet.companyFacts.incomeFromFinancialInvestments,
+              totalAssets: balanceSheet.companyFacts.totalAssets,
+              additionsToFixedAssets:
+                balanceSheet.companyFacts.additionsToFixedAssets,
+              financialAssetsAndCashBalance:
+                balanceSheet.companyFacts.financialAssetsAndCashBalance,
+            }}
+          />
+        </>
       )}
     </>
   );

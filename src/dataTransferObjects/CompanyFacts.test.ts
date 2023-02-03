@@ -9,6 +9,12 @@ describe('CompanyFacts', () => {
         costs: 88,
         countryCode: 'DEU',
       },
+      profit: 190,
+      financialCosts: 90,
+      incomeFromFinancialInvestments: 10,
+      totalAssets: 1,
+      additionsToFixedAssets: 2,
+      financialAssetsAndCashBalance: 23,
     };
     const companyFacts = CompanyFactsSchema.parse(json);
     expect(companyFacts).toMatchObject(json);

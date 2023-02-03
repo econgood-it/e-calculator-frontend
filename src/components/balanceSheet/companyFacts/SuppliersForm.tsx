@@ -2,33 +2,19 @@ import { Trans, useTranslation } from 'react-i18next';
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import CurrencyInput from './CurrencyInput';
-import GridContainer from '../../layout/GridContainer';
+import GridContainer, { FormContainer } from '../../layout/GridContainer';
 import GridItem from '../../layout/GridItem';
-import styled from 'styled-components';
 import { Button, IconButton, Typography } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { z } from 'zod';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
-import {
-  CompanyFacts,
-  CompanyFactsSchema,
-} from '../../../dataTransferObjects/CompanyFacts';
+import { CompanyFactsSchema } from '../../../dataTransferObjects/CompanyFacts';
 import { Region } from '../../../dataTransferObjects/Region';
 import { IndustrySelect, RegionSelect } from './AutocompleteSelects';
 import { Industry } from '../../../dataTransferObjects/Industry';
 import { useEffect } from 'react';
 import { useAlert } from '../../../contexts/AlertContext';
-
-const FormContainer = styled(GridContainer)`
-  padding: 10px;
-`;
-
-type SuppliersFormProps = {
-  companyFacts: CompanyFacts;
-  regions: Region[];
-  industries: Industry[];
-};
 
 const DEFAULT_CODE = 'DEFAULT_CODE';
 const SuppliersFormInputSchema = CompanyFactsSchema.pick({
@@ -38,8 +24,14 @@ const SuppliersFormInputSchema = CompanyFactsSchema.pick({
 });
 type SuppliersFormInput = z.infer<typeof SuppliersFormInputSchema>;
 
+type SuppliersFormProps = {
+  formData: SuppliersFormInput;
+  regions: Region[];
+  industries: Industry[];
+};
+
 const SuppliersForm = ({
-  companyFacts,
+  formData,
   regions,
   industries,
 }: SuppliersFormProps) => {
@@ -53,10 +45,10 @@ const SuppliersForm = ({
     handleSubmit,
     control,
     setValue,
-  } = useForm<CompanyFacts>({
+  } = useForm<SuppliersFormInput>({
     resolver: zodResolver(SuppliersFormInputSchema),
     mode: 'onChange',
-    defaultValues: companyFacts,
+    defaultValues: formData,
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -108,7 +100,7 @@ const SuppliersForm = ({
         </Typography>
       </GridItem>
       <GridItem xs={12}>
-        <CurrencyInput<CompanyFacts>
+        <CurrencyInput<SuppliersFormInput>
           fullWidth
           label={<Trans>Total purchases from suppliers</Trans>}
           error={!!errors.totalPurchaseFromSuppliers}
@@ -160,7 +152,7 @@ const SuppliersForm = ({
                   />
                 </GridItem>
                 <GridItem xs={12} sm={1}>
-                  <CurrencyInput<CompanyFacts>
+                  <CurrencyInput<SuppliersFormInput>
                     fullWidth
                     label={<Trans>Costs</Trans>}
                     error={!!errors.supplyFractions?.[index]?.costs}

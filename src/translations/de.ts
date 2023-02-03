@@ -23,7 +23,15 @@ export const DE_TRANSLATIONS = {
   'Number should be positive': 'Zahl sollte positiv sein',
   'Choose a region': 'Wählen Sie eine Region',
   'Choose an industry sector': 'Wählen Sie eine Branche',
+  'Form data is invalid': 'Formulardaten sind invalide',
+  'Owners, equity- and financial service providers':
+    'Eigentümer*innen und Finanzpartner*innen',
+  'Financial costs': 'Finanzierungskosten',
   'Add supplier': 'Lieferant hinzufügen',
   'Enter the 5 most important industry sectors whose products or services you use.':
     'Tragen Sie nachstehend, bitte die 5 wichtigsten Branchen ein, aus denen Sie Produkte/Dienstleistungen beziehen.',
+  'Income from financial investments': 'Erträge aus Finanzanlagen',
+  'Total assets': 'Bilanzaktiva',
+  'Additions to fixed assets': 'Zugänge zum Anlagevermögen',
+  'Financial assets and cash balance': 'Finanzanlagen und Barguthaben',
 };

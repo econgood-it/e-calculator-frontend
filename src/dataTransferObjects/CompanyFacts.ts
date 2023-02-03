@@ -18,9 +18,15 @@ export const CompanyFactsSchema = z.object({
     })
     .array(),
   mainOriginOfOtherSuppliers: z.object({
-    costs: z.number(),
+    costs: CurrencySchema,
     countryCode: isCountryCode.optional(),
   }),
+  profit: CurrencySchema,
+  financialCosts: CurrencySchema,
+  incomeFromFinancialInvestments: CurrencySchema,
+  totalAssets: CurrencySchema,
+  additionsToFixedAssets: CurrencySchema,
+  financialAssetsAndCashBalance: CurrencySchema,
 });
 export const CompanyFactsRequestBodySchema =
   CompanyFactsSchema.deepPartial().merge(
