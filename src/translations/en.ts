@@ -31,6 +31,7 @@ const EN_WORDS = [
   'Total assets',
   'Additions to fixed assets',
   'Financial assets and cash balance',
+  'Number of employees (full time equivalents)',
 ];
 
 export const EN_TRANSLATIONS = EN_WORDS.reduce(

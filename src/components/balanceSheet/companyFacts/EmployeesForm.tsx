@@ -2,7 +2,7 @@ import { CompanyFactsSchema } from '../../../dataTransferObjects/CompanyFacts';
 import GridItem from '../../layout/GridItem';
 import { Button, Typography } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
-import { CurrencyInput } from './NumberInputs';
+import { PositiveNumberInput } from './NumberInputs';
 import GridContainer, { FormContainer } from '../../layout/GridContainer';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,25 +12,16 @@ import { faSave } from '@fortawesome/free-solid-svg-icons';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { useAlert } from '../../../contexts/AlertContext';
 
-const OwnersAndFinancialServicesFormSchema = CompanyFactsSchema.pick({
-  profit: true,
-  financialCosts: true,
-  incomeFromFinancialInvestments: true,
-  totalAssets: true,
-  additionsToFixedAssets: true,
-  financialAssetsAndCashBalance: true,
+const EmployeesFormSchema = CompanyFactsSchema.pick({
+  numberOfEmployees: true,
 });
-type OwnersAndFinancialServicesFormInput = z.infer<
-  typeof OwnersAndFinancialServicesFormSchema
->;
+type EmployeesFormInput = z.infer<typeof EmployeesFormSchema>;
 
-type OwnersAndFinancialServicesFormProps = {
-  formData: OwnersAndFinancialServicesFormInput;
+type EmployeesFormProps = {
+  formData: EmployeesFormInput;
 };
 
-export function OwnersAndFinancialServicesForm({
-  formData,
-}: OwnersAndFinancialServicesFormProps) {
+export function EmployeesForm({ formData }: EmployeesFormProps) {
   const { t } = useTranslation();
   const { addErrorAlert } = useAlert();
   const { updateCompanyFacts } = useActiveBalanceSheet();
@@ -38,49 +29,41 @@ export function OwnersAndFinancialServicesForm({
     register,
     formState: { errors },
     handleSubmit,
-  } = useForm<OwnersAndFinancialServicesFormInput>({
-    resolver: zodResolver(OwnersAndFinancialServicesFormSchema),
+  } = useForm<EmployeesFormInput>({
+    resolver: zodResolver(EmployeesFormSchema),
     mode: 'onChange',
     defaultValues: formData,
   });
 
-  const onSaveClick = async (data: OwnersAndFinancialServicesFormInput) => {
-    const newCompanyFacts = OwnersAndFinancialServicesFormSchema.parse(data);
+  const onSaveClick = async (data: EmployeesFormInput) => {
+    const newCompanyFacts = EmployeesFormSchema.parse(data);
     await updateCompanyFacts({
       ...newCompanyFacts,
     });
   };
 
-  const fieldKeyAndLabelMap: Map<
-    keyof OwnersAndFinancialServicesFormInput,
-    string
-  > = new Map([
-    ['profit', t`Profit`],
-    ['financialCosts', t`Financial costs`],
-    ['incomeFromFinancialInvestments', t`Income from financial investments`],
-    ['totalAssets', t`Total assets`],
-    ['additionsToFixedAssets', t`Additions to fixed assets`],
-    ['financialAssetsAndCashBalance', t`Financial assets and cash balance`],
-  ]);
+  const fields: Array<keyof EmployeesFormInput> = ['numberOfEmployees'];
 
   return (
     <FormContainer spacing={3}>
       <GridItem>
         <Typography variant={'h3'}>
-          <Trans>Owners, equity- and financial service providers</Trans>
+          <Trans>Employees</Trans>
         </Typography>
       </GridItem>
       <GridItem xs={12}>
         <GridContainer spacing={3}>
-          {[...fieldKeyAndLabelMap.entries()].map(([key, label]) => (
+          {fields.map((key) => (
             <GridItem key={key} xs={12} sm={4}>
-              <CurrencyInput<OwnersAndFinancialServicesFormInput>
+              <PositiveNumberInput<EmployeesFormInput>
                 fullWidth
                 error={!!errors[key]}
                 errorMessage={!!errors[key] && t(`${errors[key]?.message}`)}
                 register={register}
                 registerKey={key}
-                label={label}
+                label={
+                  <Trans>Number of employees (full time equivalents)</Trans>
+                }
                 required={true}
               />
             </GridItem>

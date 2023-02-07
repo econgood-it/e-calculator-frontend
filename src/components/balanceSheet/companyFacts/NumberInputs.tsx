@@ -8,8 +8,8 @@ import {
 import { Path, UseFormRegister } from 'react-hook-form';
 import { ReactElement } from 'react';
 
-type CurrencyInputProps<T> = {
-  label: ReactElement;
+type PositiveNumberInputProps<T> = {
+  label: ReactElement | string;
   error: boolean;
   errorMessage?: string | boolean;
   registerKey: Path<T>;
@@ -17,9 +17,10 @@ type CurrencyInputProps<T> = {
   required: boolean;
   fullWidth: boolean;
   readOnly?: boolean;
+  startAdornment?: ReactElement;
 };
 
-const CurrencyInput = <T extends unknown>({
+export function PositiveNumberInput<T extends unknown>({
   fullWidth,
   label,
   registerKey,
@@ -28,7 +29,8 @@ const CurrencyInput = <T extends unknown>({
   error,
   errorMessage,
   readOnly,
-}: CurrencyInputProps<T>) => {
+  startAdornment,
+}: PositiveNumberInputProps<T>) {
   const id = `outlined-adornment-amount_${registerKey}`;
   return (
     <FormControl fullWidth={fullWidth}>
@@ -41,13 +43,22 @@ const CurrencyInput = <T extends unknown>({
           required: required,
         })}
         aria-label={registerKey}
-        startAdornment={<InputAdornment position="start">€</InputAdornment>}
+        startAdornment={startAdornment}
         error={error}
         label={label}
       />
       <FormHelperText>{errorMessage}</FormHelperText>
     </FormControl>
   );
-};
+}
 
-export default CurrencyInput;
+export function CurrencyInput<T extends unknown>(
+  props: PositiveNumberInputProps<T>
+) {
+  return (
+    <PositiveNumberInput
+      {...props}
+      startAdornment={<InputAdornment position="start">€</InputAdornment>}
+    />
+  );
+}

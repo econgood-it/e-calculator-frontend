@@ -13,6 +13,12 @@ export const OwnersAndFinancialServicesMocks = {
   }),
 };
 
+export const EmployeesMocks = {
+  employees1: () => ({
+    numberOfEmployees: 30,
+  }),
+};
+
 export const SuppliersMocks = {
   suppliers1: () => ({
     totalPurchaseFromSuppliers: 900,
@@ -36,6 +42,7 @@ export const CompanyFactsMocks = {
   companyFacts1: (): CompanyFacts => ({
     ...SuppliersMocks.suppliers1(),
     ...OwnersAndFinancialServicesMocks.ownersAndFinancialServices1(),
+    ...EmployeesMocks.employees1(),
   }),
 };
 

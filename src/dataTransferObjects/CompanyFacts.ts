@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const CurrencySchema = z
+const PositiveNumberSchema = z
   .number({
     invalid_type_error: 'Number expected',
     required_error: 'Number expected',
@@ -9,24 +9,25 @@ const CurrencySchema = z
 const isCountryCode = z.string().min(3).max(3);
 const isIndustryCode = z.string().min(1).max(4);
 export const CompanyFactsSchema = z.object({
-  totalPurchaseFromSuppliers: CurrencySchema,
+  totalPurchaseFromSuppliers: PositiveNumberSchema,
   supplyFractions: z
     .object({
       countryCode: isCountryCode.optional(),
-      costs: CurrencySchema,
+      costs: PositiveNumberSchema,
       industryCode: isIndustryCode.optional(),
     })
     .array(),
   mainOriginOfOtherSuppliers: z.object({
-    costs: CurrencySchema,
+    costs: PositiveNumberSchema,
     countryCode: isCountryCode.optional(),
   }),
-  profit: CurrencySchema,
-  financialCosts: CurrencySchema,
-  incomeFromFinancialInvestments: CurrencySchema,
-  totalAssets: CurrencySchema,
-  additionsToFixedAssets: CurrencySchema,
-  financialAssetsAndCashBalance: CurrencySchema,
+  profit: PositiveNumberSchema,
+  financialCosts: PositiveNumberSchema,
+  incomeFromFinancialInvestments: PositiveNumberSchema,
+  totalAssets: PositiveNumberSchema,
+  additionsToFixedAssets: PositiveNumberSchema,
+  financialAssetsAndCashBalance: PositiveNumberSchema,
+  numberOfEmployees: PositiveNumberSchema,
 });
 export const CompanyFactsRequestBodySchema =
   CompanyFactsSchema.deepPartial().merge(

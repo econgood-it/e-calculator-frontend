@@ -1,7 +1,7 @@
 import { Trans, useTranslation } from 'react-i18next';
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import CurrencyInput from './CurrencyInput';
+import { CurrencyInput } from './NumberInputs';
 import GridContainer, { FormContainer } from '../../layout/GridContainer';
 import GridItem from '../../layout/GridItem';
 import { Button, IconButton, Typography } from '@mui/material';

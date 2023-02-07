@@ -1,14 +1,9 @@
 import '@testing-library/jest-dom';
-import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import renderWithTheme from '../../../testUtils/rendering';
-
-import { OwnersAndFinancialServicesMocks } from '../../../testUtils/balanceSheets';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { useAlert } from '../../../contexts/AlertContext';
 import { OwnersAndFinancialServicesForm } from './OwnersAndFinancialServicesForm';
-import { UserEvent } from '@testing-library/user-event/dist/types/setup';
-import Element from 'react';
+import { OwnersAndFinancialServicesMocks } from '../../../testUtils/balanceSheets';
+import { expectPositiveNumberFieldToBeValidatedAndModifiedAndSaved } from '../../../testUtils/form';
 
 jest.mock('../../../contexts/ActiveBalanceSheetProvider');
 jest.mock('../../../contexts/AlertContext');
@@ -23,46 +18,20 @@ describe('OwnersAndFinancialServicesForm', () => {
     });
   });
 
-  async function checkCurrencyFieldValidations(
-    input: Element,
-    user: UserEvent
-  ) {
-    await user.clear(input);
-    await user.type(input, 'a7');
-    expect(input).toHaveValue('a7');
-    expect(screen.getByText('Number expected')).toBeInTheDocument();
-    //
-    await user.clear(input);
-    await user.type(input, '-7');
-    expect(input).toHaveValue('-7');
-    await waitFor(() =>
-      expect(screen.getByText('Number should be positive')).toBeInTheDocument()
-    );
-  }
-
   async function shouldModifyFieldSaveResults(
     fieldLabel: string,
     fieldKey: string
   ) {
-    const user = userEvent.setup();
     const formData =
       OwnersAndFinancialServicesMocks.ownersAndFinancialServices1();
-    renderWithTheme(<OwnersAndFinancialServicesForm formData={formData} />);
-    const input = screen.getByLabelText(fieldLabel);
-
-    expect(input).toHaveValue((formData as any)[fieldKey].toString());
-    await checkCurrencyFieldValidations(input, user);
-    const modifiedValue = 7;
-    await user.clear(input);
-    await user.type(input, modifiedValue.toString());
-    expect(input).toHaveValue(modifiedValue.toString());
-
-    const saveButton = screen.getByRole('button', { name: 'Save' });
-    await user.click(saveButton);
-    expect(updateCompanyFacts).toHaveBeenCalledWith({
-      ...formData,
-      [fieldKey]: modifiedValue,
-    });
+    const form = <OwnersAndFinancialServicesForm formData={formData} />;
+    await expectPositiveNumberFieldToBeValidatedAndModifiedAndSaved(
+      fieldLabel,
+      fieldKey,
+      updateCompanyFacts,
+      formData as any,
+      form
+    );
   }
 
   it('should modify profit field and save changes', async () => {

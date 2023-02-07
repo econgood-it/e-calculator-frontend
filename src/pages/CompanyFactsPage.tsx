@@ -5,6 +5,7 @@ import { OwnersAndFinancialServicesForm } from '../components/balanceSheet/compa
 import { useEffect, useState } from 'react';
 import { Region, RegionSchema } from '../dataTransferObjects/Region';
 import { Industry, IndustrySchema } from '../dataTransferObjects/Industry';
+import { EmployeesForm } from '../components/balanceSheet/companyFacts/EmployeesForm';
 
 const CompanyFactsPage = () => {
   const { balanceSheet } = useActiveBalanceSheet();
@@ -52,6 +53,11 @@ const CompanyFactsPage = () => {
                 balanceSheet.companyFacts.additionsToFixedAssets,
               financialAssetsAndCashBalance:
                 balanceSheet.companyFacts.financialAssetsAndCashBalance,
+            }}
+          />
+          <EmployeesForm
+            formData={{
+              numberOfEmployees: balanceSheet.companyFacts.numberOfEmployees,
             }}
           />
         </>

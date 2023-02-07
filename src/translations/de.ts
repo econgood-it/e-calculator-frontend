@@ -34,4 +34,6 @@ export const DE_TRANSLATIONS = {
   'Total assets': 'Bilanzaktiva',
   'Additions to fixed assets': 'Zugänge zum Anlagevermögen',
   'Financial assets and cash balance': 'Finanzanlagen und Barguthaben',
+  'Number of employees (full time equivalents)':
+    'Anzahl der Mitarbeitenden (in Vollzeitäquivalenten)',
 };
