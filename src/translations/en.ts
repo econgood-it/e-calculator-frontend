@@ -32,6 +32,8 @@ const EN_WORDS = [
   'Additions to fixed assets',
   'Financial assets and cash balance',
   'Number of employees (full time equivalents)',
+  'Staff costs (gross without employer contribution)',
+  'Average journey to work for staff (in km)',
 ];
 
 export const EN_TRANSLATIONS = EN_WORDS.reduce(

@@ -2,7 +2,7 @@ import { CompanyFactsSchema } from '../../../dataTransferObjects/CompanyFacts';
 import GridItem from '../../layout/GridItem';
 import { Button, Typography } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
-import { PositiveNumberInput } from './NumberInputs';
+import { CurrencyInput, PositiveNumberInput } from './NumberInputs';
 import GridContainer, { FormContainer } from '../../layout/GridContainer';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -14,6 +14,8 @@ import { useAlert } from '../../../contexts/AlertContext';
 
 const EmployeesFormSchema = CompanyFactsSchema.pick({
   numberOfEmployees: true,
+  totalStaffCosts: true,
+  averageJourneyToWorkForStaffInKm: true,
 });
 type EmployeesFormInput = z.infer<typeof EmployeesFormSchema>;
 
@@ -42,7 +44,35 @@ export function EmployeesForm({ formData }: EmployeesFormProps) {
     });
   };
 
-  const fields: Array<keyof EmployeesFormInput> = ['numberOfEmployees'];
+  const fields: Map<
+    keyof EmployeesFormInput,
+    {
+      label: string;
+      ComponentType: typeof PositiveNumberInput | typeof CurrencyInput;
+    }
+  > = new Map([
+    [
+      'numberOfEmployees',
+      {
+        label: t`Number of employees (full time equivalents)`,
+        ComponentType: PositiveNumberInput,
+      },
+    ],
+    [
+      'totalStaffCosts',
+      {
+        label: t`Staff costs (gross without employer contribution)`,
+        ComponentType: CurrencyInput,
+      },
+    ],
+    [
+      'averageJourneyToWorkForStaffInKm',
+      {
+        label: t`Average journey to work for staff (in km)`,
+        ComponentType: PositiveNumberInput,
+      },
+    ],
+  ]);
 
   return (
     <FormContainer spacing={3}>
@@ -53,17 +83,15 @@ export function EmployeesForm({ formData }: EmployeesFormProps) {
       </GridItem>
       <GridItem xs={12}>
         <GridContainer spacing={3}>
-          {fields.map((key) => (
+          {[...fields.entries()].map(([key, { label, ComponentType }]) => (
             <GridItem key={key} xs={12} sm={4}>
-              <PositiveNumberInput<EmployeesFormInput>
+              <ComponentType<EmployeesFormInput>
                 fullWidth
                 error={!!errors[key]}
                 errorMessage={!!errors[key] && t(`${errors[key]?.message}`)}
                 register={register}
                 registerKey={key}
-                label={
-                  <Trans>Number of employees (full time equivalents)</Trans>
-                }
+                label={label}
                 required={true}
               />
             </GridItem>

@@ -36,4 +36,8 @@ export const DE_TRANSLATIONS = {
   'Financial assets and cash balance': 'Finanzanlagen und Barguthaben',
   'Number of employees (full time equivalents)':
     'Anzahl der Mitarbeitenden (in Vollzeitäquivalenten)',
+  'Staff costs (gross without employer contribution)':
+    'Personalkosten (brutto ohne Dienstgeberanteil)',
+  'Average journey to work for staff (in km)':
+    'Durchschnittlicher Arbeitsweg der Mitarbeitenden (in km)',
 };

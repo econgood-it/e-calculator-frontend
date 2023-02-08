@@ -28,6 +28,8 @@ export const CompanyFactsSchema = z.object({
   additionsToFixedAssets: PositiveNumberSchema,
   financialAssetsAndCashBalance: PositiveNumberSchema,
   numberOfEmployees: PositiveNumberSchema,
+  totalStaffCosts: PositiveNumberSchema,
+  averageJourneyToWorkForStaffInKm: PositiveNumberSchema,
 });
 export const CompanyFactsRequestBodySchema =
   CompanyFactsSchema.deepPartial().merge(

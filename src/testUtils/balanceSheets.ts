@@ -16,6 +16,8 @@ export const OwnersAndFinancialServicesMocks = {
 export const EmployeesMocks = {
   employees1: () => ({
     numberOfEmployees: 30,
+    totalStaffCosts: 17,
+    averageJourneyToWorkForStaffInKm: 13,
   }),
 };
 

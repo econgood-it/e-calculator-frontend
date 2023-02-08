@@ -49,4 +49,18 @@ describe('EmployeesForm', () => {
       'numberOfEmployees'
     );
   });
+
+  it('should modify total staff costs field and save changes', async () => {
+    await shouldModifyFieldSaveResults(
+      'Staff costs (gross without employer contribution)',
+      'totalStaffCosts'
+    );
+  });
+
+  it('should modify average journey to work field and save changes', async () => {
+    await shouldModifyFieldSaveResults(
+      'Average journey to work for staff (in km)',
+      'averageJourneyToWorkForStaffInKm'
+    );
+  });
 });

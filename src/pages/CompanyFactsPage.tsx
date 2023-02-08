@@ -58,6 +58,9 @@ const CompanyFactsPage = () => {
           <EmployeesForm
             formData={{
               numberOfEmployees: balanceSheet.companyFacts.numberOfEmployees,
+              totalStaffCosts: balanceSheet.companyFacts.totalStaffCosts,
+              averageJourneyToWorkForStaffInKm:
+                balanceSheet.companyFacts.averageJourneyToWorkForStaffInKm,
             }}
           />
         </>

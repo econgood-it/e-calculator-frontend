@@ -16,6 +16,8 @@ describe('CompanyFacts', () => {
       additionsToFixedAssets: 2,
       financialAssetsAndCashBalance: 23,
       numberOfEmployees: 30,
+      totalStaffCosts: 17,
+      averageJourneyToWorkForStaffInKm: 13,
     };
     const companyFacts = CompanyFactsSchema.parse(json);
     expect(companyFacts).toMatchObject(json);
