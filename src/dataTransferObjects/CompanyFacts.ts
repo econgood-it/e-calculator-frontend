@@ -30,6 +30,7 @@ export const CompanyFactsSchema = z.object({
   numberOfEmployees: PositiveNumberSchema,
   totalStaffCosts: PositiveNumberSchema,
   averageJourneyToWorkForStaffInKm: PositiveNumberSchema,
+  hasCanteen: z.boolean().optional(),
 });
 export const CompanyFactsRequestBodySchema =
   CompanyFactsSchema.deepPartial().merge(

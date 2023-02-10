@@ -34,6 +34,7 @@ const EN_WORDS = [
   'Number of employees (full time equivalents)',
   'Staff costs (gross without employer contribution)',
   'Average journey to work for staff (in km)',
+  'Is there a canteen for the majority of staff?',
 ];
 
 export const EN_TRANSLATIONS = EN_WORDS.reduce(

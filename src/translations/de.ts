@@ -40,4 +40,6 @@ export const DE_TRANSLATIONS = {
     'Personalkosten (brutto ohne Dienstgeberanteil)',
   'Average journey to work for staff (in km)':
     'Durchschnittlicher Arbeitsweg der Mitarbeitenden (in km)',
+  'Is there a canteen for the majority of staff?':
+    'Gibt es eine Kantine für die Mehrheit der Mitarbeitenden?',
 };

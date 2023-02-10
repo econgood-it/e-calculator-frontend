@@ -18,6 +18,7 @@ export const EmployeesMocks = {
     numberOfEmployees: 30,
     totalStaffCosts: 17,
     averageJourneyToWorkForStaffInKm: 13,
+    hasCanteen: false,
   }),
 };
 

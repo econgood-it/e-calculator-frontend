@@ -11,11 +11,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave } from '@fortawesome/free-solid-svg-icons';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { useAlert } from '../../../contexts/AlertContext';
+import SwitchLabel from './SwitchLabel';
 
 const EmployeesFormSchema = CompanyFactsSchema.pick({
   numberOfEmployees: true,
   totalStaffCosts: true,
   averageJourneyToWorkForStaffInKm: true,
+  hasCanteen: true,
 });
 type EmployeesFormInput = z.infer<typeof EmployeesFormSchema>;
 
@@ -31,6 +33,7 @@ export function EmployeesForm({ formData }: EmployeesFormProps) {
     register,
     formState: { errors },
     handleSubmit,
+    control,
   } = useForm<EmployeesFormInput>({
     resolver: zodResolver(EmployeesFormSchema),
     mode: 'onChange',
@@ -44,7 +47,7 @@ export function EmployeesForm({ formData }: EmployeesFormProps) {
     });
   };
 
-  const fields: Map<
+  const numberFields: Map<
     keyof EmployeesFormInput,
     {
       label: string;
@@ -82,20 +85,29 @@ export function EmployeesForm({ formData }: EmployeesFormProps) {
         </Typography>
       </GridItem>
       <GridItem xs={12}>
-        <GridContainer spacing={3}>
-          {[...fields.entries()].map(([key, { label, ComponentType }]) => (
-            <GridItem key={key} xs={12} sm={4}>
-              <ComponentType<EmployeesFormInput>
-                fullWidth
-                error={!!errors[key]}
-                errorMessage={!!errors[key] && t(`${errors[key]?.message}`)}
-                register={register}
-                registerKey={key}
-                label={label}
-                required={true}
-              />
-            </GridItem>
-          ))}
+        <GridContainer spacing={3} alignItems="center">
+          {[...numberFields.entries()].map(
+            ([key, { label, ComponentType }]) => (
+              <GridItem key={key} xs={12} sm={3}>
+                <ComponentType<EmployeesFormInput>
+                  fullWidth
+                  error={!!errors[key]}
+                  errorMessage={!!errors[key] && t(`${errors[key]?.message}`)}
+                  register={register}
+                  registerKey={key}
+                  label={label}
+                  required={true}
+                />
+              </GridItem>
+            )
+          )}
+          <GridItem key={'hasCanteen'} xs={12} sm={3}>
+            <SwitchLabel<EmployeesFormInput>
+              control={control}
+              registerKey={'hasCanteen'}
+              label={t`Is there a canteen for the majority of staff?`}
+            />
+          </GridItem>
         </GridContainer>
       </GridItem>
       <GridItem xs={12}>

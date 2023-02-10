@@ -61,6 +61,7 @@ const CompanyFactsPage = () => {
               totalStaffCosts: balanceSheet.companyFacts.totalStaffCosts,
               averageJourneyToWorkForStaffInKm:
                 balanceSheet.companyFacts.averageJourneyToWorkForStaffInKm,
+              hasCanteen: balanceSheet.companyFacts.hasCanteen,
             }}
           />
         </>

@@ -14,6 +14,7 @@ import { UserEvent } from '@testing-library/user-event/dist/types/setup';
 import Element from 'react';
 import { expectPositiveNumberFieldToBeValidatedAndModifiedAndSaved } from '../../../testUtils/form';
 import { EmployeesForm } from './EmployeesForm';
+import HTMLInputElement from 'react';
 
 jest.mock('../../../contexts/ActiveBalanceSheetProvider');
 jest.mock('../../../contexts/AlertContext');
@@ -62,5 +63,22 @@ describe('EmployeesForm', () => {
       'Average journey to work for staff (in km)',
       'averageJourneyToWorkForStaffInKm'
     );
+  });
+
+  it('should check has canteen switch on and recognize modification', async () => {
+    const user = userEvent.setup();
+    const formData = EmployeesMocks.employees1();
+    renderWithTheme(<EmployeesForm formData={formData} />);
+    const switchField = screen.getByRole('checkbox', {
+      name: 'Is there a canteen for the majority of staff?',
+    });
+    expect((switchField as HTMLInputElement).checked).toBeFalsy();
+    await user.click(switchField);
+    const saveButton = screen.getByRole('button', { name: 'Save' });
+    await user.click(saveButton);
+    expect(updateCompanyFacts).toHaveBeenCalledWith({
+      ...formData,
+      hasCanteen: true,
+    });
   });
 });
