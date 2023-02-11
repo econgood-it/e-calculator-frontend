@@ -2,6 +2,12 @@ import { BalanceSheet } from '../dataTransferObjects/BalanceSheet';
 import { RatingType } from '../dataTransferObjects/Rating';
 import { CompanyFacts } from '../dataTransferObjects/CompanyFacts';
 
+export const CustomersMocks = {
+  customers1: () => ({
+    turnover: 19,
+  }),
+};
+
 export const OwnersAndFinancialServicesMocks = {
   ownersAndFinancialServices1: () => ({
     profit: 90,
@@ -47,6 +53,7 @@ export const CompanyFactsMocks = {
     ...SuppliersMocks.suppliers1(),
     ...OwnersAndFinancialServicesMocks.ownersAndFinancialServices1(),
     ...EmployeesMocks.employees1(),
+    ...CustomersMocks.customers1(),
   }),
 };
 

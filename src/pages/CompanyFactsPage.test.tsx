@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
 import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
 import { BalanceSheetMocks } from '../testUtils/balanceSheets';
@@ -45,5 +45,16 @@ describe('CompanyFactsPage', () => {
     await waitFor(() =>
       expect(apiMock.get).toHaveBeenCalledWith('/v1/industries')
     );
+  });
+
+  it('renders forms', async () => {
+    renderWithTheme(<CompanyFactsPage />);
+    expect(await screen.findByText('Suppliers')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Owners, equity- and financial service providers')
+    ).toBeInTheDocument();
+    expect(await screen.findByText('Employees')).toBeInTheDocument();
+
+    expect(await screen.findByText('Customers')).toBeInTheDocument();
   });
 });

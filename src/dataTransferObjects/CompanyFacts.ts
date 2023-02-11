@@ -40,6 +40,7 @@ export const CompanyFactsSchema = z.object({
       percentage: isPercentage,
     })
     .array(),
+  turnover: PositiveNumberSchema,
 });
 export const CompanyFactsRequestBodySchema =
   CompanyFactsSchema.deepPartial().merge(

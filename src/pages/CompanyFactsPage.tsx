@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { Region, RegionSchema } from '../dataTransferObjects/Region';
 import { Industry, IndustrySchema } from '../dataTransferObjects/Industry';
 import { EmployeesForm } from '../components/balanceSheet/companyFacts/EmployeesForm';
+import { CustomersForm } from '../components/balanceSheet/companyFacts/CustomersForm';
 
 const CompanyFactsPage = () => {
   const { balanceSheet } = useActiveBalanceSheet();
@@ -65,6 +66,9 @@ const CompanyFactsPage = () => {
               employeesFractions: balanceSheet.companyFacts.employeesFractions,
             }}
             regions={regions}
+          />
+          <CustomersForm
+            formData={{ turnover: balanceSheet.companyFacts.turnover }}
           />
         </>
       )}
