@@ -8,6 +8,9 @@ const PositiveNumberSchema = z
   .nonnegative('Number should be positive');
 const isCountryCode = z.string().min(3).max(3);
 const isIndustryCode = z.string().min(1).max(4);
+
+const isPercentage = z.number().min(0).max(100);
+
 export const CompanyFactsSchema = z.object({
   totalPurchaseFromSuppliers: PositiveNumberSchema,
   supplyFractions: z
@@ -31,6 +34,12 @@ export const CompanyFactsSchema = z.object({
   totalStaffCosts: PositiveNumberSchema,
   averageJourneyToWorkForStaffInKm: PositiveNumberSchema,
   hasCanteen: z.boolean().optional(),
+  employeesFractions: z
+    .object({
+      countryCode: isCountryCode.optional(),
+      percentage: isPercentage,
+    })
+    .array(),
 });
 export const CompanyFactsRequestBodySchema =
   CompanyFactsSchema.deepPartial().merge(

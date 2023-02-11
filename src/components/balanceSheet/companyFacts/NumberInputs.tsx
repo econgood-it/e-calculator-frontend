@@ -5,7 +5,7 @@ import {
   InputLabel,
   OutlinedInput,
 } from '@mui/material';
-import { Path, UseFormRegister } from 'react-hook-form';
+import { FieldValues, Path, UseFormRegister } from 'react-hook-form';
 import { ReactElement } from 'react';
 
 type PositiveNumberInputProps<T> = {
@@ -20,7 +20,7 @@ type PositiveNumberInputProps<T> = {
   startAdornment?: ReactElement;
 };
 
-export function PositiveNumberInput<T extends unknown>({
+export function PositiveNumberInput<T extends FieldValues>({
   fullWidth,
   label,
   registerKey,
@@ -52,13 +52,24 @@ export function PositiveNumberInput<T extends unknown>({
   );
 }
 
-export function CurrencyInput<T extends unknown>(
+export function CurrencyInput<T extends FieldValues>(
   props: PositiveNumberInputProps<T>
 ) {
   return (
     <PositiveNumberInput
       {...props}
       startAdornment={<InputAdornment position="start">€</InputAdornment>}
+    />
+  );
+}
+
+export function PercentageInput<T extends FieldValues>(
+  props: PositiveNumberInputProps<T>
+) {
+  return (
+    <PositiveNumberInput
+      {...props}
+      startAdornment={<InputAdornment position="start">%</InputAdornment>}
     />
   );
 }

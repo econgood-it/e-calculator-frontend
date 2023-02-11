@@ -35,6 +35,8 @@ const EN_WORDS = [
   'Staff costs (gross without employer contribution)',
   'Average journey to work for staff (in km)',
   'Is there a canteen for the majority of staff?',
+  'Add employees origin',
+  'Amount in %',
 ];
 
 export const EN_TRANSLATIONS = EN_WORDS.reduce(

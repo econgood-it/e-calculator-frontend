@@ -11,12 +11,16 @@ import { z } from 'zod';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { CompanyFactsSchema } from '../../../dataTransferObjects/CompanyFacts';
 import { Region } from '../../../dataTransferObjects/Region';
-import { IndustrySelect, RegionSelect } from './AutocompleteSelects';
+import {
+  DEFAULT_CODE,
+  IndustrySelect,
+  RegionSelect,
+} from './AutocompleteSelects';
 import { Industry } from '../../../dataTransferObjects/Industry';
 import { useEffect } from 'react';
 import { useAlert } from '../../../contexts/AlertContext';
+import { SaveButton } from './SaveButton';
 
-const DEFAULT_CODE = 'DEFAULT_CODE';
 const SuppliersFormInputSchema = CompanyFactsSchema.pick({
   totalPurchaseFromSuppliers: true,
   supplyFractions: true,
@@ -208,17 +212,10 @@ const SuppliersForm = ({
         </GridContainer>
       </GridItem>
       <GridItem xs={12}>
-        <Button
-          fullWidth={true}
-          size={'large'}
-          onClick={handleSubmit(onSaveClick, () =>
-            addErrorAlert(t`Form data is invalid`)
-          )}
-          variant={'contained'}
-          startIcon={<FontAwesomeIcon icon={faSave} />}
-        >
-          <Trans>Save</Trans>
-        </Button>
+        <SaveButton<SuppliersFormInput>
+          handleSubmit={handleSubmit}
+          onSaveClick={onSaveClick}
+        />
       </GridItem>
     </FormContainer>
   );

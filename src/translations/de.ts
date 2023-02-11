@@ -42,4 +42,6 @@ export const DE_TRANSLATIONS = {
     'Durchschnittlicher Arbeitsweg der Mitarbeitenden (in km)',
   'Is there a canteen for the majority of staff?':
     'Gibt es eine Kantine für die Mehrheit der Mitarbeitenden?',
+  'Add employees origin': 'Herkunft der Mitarbeitenden hinzufügen',
+  'Amount in %': 'Anteil in %',
 };

@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave } from '@fortawesome/free-solid-svg-icons';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { useAlert } from '../../../contexts/AlertContext';
+import { SaveButton } from './SaveButton';
 
 const OwnersAndFinancialServicesFormSchema = CompanyFactsSchema.pick({
   profit: true,
@@ -88,17 +89,10 @@ export function OwnersAndFinancialServicesForm({
         </GridContainer>
       </GridItem>
       <GridItem xs={12}>
-        <Button
-          fullWidth={true}
-          size={'large'}
-          onClick={handleSubmit(onSaveClick, () =>
-            addErrorAlert(t`Form data is invalid`)
-          )}
-          variant={'contained'}
-          startIcon={<FontAwesomeIcon icon={faSave} />}
-        >
-          <Trans>Save</Trans>
-        </Button>
+        <SaveButton<OwnersAndFinancialServicesFormInput>
+          handleSubmit={handleSubmit}
+          onSaveClick={onSaveClick}
+        />
       </GridItem>
     </FormContainer>
   );

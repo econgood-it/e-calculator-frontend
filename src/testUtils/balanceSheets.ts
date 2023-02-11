@@ -19,6 +19,7 @@ export const EmployeesMocks = {
     totalStaffCosts: 17,
     averageJourneyToWorkForStaffInKm: 13,
     hasCanteen: false,
+    employeesFractions: [{ countryCode: 'AFG', percentage: 0.5 }],
   }),
 };
 

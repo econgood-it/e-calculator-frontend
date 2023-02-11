@@ -4,6 +4,8 @@ import { Region } from '../../../dataTransferObjects/Region';
 import { useTranslation } from 'react-i18next';
 import { Industry } from '../../../dataTransferObjects/Industry';
 
+export const DEFAULT_CODE = 'DEFAULT_CODE';
+
 type AutocompleteSelectProps = {
   control: any;
   options: string[];
