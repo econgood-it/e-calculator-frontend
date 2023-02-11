@@ -1,16 +1,13 @@
 import { CompanyFactsSchema } from '../../../dataTransferObjects/CompanyFacts';
 import GridItem from '../../layout/GridItem';
-import { Button, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
 import { CurrencyInput } from './NumberInputs';
 import GridContainer, { FormContainer } from '../../layout/GridContainer';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSave } from '@fortawesome/free-solid-svg-icons';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
-import { useAlert } from '../../../contexts/AlertContext';
 import { SaveButton } from './SaveButton';
 
 const OwnersAndFinancialServicesFormSchema = CompanyFactsSchema.pick({
@@ -33,7 +30,6 @@ export function OwnersAndFinancialServicesForm({
   formData,
 }: OwnersAndFinancialServicesFormProps) {
   const { t } = useTranslation();
-  const { addErrorAlert } = useAlert();
   const { updateCompanyFacts } = useActiveBalanceSheet();
   const {
     register,

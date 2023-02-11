@@ -12,9 +12,8 @@ import { useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
-import { useAlert } from '../../../contexts/AlertContext';
 import SwitchLabel from './SwitchLabel';
 import { Region } from '../../../dataTransferObjects/Region';
 import { DEFAULT_CODE, RegionSelect } from './AutocompleteSelects';
@@ -36,7 +35,6 @@ type EmployeesFormProps = {
 
 export function EmployeesForm({ formData, regions }: EmployeesFormProps) {
   const { t } = useTranslation();
-  const { addErrorAlert } = useAlert();
   const { updateCompanyFacts } = useActiveBalanceSheet();
   const {
     register,

@@ -4,7 +4,6 @@ import SuppliersForm from './SuppliersForm';
 import userEvent from '@testing-library/user-event';
 import renderWithTheme from '../../../testUtils/rendering';
 import {
-  BalanceSheetMocks,
   CompanyFactsMocks,
   SuppliersMocks,
 } from '../../../testUtils/balanceSheets';
@@ -12,6 +11,11 @@ import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvi
 import { regionsMocks } from '../../../testUtils/regions';
 import { industriesMocks } from '../../../testUtils/industries';
 import { useAlert } from '../../../contexts/AlertContext';
+import {
+  fillNumberField,
+  saveForm,
+  selectRegion,
+} from '../../../testUtils/form';
 
 jest.mock('../../../contexts/ActiveBalanceSheetProvider');
 jest.mock('../../../contexts/AlertContext');
@@ -72,8 +76,7 @@ describe('SuppliersForm', () => {
     await user.clear(input);
     await user.type(input, '800');
     expect(input).toHaveValue('800');
-    const saveButton = screen.getByRole('button', { name: 'Save' });
-    await user.click(saveButton);
+    await saveForm(user);
     expect(updateCompanyFacts).toHaveBeenCalledWith({
       ...formData,
       totalPurchaseFromSuppliers: 800,
@@ -115,19 +118,16 @@ describe('SuppliersForm', () => {
         industries={industriesMocks.industries1()}
       />
     );
+    const newCosts = 20;
     for (const index in formData.supplyFractions) {
-      const costsInputField = within(
-        screen.getByLabelText(`supplyFractions.${index}.costs`)
-      ).getByRole('textbox');
-      await user.clear(costsInputField);
-      await user.type(costsInputField, '20');
+      await fillNumberField(user, `supplyFractions.${index}.costs`, newCosts);
     }
     const saveButton = screen.getByRole('button', { name: 'Save' });
     await user.click(saveButton);
     expect(updateCompanyFacts).toHaveBeenCalledWith({
       totalPurchaseFromSuppliers: formData.totalPurchaseFromSuppliers,
       supplyFractions: CompanyFactsMocks.companyFacts1().supplyFractions.map(
-        (s) => ({ ...s, costs: 20 })
+        (s) => ({ ...s, costs: newCosts })
       ),
       mainOriginOfOtherSuppliers:
         CompanyFactsMocks.companyFacts1().mainOriginOfOtherSuppliers
@@ -151,8 +151,7 @@ describe('SuppliersForm', () => {
       name: 'Add supplier',
     });
     await user.click(addSupplierButton);
-    const saveButton = screen.getByRole('button', { name: 'Save' });
-    await user.click(saveButton);
+    await saveForm(user);
 
     expect(updateCompanyFacts).not.toHaveBeenCalled();
   });
@@ -167,22 +166,17 @@ describe('SuppliersForm', () => {
         industries={industriesMocks.industries1()}
       />
     );
-    const searchField = screen.getByLabelText(
-      'mainOriginOfOtherSuppliers.countryCode'
+    const selectedRegion = regionsMocks.regions1()[3];
+    await selectRegion(
+      user,
+      'mainOriginOfOtherSuppliers.countryCode',
+      selectedRegion
     );
-    const region = regionsMocks.regions1()[3];
-    await user.type(searchField, region.countryCode);
+    await saveForm(user);
 
-    const foundRegion = screen.getByRole('option', {
-      name: `${region.countryCode} ${region.countryName}`,
-    });
-    await user.click(foundRegion);
-
-    const saveButton = screen.getByRole('button', { name: 'Save' });
-    await user.click(saveButton);
     expect(updateCompanyFacts).toHaveBeenCalledWith({
       ...formData,
-      mainOriginOfOtherSuppliers: region.countryCode,
+      mainOriginOfOtherSuppliers: selectedRegion.countryCode,
     });
   });
 
@@ -200,8 +194,7 @@ describe('SuppliersForm', () => {
       name: `Remove supply fraction with 0`,
     });
     await user.click(removeSupplierButton);
-    const saveButton = screen.getByRole('button', { name: 'Save' });
-    await user.click(saveButton);
+    await saveForm(user);
     const expectedSupplyFractions = [...formData.supplyFractions.slice(1)];
     expect(updateCompanyFacts).toHaveBeenCalledWith({
       totalPurchaseFromSuppliers: 900,
@@ -247,12 +240,9 @@ describe('SuppliersForm', () => {
       within(mainOriginOfOtherSuppliersFieldBeforeUpdate).getByRole('textbox')
     ).toHaveValue((900 - 388 - 54).toString());
 
+    const newCosts = 20;
     for (const index in formData.supplyFractions) {
-      const costsInputField = within(
-        screen.getByLabelText(`supplyFractions.${index}.costs`)
-      ).getByRole('textbox');
-      await user.clear(costsInputField);
-      await user.type(costsInputField, '20');
+      await fillNumberField(user, `supplyFractions.${index}.costs`, newCosts);
     }
     const mainOriginOfOtherSuppliersField = screen.getByLabelText(
       `mainOriginOfOtherSuppliers.costs`
@@ -260,6 +250,8 @@ describe('SuppliersForm', () => {
 
     expect(
       within(mainOriginOfOtherSuppliersField).getByRole('textbox')
-    ).toHaveValue((900 - 20 - 20).toString());
+    ).toHaveValue(
+      (900 - newCosts * formData.supplyFractions.length).toString()
+    );
   });
 });

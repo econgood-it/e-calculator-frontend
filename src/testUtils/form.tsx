@@ -1,10 +1,15 @@
 import Element, { ReactElement } from 'react';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { OwnersAndFinancialServicesMocks } from './balanceSheets';
+import {
+  EmployeesMocks,
+  OwnersAndFinancialServicesMocks,
+} from './balanceSheets';
 import renderWithTheme from './rendering';
 import { OwnersAndFinancialServicesForm } from '../components/balanceSheet/companyFacts/OwnersAndFinancialServicesForm';
+import { regionsMocks } from './regions';
+import { Region } from '../dataTransferObjects/Region';
 
 async function checkPositiveNumberFieldValidations(
   input: Element,
@@ -47,4 +52,35 @@ export async function expectPositiveNumberFieldToBeValidatedAndModifiedAndSaved(
     ...formData,
     [fieldKey]: modifiedValue,
   });
+}
+
+export async function saveForm(user: UserEvent) {
+  const saveButton = screen.getByRole('button', { name: 'Save' });
+  await user.click(saveButton);
+}
+
+export async function fillNumberField(
+  user: UserEvent,
+  labelOfField: string,
+  value: number
+) {
+  const percentageField = within(screen.getByLabelText(labelOfField)).getByRole(
+    'textbox'
+  );
+  await user.clear(percentageField);
+  await user.type(percentageField, value.toString());
+}
+
+export async function selectRegion(
+  user: UserEvent,
+  labelOfSearchField: string,
+  regionToSelect: Region
+) {
+  const searchField = screen.getByLabelText(labelOfSearchField);
+  await user.type(searchField, regionToSelect.countryCode);
+
+  const foundRegion = screen.getByRole('option', {
+    name: `${regionToSelect.countryCode} ${regionToSelect.countryName}`,
+  });
+  await user.click(foundRegion);
 }

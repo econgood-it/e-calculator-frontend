@@ -6,7 +6,7 @@ import GridContainer, { FormContainer } from '../../layout/GridContainer';
 import GridItem from '../../layout/GridItem';
 import { Button, IconButton, Typography } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faSave, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { z } from 'zod';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { CompanyFactsSchema } from '../../../dataTransferObjects/CompanyFacts';
@@ -18,7 +18,6 @@ import {
 } from './AutocompleteSelects';
 import { Industry } from '../../../dataTransferObjects/Industry';
 import { useEffect } from 'react';
-import { useAlert } from '../../../contexts/AlertContext';
 import { SaveButton } from './SaveButton';
 
 const SuppliersFormInputSchema = CompanyFactsSchema.pick({
@@ -40,7 +39,6 @@ const SuppliersForm = ({
   industries,
 }: SuppliersFormProps) => {
   const { updateCompanyFacts } = useActiveBalanceSheet();
-  const { addErrorAlert } = useAlert();
   const { t } = useTranslation();
 
   const {

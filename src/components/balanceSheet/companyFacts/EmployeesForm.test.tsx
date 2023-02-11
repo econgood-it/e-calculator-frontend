@@ -3,18 +3,18 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import renderWithTheme from '../../../testUtils/rendering';
 
-import {
-  EmployeesMocks,
-  SuppliersMocks,
-} from '../../../testUtils/balanceSheets';
+import { EmployeesMocks } from '../../../testUtils/balanceSheets';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { useAlert } from '../../../contexts/AlertContext';
 import HTMLInputElement from 'react';
-import { expectPositiveNumberFieldToBeValidatedAndModifiedAndSaved } from '../../../testUtils/form';
+import {
+  expectPositiveNumberFieldToBeValidatedAndModifiedAndSaved,
+  fillNumberField,
+  saveForm,
+  selectRegion,
+} from '../../../testUtils/form';
 import { EmployeesForm } from './EmployeesForm';
 import { regionsMocks } from '../../../testUtils/regions';
-import SuppliersForm from './SuppliersForm';
-import { industriesMocks } from '../../../testUtils/industries';
 
 jest.mock('../../../contexts/ActiveBalanceSheetProvider');
 jest.mock('../../../contexts/AlertContext');
@@ -100,8 +100,7 @@ describe('EmployeesForm', () => {
       name: 'Add employees origin',
     });
     await user.click(addEmployeesOriginButton);
-    const saveButton = screen.getByRole('button', { name: 'Save' });
-    await user.click(saveButton);
+    await saveForm(user);
 
     expect(updateCompanyFacts).not.toHaveBeenCalled();
   });
@@ -116,40 +115,27 @@ describe('EmployeesForm', () => {
       name: 'Add employees origin',
     });
     await user.click(addEmployeesOriginButton);
-
-    const searchField = screen.getByLabelText(
-      `employeesFractions.${
-        EmployeesMocks.employees1().employeesFractions.length
-      }.countryCode`
+    const indexOfAddedEmployeesFraction =
+      EmployeesMocks.employees1().employeesFractions.length;
+    const selectedRegion = regionsMocks.regions1()[3];
+    await selectRegion(
+      user,
+      `employeesFractions.${indexOfAddedEmployeesFraction}.countryCode`,
+      selectedRegion
     );
-    const region = regionsMocks.regions1()[3];
-    await user.type(searchField, region.countryCode);
-
-    const foundRegion = screen.getByRole('option', {
-      name: `${region.countryCode} ${region.countryName}`,
-    });
-    await user.click(foundRegion);
-
-    const percentageField = within(
-      screen.getByLabelText(
-        `employeesFractions.${
-          EmployeesMocks.employees1().employeesFractions.length
-        }.percentage`
-      )
-    ).getByRole('textbox');
-
     const percentage = 40;
-    await user.clear(percentageField);
-    await user.type(percentageField, percentage.toString());
-
-    const saveButton = screen.getByRole('button', { name: 'Save' });
-    await user.click(saveButton);
+    await fillNumberField(
+      user,
+      `employeesFractions.${indexOfAddedEmployeesFraction}.percentage`,
+      percentage
+    );
+    await saveForm(user);
 
     expect(updateCompanyFacts).toHaveBeenCalledWith({
       ...formData,
       employeesFractions: [
         ...formData.employeesFractions,
-        { countryCode: region.countryCode, percentage: 0.4 },
+        { countryCode: selectedRegion.countryCode, percentage: 0.4 },
       ],
     });
   });
@@ -164,8 +150,7 @@ describe('EmployeesForm', () => {
       name: `Remove employees origin with 0`,
     });
     await user.click(removeEmployeesFractionButton);
-    const saveButton = screen.getByRole('button', { name: 'Save' });
-    await user.click(saveButton);
+    await saveForm(user);
 
     expect(updateCompanyFacts).toHaveBeenCalledWith({
       ...formData,
