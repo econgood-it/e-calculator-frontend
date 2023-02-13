@@ -5,6 +5,10 @@ import { CompanyFacts } from '../dataTransferObjects/CompanyFacts';
 export const CustomersMocks = {
   customers1: () => ({
     turnover: 19,
+    isB2B: false,
+    industrySectors: [
+      { industryCode: 'A', description: 'desc', amountOfTotalTurnover: 0.8 },
+    ],
   }),
 };
 

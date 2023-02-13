@@ -68,7 +68,12 @@ const CompanyFactsPage = () => {
             regions={regions}
           />
           <CustomersForm
-            formData={{ turnover: balanceSheet.companyFacts.turnover }}
+            formData={{
+              turnover: balanceSheet.companyFacts.turnover,
+              industrySectors: balanceSheet.companyFacts.industrySectors,
+              isB2B: balanceSheet.companyFacts.isB2B,
+            }}
+            industries={industries}
           />
         </>
       )}

@@ -37,6 +37,13 @@ const EN_WORDS = [
   'Is there a canteen for the majority of staff?',
   'Add employees origin',
   'Amount in %',
+  'Percentage expected',
+  'Percentage should be between 0 and 100',
+  'Are your customers mainly other companies?',
+  'Enter the 3 most important industry sectors which your company is active in, including a rough share of turnover',
+  'Turnover',
+  'Add industry sector',
+  'Customers',
 ];
 
 export const EN_TRANSLATIONS = EN_WORDS.reduce(

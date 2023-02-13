@@ -44,4 +44,14 @@ export const DE_TRANSLATIONS = {
     'Gibt es eine Kantine für die Mehrheit der Mitarbeitenden?',
   'Add employees origin': 'Herkunft der Mitarbeitenden hinzufügen',
   'Amount in %': 'Anteil in %',
+  'Percentage expected': 'Prozentangabe erwartet',
+  'Percentage should be between 0 and 100':
+    'Prozentangabe sollte zwischen 0 und 100 liegen',
+  'Are your customers mainly other companies?':
+    'Haben Sie nahezu ausschließlich Unternehmen als Kunden?',
+  'Enter the 3 most important industry sectors which your company is active in, including a rough share of turnover':
+    'Tragen Sie nachstehend, bitte die 3 wichtigsten Branchen ein, in denen Ihr Unternehmen tätig ist, inklusive ungefährem Umsatzanteil',
+  Turnover: 'Umsatz',
+  'Add industry sector': 'Branche hinzufügen',
+  Customers: 'Kund*nnen und Mitunternehmen',
 };

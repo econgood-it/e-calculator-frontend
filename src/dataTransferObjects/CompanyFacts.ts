@@ -9,7 +9,13 @@ const PositiveNumberSchema = z
 const isCountryCode = z.string().min(3).max(3);
 const isIndustryCode = z.string().min(1).max(4);
 
-const isPercentage = z.number().min(0).max(100);
+const isPercentage = z
+  .number({
+    invalid_type_error: 'Percentage expected',
+    required_error: 'Percentage expected',
+  })
+  .min(0, 'Percentage should be between 0 and 100')
+  .max(100, 'Percentage should be between 0 and 100');
 
 export const CompanyFactsSchema = z.object({
   totalPurchaseFromSuppliers: PositiveNumberSchema,
@@ -40,7 +46,15 @@ export const CompanyFactsSchema = z.object({
       percentage: isPercentage,
     })
     .array(),
+  industrySectors: z
+    .object({
+      industryCode: isIndustryCode.optional(),
+      amountOfTotalTurnover: isPercentage,
+      description: z.string().optional(),
+    })
+    .array(),
   turnover: PositiveNumberSchema,
+  isB2B: z.boolean().optional(),
 });
 export const CompanyFactsRequestBodySchema =
   CompanyFactsSchema.deepPartial().merge(

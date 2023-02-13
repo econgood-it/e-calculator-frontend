@@ -10,6 +10,7 @@ import renderWithTheme from './rendering';
 import { OwnersAndFinancialServicesForm } from '../components/balanceSheet/companyFacts/OwnersAndFinancialServicesForm';
 import { regionsMocks } from './regions';
 import { Region } from '../dataTransferObjects/Region';
+import { Industry } from '../dataTransferObjects/Industry';
 
 async function checkPositiveNumberFieldValidations(
   input: Element,
@@ -81,6 +82,20 @@ export async function selectRegion(
 
   const foundRegion = screen.getByRole('option', {
     name: `${regionToSelect.countryCode} ${regionToSelect.countryName}`,
+  });
+  await user.click(foundRegion);
+}
+
+export async function selectIndustry(
+  user: UserEvent,
+  labelOfSearchField: string,
+  industryToSelect: Industry
+) {
+  const searchField = screen.getByLabelText(labelOfSearchField);
+  await user.type(searchField, industryToSelect.industryCode);
+
+  const foundRegion = screen.getByRole('option', {
+    name: `${industryToSelect.industryCode} - ${industryToSelect.industryName}`,
   });
   await user.click(foundRegion);
 }
