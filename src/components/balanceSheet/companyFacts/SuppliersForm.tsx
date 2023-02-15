@@ -19,6 +19,7 @@ import {
 import { Industry } from '../../../dataTransferObjects/Industry';
 import { useEffect } from 'react';
 import { SaveButton } from './SaveButton';
+import { FormTitle } from './FormTitle';
 
 const SuppliersFormInputSchema = CompanyFactsSchema.pick({
   totalPurchaseFromSuppliers: true,
@@ -97,9 +98,7 @@ const SuppliersForm = ({
   return (
     <FormContainer spacing={3}>
       <GridItem>
-        <Typography variant={'h3'}>
-          <Trans>Suppliers</Trans>
-        </Typography>
+        <FormTitle precedingCharacter={'A'} title={t`Suppliers`} />
       </GridItem>
       <GridItem xs={12}>
         <CurrencyInput<SuppliersFormInput>

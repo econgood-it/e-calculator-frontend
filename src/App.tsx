@@ -10,10 +10,19 @@ import { ThemeProvider } from 'styled-components';
 import AppRoutes from './routing/AppRoutes';
 import { BrowserRouter as Router } from 'react-router-dom';
 
+const primaryColor = '#94a231';
+const secondaryColor = '#00828b';
+
 export const themeOptions: ThemeOptions = {
   typography: {
     allVariants: {
       color: '#747474',
+    },
+    h1: {
+      color: primaryColor,
+    },
+    h2: {
+      color: secondaryColor,
     },
   },
   palette: {
@@ -21,11 +30,11 @@ export const themeOptions: ThemeOptions = {
       primary: '#747474',
     },
     primary: {
-      main: '#94a231',
+      main: primaryColor,
       contrastText: 'rgba(255,255,255,0.8)',
     },
     secondary: {
-      main: '#00828b',
+      main: secondaryColor,
       contrastText: 'rgba(255,255,255,0.8)',
     },
     error: { main: '#C2887C' },

@@ -14,6 +14,7 @@ import { DEFAULT_CODE, IndustrySelect } from './AutocompleteSelects';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import SwitchLabel from './SwitchLabel';
+import { FormTitle } from './FormTitle';
 
 const CustomersFormSchema = CompanyFactsSchema.pick({
   turnover: true,
@@ -78,9 +79,7 @@ export function CustomersForm({ formData, industries }: CustomersFormProps) {
   return (
     <FormContainer spacing={3}>
       <GridItem>
-        <Typography variant={'h3'}>
-          <Trans>Customers</Trans>
-        </Typography>
+        <FormTitle precedingCharacter={'D'} title={t`Customers`} />
       </GridItem>
       <GridItem xs={12}>
         <GridContainer spacing={3} alignItems="center">

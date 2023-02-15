@@ -1,7 +1,6 @@
 import { CompanyFactsSchema } from '../../../dataTransferObjects/CompanyFacts';
 import GridItem from '../../layout/GridItem';
-import { Typography } from '@mui/material';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { CurrencyInput } from './NumberInputs';
 import GridContainer, { FormContainer } from '../../layout/GridContainer';
 import { useForm } from 'react-hook-form';
@@ -9,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { SaveButton } from './SaveButton';
+import { FormTitle } from './FormTitle';
 
 const OwnersAndFinancialServicesFormSchema = CompanyFactsSchema.pick({
   profit: true,
@@ -63,9 +63,10 @@ export function OwnersAndFinancialServicesForm({
   return (
     <FormContainer spacing={3}>
       <GridItem>
-        <Typography variant={'h3'}>
-          <Trans>Owners, equity- and financial service providers</Trans>
-        </Typography>
+        <FormTitle
+          precedingCharacter={'B'}
+          title={t`Owners, equity- and financial service providers`}
+        />
       </GridItem>
       <GridItem xs={12}>
         <GridContainer spacing={3}>

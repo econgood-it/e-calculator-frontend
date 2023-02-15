@@ -1,6 +1,6 @@
 import { CompanyFactsSchema } from '../../../dataTransferObjects/CompanyFacts';
 import GridItem from '../../layout/GridItem';
-import { Button, IconButton, Typography } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
 import {
   CurrencyInput,
@@ -18,6 +18,7 @@ import SwitchLabel from './SwitchLabel';
 import { Region } from '../../../dataTransferObjects/Region';
 import { DEFAULT_CODE, RegionSelect } from './AutocompleteSelects';
 import { SaveButton } from './SaveButton';
+import { FormTitle } from './FormTitle';
 
 const EmployeesFormSchema = CompanyFactsSchema.pick({
   numberOfEmployees: true,
@@ -110,9 +111,7 @@ export function EmployeesForm({ formData, regions }: EmployeesFormProps) {
   return (
     <FormContainer spacing={3}>
       <GridItem>
-        <Typography variant={'h3'}>
-          <Trans>Employees</Trans>
-        </Typography>
+        <FormTitle precedingCharacter={'C'} title={t`Employees`} />
       </GridItem>
       <GridItem xs={12}>
         <GridContainer spacing={3} alignItems="center">
