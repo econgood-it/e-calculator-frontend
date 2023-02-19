@@ -18,18 +18,28 @@ import { useAlert } from './AlertContext';
 jest.mock('../contexts/ApiContext');
 jest.mock('../contexts/AlertContext');
 
-const TestComponentUpdateRating = () => {
-  const { balanceSheet, updateRating } = useActiveBalanceSheet();
+const TestComponentUpdateRatings = () => {
+  const { balanceSheet, updateRatings } = useActiveBalanceSheet();
   return (
     <>
       <Button
         onClick={() => {
-          updateRating({
-            shortName: 'A1.1',
-            name: 'Menschenwürde in der Zulieferkette',
-            estimations: 7,
-            type: RatingType.aspect,
-          });
+          updateRatings([
+            {
+              shortName: 'A1.1',
+              name: 'Menschenwürde in der Zulieferkette',
+              estimations: 7,
+              type: RatingType.aspect,
+              isPositive: true,
+            },
+            {
+              shortName: 'B1.1',
+              name: 'Financial independence through equity financing',
+              estimations: 7,
+              type: RatingType.aspect,
+              isPositive: true,
+            },
+          ]);
         }}
       >
         Update Ratings
@@ -91,14 +101,18 @@ describe('WithActiveBalanceSheet', () => {
   it('updates ratings', async () => {
     apiMock.patch.mockImplementation((path: string, data) => {
       if (path === `v1/balancesheets/3`) {
-        const updatedRating = data.ratings[0];
+        const updatedRatings = data.ratings;
         const responseData = {
           ...BalanceSheetMocks.balanceSheet1(),
-          ratings: BalanceSheetMocks.balanceSheet1().ratings.map((r) =>
-            r.shortName === updatedRating.shortName
-              ? { ...r, estimations: updatedRating.estimations }
-              : r
-          ),
+          ratings: BalanceSheetMocks.balanceSheet1().ratings.map((r) => {
+            const foundRating = updatedRatings.find(
+              (ur: { shortName: string; estimations: number }) =>
+                r.shortName === ur.shortName
+            );
+            return foundRating
+              ? { ...r, estimations: foundRating.estimations }
+              : r;
+          }),
         };
         return Promise.resolve({
           data: responseData,
@@ -115,7 +129,7 @@ describe('WithActiveBalanceSheet', () => {
             path={'/balancesheets/:balanceSheetId'}
             element={
               <ActiveBalanceSheetProvider>
-                <TestComponentUpdateRating />
+                <TestComponentUpdateRatings />
               </ActiveBalanceSheetProvider>
             }
           />
@@ -125,9 +139,13 @@ describe('WithActiveBalanceSheet', () => {
     expect(await screen.findByText(/Rating A1.1, 0/)).toBeInTheDocument();
     await user.click(screen.getByText('Update Ratings'));
     expect(apiMock.patch).toHaveBeenCalledWith('v1/balancesheets/3', {
-      ratings: [{ estimations: 7, shortName: 'A1.1' }],
+      ratings: [
+        { estimations: 7, shortName: 'A1.1' },
+        { estimations: 7, shortName: 'B1.1' },
+      ],
     });
     expect(screen.getByText(/Rating A1.1, 7/)).toBeInTheDocument();
+    expect(screen.getByText(/Rating B1.1, 7/)).toBeInTheDocument();
   });
 
   it('updates companyfacts', async () => {

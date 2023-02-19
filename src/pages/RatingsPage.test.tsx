@@ -9,13 +9,15 @@ import {
   RatingType,
   StakholderShortNames,
 } from '../dataTransferObjects/Rating';
+import { useAlert } from '../contexts/AlertContext';
 
 jest.mock('../contexts/ActiveBalanceSheetProvider');
-
+jest.mock('../contexts/AlertContext');
 describe('RatingsPage', () => {
   const updateRating = jest.fn();
 
   beforeEach(() => {
+    (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
     (useActiveBalanceSheet as jest.Mock).mockReturnValue({
       balanceSheet: BalanceSheetMocks.balanceSheet1(),
       updateRating: updateRating,

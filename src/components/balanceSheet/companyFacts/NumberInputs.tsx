@@ -20,7 +20,7 @@ type PositiveNumberInputProps<T> = {
   startAdornment?: ReactElement;
 };
 
-export function PositiveNumberInput<T extends FieldValues>({
+export function NumberInput<T extends FieldValues>({
   fullWidth,
   label,
   registerKey,
@@ -56,7 +56,7 @@ export function CurrencyInput<T extends FieldValues>(
   props: PositiveNumberInputProps<T>
 ) {
   return (
-    <PositiveNumberInput
+    <NumberInput
       {...props}
       startAdornment={<InputAdornment position="start">€</InputAdornment>}
     />
@@ -67,7 +67,7 @@ export function PercentageInput<T extends FieldValues>(
   props: PositiveNumberInputProps<T>
 ) {
   return (
-    <PositiveNumberInput
+    <NumberInput
       {...props}
       startAdornment={<InputAdornment position="start">%</InputAdornment>}
     />

@@ -1,5 +1,5 @@
 import { BalanceSheet } from '../dataTransferObjects/BalanceSheet';
-import { RatingType } from '../dataTransferObjects/Rating';
+import { Rating, RatingType } from '../dataTransferObjects/Rating';
 import { CompanyFacts } from '../dataTransferObjects/CompanyFacts';
 
 export const CustomersMocks = {
@@ -61,38 +61,43 @@ export const CompanyFactsMocks = {
   }),
 };
 
+export const RatingsMocks = {
+  ratings1: (): Rating[] => [
+    {
+      shortName: 'A1',
+      name: 'Menschenwürde in der Zulieferkette',
+      estimations: 0,
+      isPositive: true,
+      type: RatingType.topic,
+    },
+    {
+      shortName: 'A1.1',
+      name: 'Arbeitsbedingungen und gesellschaftliche Auswirkungen in der Zulieferkette',
+      estimations: 0,
+      isPositive: true,
+      type: RatingType.aspect,
+    },
+    {
+      shortName: 'A1.2',
+      name: 'Negativ-Aspekt: Verletzung der Menschenwürde in der Zulieferkette',
+      estimations: 0,
+      isPositive: false,
+      type: RatingType.aspect,
+    },
+    {
+      shortName: 'B1.1',
+      name: 'Financial independence through equity financing',
+      estimations: 0,
+      isPositive: false,
+      type: RatingType.aspect,
+    },
+  ],
+};
+
 export const BalanceSheetMocks = {
   balanceSheet1: (): BalanceSheet => ({
     id: 3,
     companyFacts: CompanyFactsMocks.companyFacts1(),
-    ratings: [
-      {
-        shortName: 'A1',
-        name: 'Menschenwürde in der Zulieferkette',
-        estimations: 0,
-        type: RatingType.topic,
-      },
-      {
-        shortName: 'A1.1',
-        name: 'Arbeitsbedingungen und gesellschaftliche Auswirkungen in der Zulieferkette',
-        estimations: 0,
-        isPositive: true,
-        type: RatingType.aspect,
-      },
-      {
-        shortName: 'A1.2',
-        name: 'Negativ-Aspekt: Verletzung der Menschenwürde in der Zulieferkette',
-        estimations: 0,
-        isPositive: false,
-        type: RatingType.aspect,
-      },
-      {
-        shortName: 'B1.1',
-        name: 'Financial independence through equity financing',
-        estimations: 0,
-        isPositive: false,
-        type: RatingType.aspect,
-      },
-    ],
+    ratings: RatingsMocks.ratings1(),
   }),
 };

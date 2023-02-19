@@ -2,11 +2,7 @@ import { CompanyFactsSchema } from '../../../dataTransferObjects/CompanyFacts';
 import GridItem from '../../layout/GridItem';
 import { Button, IconButton } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
-import {
-  CurrencyInput,
-  PercentageInput,
-  PositiveNumberInput,
-} from './NumberInputs';
+import { CurrencyInput, PercentageInput, NumberInput } from './NumberInputs';
 import GridContainer, { FormContainer } from '../../layout/GridContainer';
 import { useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -82,14 +78,14 @@ export function EmployeesForm({ formData, regions }: EmployeesFormProps) {
     keyof EmployeesFormInput,
     {
       label: string;
-      ComponentType: typeof PositiveNumberInput | typeof CurrencyInput;
+      ComponentType: typeof NumberInput | typeof CurrencyInput;
     }
   > = new Map([
     [
       'numberOfEmployees',
       {
         label: t`Number of employees (full time equivalents)`,
-        ComponentType: PositiveNumberInput,
+        ComponentType: NumberInput,
       },
     ],
     [
@@ -103,7 +99,7 @@ export function EmployeesForm({ formData, regions }: EmployeesFormProps) {
       'averageJourneyToWorkForStaffInKm',
       {
         label: t`Average journey to work for staff (in km)`,
-        ComponentType: PositiveNumberInput,
+        ComponentType: NumberInput,
       },
     ],
   ]);

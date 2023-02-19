@@ -20,6 +20,7 @@ import { CompanyFactsRequestBody } from '../dataTransferObjects/CompanyFacts';
 interface IActiveBalanceSheetContext {
   balanceSheet?: BalanceSheet;
   updateRating: (rating: Rating) => Promise<void>;
+  updateRatings: (ratings: Rating[]) => Promise<void>;
   updateCompanyFacts: (companyFacts: CompanyFactsRequestBody) => Promise<void>;
 }
 
@@ -51,6 +52,17 @@ export default function ActiveBalanceSheetProvider({
     addSuccessAlert(t`Modifications saved`);
   };
 
+  const updateRatings = async (ratings: Rating[]) => {
+    const response = await api.patch(`v1/balancesheets/${balanceSheetId}`, {
+      ratings: ratings.map((r) => ({
+        shortName: r.shortName,
+        estimations: r.estimations,
+      })),
+    });
+    setBalanceSheet(BalanceSheetResponseSchema.parse(response.data));
+    addSuccessAlert(t`Modifications saved`);
+  };
+
   const updateCompanyFacts = async (companyFacts: CompanyFactsRequestBody) => {
     const response = await api.patch(`v1/balancesheets/${balanceSheetId}`, {
       companyFacts: companyFacts,
@@ -71,6 +83,7 @@ export default function ActiveBalanceSheetProvider({
       value={{
         balanceSheet,
         updateRating,
+        updateRatings,
         updateCompanyFacts,
       }}
     >

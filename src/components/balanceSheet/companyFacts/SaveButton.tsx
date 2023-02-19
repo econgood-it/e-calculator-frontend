@@ -20,9 +20,9 @@ export function SaveButton<TFieldValues>({
     <Button
       fullWidth={true}
       size={'large'}
-      onClick={handleSubmit(onSaveClick, () =>
-        addErrorAlert(t`Form data is invalid`)
-      )}
+      onClick={handleSubmit(onSaveClick, () => {
+        addErrorAlert(t`Form data is invalid`);
+      })}
       variant={'contained'}
       startIcon={<FontAwesomeIcon icon={faSave} />}
     >

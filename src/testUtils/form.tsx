@@ -2,25 +2,17 @@ import Element, { ReactElement } from 'react';
 import { UserEvent } from '@testing-library/user-event/dist/types/setup';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {
-  EmployeesMocks,
-  OwnersAndFinancialServicesMocks,
-} from './balanceSheets';
 import renderWithTheme from './rendering';
-import { OwnersAndFinancialServicesForm } from '../components/balanceSheet/companyFacts/OwnersAndFinancialServicesForm';
-import { regionsMocks } from './regions';
 import { Region } from '../dataTransferObjects/Region';
 import { Industry } from '../dataTransferObjects/Industry';
 
-async function checkPositiveNumberFieldValidations(
-  input: Element,
-  user: UserEvent
-) {
+async function checkNumberFieldValidations(input: Element, user: UserEvent) {
   await user.clear(input);
   await user.type(input, 'a7');
   expect(input).toHaveValue('a7');
   expect(screen.getByText('Number expected')).toBeInTheDocument();
   //
+
   await user.clear(input);
   await user.type(input, '-7');
   expect(input).toHaveValue('-7');
@@ -41,7 +33,7 @@ export async function expectPositiveNumberFieldToBeValidatedAndModifiedAndSaved(
   const input = screen.getByLabelText(fieldLabel);
 
   expect(input).toHaveValue(formData[fieldKey].toString());
-  await checkPositiveNumberFieldValidations(input, user);
+  await checkNumberFieldValidations(input, user);
   const modifiedValue = 7;
   await user.clear(input);
   await user.type(input, modifiedValue.toString());

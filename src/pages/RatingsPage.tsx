@@ -1,36 +1,28 @@
 import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
-import RatingCard from '../components/balanceSheet/RatingCard';
 import {
   RatingType,
   StakholderShortNames,
 } from '../dataTransferObjects/Rating';
-import GridContainer from '../components/layout/GridContainer';
-import GridItem from '../components/layout/GridItem';
+import { RatingsForm } from '../components/balanceSheet/RatingsForm';
 
 type RatingsPageProps = {
   stakeholderToFilterBy: StakholderShortNames;
 };
 
 const RatingsPage = ({ stakeholderToFilterBy }: RatingsPageProps) => {
-  const { balanceSheet, updateRating } = useActiveBalanceSheet();
+  const { balanceSheet } = useActiveBalanceSheet();
 
   return (
     <>
-      <GridContainer spacing={2}>
-        {balanceSheet?.ratings
-          .filter((rating) =>
-            rating.shortName.startsWith(stakeholderToFilterBy)
-          )
-          .filter((rating) => rating.type === RatingType.aspect)
-          .map((rating) => (
-            <GridItem key={rating.shortName}>
-              <RatingCard
-                rating={rating}
-                onRatingSaved={(rating) => updateRating(rating)}
-              />
-            </GridItem>
-          ))}
-      </GridContainer>
+      {balanceSheet && (
+        <RatingsForm
+          ratings={balanceSheet.ratings
+            .filter((rating) =>
+              rating.shortName.startsWith(stakeholderToFilterBy)
+            )
+            .filter((rating) => rating.type === RatingType.aspect)}
+        />
+      )}
     </>
   );
 };
