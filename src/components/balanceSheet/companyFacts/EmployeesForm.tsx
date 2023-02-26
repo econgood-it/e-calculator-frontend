@@ -1,20 +1,23 @@
 import { CompanyFactsSchema } from '../../../dataTransferObjects/CompanyFacts';
 import GridItem from '../../layout/GridItem';
-import { Button, IconButton } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
-import { CurrencyInput, PercentageInput, NumberInput } from './NumberInputs';
+import {
+  CurrencyInput,
+  NumberInput,
+  PercentageInput,
+} from '../forms/NumberInputs';
 import GridContainer, { FormContainer } from '../../layout/GridContainer';
-import { useFieldArray, useForm } from 'react-hook-form';
+import { FieldValues, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
-import SwitchLabel from './SwitchLabel';
+import SwitchLabel from '../forms/SwitchLabel';
 import { Region } from '../../../dataTransferObjects/Region';
 import { DEFAULT_CODE, RegionSelect } from './AutocompleteSelects';
-import { SaveButton } from './SaveButton';
+import { SaveButton } from '../forms/SaveButton';
 import { FormTitle } from './FormTitle';
+import { FieldArrayAppendButton } from '../forms/FieldArrayAppendButton';
+import { FieldArrayRemoveButton } from '../forms/FieldArrayRemoveButton';
 
 const EmployeesFormSchema = CompanyFactsSchema.pick({
   numberOfEmployees: true,
@@ -34,10 +37,10 @@ export function EmployeesForm({ formData, regions }: EmployeesFormProps) {
   const { t } = useTranslation();
   const { updateCompanyFacts } = useActiveBalanceSheet();
   const {
+    control,
     register,
     formState: { errors },
     handleSubmit,
-    control,
   } = useForm<EmployeesFormInput>({
     resolver: zodResolver(EmployeesFormSchema),
     mode: 'onChange',
@@ -50,20 +53,17 @@ export function EmployeesForm({ formData, regions }: EmployeesFormProps) {
     },
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const fieldArrayName = 'employeesFractions';
+  const {
+    fields: employeesFractions,
+    append,
+    remove,
+  } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
-    name: 'employeesFractions', // unique name for your Field Array
+    name: fieldArrayName, // unique name for your Field Array
   });
 
-  const addSupplierFraction = () => {
-    append({ countryCode: undefined, percentage: 0 });
-  };
-
-  const removeEmployeesFraction = (index: number) => {
-    remove(index);
-  };
-
-  const onSaveClick = async (data: EmployeesFormInput) => {
+  const onSaveClick = async (data: FieldValues) => {
     const newCompanyFacts = EmployeesFormSchema.parse(data);
     await updateCompanyFacts({
       ...newCompanyFacts,
@@ -74,36 +74,6 @@ export function EmployeesForm({ formData, regions }: EmployeesFormProps) {
     });
   };
 
-  const numberFields: Map<
-    keyof EmployeesFormInput,
-    {
-      label: string;
-      ComponentType: typeof NumberInput | typeof CurrencyInput;
-    }
-  > = new Map([
-    [
-      'numberOfEmployees',
-      {
-        label: t`Number of employees (full time equivalents)`,
-        ComponentType: NumberInput,
-      },
-    ],
-    [
-      'totalStaffCosts',
-      {
-        label: t`Staff costs (gross without employer contribution)`,
-        ComponentType: CurrencyInput,
-      },
-    ],
-    [
-      'averageJourneyToWorkForStaffInKm',
-      {
-        label: t`Average journey to work for staff (in km)`,
-        ComponentType: NumberInput,
-      },
-    ],
-  ]);
-
   return (
     <FormContainer spacing={3}>
       <GridItem>
@@ -111,21 +81,30 @@ export function EmployeesForm({ formData, regions }: EmployeesFormProps) {
       </GridItem>
       <GridItem xs={12}>
         <GridContainer spacing={3} alignItems="center">
-          {[...numberFields.entries()].map(
-            ([key, { label, ComponentType }]) => (
-              <GridItem key={key} xs={12} sm={3}>
-                <ComponentType<EmployeesFormInput>
-                  fullWidth
-                  error={!!errors[key]}
-                  errorMessage={!!errors[key] && t(`${errors[key]?.message}`)}
-                  register={register}
-                  registerKey={key}
-                  label={label}
-                  required={true}
-                />
-              </GridItem>
-            )
-          )}
+          <GridItem xs={12} sm={3}>
+            <NumberInput<EmployeesFormInput>
+              register={register}
+              errors={errors}
+              registerKey={'numberOfEmployees'}
+              label={t`Number of employees (full time equivalents)`}
+            />
+          </GridItem>
+          <GridItem xs={12} sm={3}>
+            <CurrencyInput<EmployeesFormInput>
+              register={register}
+              errors={errors}
+              registerKey={'totalStaffCosts'}
+              label={t`Staff costs (gross without employer contribution)`}
+            />
+          </GridItem>
+          <GridItem xs={12} sm={3}>
+            <NumberInput<EmployeesFormInput>
+              register={register}
+              errors={errors}
+              registerKey={'averageJourneyToWorkForStaffInKm'}
+              label={t`Average journey to work for staff (in km)`}
+            />
+          </GridItem>
           <GridItem key={'hasCanteen'} xs={12} sm={3}>
             <SwitchLabel<EmployeesFormInput>
               control={control}
@@ -133,65 +112,43 @@ export function EmployeesForm({ formData, regions }: EmployeesFormProps) {
               label={t`Is there a canteen for the majority of staff?`}
             />
           </GridItem>
-          <GridItem xs={12}>
-            <Button
-              variant={'contained'}
-              startIcon={<FontAwesomeIcon icon={faPlus} />}
-              onClick={() => addSupplierFraction()}
-            >
-              <Trans>Add employees origin</Trans>
-            </Button>
-          </GridItem>
-          <GridItem xs={12}>
-            <GridContainer spacing={3}>
-              {fields.map((field, index) => (
-                <GridItem key={index} xs={12}>
-                  <GridContainer spacing={3} alignItems="center">
-                    <GridItem xs={12} sm={6}>
-                      <RegionSelect
-                        control={control}
-                        regions={regions}
-                        defaultValue={DEFAULT_CODE}
-                        name={`employeesFractions.${index}.countryCode`}
-                      />
-                    </GridItem>
-                    <GridItem xs={12} sm={5}>
-                      <PercentageInput<EmployeesFormInput>
-                        fullWidth
-                        label={<Trans>Amount in %</Trans>}
-                        error={!!errors.employeesFractions?.[index]?.percentage}
-                        errorMessage={
-                          !!errors.employeesFractions?.[index]?.percentage &&
-                          t(
-                            `${errors.employeesFractions?.[index]?.percentage?.message}`
-                          )
-                        }
-                        register={register}
-                        registerKey={`employeesFractions.${index}.percentage`}
-                        required={true}
-                      />
-                    </GridItem>
-                    <GridItem xs={12} sm={1}>
-                      <IconButton
-                        onClick={() => removeEmployeesFraction(index)}
-                        aria-label={`Remove employees origin with ${index}`}
-                        color="error"
-                      >
-                        <FontAwesomeIcon icon={faTrash} />
-                      </IconButton>
-                    </GridItem>
-                  </GridContainer>
-                </GridItem>
-              ))}
-            </GridContainer>
-          </GridItem>
         </GridContainer>
       </GridItem>
       <GridItem xs={12}>
-        <SaveButton<EmployeesFormInput>
-          handleSubmit={handleSubmit}
-          onSaveClick={onSaveClick}
-        />
+        <FieldArrayAppendButton
+          onClick={() => append({ countryCode: undefined, percentage: 0 })}
+        ></FieldArrayAppendButton>
+      </GridItem>
+      {employeesFractions.map((ef, index) => (
+        <GridItem key={index} xs={12}>
+          <GridContainer spacing={3}>
+            <GridItem xs={12} sm={6}>
+              <RegionSelect
+                control={control}
+                regions={regions}
+                defaultValue={DEFAULT_CODE}
+                name={`${fieldArrayName}.${index}.countryCode`}
+              />
+            </GridItem>
+            <GridItem xs={12} sm={5}>
+              <PercentageInput<EmployeesFormInput>
+                register={register}
+                errors={errors}
+                label={<Trans>Amount in %</Trans>}
+                registerKey={`${fieldArrayName}.${index}.percentage`}
+              />
+            </GridItem>
+            <GridItem xs={12} sm={1}>
+              <FieldArrayRemoveButton
+                onClick={() => remove(index)}
+                ariaLabel={`Remove ${fieldArrayName} with ${index}`}
+              />
+            </GridItem>
+          </GridContainer>
+        </GridItem>
+      ))}
+      <GridItem xs={12}>
+        <SaveButton handleSubmit={handleSubmit} onSaveClick={onSaveClick} />
       </GridItem>
     </FormContainer>
   );

@@ -1,4 +1,10 @@
-import { Controller } from 'react-hook-form';
+import {
+  Control,
+  Controller,
+  FieldValues,
+  Path,
+  PathValue,
+} from 'react-hook-form';
 import { Autocomplete, TextField } from '@mui/material';
 import { Region } from '../../../dataTransferObjects/Region';
 import { useTranslation } from 'react-i18next';
@@ -6,23 +12,23 @@ import { Industry } from '../../../dataTransferObjects/Industry';
 
 export const DEFAULT_CODE = 'DEFAULT_CODE';
 
-type AutocompleteSelectProps = {
-  control: any;
+type AutocompleteSelectProps<T> = {
   options: string[];
+  control: Control<T>;
   getOptionLabel: (option: any) => string;
-  name: string;
+  name: Path<T>;
   label: string;
-  defaultValue: string;
+  defaultValue: PathValue<T, Path<T>>;
 };
 
-function AutocompleteSelect({
-  control,
+function AutocompleteSelect<T extends FieldValues>({
   options,
   getOptionLabel,
+  control,
   defaultValue,
   name,
   label,
-}: AutocompleteSelectProps) {
+}: AutocompleteSelectProps<T>) {
   return (
     <Controller
       defaultValue={defaultValue}
@@ -52,19 +58,19 @@ function AutocompleteSelect({
   );
 }
 
-type RegionSelectProps = {
-  control: any;
+type RegionSelectProps<T> = {
   regions: Region[];
-  name: string;
-  defaultValue: string;
+  name: Path<T>;
+  defaultValue: PathValue<T, Path<T>>;
+  control: Control<T>;
 };
 
-export function RegionSelect({
-  control,
+export function RegionSelect<T extends FieldValues>({
   regions,
   name,
   defaultValue,
-}: RegionSelectProps) {
+  control,
+}: RegionSelectProps<T>) {
   const { t } = useTranslation();
   const defaultLabel = t`Choose a region`;
   const getOptionLabel = (option: string) =>
@@ -76,8 +82,8 @@ export function RegionSelect({
 
   return (
     <AutocompleteSelect
-      defaultValue={defaultValue}
       control={control}
+      defaultValue={defaultValue}
       options={regions.map((r) => r.countryCode)}
       getOptionLabel={getOptionLabel}
       name={name}
@@ -86,19 +92,19 @@ export function RegionSelect({
   );
 }
 
-type IndustrySelectProps = {
-  control: any;
+type IndustrySelectProps<T> = {
   industries: Industry[];
-  name: string;
-  defaultValue: string;
+  name: Path<T>;
+  defaultValue: PathValue<T, Path<T>>;
+  control: Control<T>;
 };
 
-export function IndustrySelect({
-  control,
+export function IndustrySelect<T extends FieldValues>({
   industries,
   name,
   defaultValue,
-}: IndustrySelectProps) {
+  control,
+}: IndustrySelectProps<T>) {
   const { t } = useTranslation();
   const defaultLabel = t`Choose an industry sector`;
   const getOptionLabel = (option: string) =>
@@ -110,8 +116,8 @@ export function IndustrySelect({
 
   return (
     <AutocompleteSelect
-      defaultValue={defaultValue}
       control={control}
+      defaultValue={defaultValue}
       options={industries.map((i) => i.industryCode)}
       getOptionLabel={getOptionLabel}
       name={name}

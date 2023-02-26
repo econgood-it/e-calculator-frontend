@@ -1,12 +1,10 @@
 import { Trans, useTranslation } from 'react-i18next';
-import { useFieldArray, useForm, useWatch } from 'react-hook-form';
+import { FieldValues, useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { CurrencyInput } from './NumberInputs';
+import { CurrencyInput } from '../forms/NumberInputs';
 import GridContainer, { FormContainer } from '../../layout/GridContainer';
 import GridItem from '../../layout/GridItem';
-import { Button, IconButton, Typography } from '@mui/material';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { Typography } from '@mui/material';
 import { z } from 'zod';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { CompanyFactsSchema } from '../../../dataTransferObjects/CompanyFacts';
@@ -18,8 +16,10 @@ import {
 } from './AutocompleteSelects';
 import { Industry } from '../../../dataTransferObjects/Industry';
 import { useEffect } from 'react';
-import { SaveButton } from './SaveButton';
+import { SaveButton } from '../forms/SaveButton';
 import { FormTitle } from './FormTitle';
+import { FieldArrayAppendButton } from '../forms/FieldArrayAppendButton';
+import { FieldArrayRemoveButton } from '../forms/FieldArrayRemoveButton';
 
 const SuppliersFormInputSchema = CompanyFactsSchema.pick({
   totalPurchaseFromSuppliers: true,
@@ -43,27 +43,35 @@ const SuppliersForm = ({
   const { t } = useTranslation();
 
   const {
-    register,
     formState: { errors },
+    register,
     handleSubmit,
-    control,
     setValue,
+    control,
   } = useForm<SuppliersFormInput>({
     resolver: zodResolver(SuppliersFormInputSchema),
     mode: 'onChange',
     defaultValues: formData,
   });
 
-  const { fields, append, remove } = useFieldArray({
+  const fieldArrayName = 'supplyFractions';
+  const {
+    fields: supplyFractions,
+    append,
+    remove,
+  } = useFieldArray({
     control, // control props comes from useForm (optional: if you are using FormContext)
-    name: 'supplyFractions', // unique name for your Field Array
+    name: fieldArrayName, // unique name for your Field Array
   });
 
   const watchedTotalPurchaseFromSuppliers = useWatch({
     control,
     name: 'totalPurchaseFromSuppliers',
   });
-  const watchedSupplyFractions = useWatch({ control, name: 'supplyFractions' });
+  const watchedSupplyFractions = useWatch({
+    control,
+    name: 'supplyFractions',
+  });
 
   useEffect(() => {
     const sum: number =
@@ -72,7 +80,7 @@ const SuppliersForm = ({
     setValue('mainOriginOfOtherSuppliers.costs', sum);
   }, [watchedTotalPurchaseFromSuppliers, watchedSupplyFractions]);
 
-  const onSaveClick = async (data: SuppliersFormInput) => {
+  const onSaveClick = async (data: FieldValues) => {
     const newCompanyFacts = SuppliersFormInputSchema.parse(data);
     await updateCompanyFacts({
       ...newCompanyFacts,
@@ -88,13 +96,6 @@ const SuppliersForm = ({
     });
   };
 
-  const addSupplierFraction = () => {
-    append({ countryCode: undefined, industryCode: undefined, costs: 0 });
-  };
-  const removeSupplierFraction = (index: number) => {
-    remove(index);
-  };
-
   return (
     <FormContainer spacing={3}>
       <GridItem>
@@ -102,16 +103,10 @@ const SuppliersForm = ({
       </GridItem>
       <GridItem xs={12}>
         <CurrencyInput<SuppliersFormInput>
-          fullWidth
-          label={<Trans>Total purchases from suppliers</Trans>}
-          error={!!errors.totalPurchaseFromSuppliers}
-          errorMessage={
-            !!errors.totalPurchaseFromSuppliers &&
-            t(`${errors.totalPurchaseFromSuppliers?.message}`)
-          }
           register={register}
+          errors={errors}
+          label={<Trans>Total purchases from suppliers</Trans>}
           registerKey={'totalPurchaseFromSuppliers'}
-          required={true}
         />
       </GridItem>
       <GridItem xs={12}>
@@ -123,63 +118,53 @@ const SuppliersForm = ({
         </Typography>
       </GridItem>
       <GridItem xs={12}>
-        <Button
-          variant={'contained'}
-          startIcon={<FontAwesomeIcon icon={faPlus} />}
-          onClick={() => addSupplierFraction()}
-        >
-          <Trans>Add supplier</Trans>
-        </Button>
+        <FieldArrayAppendButton
+          onClick={() =>
+            append({
+              countryCode: undefined,
+              industryCode: undefined,
+              costs: 0,
+            })
+          }
+        ></FieldArrayAppendButton>
       </GridItem>
-      <GridItem xs={12}>
-        <GridContainer spacing={3}>
-          {fields.map((field, index) => (
-            <GridItem key={index} xs={12}>
-              <GridContainer spacing={3} alignItems="center">
-                <GridItem xs={12} sm={5}>
-                  <IndustrySelect
-                    control={control}
-                    industries={industries}
-                    defaultValue={DEFAULT_CODE}
-                    name={`supplyFractions.${index}.industryCode`}
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={5}>
-                  <RegionSelect
-                    control={control}
-                    regions={regions}
-                    defaultValue={DEFAULT_CODE}
-                    name={`supplyFractions.${index}.countryCode`}
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={1}>
-                  <CurrencyInput<SuppliersFormInput>
-                    fullWidth
-                    label={<Trans>Costs</Trans>}
-                    error={!!errors.supplyFractions?.[index]?.costs}
-                    errorMessage={
-                      !!errors.supplyFractions?.[index]?.costs &&
-                      t(`${errors.supplyFractions?.[index]?.costs?.message}`)
-                    }
-                    register={register}
-                    registerKey={`supplyFractions.${index}.costs`}
-                    required={true}
-                  />
-                </GridItem>
-                <GridItem xs={12} sm={1}>
-                  <IconButton
-                    onClick={() => removeSupplierFraction(index)}
-                    aria-label={`Remove supply fraction with ${index}`}
-                    color="error"
-                  >
-                    <FontAwesomeIcon icon={faTrash} />
-                  </IconButton>
-                </GridItem>
-              </GridContainer>
+      {supplyFractions.map((sf, index) => (
+        <GridItem key={index} xs={12}>
+          <GridContainer spacing={3}>
+            <GridItem xs={12} sm={5}>
+              <IndustrySelect
+                control={control}
+                industries={industries}
+                defaultValue={DEFAULT_CODE}
+                name={`${fieldArrayName}.${index}.industryCode`}
+              />
             </GridItem>
-          ))}
-        </GridContainer>
-      </GridItem>
+            <GridItem xs={12} sm={5}>
+              <RegionSelect
+                control={control}
+                regions={regions}
+                defaultValue={DEFAULT_CODE}
+                name={`${fieldArrayName}.${index}.countryCode`}
+              />
+            </GridItem>
+            <GridItem xs={12} sm={1}>
+              <CurrencyInput<SuppliersFormInput>
+                register={register}
+                errors={errors}
+                label={<Trans>Costs</Trans>}
+                registerKey={`${fieldArrayName}.${index}.costs`}
+              />
+            </GridItem>
+            <GridItem xs={12} sm={1}>
+              <FieldArrayRemoveButton
+                onClick={() => remove(index)}
+                ariaLabel={`Remove ${fieldArrayName} with ${index}`}
+              />
+            </GridItem>
+          </GridContainer>
+        </GridItem>
+      ))}
+
       <GridItem xs={12}>
         <GridContainer spacing={3} alignItems="center">
           <GridItem xs={12} sm={5}>
@@ -197,22 +182,17 @@ const SuppliersForm = ({
           </GridItem>
           <GridItem xs={12} sm={1}>
             <CurrencyInput
-              fullWidth
-              label={<Trans>Costs</Trans>}
-              error={false}
-              readOnly={true}
               register={register}
+              errors={errors}
+              label={<Trans>Costs</Trans>}
+              readOnly={true}
               registerKey={'mainOriginOfOtherSuppliers.costs'}
-              required={true}
             />
           </GridItem>
         </GridContainer>
       </GridItem>
       <GridItem xs={12}>
-        <SaveButton<SuppliersFormInput>
-          handleSubmit={handleSubmit}
-          onSaveClick={onSaveClick}
-        />
+        <SaveButton handleSubmit={handleSubmit} onSaveClick={onSaveClick} />
       </GridItem>
     </FormContainer>
   );

@@ -3,17 +3,18 @@ import { faSave } from '@fortawesome/free-solid-svg-icons';
 import { Trans, useTranslation } from 'react-i18next';
 import { Button } from '@mui/material';
 import { useAlert } from '../../../contexts/AlertContext';
-import { UseFormHandleSubmit } from 'react-hook-form/dist/types/form';
+import {
+  SubmitHandler,
+  UseFormHandleSubmit,
+} from 'react-hook-form/dist/types/form';
+import { FieldValues } from 'react-hook-form';
 
-type SaveButtonProps<TFieldValues> = {
-  handleSubmit: UseFormHandleSubmit<TFieldValues>;
-  onSaveClick: (data: TFieldValues) => Promise<void>;
+type SaveButtonProps = {
+  handleSubmit: UseFormHandleSubmit<FieldValues>;
+  onSaveClick: SubmitHandler<FieldValues>;
 };
 
-export function SaveButton<TFieldValues>({
-  handleSubmit,
-  onSaveClick,
-}: SaveButtonProps<TFieldValues>) {
+export function SaveButton({ onSaveClick, handleSubmit }: SaveButtonProps) {
   const { addErrorAlert } = useAlert();
   const { t } = useTranslation();
   return (

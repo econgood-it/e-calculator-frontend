@@ -148,7 +148,7 @@ describe('SuppliersForm', () => {
       />
     );
     const addSupplierButton = screen.getByRole('button', {
-      name: 'Add supplier',
+      name: 'Add',
     });
     await user.click(addSupplierButton);
     await saveForm(user);
@@ -191,7 +191,7 @@ describe('SuppliersForm', () => {
       />
     );
     const removeSupplierButton = screen.getByRole('button', {
-      name: `Remove supply fraction with 0`,
+      name: `Remove supplyFractions with 0`,
     });
     await user.click(removeSupplierButton);
     await saveForm(user);

@@ -35,7 +35,7 @@ const TestComponentUpdateRatings = () => {
             {
               shortName: 'B1.1',
               name: 'Financial independence through equity financing',
-              estimations: 7,
+              estimations: -20,
               type: RatingType.aspect,
               isPositive: true,
             },
@@ -141,11 +141,11 @@ describe('WithActiveBalanceSheet', () => {
     expect(apiMock.patch).toHaveBeenCalledWith('v1/balancesheets/3', {
       ratings: [
         { estimations: 7, shortName: 'A1.1' },
-        { estimations: 7, shortName: 'B1.1' },
+        { estimations: -20, shortName: 'B1.1' },
       ],
     });
     expect(screen.getByText(/Rating A1.1, 7/)).toBeInTheDocument();
-    expect(screen.getByText(/Rating B1.1, 7/)).toBeInTheDocument();
+    expect(screen.getByText(/Rating B1.1, -20/)).toBeInTheDocument();
   });
 
   it('updates companyfacts', async () => {

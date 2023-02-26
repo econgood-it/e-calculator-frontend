@@ -18,11 +18,7 @@ describe('SwitchLabel', () => {
       defaultValues: { hasCanteen: false },
     });
     return (
-      <SwitchLabel<z.infer<typeof FormInputSchema>>
-        registerKey={'hasCanteen'}
-        label={label}
-        control={control}
-      />
+      <SwitchLabel control={control} registerKey={'hasCanteen'} label={label} />
     );
   }
 

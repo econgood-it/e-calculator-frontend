@@ -2,14 +2,15 @@ import userEvent from '@testing-library/user-event';
 import renderWithTheme from '../../../testUtils/rendering';
 
 import { regionsMocks } from '../../../testUtils/regions';
-import { useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { RegionSelect, IndustrySelect } from './AutocompleteSelects';
+import { IndustrySelect, RegionSelect } from './AutocompleteSelects';
 import { Region } from '../../../dataTransferObjects/Region';
 import { screen } from '@testing-library/react';
 import { Industry } from '../../../dataTransferObjects/Industry';
 import { industriesMocks } from '../../../testUtils/industries';
+
 describe('RegionSelect', () => {
   const defaultValue = 'defaultValue';
   function TestComponent({
@@ -30,8 +31,8 @@ describe('RegionSelect', () => {
     return (
       <RegionSelect
         name={`countryCode`}
-        regions={regions}
         control={control}
+        regions={regions}
         defaultValue={defaultValue}
       />
     );
@@ -89,9 +90,9 @@ describe('IndustrySelect', () => {
     });
     return (
       <IndustrySelect
+        control={control}
         name={`industryCode`}
         industries={industries}
-        control={control}
         defaultValue={defaultValue}
       />
     );

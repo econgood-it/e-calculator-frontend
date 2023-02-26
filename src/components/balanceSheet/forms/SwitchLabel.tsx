@@ -1,17 +1,16 @@
 import { FormControlLabel, FormGroup, Switch } from '@mui/material';
-import { Controller, FieldValues, Path } from 'react-hook-form';
-import { Control } from 'react-hook-form/dist/types/form';
+import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 
 type SwitchLabelProps<T> = {
   registerKey: Path<T>;
-  label: string;
   control: Control<T>;
+  label: string;
 };
 
 export default function SwitchLabel<T extends FieldValues>({
+  control,
   registerKey,
   label,
-  control,
 }: SwitchLabelProps<T>) {
   return (
     <FormGroup>

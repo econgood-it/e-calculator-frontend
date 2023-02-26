@@ -82,7 +82,7 @@ describe('CustomersForm', () => {
       />
     );
     const addIndustrySectorButton = screen.getByRole('button', {
-      name: 'Add industry sector',
+      name: 'Add',
     });
     await user.click(addIndustrySectorButton);
     const indexOfAddedIndustrySector =
