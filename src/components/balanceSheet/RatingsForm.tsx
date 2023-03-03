@@ -9,6 +9,7 @@ import GridContainer, { FormContainer } from '../layout/GridContainer';
 import { Typography } from '@mui/material';
 import { SaveButton } from './forms/SaveButton';
 import { useActiveBalanceSheet } from '../../contexts/ActiveBalanceSheetProvider';
+import { useEffect } from 'react';
 
 type RatingsFormProps = {
   ratings: Rating[];
@@ -25,13 +26,13 @@ export function RatingsForm({ ratings }: RatingsFormProps) {
     formState: { errors },
     control,
     handleSubmit,
-    // reset,
+    reset,
   } = useForm<RatingsFormInput>({
     resolver: zodResolver(RatingsFormSchema),
     mode: 'onChange',
     defaultValues: { ratings: ratings },
   });
-  // useEffect(() => reset({ ratings: ratings }), [reset, ratings]);
+  useEffect(() => reset({ ratings: ratings }), [reset, ratings]);
 
   const fieldArrayName = 'ratings';
   const { fields: ratingsFields } = useFieldArray<RatingsFormInput>({

@@ -8,6 +8,9 @@ import { RatingsMocks } from '../../testUtils/balanceSheets';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { saveForm } from '../../testUtils/form';
+import { Rating, RatingType } from '../../dataTransferObjects/Rating';
+import { Button } from '@mui/material';
+import { useState } from 'react';
 
 jest.mock('../../contexts/ActiveBalanceSheetProvider');
 jest.mock('../../contexts/AlertContext');
@@ -48,5 +51,78 @@ describe('RatingsForm', () => {
       { ...ratings[0], estimations: 4 },
       ...ratings.slice(1),
     ]);
+  });
+
+  function TestSwitchRatingsComponent({
+    ratingsA,
+    ratingsB,
+  }: {
+    ratingsA: Rating[];
+    ratingsB: Rating[];
+  }) {
+    const [switchToB, setSwitchToB] = useState<boolean>(false);
+
+    return (
+      <>
+        <Button onClick={() => setSwitchToB(true)}>Switch B</Button>
+        <RatingsForm ratings={switchToB ? ratingsB : ratingsA} />
+      </>
+    );
+  }
+
+  it('should update ratings form entries if provided ratings are changed', async () => {
+    const user = userEvent.setup();
+
+    const ratingsA = [
+      {
+        shortName: 'A1',
+        name: 'Menschenwürde in der Zulieferkette',
+        estimations: 0,
+        isPositive: true,
+        type: RatingType.topic,
+      },
+      {
+        shortName: 'A1.1',
+        name: 'Arbeitsbedingungen und gesellschaftliche Auswirkungen in der Zulieferkette',
+        estimations: 0,
+        isPositive: true,
+        type: RatingType.aspect,
+      },
+    ];
+    const ratingsB = [
+      {
+        shortName: 'B1',
+        name: 'Ethical position in relation to financial resources',
+        estimations: 0,
+        isPositive: true,
+        type: RatingType.topic,
+      },
+      {
+        shortName: 'B1.1',
+        name: 'Financial independence through equity financing',
+        estimations: 0,
+        isPositive: true,
+        type: RatingType.aspect,
+      },
+    ];
+
+    renderWithTheme(
+      <TestSwitchRatingsComponent ratingsA={ratingsA} ratingsB={ratingsB} />
+    );
+    ratingsA.forEach((r) => {
+      expect(screen.queryByText(r.name)).toBeInTheDocument();
+    });
+    ratingsB.forEach((r) => {
+      expect(screen.queryByText(r.name)).not.toBeInTheDocument();
+    });
+    const switchToBButton = screen.getByRole('button', { name: 'Switch B' });
+    await user.click(switchToBButton);
+
+    ratingsA.forEach((r) => {
+      expect(screen.queryByText(r.name)).not.toBeInTheDocument();
+    });
+    ratingsB.forEach((r) => {
+      expect(screen.queryByText(r.name)).toBeInTheDocument();
+    });
   });
 });
