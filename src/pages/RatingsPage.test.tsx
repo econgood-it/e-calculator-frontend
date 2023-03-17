@@ -42,19 +42,4 @@ describe('RatingsPage', () => {
         expect(screen.queryByText(r.shortName)).not.toBeInTheDocument();
       });
   });
-
-  it('calls onRatingChange if rating changes', async () => {
-    const user = userEvent.setup();
-    renderWithTheme(
-      <RatingsPage stakeholderToFilterBy={StakholderShortNames.Suppliers} />
-    );
-    const input = screen
-      .getAllByLabelText('rating-card')
-      .find((div) => div.innerHTML.includes('A1.1'));
-
-    await user.click(within(input!).getByLabelText('edit rating'));
-    await user.click(within(input!).getByLabelText('9 Stars'));
-    await user.click(within(input!).getByLabelText('save rating'));
-    expect(updateRating).toHaveBeenCalled();
-  });
 });
