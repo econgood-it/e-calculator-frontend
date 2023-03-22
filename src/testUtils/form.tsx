@@ -1,27 +1,35 @@
 import Element, { ReactElement } from 'react';
-import { UserEvent } from '@testing-library/user-event/dist/types/setup';
+
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import renderWithTheme from './rendering';
-import { Region } from '../dataTransferObjects/Region';
-import { Industry } from '../dataTransferObjects/Industry';
+import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
+import { Region } from '../models/Region';
+import { Industry } from '../models/Industry';
 
-async function checkNumberFieldValidations(input: Element, user: UserEvent) {
+async function checkNumberFieldValidations(
+  isPositveNumber: boolean,
+  input: Element,
+  user: UserEvent
+) {
   await user.clear(input);
   await user.type(input, 'a7');
   expect(input).toHaveValue('a7');
   expect(screen.getByText('Number expected')).toBeInTheDocument();
   //
 
-  await user.clear(input);
-  await user.type(input, '-7');
-  expect(input).toHaveValue('-7');
-  await waitFor(() =>
-    expect(screen.getByText('Number should be positive')).toBeInTheDocument()
-  );
+  if (isPositveNumber) {
+    await user.clear(input);
+    await user.type(input, '-7');
+    expect(input).toHaveValue('-7');
+    await waitFor(() =>
+      expect(screen.getByText('Number should be positive')).toBeInTheDocument()
+    );
+  }
 }
 
 export async function expectPositiveNumberFieldToBeValidatedAndModifiedAndSaved(
+  isPositveNumber: boolean,
   fieldLabel: string,
   fieldKey: string,
   updateCompanyFacts: () => void,
@@ -33,7 +41,7 @@ export async function expectPositiveNumberFieldToBeValidatedAndModifiedAndSaved(
   const input = screen.getByLabelText(fieldLabel);
 
   expect(input).toHaveValue(formData[fieldKey].toString());
-  await checkNumberFieldValidations(input, user);
+  await checkNumberFieldValidations(isPositveNumber, input, user);
   const modifiedValue = 7;
   await user.clear(input);
   await user.type(input, modifiedValue.toString());

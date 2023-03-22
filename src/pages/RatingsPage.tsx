@@ -1,9 +1,8 @@
 import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
-import {
-  RatingType,
-  StakholderShortNames,
-} from '../dataTransferObjects/Rating';
+
 import { RatingsForm } from '../components/balanceSheet/RatingsForm';
+import { RatingType } from 'e-calculator-schemas/dist/rating.dto';
+import { Rating, StakholderShortNames } from '../models/Rating';
 
 type RatingsPageProps = {
   stakeholderToFilterBy: StakholderShortNames;
@@ -17,10 +16,10 @@ const RatingsPage = ({ stakeholderToFilterBy }: RatingsPageProps) => {
       {balanceSheet && (
         <RatingsForm
           ratings={balanceSheet.ratings
-            .filter((rating) =>
+            .filter((rating: Rating) =>
               rating.shortName.startsWith(stakeholderToFilterBy)
             )
-            .filter((rating) => rating.type === RatingType.aspect)}
+            .filter((rating: Rating) => rating.type === RatingType.aspect)}
         />
       )}
     </>

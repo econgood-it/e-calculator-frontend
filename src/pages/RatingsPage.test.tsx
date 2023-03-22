@@ -1,15 +1,12 @@
 import '@testing-library/jest-dom';
-import { screen, within } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
 import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
 import { BalanceSheetMocks } from '../testUtils/balanceSheets';
 import RatingsPage from './RatingsPage';
-import userEvent from '@testing-library/user-event';
-import {
-  RatingType,
-  StakholderShortNames,
-} from '../dataTransferObjects/Rating';
 import { useAlert } from '../contexts/AlertContext';
+import { RatingType } from 'e-calculator-schemas/dist/rating.dto';
+import { Rating, StakholderShortNames } from '../models/Rating';
 
 jest.mock('../contexts/ActiveBalanceSheetProvider');
 jest.mock('../contexts/AlertContext');
@@ -29,16 +26,16 @@ describe('RatingsPage', () => {
       <RatingsPage stakeholderToFilterBy={StakholderShortNames.Suppliers} />
     );
     const aspectsOfStakeholderSuppliers = BalanceSheetMocks.balanceSheet1()
-      .ratings.filter((r) =>
+      .ratings.filter((r: Rating) =>
         r.shortName.startsWith(StakholderShortNames.Suppliers)
       )
-      .filter((r) => r.type === RatingType.aspect);
-    aspectsOfStakeholderSuppliers.forEach((r, index) => {
+      .filter((r: Rating) => r.type === RatingType.aspect);
+    aspectsOfStakeholderSuppliers.forEach((r: Rating) => {
       expect(screen.getByText(r.shortName)).toBeInTheDocument();
     });
     BalanceSheetMocks.balanceSheet1()
-      .ratings.filter((r) => r.type === RatingType.topic)
-      .forEach((r, index) => {
+      .ratings.filter((r: Rating) => r.type === RatingType.topic)
+      .forEach((r: Rating) => {
         expect(screen.queryByText(r.shortName)).not.toBeInTheDocument();
       });
   });

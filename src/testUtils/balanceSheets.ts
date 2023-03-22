@@ -1,6 +1,11 @@
-import { BalanceSheet } from '../dataTransferObjects/BalanceSheet';
-import { Rating, RatingType } from '../dataTransferObjects/Rating';
-import { CompanyFacts } from '../dataTransferObjects/CompanyFacts';
+import { RatingType } from 'e-calculator-schemas/dist/rating.dto';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from 'e-calculator-schemas/dist/shared.schemas';
+import { CompanyFacts } from '../models/CompanyFacts';
+import { Rating } from '../models/Rating';
+import { BalanceSheet } from '../models/BalanceSheet';
 
 export const CustomersMocks = {
   customers1: () => ({
@@ -69,6 +74,9 @@ export const RatingsMocks = {
       estimations: 0,
       isPositive: true,
       type: RatingType.topic,
+      weight: 0,
+      maxPoints: 0,
+      points: 0,
     },
     {
       shortName: 'A1.1',
@@ -76,6 +84,9 @@ export const RatingsMocks = {
       estimations: 0,
       isPositive: true,
       type: RatingType.aspect,
+      weight: 0,
+      maxPoints: 0,
+      points: 0,
     },
     {
       shortName: 'A1.2',
@@ -83,6 +94,9 @@ export const RatingsMocks = {
       estimations: 0,
       isPositive: false,
       type: RatingType.aspect,
+      weight: 0,
+      maxPoints: 0,
+      points: 0,
     },
     {
       shortName: 'B1.1',
@@ -90,6 +104,9 @@ export const RatingsMocks = {
       estimations: 0,
       isPositive: false,
       type: RatingType.aspect,
+      weight: 0,
+      maxPoints: 0,
+      points: 0,
     },
   ],
 };
@@ -97,6 +114,8 @@ export const RatingsMocks = {
 export const BalanceSheetMocks = {
   balanceSheet1: (): BalanceSheet => ({
     id: 3,
+    type: BalanceSheetType.Full,
+    version: BalanceSheetVersion.v5_0_8,
     companyFacts: CompanyFactsMocks.companyFacts1(),
     ratings: RatingsMocks.ratings1(),
   }),

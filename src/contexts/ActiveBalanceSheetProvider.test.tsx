@@ -12,8 +12,8 @@ import ActiveBalanceSheetProvider, {
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Button } from '@mui/material';
 import userEvent from '@testing-library/user-event';
-import { RatingType } from '../dataTransferObjects/Rating';
 import { useAlert } from './AlertContext';
+import { RatingType } from 'e-calculator-schemas/dist/rating.dto';
 
 jest.mock('../contexts/ApiContext');
 jest.mock('../contexts/AlertContext');
@@ -31,6 +31,9 @@ const TestComponentUpdateRatings = () => {
               estimations: 7,
               type: RatingType.aspect,
               isPositive: true,
+              weight: 0,
+              maxPoints: 0,
+              points: 0,
             },
             {
               shortName: 'B1.1',
@@ -38,6 +41,9 @@ const TestComponentUpdateRatings = () => {
               estimations: -20,
               type: RatingType.aspect,
               isPositive: true,
+              weight: 0,
+              maxPoints: 0,
+              points: 0,
             },
           ]);
         }}

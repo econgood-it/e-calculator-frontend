@@ -8,9 +8,11 @@ import { RatingsMocks } from '../../testUtils/balanceSheets';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { saveForm } from '../../testUtils/form';
-import { Rating, RatingType } from '../../dataTransferObjects/Rating';
+
 import { Button } from '@mui/material';
 import { useState } from 'react';
+import { RatingType } from 'e-calculator-schemas/dist/rating.dto';
+import { Rating } from '../../models/Rating';
 
 jest.mock('../../contexts/ActiveBalanceSheetProvider');
 jest.mock('../../contexts/AlertContext');
@@ -80,6 +82,9 @@ describe('RatingsForm', () => {
         estimations: 0,
         isPositive: true,
         type: RatingType.topic,
+        weight: 0,
+        maxPoints: 0,
+        points: 0,
       },
       {
         shortName: 'A1.1',
@@ -87,6 +92,9 @@ describe('RatingsForm', () => {
         estimations: 0,
         isPositive: true,
         type: RatingType.aspect,
+        weight: 0,
+        maxPoints: 0,
+        points: 0,
       },
     ];
     const ratingsB = [
@@ -96,6 +104,9 @@ describe('RatingsForm', () => {
         estimations: 0,
         isPositive: true,
         type: RatingType.topic,
+        weight: 0,
+        maxPoints: 0,
+        points: 0,
       },
       {
         shortName: 'B1.1',
@@ -103,6 +114,9 @@ describe('RatingsForm', () => {
         estimations: 0,
         isPositive: true,
         type: RatingType.aspect,
+        weight: 0,
+        maxPoints: 0,
+        points: 0,
       },
     ];
 

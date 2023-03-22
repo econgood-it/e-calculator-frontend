@@ -4,22 +4,22 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBuilding,
+  faCoins,
+  faGlobe,
+  faPeopleGroup,
   faTrash,
   faTruckRampBox,
-  faCoins,
-  faPeopleGroup,
   faUserGroup,
-  faGlobe,
   IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
 import ListItemText from '@mui/material/ListItemText';
 import { Trans, useTranslation } from 'react-i18next';
 import List from '@mui/material/List';
 import { Link, useNavigate } from 'react-router-dom';
-import { BalanceSheetItem } from '../../dataTransferObjects/BalanceSheet';
 import { useApi } from '../../contexts/ApiContext';
 import { useBalanceSheetItems } from '../../contexts/BalanceSheetListContext';
 import { ListSubheader } from '@mui/material';
+import { BalanceSheetItem } from '../../models/BalanceSheet';
 
 type BalanceSheetSubNavigationProps = {
   balanceSheetItem: BalanceSheetItem;

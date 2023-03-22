@@ -14,17 +14,21 @@ import { AppBar, Box, useTheme } from '@mui/material';
 import { Trans } from 'react-i18next';
 import styled from 'styled-components';
 import { Outlet, useNavigate } from 'react-router-dom';
-import {
-  BalanceSheetRequest,
-  BalanceSheetResponse,
-  BalanceSheetResponseSchema,
-  BalanceSheetType,
-  BalanceSheetVersion,
-} from '../dataTransferObjects/BalanceSheet';
+
 import { useApi } from '../contexts/ApiContext';
 import { BalanceSheetNavigationItem } from '../components/balanceSheet/BalanceSheetNavigationItem';
 import { AxiosResponse } from 'axios';
 import { useBalanceSheetItems } from '../contexts/BalanceSheetListContext';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from 'e-calculator-schemas/dist/shared.schemas';
+import {
+  BalanceSheetCreateRequestBodySchema,
+  BalanceSheetResponseBodySchema,
+} from 'e-calculator-schemas/dist/balance.sheet.dto';
+import { z } from 'zod';
+import { BalanceSheet } from '../models/BalanceSheet';
 
 const FixedAppBar = styled(AppBar)`
   z-index: ${(props) => props.theme.zIndex.drawer + 1};
@@ -59,20 +63,21 @@ export default function Sidebar() {
 
   const createBalanceSheet = async () => {
     const response = await api.post<
-      BalanceSheetResponse,
-      AxiosResponse<BalanceSheetResponse>,
-      BalanceSheetRequest
+      BalanceSheet,
+      AxiosResponse<BalanceSheet>,
+      z.input<typeof BalanceSheetCreateRequestBodySchema>
     >('/v1/balancesheets', {
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_8,
     });
-    const newBalanceSheet = BalanceSheetResponseSchema.parse(
+    const newBalanceSheet = BalanceSheetResponseBodySchema.parse(
       await response.data
     );
+    const id = newBalanceSheet.id!;
     setBalanceSheetItems((prevBalanceSheets) =>
-      prevBalanceSheets.concat({ id: newBalanceSheet.id })
+      prevBalanceSheets.concat({ id: id })
     );
-    navigate(`${newBalanceSheet.id}`);
+    navigate(`${id}`);
   };
 
   return (

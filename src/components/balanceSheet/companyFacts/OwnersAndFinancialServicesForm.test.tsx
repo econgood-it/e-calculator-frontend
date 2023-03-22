@@ -20,12 +20,14 @@ describe('OwnersAndFinancialServicesForm', () => {
 
   async function shouldModifyFieldSaveResults(
     fieldLabel: string,
-    fieldKey: string
+    fieldKey: string,
+    isPositveNumber: boolean = true
   ) {
     const formData =
       OwnersAndFinancialServicesMocks.ownersAndFinancialServices1();
     const form = <OwnersAndFinancialServicesForm formData={formData} />;
     await expectPositiveNumberFieldToBeValidatedAndModifiedAndSaved(
+      isPositveNumber,
       fieldLabel,
       fieldKey,
       updateCompanyFacts,
@@ -45,7 +47,8 @@ describe('OwnersAndFinancialServicesForm', () => {
   it('should modify income from financial investments field and save changes', async () => {
     await shouldModifyFieldSaveResults(
       'Income from financial investments',
-      'incomeFromFinancialInvestments'
+      'incomeFromFinancialInvestments',
+      false
     );
   });
 
@@ -56,7 +59,8 @@ describe('OwnersAndFinancialServicesForm', () => {
   it('should modify additions to fixed assets field and save changes', async () => {
     await shouldModifyFieldSaveResults(
       'Additions to fixed assets',
-      'additionsToFixedAssets'
+      'additionsToFixedAssets',
+      false
     );
   });
 

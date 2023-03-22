@@ -6,13 +6,14 @@ import {
   PathValue,
 } from 'react-hook-form';
 import { Autocomplete, TextField } from '@mui/material';
-import { Region } from '../../../dataTransferObjects/Region';
+
 import { useTranslation } from 'react-i18next';
-import { Industry } from '../../../dataTransferObjects/Industry';
+import { Region } from '../../../models/Region';
+import { Industry } from '../../../models/Industry';
 
 export const DEFAULT_CODE = 'DEFAULT_CODE';
 
-type AutocompleteSelectProps<T> = {
+type AutocompleteSelectProps<T extends FieldValues> = {
   options: string[];
   control: Control<T>;
   getOptionLabel: (option: any) => string;
@@ -58,7 +59,7 @@ function AutocompleteSelect<T extends FieldValues>({
   );
 }
 
-type RegionSelectProps<T> = {
+type RegionSelectProps<T extends FieldValues> = {
   regions: Region[];
   name: Path<T>;
   defaultValue: PathValue<T, Path<T>>;
@@ -92,7 +93,7 @@ export function RegionSelect<T extends FieldValues>({
   );
 }
 
-type IndustrySelectProps<T> = {
+type IndustrySelectProps<T extends FieldValues> = {
   industries: Industry[];
   name: Path<T>;
   defaultValue: PathValue<T, Path<T>>;

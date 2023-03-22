@@ -7,8 +7,8 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { BalanceSheetItem } from '../dataTransferObjects/BalanceSheet';
 import { useApi } from './ApiContext';
+import { BalanceSheetItem } from '../models/BalanceSheet';
 
 interface IBalanceSheetListContext {
   balanceSheetItems: BalanceSheetItem[];

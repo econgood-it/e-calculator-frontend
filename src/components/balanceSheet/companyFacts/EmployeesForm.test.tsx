@@ -15,6 +15,7 @@ import {
 } from '../../../testUtils/form';
 import { EmployeesForm } from './EmployeesForm';
 import { regionsMocks } from '../../../testUtils/regions';
+import { boolean } from 'zod';
 
 jest.mock('../../../contexts/ActiveBalanceSheetProvider');
 jest.mock('../../../contexts/AlertContext');
@@ -31,13 +32,15 @@ describe('EmployeesForm', () => {
 
   async function shouldModifyFieldSaveResults(
     fieldLabel: string,
-    fieldKey: string
+    fieldKey: string,
+    isPositiveNumber: boolean = true
   ) {
     const formData = EmployeesMocks.employees1();
     const form = (
       <EmployeesForm formData={formData} regions={regionsMocks.regions1()} />
     );
     await expectPositiveNumberFieldToBeValidatedAndModifiedAndSaved(
+      isPositiveNumber,
       fieldLabel,
       fieldKey,
       updateCompanyFacts,

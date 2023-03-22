@@ -43,6 +43,7 @@ describe('CustomersForm', () => {
       />
     );
     await expectPositiveNumberFieldToBeValidatedAndModifiedAndSaved(
+      true,
       'Turnover',
       'turnover',
       updateCompanyFacts,

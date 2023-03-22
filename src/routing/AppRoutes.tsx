@@ -8,8 +8,8 @@ import Sidebar from '../pages/Sidebar';
 import BalanceSheetOverviewPage from '../pages/BalanceSheetOverviewPage';
 import RatingsPage from '../pages/RatingsPage';
 import WithActiveBalanceSheet from '../components/balanceSheet/WithActiveBalanceSheet';
-import { StakholderShortNames } from '../dataTransferObjects/Rating';
 import CompanyFactsPage from '../pages/CompanyFactsPage';
+import { StakholderShortNames } from '../models/Rating';
 
 const AppRoutes = () => {
   // we get the user from the localStorage because that's where we will save their account on the login process

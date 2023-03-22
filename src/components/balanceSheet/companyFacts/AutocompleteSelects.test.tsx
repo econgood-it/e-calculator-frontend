@@ -2,14 +2,16 @@ import userEvent from '@testing-library/user-event';
 import renderWithTheme from '../../../testUtils/rendering';
 
 import { regionsMocks } from '../../../testUtils/regions';
-import { FormProvider, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IndustrySelect, RegionSelect } from './AutocompleteSelects';
-import { Region } from '../../../dataTransferObjects/Region';
+
 import { screen } from '@testing-library/react';
-import { Industry } from '../../../dataTransferObjects/Industry';
+
 import { industriesMocks } from '../../../testUtils/industries';
+import { Region } from '../../../models/Region';
+import { Industry } from '../../../models/Industry';
 
 describe('RegionSelect', () => {
   const defaultValue = 'defaultValue';

@@ -7,21 +7,23 @@ import GridItem from '../../layout/GridItem';
 import { Typography } from '@mui/material';
 import { z } from 'zod';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
-import { CompanyFactsSchema } from '../../../dataTransferObjects/CompanyFacts';
-import { Region } from '../../../dataTransferObjects/Region';
+
 import {
   DEFAULT_CODE,
   IndustrySelect,
   RegionSelect,
 } from './AutocompleteSelects';
-import { Industry } from '../../../dataTransferObjects/Industry';
+
 import { useEffect } from 'react';
 import { SaveButton } from '../forms/SaveButton';
 import { FormTitle } from './FormTitle';
 import { FieldArrayAppendButton } from '../forms/FieldArrayAppendButton';
 import { FieldArrayRemoveButton } from '../forms/FieldArrayRemoveButton';
+import { Region } from '../../../models/Region';
+import { Industry } from '../../../models/Industry';
+import { CompanyFactsResponseBodySchema } from 'e-calculator-schemas/dist/company.facts.dto';
 
-const SuppliersFormInputSchema = CompanyFactsSchema.pick({
+const SuppliersFormInputSchema = CompanyFactsResponseBodySchema.pick({
   totalPurchaseFromSuppliers: true,
   supplyFractions: true,
   mainOriginOfOtherSuppliers: true,

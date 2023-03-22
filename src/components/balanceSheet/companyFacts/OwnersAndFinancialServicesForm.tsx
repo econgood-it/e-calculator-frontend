@@ -1,4 +1,3 @@
-import { CompanyFactsSchema } from '../../../dataTransferObjects/CompanyFacts';
 import GridItem from '../../layout/GridItem';
 import { useTranslation } from 'react-i18next';
 import { CurrencyInput } from '../forms/NumberInputs';
@@ -9,15 +8,17 @@ import { z } from 'zod';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { SaveButton } from '../forms/SaveButton';
 import { FormTitle } from './FormTitle';
+import { CompanyFactsResponseBodySchema } from 'e-calculator-schemas/dist/company.facts.dto';
 
-const OwnersAndFinancialServicesFormSchema = CompanyFactsSchema.pick({
-  profit: true,
-  financialCosts: true,
-  incomeFromFinancialInvestments: true,
-  totalAssets: true,
-  additionsToFixedAssets: true,
-  financialAssetsAndCashBalance: true,
-});
+const OwnersAndFinancialServicesFormSchema =
+  CompanyFactsResponseBodySchema.pick({
+    profit: true,
+    financialCosts: true,
+    incomeFromFinancialInvestments: true,
+    totalAssets: true,
+    additionsToFixedAssets: true,
+    financialAssetsAndCashBalance: true,
+  });
 type OwnersAndFinancialServicesFormInput = z.infer<
   typeof OwnersAndFinancialServicesFormSchema
 >;

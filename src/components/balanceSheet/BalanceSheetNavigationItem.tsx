@@ -7,8 +7,8 @@ import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons';
 import ListItemText from '@mui/material/ListItemText';
 import { Trans } from 'react-i18next';
 import Collapse from '@mui/material/Collapse';
-import { BalanceSheetItem } from '../../dataTransferObjects/BalanceSheet';
 import BalanceSheetSubNavigation from './BalanceSheetSubNavigation';
+import { BalanceSheetItem } from '../../models/BalanceSheet';
 
 type BalanceSheetNavigationItemProps = {
   balanceSheetItem: BalanceSheetItem;

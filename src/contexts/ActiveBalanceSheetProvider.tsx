@@ -6,22 +6,28 @@ import {
   useState,
 } from 'react';
 import { useParams } from 'react-router-dom';
-import {
-  BalanceSheet,
-  BalanceSheetResponseSchema,
-} from '../dataTransferObjects/BalanceSheet';
+
 import { useApi } from './ApiContext';
 
-import { Rating } from '../dataTransferObjects/Rating';
 import { useAlert } from './AlertContext';
 import { useTranslation } from 'react-i18next';
-import { CompanyFactsRequestBody } from '../dataTransferObjects/CompanyFacts';
+import { Rating } from '../models/Rating';
+import { BalanceSheet } from '../models/BalanceSheet';
+import { BalanceSheetResponseBodySchema } from 'e-calculator-schemas/dist/balance.sheet.dto';
+import { CompanyFactsPatchRequestBodySchema } from 'e-calculator-schemas/dist/company.facts.dto';
+import { z } from 'zod';
+
+type CompanyFactsPatchRequestBody = z.infer<
+  typeof CompanyFactsPatchRequestBodySchema
+>;
 
 interface IActiveBalanceSheetContext {
   balanceSheet?: BalanceSheet;
   updateRating: (rating: Rating) => Promise<void>;
   updateRatings: (ratings: Rating[]) => Promise<void>;
-  updateCompanyFacts: (companyFacts: CompanyFactsRequestBody) => Promise<void>;
+  updateCompanyFacts: (
+    companyFacts: CompanyFactsPatchRequestBody
+  ) => Promise<void>;
 }
 
 const ActiveBalanceSheetContext = createContext<
@@ -48,7 +54,7 @@ export default function ActiveBalanceSheetProvider({
         { shortName: rating.shortName, estimations: rating.estimations },
       ],
     });
-    setBalanceSheet(BalanceSheetResponseSchema.parse(response.data));
+    setBalanceSheet(BalanceSheetResponseBodySchema.parse(response.data));
     addSuccessAlert(t`Modifications saved`);
   };
 
@@ -59,22 +65,24 @@ export default function ActiveBalanceSheetProvider({
         estimations: r.estimations,
       })),
     });
-    setBalanceSheet(BalanceSheetResponseSchema.parse(response.data));
+    setBalanceSheet(BalanceSheetResponseBodySchema.parse(response.data));
     addSuccessAlert(t`Modifications saved`);
   };
 
-  const updateCompanyFacts = async (companyFacts: CompanyFactsRequestBody) => {
+  const updateCompanyFacts = async (
+    companyFacts: CompanyFactsPatchRequestBody
+  ) => {
     const response = await api.patch(`v1/balancesheets/${balanceSheetId}`, {
       companyFacts: companyFacts,
     });
-    setBalanceSheet(BalanceSheetResponseSchema.parse(response.data));
+    setBalanceSheet(BalanceSheetResponseBodySchema.parse(response.data));
     addSuccessAlert(t`Modifications saved`);
   };
 
   useEffect(() => {
     (async () => {
       const response = await api.get(`v1/balancesheets/${balanceSheetId}`);
-      setBalanceSheet(BalanceSheetResponseSchema.parse(response.data));
+      setBalanceSheet(BalanceSheetResponseBodySchema.parse(response.data));
     })();
   }, [balanceSheetId]);
 

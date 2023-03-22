@@ -1,4 +1,3 @@
-import { Rating, RatingSchema } from '../../dataTransferObjects/Rating';
 import { FieldValues, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -10,12 +9,16 @@ import { Typography } from '@mui/material';
 import { SaveButton } from './forms/SaveButton';
 import { useActiveBalanceSheet } from '../../contexts/ActiveBalanceSheetProvider';
 import { useEffect } from 'react';
+import { Rating } from '../../models/Rating';
+import { RatingResponseBodySchema } from 'e-calculator-schemas/dist/rating.dto';
 
 type RatingsFormProps = {
   ratings: Rating[];
 };
 
-const RatingsFormSchema = z.object({ ratings: RatingSchema.array() });
+const RatingsFormSchema = z.object({
+  ratings: RatingResponseBodySchema.array(),
+});
 type RatingsFormInput = z.infer<typeof RatingsFormSchema>;
 
 export function RatingsForm({ ratings }: RatingsFormProps) {

@@ -3,10 +3,13 @@ import SuppliersForm from '../components/balanceSheet/companyFacts/SuppliersForm
 import { useApi } from '../contexts/ApiContext';
 import { OwnersAndFinancialServicesForm } from '../components/balanceSheet/companyFacts/OwnersAndFinancialServicesForm';
 import { useEffect, useState } from 'react';
-import { Region, RegionSchema } from '../dataTransferObjects/Region';
-import { Industry, IndustrySchema } from '../dataTransferObjects/Industry';
+
 import { EmployeesForm } from '../components/balanceSheet/companyFacts/EmployeesForm';
 import { CustomersForm } from '../components/balanceSheet/companyFacts/CustomersForm';
+import { IndustryResponseBodySchema } from 'e-calculator-schemas/dist/industry.dto';
+import { Region } from '../models/Region';
+import { Industry } from '../models/Industry';
+import { RegionResponseBodySchema } from 'e-calculator-schemas/dist/region.dto';
 
 const CompanyFactsPage = () => {
   const { balanceSheet } = useActiveBalanceSheet();
@@ -17,14 +20,16 @@ const CompanyFactsPage = () => {
   useEffect(() => {
     (async () => {
       const regionResponse = await api.get<Region[]>('/v1/regions');
-      setRegions(RegionSchema.array().parse(regionResponse.data));
+      setRegions(RegionResponseBodySchema.array().parse(regionResponse.data));
     })();
   }, [api]);
 
   useEffect(() => {
     (async () => {
       const industryResponse = await api.get<Region[]>('/v1/industries');
-      setIndustries(IndustrySchema.array().parse(industryResponse.data));
+      setIndustries(
+        IndustryResponseBodySchema.array().parse(industryResponse.data)
+      );
     })();
   }, [api]);
 

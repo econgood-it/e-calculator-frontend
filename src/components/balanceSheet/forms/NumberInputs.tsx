@@ -15,7 +15,7 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 
-type PositiveNumberInputProps<T> = {
+type PositiveNumberInputProps<T extends FieldValues> = {
   label: ReactElement | string;
   errors: FieldErrors<T>;
   register: UseFormRegister<T>;

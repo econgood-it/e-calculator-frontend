@@ -1,4 +1,3 @@
-import { CompanyFactsSchema } from '../../../dataTransferObjects/CompanyFacts';
 import GridItem from '../../layout/GridItem';
 import { Typography } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
@@ -9,14 +8,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { SaveButton } from '../forms/SaveButton';
-import { Industry } from '../../../dataTransferObjects/Industry';
+
 import { DEFAULT_CODE, IndustrySelect } from './AutocompleteSelects';
 import SwitchLabel from '../forms/SwitchLabel';
 import { FormTitle } from './FormTitle';
 import { FieldArrayAppendButton } from '../forms/FieldArrayAppendButton';
 import { FieldArrayRemoveButton } from '../forms/FieldArrayRemoveButton';
+import { CompanyFactsResponseBodySchema } from 'e-calculator-schemas/dist/company.facts.dto';
+import { Industry } from '../../../models/Industry';
 
-const CustomersFormSchema = CompanyFactsSchema.pick({
+const CustomersFormSchema = CompanyFactsResponseBodySchema.pick({
   turnover: true,
   industrySectors: true,
   isB2B: true,

@@ -1,4 +1,3 @@
-import { CompanyFactsSchema } from '../../../dataTransferObjects/CompanyFacts';
 import GridItem from '../../layout/GridItem';
 import { Trans, useTranslation } from 'react-i18next';
 import {
@@ -12,14 +11,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import SwitchLabel from '../forms/SwitchLabel';
-import { Region } from '../../../dataTransferObjects/Region';
+
 import { DEFAULT_CODE, RegionSelect } from './AutocompleteSelects';
 import { SaveButton } from '../forms/SaveButton';
 import { FormTitle } from './FormTitle';
 import { FieldArrayAppendButton } from '../forms/FieldArrayAppendButton';
 import { FieldArrayRemoveButton } from '../forms/FieldArrayRemoveButton';
+import { CompanyFactsResponseBodySchema } from 'e-calculator-schemas/dist/company.facts.dto';
+import { Region } from '../../../models/Region';
 
-const EmployeesFormSchema = CompanyFactsSchema.pick({
+const EmployeesFormSchema = CompanyFactsResponseBodySchema.pick({
   numberOfEmployees: true,
   totalStaffCosts: true,
   averageJourneyToWorkForStaffInKm: true,
