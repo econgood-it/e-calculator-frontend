@@ -1,7 +1,7 @@
 import {
   BalanceSheetItemResponseSchema,
   BalanceSheetResponseBodySchema,
-} from 'e-calculator-schemas/dist/balance.sheet.dto';
+} from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { z } from 'zod';
 
 export type BalanceSheetItem = z.infer<typeof BalanceSheetItemResponseSchema>;

@@ -13,8 +13,8 @@ import { useAlert } from './AlertContext';
 import { useTranslation } from 'react-i18next';
 import { Rating } from '../models/Rating';
 import { BalanceSheet } from '../models/BalanceSheet';
-import { BalanceSheetResponseBodySchema } from 'e-calculator-schemas/dist/balance.sheet.dto';
-import { CompanyFactsPatchRequestBodySchema } from 'e-calculator-schemas/dist/company.facts.dto';
+import { BalanceSheetResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
+import { CompanyFactsPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
 import { z } from 'zod';
 
 type CompanyFactsPatchRequestBody = z.infer<

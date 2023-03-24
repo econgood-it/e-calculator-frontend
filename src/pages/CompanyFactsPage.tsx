@@ -6,10 +6,10 @@ import { useEffect, useState } from 'react';
 
 import { EmployeesForm } from '../components/balanceSheet/companyFacts/EmployeesForm';
 import { CustomersForm } from '../components/balanceSheet/companyFacts/CustomersForm';
-import { IndustryResponseBodySchema } from 'e-calculator-schemas/dist/industry.dto';
+import { IndustryResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/industry.dto';
 import { Region } from '../models/Region';
 import { Industry } from '../models/Industry';
-import { RegionResponseBodySchema } from 'e-calculator-schemas/dist/region.dto';
+import { RegionResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/region.dto';
 
 const CompanyFactsPage = () => {
   const { balanceSheet } = useActiveBalanceSheet();

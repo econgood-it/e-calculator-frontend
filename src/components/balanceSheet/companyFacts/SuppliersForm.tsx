@@ -21,7 +21,7 @@ import { FieldArrayAppendButton } from '../forms/FieldArrayAppendButton';
 import { FieldArrayRemoveButton } from '../forms/FieldArrayRemoveButton';
 import { Region } from '../../../models/Region';
 import { Industry } from '../../../models/Industry';
-import { CompanyFactsResponseBodySchema } from 'e-calculator-schemas/dist/company.facts.dto';
+import { CompanyFactsResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
 
 const SuppliersFormInputSchema = CompanyFactsResponseBodySchema.pick({
   totalPurchaseFromSuppliers: true,

@@ -13,7 +13,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Button } from '@mui/material';
 import userEvent from '@testing-library/user-event';
 import { useAlert } from './AlertContext';
-import { RatingType } from 'e-calculator-schemas/dist/rating.dto';
+import { RatingType } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 
 jest.mock('../contexts/ApiContext');
 jest.mock('../contexts/AlertContext');

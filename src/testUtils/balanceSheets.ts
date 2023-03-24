@@ -1,8 +1,8 @@
-import { RatingType } from 'e-calculator-schemas/dist/rating.dto';
+import { RatingType } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from 'e-calculator-schemas/dist/shared.schemas';
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { CompanyFacts } from '../models/CompanyFacts';
 import { Rating } from '../models/Rating';
 import { BalanceSheet } from '../models/BalanceSheet';

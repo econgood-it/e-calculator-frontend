@@ -1200,6 +1200,14 @@
   resolved "https://registry.yarnpkg.com/@csstools/selector-specificity/-/selector-specificity-2.2.0.tgz#2cbcf822bf3764c9658c4d2e568bd0c0cb748016"
   integrity sha512-+OJ9konv95ClSTOJCmMZqpd5+YGsB2S+x6w3E1oaM8UuR5j8nTNHYSz8c9BEPGDOCMQYIEEGlVPj/VY64iTbGw==
 
+"@ecogood/e-calculator-schemas@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@ecogood/e-calculator-schemas/-/e-calculator-schemas-1.0.0.tgz#b9c649e3dccdee2d5043f858b458c2b23c243511"
+  integrity sha512-TfFvu+CrNwm5xYg0/deGDa0jMN24hWI37ibHu9Jxu8rpbY0UUh9VbokvKZVPNLHVciJ7lBHFmMb52xvHl/Dr3g==
+  dependencies:
+    eslint-plugin-n "^15.6.1"
+    zod "^3.20.6"
+
 "@emotion/is-prop-valid@^1.1.0", "@emotion/is-prop-valid@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@emotion/is-prop-valid/-/is-prop-valid-1.2.0.tgz#7f2d35c97891669f7e276eb71c83376a5dc44c83"
@@ -4129,13 +4137,6 @@ duplexer@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/duplexer/-/duplexer-0.1.2.tgz#3abe43aef3835f8ae077d136ddce0f276b0400e6"
   integrity sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg==
-
-"e-calculator-schemas@git+ssh://ecg00-gitea@git.ecogood.org:services/e-calculator-schemas.git#v1.0.13":
-  version "1.0.15"
-  resolved "git+ssh://ecg00-gitea@git.ecogood.org:services/e-calculator-schemas.git#c6c570082a76b31047d1e3c17891c7019804e2de"
-  dependencies:
-    eslint-plugin-n "^15.6.1"
-    zod "^3.20.6"
 
 ee-first@1.1.1:
   version "1.1.1"

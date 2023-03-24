@@ -14,7 +14,7 @@ import SwitchLabel from '../forms/SwitchLabel';
 import { FormTitle } from './FormTitle';
 import { FieldArrayAppendButton } from '../forms/FieldArrayAppendButton';
 import { FieldArrayRemoveButton } from '../forms/FieldArrayRemoveButton';
-import { CompanyFactsResponseBodySchema } from 'e-calculator-schemas/dist/company.facts.dto';
+import { CompanyFactsResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
 import { Industry } from '../../../models/Industry';
 
 const CustomersFormSchema = CompanyFactsResponseBodySchema.pick({

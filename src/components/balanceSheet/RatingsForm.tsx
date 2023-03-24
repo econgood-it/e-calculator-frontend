@@ -10,7 +10,7 @@ import { SaveButton } from './forms/SaveButton';
 import { useActiveBalanceSheet } from '../../contexts/ActiveBalanceSheetProvider';
 import { useEffect } from 'react';
 import { Rating } from '../../models/Rating';
-import { RatingResponseBodySchema } from 'e-calculator-schemas/dist/rating.dto';
+import { RatingResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 
 type RatingsFormProps = {
   ratings: Rating[];

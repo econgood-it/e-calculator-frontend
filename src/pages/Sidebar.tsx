@@ -22,11 +22,11 @@ import { useBalanceSheetItems } from '../contexts/BalanceSheetListContext';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
-} from 'e-calculator-schemas/dist/shared.schemas';
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import {
   BalanceSheetCreateRequestBodySchema,
   BalanceSheetResponseBodySchema,
-} from 'e-calculator-schemas/dist/balance.sheet.dto';
+} from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { z } from 'zod';
 import { BalanceSheet } from '../models/BalanceSheet';
 

@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { SaveButton } from '../forms/SaveButton';
 import { FormTitle } from './FormTitle';
-import { CompanyFactsResponseBodySchema } from 'e-calculator-schemas/dist/company.facts.dto';
+import { CompanyFactsResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
 
 const OwnersAndFinancialServicesFormSchema =
   CompanyFactsResponseBodySchema.pick({

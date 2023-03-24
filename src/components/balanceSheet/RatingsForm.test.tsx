@@ -11,7 +11,7 @@ import { saveForm } from '../../testUtils/form';
 
 import { Button } from '@mui/material';
 import { useState } from 'react';
-import { RatingType } from 'e-calculator-schemas/dist/rating.dto';
+import { RatingType } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import { Rating } from '../../models/Rating';
 
 jest.mock('../../contexts/ActiveBalanceSheetProvider');

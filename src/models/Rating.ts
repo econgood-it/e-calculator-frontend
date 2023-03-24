@@ -1,4 +1,4 @@
-import { RatingResponseBodySchema } from 'e-calculator-schemas/dist/rating.dto';
+import { RatingResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import { z } from 'zod';
 
 export enum StakholderShortNames {

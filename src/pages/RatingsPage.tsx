@@ -1,7 +1,7 @@
 import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
 
 import { RatingsForm } from '../components/balanceSheet/RatingsForm';
-import { RatingType } from 'e-calculator-schemas/dist/rating.dto';
+import { RatingType } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import { Rating, StakholderShortNames } from '../models/Rating';
 
 type RatingsPageProps = {

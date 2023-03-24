@@ -5,7 +5,7 @@ import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
 import { BalanceSheetMocks } from '../testUtils/balanceSheets';
 import RatingsPage from './RatingsPage';
 import { useAlert } from '../contexts/AlertContext';
-import { RatingType } from 'e-calculator-schemas/dist/rating.dto';
+import { RatingType } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import { Rating, StakholderShortNames } from '../models/Rating';
 
 jest.mock('../contexts/ActiveBalanceSheetProvider');
