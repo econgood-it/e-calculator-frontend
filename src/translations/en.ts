@@ -44,6 +44,9 @@ const EN_WORDS = [
   'Turnover',
   'Add industry sector',
   'Customers',
+  'Number should be between 0 and 10',
+  'Number should be between -200 and 0',
+  'Estimation',
 ];
 
 export const EN_TRANSLATIONS = EN_WORDS.reduce(

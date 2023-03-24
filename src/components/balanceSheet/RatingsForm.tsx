@@ -71,7 +71,7 @@ export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
               <NumberInput<RatingsFormInput>
                 register={register}
                 errors={errors}
-                label={<Trans>Estimations</Trans>}
+                label={<Trans>Estimation</Trans>}
                 registerKey={`${fieldArrayName}.${index}.estimations`}
               />
             </GridItem>

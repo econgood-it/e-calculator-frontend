@@ -54,4 +54,8 @@ export const DE_TRANSLATIONS = {
   Turnover: 'Umsatz',
   'Add industry sector': 'Branche hinzufügen',
   Customers: 'Kund*nnen und Mitunternehmen',
+  'Number should be between 0 and 10': 'Zahl sollte zwischen 0 und 10 liegen',
+  'Number should be between -200 and 0':
+    'Zahl sollte zwischen -200 und 0 liegen',
+  Estimation: 'Einschätzung',
 };
