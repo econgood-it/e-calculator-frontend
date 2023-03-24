@@ -8,12 +8,13 @@ import GridContainer, { FormContainer } from '../layout/GridContainer';
 import { Typography } from '@mui/material';
 import { SaveButton } from './forms/SaveButton';
 import { useActiveBalanceSheet } from '../../contexts/ActiveBalanceSheetProvider';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Rating } from '../../models/Rating';
 import { RatingResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 
 type RatingsFormProps = {
   ratings: Rating[];
+  stakeholderName: string;
 };
 
 const RatingsFormSchema = z.object({
@@ -21,9 +22,10 @@ const RatingsFormSchema = z.object({
 });
 type RatingsFormInput = z.infer<typeof RatingsFormSchema>;
 
-export function RatingsForm({ ratings }: RatingsFormProps) {
+export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
   const { updateRatings } = useActiveBalanceSheet();
 
+  const stakeholderRef = useRef(stakeholderName);
   const {
     register,
     formState: { errors },
@@ -35,7 +37,13 @@ export function RatingsForm({ ratings }: RatingsFormProps) {
     mode: 'onChange',
     defaultValues: { ratings: ratings },
   });
-  useEffect(() => reset({ ratings: ratings }), [reset, ratings]);
+
+  useEffect(() => {
+    if (stakeholderRef.current !== stakeholderName) {
+      reset({ ratings: ratings });
+      stakeholderRef.current = stakeholderName;
+    }
+  }, [reset, ratings, stakeholderRef, stakeholderName]);
 
   const fieldArrayName = 'ratings';
   const { fields: ratingsFields } = useFieldArray<RatingsFormInput>({

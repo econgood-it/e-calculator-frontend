@@ -13,13 +13,13 @@ import { Button } from '@mui/material';
 import { useState } from 'react';
 import { RatingType } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import { Rating } from '../../models/Rating';
+import { MemoryRouter } from 'react-router-dom';
 
 jest.mock('../../contexts/ActiveBalanceSheetProvider');
 jest.mock('../../contexts/AlertContext');
 
 describe('RatingsForm', () => {
   const updateRatings = jest.fn();
-
   beforeEach(() => {
     (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
     (useActiveBalanceSheet as jest.Mock).mockReturnValue({
@@ -28,7 +28,7 @@ describe('RatingsForm', () => {
   });
   it('should render ratings', async () => {
     const ratings = RatingsMocks.ratings1();
-    renderWithTheme(<RatingsForm ratings={ratings} />);
+    renderWithTheme(<RatingsForm stakeholderName={''} ratings={ratings} />);
     for (const [index, rating] of ratings.entries()) {
       expect(
         screen.getByLabelText(`ratings.${index}.estimations`)
@@ -41,7 +41,7 @@ describe('RatingsForm', () => {
   it('should modify and save estimations of some ratings', async () => {
     const user = userEvent.setup();
     const ratings = RatingsMocks.ratings1();
-    renderWithTheme(<RatingsForm ratings={ratings} />);
+    renderWithTheme(<RatingsForm stakeholderName={''} ratings={ratings} />);
     const input = within(
       screen.getByLabelText(`ratings.${0}.estimations`)
     ).getByRole('textbox');
@@ -54,7 +54,6 @@ describe('RatingsForm', () => {
       ...ratings.slice(1),
     ]);
   });
-
   function TestSwitchRatingsComponent({
     ratingsA,
     ratingsB,
@@ -67,7 +66,10 @@ describe('RatingsForm', () => {
     return (
       <>
         <Button onClick={() => setSwitchToB(true)}>Switch B</Button>
-        <RatingsForm ratings={switchToB ? ratingsB : ratingsA} />
+        <RatingsForm
+          stakeholderName={switchToB ? 'B' : 'A'}
+          ratings={switchToB ? ratingsB : ratingsA}
+        />
       </>
     );
   }

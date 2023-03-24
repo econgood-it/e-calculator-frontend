@@ -2,12 +2,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave } from '@fortawesome/free-solid-svg-icons';
 import { Trans, useTranslation } from 'react-i18next';
 import { Button } from '@mui/material';
-import { useAlert } from '../../../contexts/AlertContext';
 import {
   SubmitHandler,
   UseFormHandleSubmit,
 } from 'react-hook-form/dist/types/form';
 import { FieldValues } from 'react-hook-form';
+import { useAlert } from '../../../contexts/AlertContext';
 
 type SaveButtonProps = {
   handleSubmit: UseFormHandleSubmit<FieldValues>;

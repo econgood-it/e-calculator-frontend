@@ -15,6 +15,7 @@ const RatingsPage = ({ stakeholderToFilterBy }: RatingsPageProps) => {
     <>
       {balanceSheet && (
         <RatingsForm
+          stakeholderName={stakeholderToFilterBy}
           ratings={balanceSheet.ratings
             .filter((rating: Rating) =>
               rating.shortName.startsWith(stakeholderToFilterBy)

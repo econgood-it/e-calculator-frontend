@@ -7,6 +7,11 @@ import RatingsPage from './RatingsPage';
 import { useAlert } from '../contexts/AlertContext';
 import { RatingType } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import { Rating, StakholderShortNames } from '../models/Rating';
+import { useState } from 'react';
+import { MemoryRouter } from 'react-router-dom';
+import { Button } from '@mui/material';
+import { RatingsForm } from '../components/balanceSheet/RatingsForm';
+import userEvent from '@testing-library/user-event';
 
 jest.mock('../contexts/ActiveBalanceSheetProvider');
 jest.mock('../contexts/AlertContext');
