@@ -45,13 +45,7 @@ export function EmployeesForm({ formData, regions }: EmployeesFormProps) {
   } = useForm<EmployeesFormInput>({
     resolver: zodResolver(EmployeesFormSchema),
     mode: 'onChange',
-    defaultValues: {
-      ...formData,
-      employeesFractions: formData.employeesFractions.map((ef) => ({
-        ...ef,
-        percentage: ef.percentage * 100,
-      })),
-    },
+    defaultValues: formData,
   });
 
   const fieldArrayName = 'employeesFractions';
@@ -65,14 +59,7 @@ export function EmployeesForm({ formData, regions }: EmployeesFormProps) {
   });
 
   const onSaveClick = async (data: FieldValues) => {
-    const newCompanyFacts = EmployeesFormSchema.parse(data);
-    await updateCompanyFacts({
-      ...newCompanyFacts,
-      employeesFractions: newCompanyFacts.employeesFractions.map((ef) => ({
-        ...ef,
-        percentage: ef.percentage / 100,
-      })),
-    });
+    await updateCompanyFacts(EmployeesFormSchema.parse(data));
   };
 
   return (

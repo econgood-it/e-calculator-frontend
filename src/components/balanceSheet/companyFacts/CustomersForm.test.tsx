@@ -109,7 +109,7 @@ describe('CustomersForm', () => {
         {
           description: '',
           industryCode: selectedIndustry.industryCode,
-          amountOfTotalTurnover: amountOfTotalTurnover / 100,
+          amountOfTotalTurnover: amountOfTotalTurnover,
         },
       ],
     });

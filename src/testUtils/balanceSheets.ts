@@ -12,7 +12,7 @@ export const CustomersMocks = {
     turnover: 19,
     isB2B: false,
     industrySectors: [
-      { industryCode: 'A', description: 'desc', amountOfTotalTurnover: 0.8 },
+      { industryCode: 'A', description: 'desc', amountOfTotalTurnover: 80 },
     ],
   }),
 };
@@ -34,7 +34,7 @@ export const EmployeesMocks = {
     totalStaffCosts: 17,
     averageJourneyToWorkForStaffInKm: 13,
     hasCanteen: false,
-    employeesFractions: [{ countryCode: 'AFG', percentage: 0.5 }],
+    employeesFractions: [{ countryCode: 'AFG', percentage: 50 }],
   }),
 };
 

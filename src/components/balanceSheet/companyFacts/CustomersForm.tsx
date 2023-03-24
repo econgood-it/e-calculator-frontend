@@ -41,13 +41,7 @@ export function CustomersForm({ formData, industries }: CustomersFormProps) {
   } = useForm<CustomersFormInput>({
     resolver: zodResolver(CustomersFormSchema),
     mode: 'onChange',
-    defaultValues: {
-      ...formData,
-      industrySectors: formData.industrySectors.map((is) => ({
-        ...is,
-        amountOfTotalTurnover: is.amountOfTotalTurnover * 100,
-      })),
-    },
+    defaultValues: formData,
   });
 
   const fieldArrayName = 'industrySectors';
@@ -61,14 +55,7 @@ export function CustomersForm({ formData, industries }: CustomersFormProps) {
   });
 
   const onSaveClick = async (data: FieldValues) => {
-    const newCompanyFacts = CustomersFormSchema.parse(data);
-    await updateCompanyFacts({
-      ...newCompanyFacts,
-      industrySectors: newCompanyFacts.industrySectors.map((is) => ({
-        ...is,
-        amountOfTotalTurnover: is.amountOfTotalTurnover / 100,
-      })),
-    });
+    await updateCompanyFacts(CustomersFormSchema.parse(data));
   };
 
   return (

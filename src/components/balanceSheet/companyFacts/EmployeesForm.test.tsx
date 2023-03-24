@@ -138,7 +138,7 @@ describe('EmployeesForm', () => {
       ...formData,
       employeesFractions: [
         ...formData.employeesFractions,
-        { countryCode: selectedRegion.countryCode, percentage: 0.4 },
+        { countryCode: selectedRegion.countryCode, percentage: 40 },
       ],
     });
   });
