@@ -24,7 +24,7 @@ export function useRouter() {
     userString ? JSON.parse(userString) : undefined
   );
 
-  const router = createBrowserRouter(
+  return createBrowserRouter(
     createRoutesFromElements(
       <Route>
         <Route path={'/'} element={<Navigate to="/balancesheets" />} />
@@ -90,5 +90,4 @@ export function useRouter() {
       </Route>
     )
   );
-  return { router };
 }

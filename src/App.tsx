@@ -8,7 +8,7 @@ import { AlertProvider } from './contexts/AlertContext';
 import NotificationList from './components/alerts/NotificationList';
 import { ThemeProvider } from 'styled-components';
 import { RouterProvider } from 'react-router-dom';
-import { useRouter } from './routing/AppRoutes';
+import { useRouter } from './routing/useRouter';
 
 const primaryColor = '#94a231';
 const secondaryColor = '#00828b';
@@ -46,7 +46,7 @@ export const themeOptions: ThemeOptions = {
 const theme = createTheme(themeOptions);
 
 function App() {
-  const { router } = useRouter();
+  const router = useRouter();
   return (
     <Suspense fallback={'Loading'}>
       <MuiThemeProvider theme={theme}>
