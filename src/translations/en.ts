@@ -47,6 +47,7 @@ const EN_WORDS = [
   'Number should be between 0 and 10',
   'Number should be between -200 and 0',
   'Estimation',
+  'Failed to load workbook',
 ];
 
 export const EN_TRANSLATIONS = EN_WORDS.reduce(
