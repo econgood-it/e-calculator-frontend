@@ -14,15 +14,13 @@ type ApiProviderProps = {
 function ApiProvider({ user, children }: ApiProviderProps) {
   const language = useLanguage();
   const api = axios.create({ baseURL: `${API_URL}/` });
+
   api.interceptors.request.use(async (config) => {
     config.headers = {
       ...config?.headers,
       Authorization: `Bearer ${user.token}`,
     };
-    config.params = {
-      ...config?.params,
-      lng: language,
-    };
+    config.params = { ...config?.params, lng: language };
     return config;
   });
 

@@ -1,30 +1,35 @@
-import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Navigate,
+  Outlet,
+  Route,
+} from 'react-router-dom';
 import { LoginPage } from '../pages/LoginPage';
-import RequiresAuth from './RequiresAuth';
 import { useState } from 'react';
 import { User } from '../authentication/User';
-import BalanceSheetListPage from '../pages/BalanceSheetListPage';
-import Sidebar from '../pages/Sidebar';
-import BalanceSheetOverviewPage from '../pages/BalanceSheetOverviewPage';
 import RatingsPage from '../pages/RatingsPage';
-import WithActiveBalanceSheet from '../components/balanceSheet/WithActiveBalanceSheet';
-import CompanyFactsPage from '../pages/CompanyFactsPage';
 import { StakholderShortNames } from '../models/Rating';
+import RequiresAuth from './RequiresAuth';
+import Sidebar from '../pages/Sidebar';
+import BalanceSheetListPage from '../pages/BalanceSheetListPage';
+import WithActiveBalanceSheet from '../components/balanceSheet/WithActiveBalanceSheet';
+import BalanceSheetOverviewPage from '../pages/BalanceSheetOverviewPage';
+import CompanyFactsPage from '../pages/CompanyFactsPage';
 
-const AppRoutes = () => {
-  // we get the user from the localStorage because that's where we will save their account on the login process
+export function useRouter() {
   const userString = window.localStorage.getItem('user');
 
   const [user, setUser] = useState<User | undefined>(
     userString ? JSON.parse(userString) : undefined
   );
 
-  return (
-    <>
-      <Routes>
-        <Route path="/login" element={<LoginPage setUser={setUser} />} />
-        <Route path="/" element={<Navigate to="balancesheets" />} />
-        <Route path="/balancesheets" element={<RequiresAuth user={user} />}>
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <Route>
+        <Route path={'/'} element={<Navigate to="/balancesheets" />} />
+        <Route path={'/login'} element={<LoginPage setUser={setUser} />} />
+        <Route path={'/balancesheets'} element={<RequiresAuth user={user} />}>
           <Route element={<Sidebar />}>
             <Route index element={<BalanceSheetListPage />} />
             <Route path=":balanceSheetId" element={<WithActiveBalanceSheet />}>
@@ -82,9 +87,8 @@ const AppRoutes = () => {
             </Route>
           </Route>
         </Route>
-      </Routes>
-    </>
+      </Route>
+    )
   );
-};
-
-export default AppRoutes;
+  return { router };
+}

@@ -3,7 +3,7 @@
   "version": "2.1.1",
   "private": true,
   "dependencies": {
-    "@ecogood/e-calculator-schemas": "^1.0.4",
+    "@ecogood/e-calculator-schemas": "^1.0.5",
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/react-fontawesome": "^0.1.16",
@@ -19,7 +19,7 @@
     "react-dom": "^18.1.0",
     "react-hook-form": "^7.21.2",
     "react-i18next": "^11.15.3",
-    "react-router-dom": "^6.1.1",
+    "react-router-dom": "^6.11.0",
     "react-scripts": "5.0.1",
     "styled-components": "^5.3.3",
     "web-vitals": "^2.1.4",

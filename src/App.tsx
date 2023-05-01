@@ -7,8 +7,8 @@ import {
 import { AlertProvider } from './contexts/AlertContext';
 import NotificationList from './components/alerts/NotificationList';
 import { ThemeProvider } from 'styled-components';
-import AppRoutes from './routing/AppRoutes';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { RouterProvider } from 'react-router-dom';
+import { useRouter } from './routing/AppRoutes';
 
 const primaryColor = '#94a231';
 const secondaryColor = '#00828b';
@@ -46,15 +46,14 @@ export const themeOptions: ThemeOptions = {
 const theme = createTheme(themeOptions);
 
 function App() {
+  const { router } = useRouter();
   return (
     <Suspense fallback={'Loading'}>
       <MuiThemeProvider theme={theme}>
         <ThemeProvider theme={theme}>
           <AlertProvider>
             <>
-              <Router>
-                <AppRoutes />
-              </Router>
+              <RouterProvider router={router} />
               <NotificationList />
             </>
           </AlertProvider>
