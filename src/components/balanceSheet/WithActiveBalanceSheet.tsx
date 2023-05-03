@@ -1,11 +1,14 @@
 import ActiveBalanceSheetProvider from '../../contexts/ActiveBalanceSheetProvider';
 import { Outlet } from 'react-router-dom';
+import WorkbookProvider from '../../contexts/WorkbookProvider';
 
 const WithActiveBalanceSheet = () => {
   return (
-    <ActiveBalanceSheetProvider>
-      <Outlet />
-    </ActiveBalanceSheetProvider>
+    <WorkbookProvider>
+      <ActiveBalanceSheetProvider>
+        <Outlet />
+      </ActiveBalanceSheetProvider>
+    </WorkbookProvider>
   );
 };
 

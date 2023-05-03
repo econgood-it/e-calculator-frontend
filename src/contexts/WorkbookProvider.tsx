@@ -7,12 +7,12 @@ import {
 } from 'react';
 
 import { useApi } from './ApiContext';
-import { Workbook } from '../models/Workbook';
+import { IWorkbook, Workbook } from '../models/Workbook';
 import { WorkbookResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/workbook.dto';
 import { useAlert } from './AlertContext';
 import { useTranslation } from 'react-i18next';
 
-const WorkbookContext = createContext<Workbook | undefined>(undefined);
+const WorkbookContext = createContext<IWorkbook | undefined>(undefined);
 
 type WorkbookProviderProps = {
   children: ReactElement;
@@ -28,7 +28,9 @@ export default function WorkbookProvider({ children }: WorkbookProviderProps) {
     (async () => {
       try {
         const response = await api.get(`v1/workbook`);
-        setWorkbook(WorkbookResponseBodySchema.parse(response.data));
+        setWorkbook(
+          new Workbook(WorkbookResponseBodySchema.parse(response.data))
+        );
       } catch (e) {
         addErrorAlert(t`Failed to load workbook`);
       }
@@ -42,7 +44,7 @@ export default function WorkbookProvider({ children }: WorkbookProviderProps) {
   );
 }
 
-export const useWorkbook = (): Workbook | undefined => {
+export const useWorkbook = (): IWorkbook | undefined => {
   return useContext(WorkbookContext);
 };
 export { WorkbookProvider };

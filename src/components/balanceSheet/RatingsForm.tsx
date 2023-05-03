@@ -5,12 +5,15 @@ import { NumberInput } from './forms/NumberInputs';
 import { Trans } from 'react-i18next';
 import GridItem from '../layout/GridItem';
 import GridContainer, { FormContainer } from '../layout/GridContainer';
-import { Typography } from '@mui/material';
+import { IconButton, Tooltip, Typography } from '@mui/material';
 import { SaveButton } from './forms/SaveButton';
 import { useActiveBalanceSheet } from '../../contexts/ActiveBalanceSheetProvider';
 import { useEffect, useRef } from 'react';
 import { Rating } from '../../models/Rating';
 import { RatingResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/rating.dto';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
+import { useWorkbook } from '../../contexts/WorkbookProvider';
 
 type RatingsFormProps = {
   ratings: Rating[];
@@ -24,6 +27,7 @@ type RatingsFormInput = z.infer<typeof RatingsFormSchema>;
 
 export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
   const { updateRatings } = useActiveBalanceSheet();
+  const workbook = useWorkbook();
 
   const stakeholderRef = useRef(stakeholderName);
   const {
@@ -67,13 +71,24 @@ export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
             <GridItem xs={12} sm={7}>
               <Typography variant={'body1'}>{r.name}</Typography>
             </GridItem>
-            <GridItem xs={12} sm={4}>
+            <GridItem xs={12} sm={3}>
               <NumberInput<RatingsFormInput>
                 register={register}
                 errors={errors}
                 label={<Trans>Estimation</Trans>}
                 registerKey={`${fieldArrayName}.${index}.estimations`}
               />
+            </GridItem>
+            <GridItem xs={12} sm={1}>
+              {workbook && workbook.hasSection(r.shortName) && (
+                <Tooltip
+                  title={`Title: ${workbook.getSection(r.shortName)?.title}`}
+                >
+                  <IconButton aria-label={'info'} color={'secondary'}>
+                    <FontAwesomeIcon icon={faCircleInfo} />
+                  </IconButton>
+                </Tooltip>
+              )}
             </GridItem>
           </GridContainer>
         </GridItem>

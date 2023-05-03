@@ -13,15 +13,21 @@ import { Button } from '@mui/material';
 import { useState } from 'react';
 import { RatingType } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import { Rating } from '../../models/Rating';
-import { MemoryRouter } from 'react-router-dom';
+import { useWorkbook } from '../../contexts/WorkbookProvider';
+import { WorkbookResponseMocks } from '../../testUtils/workbook';
+import { Workbook } from '../../models/Workbook';
 
 jest.mock('../../contexts/ActiveBalanceSheetProvider');
 jest.mock('../../contexts/AlertContext');
+jest.mock('../../contexts/WorkbookProvider');
 
 describe('RatingsForm', () => {
   const updateRatings = jest.fn();
   beforeEach(() => {
     (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
+    (useWorkbook as jest.Mock).mockReturnValue(
+      new Workbook(WorkbookResponseMocks.default())
+    );
     (useActiveBalanceSheet as jest.Mock).mockReturnValue({
       updateRatings: updateRatings,
     });
@@ -36,6 +42,19 @@ describe('RatingsForm', () => {
       expect(screen.getByText(`${rating.shortName}`)).toBeInTheDocument();
       expect(screen.getByText(`${rating.name}`)).toBeInTheDocument();
     }
+  });
+
+  it('should show workbook tooltip', async () => {
+    const user = userEvent.setup();
+    const ratings = RatingsMocks.ratings1();
+    renderWithTheme(<RatingsForm stakeholderName={''} ratings={ratings} />);
+    const infoIcons = screen.getAllByLabelText('info');
+    const workbook = new Workbook(WorkbookResponseMocks.default());
+    expect(infoIcons).toHaveLength(2);
+    await user.hover(infoIcons[0]);
+    expect(
+      await screen.findByText(`Title: ${workbook.getSections()[0]!.title}`)
+    );
   });
 
   it('should modify and save estimations of some ratings', async () => {
