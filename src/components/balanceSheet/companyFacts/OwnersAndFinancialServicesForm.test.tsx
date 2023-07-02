@@ -37,7 +37,7 @@ describe('OwnersAndFinancialServicesForm', () => {
   }
 
   it('should modify profit field and save changes', async () => {
-    await shouldModifyFieldSaveResults('Profit', 'profit');
+    await shouldModifyFieldSaveResults('Profit', 'profit', false);
   });
 
   it('should modify financial costs field and save changes', async () => {
