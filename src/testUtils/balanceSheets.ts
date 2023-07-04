@@ -118,5 +118,6 @@ export const BalanceSheetMocks = {
     version: BalanceSheetVersion.v5_0_8,
     companyFacts: CompanyFactsMocks.companyFacts1(),
     ratings: RatingsMocks.ratings1(),
+    stakeholderWeights: [],
   }),
 };
