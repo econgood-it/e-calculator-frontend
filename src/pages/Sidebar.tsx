@@ -10,7 +10,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import { AppBar, Box, useTheme } from '@mui/material';
+import { AppBar, Box, ListSubheader, useTheme } from '@mui/material';
 import { Trans } from 'react-i18next';
 import styled from 'styled-components';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -106,7 +106,13 @@ export default function Sidebar() {
       >
         <Toolbar />
         <Box>
-          <List>
+          <List
+            subheader={
+              <ListSubheader>
+                <Trans>Balance sheets</Trans>
+              </ListSubheader>
+            }
+          >
             <ListItem key={'create-balance-sheet'} disablePadding>
               <ListItemButton onClick={createBalanceSheet}>
                 <ListItemIcon>

@@ -59,4 +59,5 @@ export const DE_TRANSLATIONS = {
     'Zahl sollte zwischen -200 und 0 liegen',
   Estimation: 'Einschätzung',
   'Failed to load workbook': 'Laden des Arbeitsbuches fehlgeschlagen',
+  'Your Organization': 'Ihre Organisation',
 };

@@ -48,6 +48,7 @@ const EN_WORDS = [
   'Number should be between -200 and 0',
   'Estimation',
   'Failed to load workbook',
+  'Your Organization',
 ];
 
 export const EN_TRANSLATIONS = EN_WORDS.reduce(

@@ -35,7 +35,7 @@ describe('Sidebar', () => {
     (useApi as jest.Mock).mockImplementation(() => apiMock);
   });
 
-  it('renders Create balance sheet navigation item', async () => {
+  it('renders Balance sheets subheader and Create balance sheet navigation item', async () => {
     act(() => {
       renderWithTheme(
         <MemoryRouter initialEntries={[initialPathForRouting]}>
@@ -45,7 +45,7 @@ describe('Sidebar', () => {
         </MemoryRouter>
       );
     });
-
+    expect(await screen.findByText('Balance sheets')).toBeInTheDocument();
     expect(await screen.findByText('Create balance sheet')).toBeInTheDocument();
   });
 
@@ -57,7 +57,7 @@ describe('Sidebar', () => {
         </Routes>
       </MemoryRouter>
     );
-    expect(await screen.findAllByText(/Balance sheet/)).toHaveLength(2);
+    expect(await screen.findAllByText(/Balance sheet \d/)).toHaveLength(2);
     expect(screen.getByText('Balance sheet 1')).toBeInTheDocument();
     expect(screen.getByText('Balance sheet 2')).toBeInTheDocument();
   });

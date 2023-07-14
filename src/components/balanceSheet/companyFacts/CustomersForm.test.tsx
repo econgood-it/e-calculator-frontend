@@ -1,9 +1,6 @@
 import '@testing-library/jest-dom';
 
-import {
-  CustomersMocks,
-  EmployeesMocks,
-} from '../../../testUtils/balanceSheets';
+import { CustomersMocks } from '../../../testUtils/balanceSheets';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { useAlert } from '../../../contexts/AlertContext';
 import {
@@ -17,8 +14,6 @@ import userEvent from '@testing-library/user-event';
 import renderWithTheme from '../../../testUtils/rendering';
 import { screen } from '@testing-library/react';
 import { industriesMocks } from '../../../testUtils/industries';
-import { EmployeesForm } from './EmployeesForm';
-import { regionsMocks } from '../../../testUtils/regions';
 import HTMLInputElement from 'react';
 
 jest.mock('../../../contexts/ActiveBalanceSheetProvider');
