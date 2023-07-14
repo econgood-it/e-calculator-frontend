@@ -1,3 +1,5 @@
+import { EN_ERROR_TRANSLATIONS } from '@ecogood/e-calculator-schemas/dist/translations/en';
+
 const EN_WORDS = [
   'Balance sheet {{id}}',
   'Company Facts',
@@ -18,8 +20,6 @@ const EN_WORDS = [
   'Login failed',
   'ECG Calculator',
   'Create balance sheet',
-  'Number expected',
-  'Number should be positive',
   'Choose a region',
   'Choose an industry sector',
   'Form data is invalid',
@@ -37,21 +37,17 @@ const EN_WORDS = [
   'Is there a canteen for the majority of staff?',
   'Add employees origin',
   'Amount in %',
-  'Percentage expected',
-  'Percentage should be between 0 and 100',
   'Are your customers mainly other companies?',
   'Enter the 3 most important industry sectors which your company is active in, including a rough share of turnover',
   'Turnover',
   'Add industry sector',
   'Customers',
-  'Number should be between 0 and 10',
-  'Number should be between -200 and 0',
   'Estimation',
   'Failed to load workbook',
   'Your Organization',
 ];
 
-export const EN_TRANSLATIONS = EN_WORDS.reduce(
-  (prevValue, w) => ({ ...prevValue, [w]: w }),
-  {}
-);
+export const EN_TRANSLATIONS = {
+  ...EN_WORDS.reduce((prevValue, w) => ({ ...prevValue, [w]: w }), {}),
+  ...EN_ERROR_TRANSLATIONS,
+};

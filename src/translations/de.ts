@@ -1,3 +1,5 @@
+import { DE_ERROR_TRANSLATIONS } from '@ecogood/e-calculator-schemas/dist/translations/de';
+
 export const DE_TRANSLATIONS = {
   'Balance sheet {{id}}': 'Bilanz {{id}}',
   'Company Facts': 'Fakten zum Unternehmen',
@@ -19,8 +21,6 @@ export const DE_TRANSLATIONS = {
   'Login failed': 'Login fehlgeschlagen',
   'ECG Calculator': 'GWÖ Rechner',
   'Create balance sheet': 'Bilanz erstellen',
-  'Number expected': 'Zahl erwartet',
-  'Number should be positive': 'Zahl sollte positiv sein',
   'Choose a region': 'Wählen Sie eine Region',
   'Choose an industry sector': 'Wählen Sie eine Branche',
   'Form data is invalid': 'Formulardaten sind invalide',
@@ -44,9 +44,6 @@ export const DE_TRANSLATIONS = {
     'Gibt es eine Kantine für die Mehrheit der Mitarbeitenden?',
   'Add employees origin': 'Herkunft der Mitarbeitenden hinzufügen',
   'Amount in %': 'Anteil in %',
-  'Percentage expected': 'Prozentangabe erwartet',
-  'Percentage should be between 0 and 100':
-    'Prozentangabe sollte zwischen 0 und 100 liegen',
   'Are your customers mainly other companies?':
     'Haben Sie nahezu ausschließlich Unternehmen als Kunden?',
   'Enter the 3 most important industry sectors which your company is active in, including a rough share of turnover':
@@ -54,10 +51,8 @@ export const DE_TRANSLATIONS = {
   Turnover: 'Umsatz',
   'Add industry sector': 'Branche hinzufügen',
   Customers: 'Kund*nnen und Mitunternehmen',
-  'Number should be between 0 and 10': 'Zahl sollte zwischen 0 und 10 liegen',
-  'Number should be between -200 and 0':
-    'Zahl sollte zwischen -200 und 0 liegen',
   Estimation: 'Einschätzung',
   'Failed to load workbook': 'Laden des Arbeitsbuches fehlgeschlagen',
   'Your Organization': 'Ihre Organisation',
+  ...DE_ERROR_TRANSLATIONS,
 };
