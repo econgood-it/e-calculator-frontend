@@ -1,10 +1,11 @@
-import axios, { AxiosInstance } from 'axios';
+import axios from 'axios';
 import { createContext, ReactElement, useContext } from 'react';
 import { API_URL } from '../configuration';
 import { User } from '../authentication/User';
 import { useLanguage } from '../i18n';
+import { ApiClient } from '../api/api.client';
 
-const ApiContext = createContext<AxiosInstance | undefined>(undefined);
+const ApiContext = createContext<ApiClient | undefined>(undefined);
 
 type ApiProviderProps = {
   user: User;
@@ -39,7 +40,11 @@ function ApiProvider({ user, children }: ApiProviderProps) {
       return Promise.reject(error);
     }
   );
-  return <ApiContext.Provider value={api}>{children}</ApiContext.Provider>;
+  return (
+    <ApiContext.Provider value={new ApiClient(api)}>
+      {children}
+    </ApiContext.Provider>
+  );
 }
 
 export const useApi = () => {
