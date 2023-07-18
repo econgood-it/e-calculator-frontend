@@ -102,6 +102,11 @@ export class ApiClient {
     return BalanceSheetItemsResponseSchema.parse(await response.json());
   }
 
+  async getBalanceSheet(id: number): Promise<BalanceSheet> {
+    const response = await this.wretchInstance.get(`/balancesheets/${id}`);
+    return BalanceSheetResponseBodySchema.parse(await response.json());
+  }
+
   async createBalanceSheet(
     balanceSheet: BalanceSheetCreateRequestBody
   ): Promise<BalanceSheet> {

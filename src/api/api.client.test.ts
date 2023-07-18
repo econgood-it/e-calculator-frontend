@@ -88,5 +88,15 @@ describe('ApiClient', () => {
       const request = await requestPromise;
       await expect(request.json()).resolves.toEqual(balanceSheet);
     });
+    it('returns balance sheet', async () => {
+      const balanceSheet = BalanceSheetMocks.balanceSheet1();
+      mockResource(
+        'get',
+        `${URL}/v1/balancesheets/${balanceSheet.id}`,
+        new Response(JSON.stringify(balanceSheet))
+      );
+      const response = await apiClient.getBalanceSheet(balanceSheet.id!);
+      expect(response).toEqual(balanceSheet);
+    });
   });
 });

@@ -85,7 +85,7 @@ const TestComponentUpdateCompanyFacts = () => {
 
 describe('WithActiveBalanceSheet', () => {
   const apiMock = {
-    get: jest.fn(),
+    getBalanceSheet: jest.fn(),
     patch: jest.fn(),
   };
 
@@ -94,13 +94,9 @@ describe('WithActiveBalanceSheet', () => {
   };
 
   beforeEach(() => {
-    apiMock.get.mockImplementation((path: string) => {
-      if (path === `v1/balancesheets/3`) {
-        return Promise.resolve({
-          data: BalanceSheetMocks.balanceSheet1(),
-        });
-      }
-    });
+    apiMock.getBalanceSheet.mockResolvedValue(
+      BalanceSheetMocks.balanceSheet1()
+    );
     (useAlert as jest.Mock).mockImplementation(() => alertMock);
   });
 

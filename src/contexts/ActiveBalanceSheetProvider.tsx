@@ -81,8 +81,9 @@ export default function ActiveBalanceSheetProvider({
 
   useEffect(() => {
     (async () => {
-      const response = await api.get(`v1/balancesheets/${balanceSheetId}`);
-      setBalanceSheet(BalanceSheetResponseBodySchema.parse(response.data));
+      if (balanceSheetId) {
+        setBalanceSheet(await api.getBalanceSheet(Number(balanceSheetId)));
+      }
     })();
   }, [balanceSheetId]);
 
