@@ -29,8 +29,7 @@ function BalanceSheetListProvider({ children }: BalanceSheetListProviderProps) {
   const api = useApi();
   useEffect(() => {
     (async () => {
-      const response = await api.get(`v1/balancesheets`);
-      setBalanceSheetItems(response.data);
+      setBalanceSheetItems(await api.getBalanceSheets());
     })();
   }, []);
 

@@ -7,6 +7,10 @@ import userEvent from '@testing-library/user-event';
 import { useApi } from '../contexts/ApiContext';
 import { useBalanceSheetItems } from '../contexts/BalanceSheetListContext';
 import { BalanceSheetMocks } from '../testUtils/balanceSheets';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 jest.mock('../contexts/ApiContext');
 jest.mock('../contexts/BalanceSheetListContext');
@@ -17,22 +21,14 @@ describe('Sidebar', () => {
   const setBalanceSheetItems = jest.fn();
   const apiMock = {
     get: jest.fn(),
-    post: jest.fn(),
+    createBalanceSheet: jest.fn(),
   };
-  const balanceSheet = BalanceSheetMocks.balanceSheet1();
+
   beforeEach(() => {
-    apiMock.post.mockImplementation((path: string) => {
-      if (path === `/v1/balancesheets`) {
-        return Promise.resolve({
-          data: { ...balanceSheet, id: 3 },
-        });
-      }
-    });
     (useBalanceSheetItems as jest.Mock).mockReturnValue([
       balanceSheetItems,
       setBalanceSheetItems,
     ]);
-    (useApi as jest.Mock).mockImplementation(() => apiMock);
   });
 
   it('renders Balance sheets subheader and Create balance sheet navigation item', async () => {
@@ -89,6 +85,9 @@ describe('Sidebar', () => {
   });
 
   it('creates and navigates to new balance sheet if user clicks on Create balance sheet', async () => {
+    const balanceSheet = BalanceSheetMocks.balanceSheet1();
+    apiMock.createBalanceSheet.mockResolvedValue({ ...balanceSheet, id: 3 });
+    (useApi as jest.Mock).mockImplementation(() => apiMock);
     act(() => {
       renderWithTheme(
         <MemoryRouter initialEntries={[initialPathForRouting]}>
@@ -106,7 +105,11 @@ describe('Sidebar', () => {
     fireEvent.click(
       screen.getByRole('button', { name: /Create balance sheet/i })
     );
-    expect(apiMock.post).toHaveBeenCalled();
+
+    expect(apiMock.createBalanceSheet).toHaveBeenCalledWith({
+      type: BalanceSheetType.Full,
+      version: BalanceSheetVersion.v5_0_8,
+    });
     expect(
       await screen.findByText('Navigated to Balance sheet 3')
     ).toBeInTheDocument();

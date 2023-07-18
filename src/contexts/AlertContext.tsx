@@ -1,4 +1,4 @@
-import { createContext, ReactElement, useContext, useReducer } from 'react';
+import { createContext, ReactNode, useContext, useReducer } from 'react';
 import { AlertColor } from '@mui/material';
 
 export type AlertMsg = {
@@ -44,7 +44,7 @@ const reducer = (
 };
 
 type AlertContextProviderProps = {
-  children: ReactElement;
+  children: ReactNode;
 };
 
 function AlertProvider({ children }: AlertContextProviderProps) {

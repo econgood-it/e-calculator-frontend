@@ -17,18 +17,11 @@ import { Outlet, useNavigate } from 'react-router-dom';
 
 import { useApi } from '../contexts/ApiContext';
 import { BalanceSheetNavigationItem } from '../components/balanceSheet/BalanceSheetNavigationItem';
-import { AxiosResponse } from 'axios';
 import { useBalanceSheetItems } from '../contexts/BalanceSheetListContext';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import {
-  BalanceSheetCreateRequestBodySchema,
-  BalanceSheetResponseBodySchema,
-} from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
-import { z } from 'zod';
-import { BalanceSheet } from '../models/BalanceSheet';
 
 const FixedAppBar = styled(AppBar)`
   z-index: ${(props) => props.theme.zIndex.drawer + 1};
@@ -62,17 +55,10 @@ export default function Sidebar() {
   };
 
   const createBalanceSheet = async () => {
-    const response = await api.post<
-      BalanceSheet,
-      AxiosResponse<BalanceSheet>,
-      z.input<typeof BalanceSheetCreateRequestBodySchema>
-    >('/v1/balancesheets', {
+    const newBalanceSheet = await api.createBalanceSheet({
       type: BalanceSheetType.Full,
       version: BalanceSheetVersion.v5_0_8,
     });
-    const newBalanceSheet = BalanceSheetResponseBodySchema.parse(
-      await response.data
-    );
     const id = newBalanceSheet.id!;
     setBalanceSheetItems((prevBalanceSheets) =>
       prevBalanceSheets.concat({ id: id })

@@ -3,6 +3,15 @@ import wretch, { Wretch, WretchOptions, WretchResponse } from 'wretch';
 import { User } from '../authentication/User';
 import { OrganizationItemsResponseSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
 import { z } from 'zod';
+import {
+  BalanceSheet,
+  BalanceSheetCreateRequestBody,
+  BalanceSheetItem,
+} from '../models/BalanceSheet';
+import {
+  BalanceSheetItemsResponseSchema,
+  BalanceSheetResponseBodySchema,
+} from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 
 function language(language: string) {
   return function (
@@ -32,7 +41,7 @@ export function makeWretchInstance(
   user: User,
   language: string
 ) {
-  return wretch(`${apiUrl}?lng=${language}`)
+  return wretch(`${apiUrl}/v1?lng=${language}`)
     .headers({ Authorization: `Bearer ${user.token}` })
     .resolve((r) =>
       r
@@ -57,14 +66,6 @@ export class ApiClient {
     config?: AxiosRequestConfig<D>
   ): Promise<R> {
     return this.axiosInstance.patch(url, data, config);
-  }
-
-  post<T = any, R = AxiosResponse<T>, D = any>(
-    url: string,
-    data?: D,
-    config?: AxiosRequestConfig<D>
-  ): Promise<R> {
-    return this.axiosInstance.post(url, data, config);
   }
 
   put<T = any, R = AxiosResponse<T>, D = any>(
@@ -92,7 +93,22 @@ export class ApiClient {
   async getOrganizations(): Promise<
     z.infer<typeof OrganizationItemsResponseSchema>
   > {
-    const response = await this.wretchInstance.get('/v1/organization');
+    const response = await this.wretchInstance.get('/organization');
     return OrganizationItemsResponseSchema.parse(await response.json());
+  }
+
+  async getBalanceSheets(): Promise<BalanceSheetItem[]> {
+    const response = await this.wretchInstance.get('/balancesheets');
+    return BalanceSheetItemsResponseSchema.parse(await response.json());
+  }
+
+  async createBalanceSheet(
+    balanceSheet: BalanceSheetCreateRequestBody
+  ): Promise<BalanceSheet> {
+    const response = await this.wretchInstance.post(
+      balanceSheet,
+      '/balancesheets'
+    );
+    return BalanceSheetResponseBodySchema.parse(await response.json());
   }
 }

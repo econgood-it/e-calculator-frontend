@@ -3,6 +3,10 @@ import { mswServer } from './mswServer';
 import { ApiClient, makeWretchInstance } from './api.client';
 import axios from 'axios';
 import { exampleUser } from '../testUtils/user';
+import {
+  BalanceSheetJsonMocks,
+  BalanceSheetMocks,
+} from '../testUtils/balanceSheets';
 
 jest.mock('react-router-dom');
 
@@ -46,14 +50,43 @@ describe('ApiClient', () => {
 
   describe('Organization', () => {
     it('returns organizations of user', async () => {
-      const organizations = [{ id: 1 }];
-      mockResource(
+      const organizations = [{ id: 1 }, { id: 3 }];
+      const requestPromise = mockResource(
         'get',
         `${URL}/v1/organization`,
         new Response(JSON.stringify(organizations))
       );
       const response = await apiClient.getOrganizations();
       expect(response).toEqual(organizations);
+      const request = await requestPromise;
+      expect(request.url.toString()).toContain('?lng=de');
+    });
+  });
+
+  describe('BalanceSheet', () => {
+    it('returns balancesheets of user', async () => {
+      const balanceSheets = [{ id: 1 }, { id: 4 }];
+      mockResource(
+        'get',
+        `${URL}/v1/balancesheets`,
+        new Response(JSON.stringify(balanceSheets))
+      );
+      const response = await apiClient.getBalanceSheets();
+      expect(response).toEqual(balanceSheets);
+    });
+
+    it('creates balancesheet', async () => {
+      const balanceSheet = BalanceSheetJsonMocks.create();
+      const requestPromise = mockResource(
+        'post',
+        `${URL}/v1/balancesheets`,
+        new Response(JSON.stringify(BalanceSheetMocks.balanceSheet1()))
+      );
+      const response = await apiClient.createBalanceSheet(balanceSheet);
+      expect(response).toEqual(BalanceSheetMocks.balanceSheet1());
+
+      const request = await requestPromise;
+      await expect(request.json()).resolves.toEqual(balanceSheet);
     });
   });
 });

@@ -5,7 +5,11 @@ import {
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { CompanyFacts } from '../models/CompanyFacts';
 import { Rating } from '../models/Rating';
-import { BalanceSheet } from '../models/BalanceSheet';
+import {
+  BalanceSheet,
+  BalanceSheetCreateRequestBody,
+} from '../models/BalanceSheet';
+import { z } from 'zod';
 
 export const CustomersMocks = {
   customers1: () => ({
@@ -57,9 +61,37 @@ export const SuppliersMocks = {
   }),
 };
 
+export const SuppliersJsonMocks = {
+  create: () => ({
+    totalPurchaseFromSuppliers: 900,
+    supplyFractions: [
+      {
+        countryCode: 'EGY',
+        industryCode: 'A',
+        costs: 388,
+      },
+      {
+        countryCode: 'AFG',
+        industryCode: 'A',
+        costs: 54,
+      },
+    ],
+    mainOriginOfOtherSuppliers: 'BEL',
+  }),
+};
+
 export const CompanyFactsMocks = {
   companyFacts1: (): CompanyFacts => ({
     ...SuppliersMocks.suppliers1(),
+    ...OwnersAndFinancialServicesMocks.ownersAndFinancialServices1(),
+    ...EmployeesMocks.employees1(),
+    ...CustomersMocks.customers1(),
+  }),
+};
+
+export const CompanyFactsJsonMocks = {
+  create: () => ({
+    ...SuppliersJsonMocks.create(),
     ...OwnersAndFinancialServicesMocks.ownersAndFinancialServices1(),
     ...EmployeesMocks.employees1(),
     ...CustomersMocks.customers1(),
@@ -117,6 +149,16 @@ export const BalanceSheetMocks = {
     type: BalanceSheetType.Full,
     version: BalanceSheetVersion.v5_0_8,
     companyFacts: CompanyFactsMocks.companyFacts1(),
+    ratings: RatingsMocks.ratings1(),
+    stakeholderWeights: [],
+  }),
+};
+
+export const BalanceSheetJsonMocks = {
+  create: (): BalanceSheetCreateRequestBody => ({
+    type: BalanceSheetType.Full,
+    version: BalanceSheetVersion.v5_0_8,
+    companyFacts: CompanyFactsJsonMocks.create(),
     ratings: RatingsMocks.ratings1(),
     stakeholderWeights: [],
   }),

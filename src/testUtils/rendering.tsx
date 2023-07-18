@@ -1,13 +1,13 @@
 import {
   render,
+  renderHook,
   RenderHookOptions,
   RenderOptions,
 } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
 import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material';
 import { themeOptions } from '../App';
-import { FC, PropsWithChildren, ReactElement, ReactNode } from 'react';
-import { renderHook } from '@testing-library/react';
+import { FC, ReactElement, ReactNode } from 'react';
 
 const theme = createTheme({ ...themeOptions });
 
