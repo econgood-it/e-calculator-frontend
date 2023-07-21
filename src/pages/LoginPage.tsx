@@ -3,7 +3,6 @@ import { Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { User } from '../authentication/User';
-import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,6 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { API_URL } from '../configuration';
 import { useAlert } from '../contexts/AlertContext';
 import { useTranslation } from 'react-i18next';
+import { AuthApiClient, makeWretchInstance } from '../api/api.client';
 
 const CenteredDiv = styled.div`
   display: flex;
@@ -49,12 +49,8 @@ export const LoginPage = ({ setUser }: LoginPageProps) => {
 
   const onSubmit = async (data: FormInput) => {
     try {
-      const result = await axios.post(`${API_URL}/v1/users/token`, {
-        email: data.email,
-        password: data.password,
-      });
-
-      const user = result.data;
+      const result = new AuthApiClient(makeWretchInstance(API_URL, 'en'));
+      const user = await result.generateToken(data.email, data.password);
       window.localStorage.setItem('user', JSON.stringify(user));
       setUser(user);
       navigate('/');

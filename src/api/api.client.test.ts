@@ -1,7 +1,12 @@
 import { MockedRequest, rest } from 'msw';
 import { mswServer } from './mswServer';
-import { ApiClient, makeWretchInstance } from './api.client';
-import { exampleUser } from '../testUtils/user';
+import {
+  ApiClient,
+  AuthApiClient,
+  makeWretchInstance,
+  makeWretchInstanceWithAuth,
+} from './api.client';
+import { exampleUser, UserMocks } from '../testUtils/user';
 import {
   BalanceSheetJsonMocks,
   BalanceSheetMocks,
@@ -9,6 +14,7 @@ import {
 import { WorkbookResponseMocks } from '../testUtils/workbook';
 import { regionsMocks } from '../testUtils/regions';
 import { industriesMocks } from '../testUtils/industries';
+import { OrganizationMocks } from '../testUtils/organization';
 
 jest.mock('react-router-dom');
 
@@ -40,12 +46,37 @@ function mockResource(
   });
 }
 const URL = 'https://calculator.test.ecogood.org';
-const apiClient = new ApiClient(makeWretchInstance(URL, exampleUser, 'de'));
+const apiClient = new ApiClient(
+  makeWretchInstanceWithAuth(URL, exampleUser, 'de')
+);
+const authApiClient = new AuthApiClient(makeWretchInstance(URL, 'en'));
 
 describe('ApiClient', () => {
   beforeAll(() => mswServer.listen({ onUnhandledRequest: 'error' }));
   afterEach(() => mswServer.resetHandlers());
   afterAll(() => mswServer.close());
+
+  describe('User', () => {
+    it('should generate token for credentials', async () => {
+      const user = UserMocks.default();
+      const credentials = {
+        email: 'user@example.com',
+        password: 'fjdklsareuqjkdjfkl',
+      };
+      const requestPromise = mockResource(
+        'post',
+        `${URL}/v1/users/token`,
+        new Response(JSON.stringify(user))
+      );
+      const response = await authApiClient.generateToken(
+        credentials.email,
+        credentials.password
+      );
+      expect(response).toEqual(user);
+      const request = await requestPromise;
+      await expect(request.json()).resolves.toEqual(credentials);
+    });
+  });
 
   describe('Organization', () => {
     it('returns organizations of user', async () => {
@@ -59,6 +90,17 @@ describe('ApiClient', () => {
       expect(response).toEqual(organizations);
       const request = await requestPromise;
       expect(request.url.toString()).toContain('?lng=de');
+    });
+    it('returns organization', async () => {
+      const organization = OrganizationMocks.default();
+      const id = 1;
+      mockResource(
+        'get',
+        `${URL}/v1/organization/${id}`,
+        new Response(JSON.stringify(organization))
+      );
+      const response = await apiClient.getOrganization(id);
+      expect(response).toEqual(organization);
     });
   });
 

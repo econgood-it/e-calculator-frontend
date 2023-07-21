@@ -17,6 +17,11 @@ import { RegionResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/reg
 import { Region } from '../models/Region';
 import { Industry } from '../models/Industry';
 import { IndustryResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/industry.dto';
+import {
+  Organization,
+  OrganizationItems,
+  tmpSchema,
+} from '../models/Organization';
 
 function language(language: string) {
   return function (
@@ -40,12 +45,12 @@ export const Middlewares = {
   language: language,
 };
 
-export function makeWretchInstance(
+export function makeWretchInstanceWithAuth(
   apiUrl: string,
   user: User,
   language: string
 ) {
-  return wretch(`${apiUrl}/v1?lng=${language}`)
+  return makeWretchInstance(apiUrl, language)
     .headers({ Authorization: `Bearer ${user.token}` })
     .resolve((r) =>
       r
@@ -56,7 +61,25 @@ export function makeWretchInstance(
     );
 }
 
+export function makeWretchInstance(apiUrl: string, language: string) {
+  return wretch(`${apiUrl}/v1?lng=${language}`);
+}
+
 type WretchType = Wretch<unknown, unknown, Promise<WretchResponse>>;
+
+export class AuthApiClient {
+  public constructor(
+    private wretchInstance: Wretch<unknown, unknown, undefined>
+  ) {}
+
+  async generateToken(email: string, password: string): Promise<User> {
+    const response = await this.wretchInstance.post(
+      { email, password },
+      '/users/token'
+    );
+    return await response.json();
+  }
+}
 
 export class ApiClient {
   public constructor(private wretchInstance: WretchType) {}
@@ -76,11 +99,14 @@ export class ApiClient {
     return WorkbookResponseBodySchema.parse(await response.json());
   }
 
-  async getOrganizations(): Promise<
-    z.infer<typeof OrganizationItemsResponseSchema>
-  > {
+  async getOrganizations(): Promise<OrganizationItems> {
     const response = await this.wretchInstance.get('/organization');
     return OrganizationItemsResponseSchema.parse(await response.json());
+  }
+
+  async getOrganization(id: number): Promise<Organization> {
+    const response = await this.wretchInstance.get(`/organization/${id}`);
+    return tmpSchema.parse(await response.json());
   }
 
   async getBalanceSheets(): Promise<BalanceSheetItem[]> {

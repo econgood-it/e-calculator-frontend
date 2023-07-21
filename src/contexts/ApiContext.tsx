@@ -2,7 +2,7 @@ import { createContext, ReactElement, useContext } from 'react';
 import { API_URL } from '../configuration';
 import { User } from '../authentication/User';
 import { useLanguage } from '../i18n';
-import { ApiClient, makeWretchInstance } from '../api/api.client';
+import { ApiClient, makeWretchInstanceWithAuth } from '../api/api.client';
 
 const ApiContext = createContext<ApiClient | undefined>(undefined);
 
@@ -16,7 +16,7 @@ function ApiProvider({ user, children }: ApiProviderProps) {
 
   return (
     <ApiContext.Provider
-      value={new ApiClient(makeWretchInstance(API_URL, user, language))}
+      value={new ApiClient(makeWretchInstanceWithAuth(API_URL, user, language))}
     >
       {children}
     </ApiContext.Provider>
