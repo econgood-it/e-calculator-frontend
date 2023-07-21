@@ -13,7 +13,6 @@ import { useAlert } from './AlertContext';
 import { useTranslation } from 'react-i18next';
 import { Rating } from '../models/Rating';
 import { BalanceSheet } from '../models/BalanceSheet';
-import { BalanceSheetResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { CompanyFactsPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
 import { z } from 'zod';
 
@@ -49,33 +48,33 @@ export default function ActiveBalanceSheetProvider({
   const { balanceSheetId } = useParams();
 
   const updateRating = async (rating: Rating) => {
-    const response = await api.patch(`v1/balancesheets/${balanceSheetId}`, {
+    const response = await api.updateBalanceSheet(Number(balanceSheetId), {
       ratings: [
         { shortName: rating.shortName, estimations: rating.estimations },
       ],
     });
-    setBalanceSheet(BalanceSheetResponseBodySchema.parse(response.data));
+    setBalanceSheet(response);
     addSuccessAlert(t`Modifications saved`);
   };
 
   const updateRatings = async (ratings: Rating[]) => {
-    const response = await api.patch(`v1/balancesheets/${balanceSheetId}`, {
+    const response = await api.updateBalanceSheet(Number(balanceSheetId), {
       ratings: ratings.map((r) => ({
         shortName: r.shortName,
         estimations: r.estimations,
       })),
     });
-    setBalanceSheet(BalanceSheetResponseBodySchema.parse(response.data));
+    setBalanceSheet(response);
     addSuccessAlert(t`Modifications saved`);
   };
 
   const updateCompanyFacts = async (
     companyFacts: CompanyFactsPatchRequestBody
   ) => {
-    const response = await api.patch(`v1/balancesheets/${balanceSheetId}`, {
+    const response = await api.updateBalanceSheet(Number(balanceSheetId), {
       companyFacts: companyFacts,
     });
-    setBalanceSheet(BalanceSheetResponseBodySchema.parse(response.data));
+    setBalanceSheet(response);
     addSuccessAlert(t`Modifications saved`);
   };
 

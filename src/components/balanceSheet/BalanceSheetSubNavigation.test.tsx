@@ -16,14 +16,10 @@ describe('BalanceSheetSubNavigation', () => {
   const setBalanceSheetItems = jest.fn();
 
   const apiMock = {
-    delete: jest.fn(),
+    deleteBalanceSheet: jest.fn(),
   };
   beforeEach(() => {
-    apiMock.delete.mockImplementation((path: string) => {
-      if (path === `/v1/balancesheets`) {
-        return Promise.resolve();
-      }
-    });
+    apiMock.deleteBalanceSheet.mockImplementation();
     (useBalanceSheetItems as jest.Mock).mockReturnValue([
       balanceSheetItems,
       setBalanceSheetItems,
@@ -135,7 +131,9 @@ describe('BalanceSheetSubNavigation', () => {
 
     await user.click(deleteButton);
 
-    expect(apiMock.delete).toHaveBeenCalled();
+    expect(apiMock.deleteBalanceSheet).toHaveBeenCalledWith(
+      balanceSheetItem.id
+    );
 
     expect(
       screen.getByText('Navigated to balancesheets list page')

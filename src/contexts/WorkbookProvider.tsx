@@ -8,7 +8,6 @@ import {
 
 import { useApi } from './ApiContext';
 import { IWorkbook, Workbook } from '../models/Workbook';
-import { WorkbookResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/workbook.dto';
 import { useAlert } from './AlertContext';
 import { useTranslation } from 'react-i18next';
 
@@ -27,10 +26,7 @@ export default function WorkbookProvider({ children }: WorkbookProviderProps) {
   useEffect(() => {
     (async () => {
       try {
-        const response = await api.get(`v1/workbook`);
-        setWorkbook(
-          new Workbook(WorkbookResponseBodySchema.parse(response.data))
-        );
+        setWorkbook(new Workbook(await api.getWorkbook()));
       } catch (e) {
         addErrorAlert(t`Failed to load workbook`);
       }

@@ -15,36 +15,23 @@ jest.mock('../contexts/AlertContext');
 jest.mock('../contexts/ApiContext');
 describe('CompanyFactsPage', () => {
   const apiMock = {
-    get: jest.fn(),
+    getRegions: jest.fn(),
+    getIndustries: jest.fn(),
   };
   beforeEach(() => {
     (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
     (useActiveBalanceSheet as jest.Mock).mockReturnValue({
       balanceSheet: BalanceSheetMocks.balanceSheet1(),
     });
-    apiMock.get.mockImplementation((path: string) => {
-      if (path === `/v1/regions`) {
-        return Promise.resolve({
-          data: regionsMocks.regions1(),
-        });
-      }
-      if (path === `/v1/industries`) {
-        return Promise.resolve({
-          data: industriesMocks.industries1(),
-        });
-      }
-    });
+    apiMock.getRegions.mockResolvedValue(regionsMocks.regions1());
+    apiMock.getIndustries.mockResolvedValue(industriesMocks.industries1());
     (useApi as jest.Mock).mockImplementation(() => apiMock);
   });
 
   it('renders balance sheet items and navigates on click', async () => {
     renderWithTheme(<CompanyFactsPage />);
-    await waitFor(() =>
-      expect(apiMock.get).toHaveBeenCalledWith('/v1/regions')
-    );
-    await waitFor(() =>
-      expect(apiMock.get).toHaveBeenCalledWith('/v1/industries')
-    );
+    await waitFor(() => expect(apiMock.getRegions).toHaveBeenCalledWith());
+    await waitFor(() => expect(apiMock.getIndustries).toHaveBeenCalledWith());
   });
 
   it('renders forms', async () => {

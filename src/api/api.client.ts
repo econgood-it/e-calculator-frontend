@@ -1,4 +1,3 @@
-import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import wretch, { Wretch, WretchOptions, WretchResponse } from 'wretch';
 import { User } from '../authentication/User';
 import { OrganizationItemsResponseSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
@@ -7,18 +6,23 @@ import {
   BalanceSheet,
   BalanceSheetCreateRequestBody,
   BalanceSheetItem,
+  BalanceSheetPatchRequestBody,
 } from '../models/BalanceSheet';
 import {
   BalanceSheetItemsResponseSchema,
   BalanceSheetResponseBodySchema,
 } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
+import { WorkbookResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/workbook.dto';
+import { RegionResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/region.dto';
+import { Region } from '../models/Region';
+import { Industry } from '../models/Industry';
+import { IndustryResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/industry.dto';
 
 function language(language: string) {
   return function (
     next: (url: string, opts: WretchOptions) => Promise<WretchResponse>
   ) {
     return async function (url: string, opts: WretchOptions) {
-      console.log(opts);
       return Promise.resolve(
         next(url, {
           ...opts,
@@ -55,39 +59,21 @@ export function makeWretchInstance(
 type WretchType = Wretch<unknown, unknown, Promise<WretchResponse>>;
 
 export class ApiClient {
-  public constructor(
-    private axiosInstance: AxiosInstance,
-    private wretchInstance: WretchType
-  ) {}
+  public constructor(private wretchInstance: WretchType) {}
 
-  patch<T = any, R = AxiosResponse<T>, D = any>(
-    url: string,
-    data?: D,
-    config?: AxiosRequestConfig<D>
-  ): Promise<R> {
-    return this.axiosInstance.patch(url, data, config);
+  async getRegions(): Promise<Region[]> {
+    const response = await this.wretchInstance.get('/regions');
+    return RegionResponseBodySchema.array().parse(await response.json());
   }
 
-  put<T = any, R = AxiosResponse<T>, D = any>(
-    url: string,
-    data?: D,
-    config?: AxiosRequestConfig<D>
-  ): Promise<R> {
-    return this.axiosInstance.put(url, data, config);
+  async getIndustries(): Promise<Industry[]> {
+    const response = await this.wretchInstance.get('/industries');
+    return IndustryResponseBodySchema.array().parse(await response.json());
   }
 
-  get<T = any, R = AxiosResponse<T>, D = any>(
-    url: string,
-    config?: AxiosRequestConfig<D>
-  ): Promise<R> {
-    return this.axiosInstance.get(url, config);
-  }
-
-  delete<T = any, R = AxiosResponse<T>, D = any>(
-    url: string,
-    config?: AxiosRequestConfig<D>
-  ): Promise<R> {
-    return this.axiosInstance.delete(url, config);
+  async getWorkbook(): Promise<z.infer<typeof WorkbookResponseBodySchema>> {
+    const response = await this.wretchInstance.get('/workbook');
+    return WorkbookResponseBodySchema.parse(await response.json());
   }
 
   async getOrganizations(): Promise<
@@ -105,6 +91,21 @@ export class ApiClient {
   async getBalanceSheet(id: number): Promise<BalanceSheet> {
     const response = await this.wretchInstance.get(`/balancesheets/${id}`);
     return BalanceSheetResponseBodySchema.parse(await response.json());
+  }
+
+  async updateBalanceSheet(
+    id: number,
+    balanceSheet: BalanceSheetPatchRequestBody
+  ): Promise<BalanceSheet> {
+    const response = await this.wretchInstance.patch(
+      balanceSheet,
+      `/balancesheets/${id}`
+    );
+    return BalanceSheetResponseBodySchema.parse(await response.json());
+  }
+
+  async deleteBalanceSheet(id: number) {
+    await this.wretchInstance.delete(`/balancesheets/${id}`);
   }
 
   async createBalanceSheet(

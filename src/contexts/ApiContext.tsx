@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { createContext, ReactElement, useContext } from 'react';
 import { API_URL } from '../configuration';
 import { User } from '../authentication/User';
@@ -14,35 +13,10 @@ type ApiProviderProps = {
 
 function ApiProvider({ user, children }: ApiProviderProps) {
   const language = useLanguage();
-  const api = axios.create({ baseURL: `${API_URL}/` });
 
-  api.interceptors.request.use(async (config) => {
-    config.headers = {
-      ...config?.headers,
-      Authorization: `Bearer ${user.token}`,
-    };
-    config.params = { ...config?.params, lng: language };
-    return config;
-  });
-
-  api.interceptors.response.use(
-    function (response) {
-      // Any status code that lie within the range of 2xx cause this function to trigger
-      // Do something with response data
-      return response;
-    },
-    function (error) {
-      if (error?.response?.status === 401) {
-        window.location.pathname = '/login';
-      }
-      // Any status codes that falls outside the range of 2xx cause this function to trigger
-      // Do something with response error
-      return Promise.reject(error);
-    }
-  );
   return (
     <ApiContext.Provider
-      value={new ApiClient(api, makeWretchInstance(API_URL, user, language))}
+      value={new ApiClient(makeWretchInstance(API_URL, user, language))}
     >
       {children}
     </ApiContext.Provider>

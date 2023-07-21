@@ -6,10 +6,8 @@ import { useEffect, useState } from 'react';
 
 import { EmployeesForm } from '../components/balanceSheet/companyFacts/EmployeesForm';
 import { CustomersForm } from '../components/balanceSheet/companyFacts/CustomersForm';
-import { IndustryResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/industry.dto';
 import { Region } from '../models/Region';
 import { Industry } from '../models/Industry';
-import { RegionResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/region.dto';
 
 const CompanyFactsPage = () => {
   const { balanceSheet } = useActiveBalanceSheet();
@@ -19,17 +17,13 @@ const CompanyFactsPage = () => {
 
   useEffect(() => {
     (async () => {
-      const regionResponse = await api.get<Region[]>('/v1/regions');
-      setRegions(RegionResponseBodySchema.array().parse(regionResponse.data));
+      setRegions(await api.getRegions());
     })();
   }, [api]);
 
   useEffect(() => {
     (async () => {
-      const industryResponse = await api.get<Region[]>('/v1/industries');
-      setIndustries(
-        IndustryResponseBodySchema.array().parse(industryResponse.data)
-      );
+      setIndustries(await api.getIndustries());
     })();
   }, [api]);
 

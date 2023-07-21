@@ -1,7 +1,7 @@
 import { renderHookWithTheme } from '../testUtils/rendering';
 import { waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { useApi } from '../contexts/ApiContext';
+import { useApi } from './ApiContext';
 import WorkbookProvider, { useWorkbook } from './WorkbookProvider';
 import { useAlert } from './AlertContext';
 import { WorkbookResponseMocks } from '../testUtils/workbook';
@@ -10,7 +10,7 @@ jest.mock('../contexts/ApiContext');
 jest.mock('../contexts/AlertContext');
 describe('WithWorkbook', () => {
   const apiMock = {
-    get: jest.fn(),
+    getWorkbook: jest.fn(),
   };
 
   const alertMock = {
@@ -22,29 +22,25 @@ describe('WithWorkbook', () => {
 
   it('provides Workbook from API', async () => {
     const workbookResponse = WorkbookResponseMocks.default();
-    apiMock.get.mockResolvedValue({ data: workbookResponse });
+    apiMock.getWorkbook.mockResolvedValue(workbookResponse);
     (useApi as jest.Mock).mockImplementation(() => apiMock);
     const { result } = renderHookWithTheme(() => useWorkbook(), {
       wrapper: WorkbookProvider,
     });
-    await waitFor(() =>
-      expect(apiMock.get).toHaveBeenCalledWith('v1/workbook')
-    );
+    await waitFor(() => expect(apiMock.getWorkbook).toHaveBeenCalledWith());
     await waitFor(() =>
       expect(result.current!.getSections()).toEqual(workbookResponse.sections)
     );
   });
 
   it('fails to retrieve Workbook from API', async () => {
-    apiMock.get.mockRejectedValue({});
+    apiMock.getWorkbook.mockRejectedValue({});
     (useApi as jest.Mock).mockImplementation(() => apiMock);
 
     const { result } = renderHookWithTheme(() => useWorkbook(), {
       wrapper: WorkbookProvider,
     });
-    await waitFor(() =>
-      expect(apiMock.get).toHaveBeenCalledWith('v1/workbook')
-    );
+    await waitFor(() => expect(apiMock.getWorkbook).toHaveBeenCalledWith());
     await waitFor(() =>
       expect(alertMock.addErrorAlert).toHaveBeenCalledWith([
         'Failed to load workbook',

@@ -62,7 +62,7 @@ const BalanceSheetSubNavigation = ({
   const [, setBalanceSheetItems] = useBalanceSheetItems();
 
   const deleteBalanceSheet = async () => {
-    await api.delete(`/v1/balancesheets/${balanceSheetItem.id}`);
+    await api.deleteBalanceSheet(balanceSheetItem.id);
     setBalanceSheetItems((prevState) =>
       prevState.filter((b) => b.id !== balanceSheetItem.id)
     );

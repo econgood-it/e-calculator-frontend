@@ -9,7 +9,6 @@ import {
   BalanceSheet,
   BalanceSheetCreateRequestBody,
 } from '../models/BalanceSheet';
-import { z } from 'zod';
 
 export const CustomersMocks = {
   customers1: () => ({
@@ -155,7 +154,7 @@ export const BalanceSheetMocks = {
 };
 
 export const BalanceSheetJsonMocks = {
-  create: (): BalanceSheetCreateRequestBody => ({
+  request: (): BalanceSheetCreateRequestBody => ({
     type: BalanceSheetType.Full,
     version: BalanceSheetVersion.v5_0_8,
     companyFacts: CompanyFactsJsonMocks.create(),
