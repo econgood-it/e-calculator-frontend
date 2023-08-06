@@ -1,6 +1,11 @@
 import { Typography } from '@mui/material';
 import { Trans } from 'react-i18next';
-import { Organization, tmpSchema } from '../../models/Organization';
+import {
+  Organization,
+  OrganizationRequestBody,
+  tmpRequestSchema,
+  tmpSchema,
+} from '../../models/Organization';
 import { FieldValues, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -10,10 +15,10 @@ import GridItem from '../layout/GridItem';
 import { FormTextField } from '../balanceSheet/forms/FormTextField';
 
 type OrganizationFormProps = {
-  organization: Organization;
-  onSave: (organization: Organization) => Promise<void>;
+  organization: Organization | undefined;
+  onSave: (organization: OrganizationRequestBody) => Promise<void>;
 };
-const FormInputSchema = tmpSchema;
+const FormInputSchema = tmpRequestSchema;
 type FormInput = z.infer<typeof FormInputSchema>;
 
 export function OrganizationForm({

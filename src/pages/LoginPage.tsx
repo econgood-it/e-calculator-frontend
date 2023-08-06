@@ -50,7 +50,7 @@ export const LoginPage = ({ setUser }: LoginPageProps) => {
   const onSubmit = async (data: FormInput) => {
     try {
       const result = new AuthApiClient(makeWretchInstance(API_URL, 'en'));
-      const user = await result.generateToken(data.email, data.password);
+      const user = await result.login(data.email, data.password);
       window.localStorage.setItem('user', JSON.stringify(user));
       setUser(user);
       navigate('/');

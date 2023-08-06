@@ -72,7 +72,7 @@ export class AuthApiClient {
     private wretchInstance: Wretch<unknown, unknown, undefined>
   ) {}
 
-  async generateToken(email: string, password: string): Promise<User> {
+  async login(email: string, password: string): Promise<User> {
     const response = await this.wretchInstance.post(
       { email, password },
       '/users/token'
@@ -109,8 +109,12 @@ export class ApiClient {
     return tmpSchema.parse(await response.json());
   }
 
-  async getBalanceSheets(): Promise<BalanceSheetItem[]> {
-    const response = await this.wretchInstance.get('/balancesheets');
+  async getBalanceSheets(organizationId?: number): Promise<BalanceSheetItem[]> {
+    const response = organizationId
+      ? await this.wretchInstance.get(
+          `/organization/${organizationId}/balancesheet`
+        )
+      : await this.wretchInstance.get('/balancesheets');
     return BalanceSheetItemsResponseSchema.parse(await response.json());
   }
 

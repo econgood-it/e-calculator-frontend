@@ -11,9 +11,13 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { useOrganizations } from '../hooks/organization';
+import { OrganizationItemsMocks } from '../testUtils/organization';
 
 jest.mock('../contexts/ApiContext');
 jest.mock('../contexts/BalanceSheetListContext');
+jest.mock('../hooks/organization');
+jest.mock('../contexts/AlertContext');
 
 describe('Sidebar', () => {
   const initialPathForRouting = '/balancesheets';
@@ -29,6 +33,9 @@ describe('Sidebar', () => {
       balanceSheetItems,
       setBalanceSheetItems,
     ]);
+    (useOrganizations as jest.Mock).mockReturnValue({
+      organizationItems: OrganizationItemsMocks.default(),
+    });
   });
 
   it('renders Balance sheets subheader and Create balance sheet navigation item', async () => {
@@ -113,5 +120,30 @@ describe('Sidebar', () => {
     expect(
       await screen.findByText('Navigated to Balance sheet 3')
     ).toBeInTheDocument();
+  });
+
+  it('shows dropdown of organizations', async () => {
+    const user = userEvent.setup();
+    act(() => {
+      renderWithTheme(
+        <MemoryRouter initialEntries={[initialPathForRouting]}>
+          <Routes>
+            <Route path={initialPathForRouting} element={<Sidebar />} />
+          </Routes>
+        </MemoryRouter>
+      );
+    });
+
+    await user.click(
+      screen.getByRole('button', {
+        name: 'My balance sheets',
+      })
+    );
+    const options = await screen.findAllByRole('option');
+
+    expect(options.map((o) => o.textContent)).toEqual([
+      'My balance sheets',
+      ...OrganizationItemsMocks.default().map((i) => `Organization ${i.id}`),
+    ]);
   });
 });

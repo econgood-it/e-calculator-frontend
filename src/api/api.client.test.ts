@@ -57,7 +57,7 @@ describe('ApiClient', () => {
   afterAll(() => mswServer.close());
 
   describe('User', () => {
-    it('should generate token for credentials', async () => {
+    it('should login with credentials', async () => {
       const user = UserMocks.default();
       const credentials = {
         email: 'user@example.com',
@@ -68,7 +68,7 @@ describe('ApiClient', () => {
         `${URL}/v1/users/token`,
         new Response(JSON.stringify(user))
       );
-      const response = await authApiClient.generateToken(
+      const response = await authApiClient.login(
         credentials.email,
         credentials.password
       );
@@ -152,6 +152,18 @@ describe('ApiClient', () => {
         new Response(JSON.stringify(balanceSheets))
       );
       const response = await apiClient.getBalanceSheets();
+      expect(response).toEqual(balanceSheets);
+    });
+
+    it('returns balancesheets of organization', async () => {
+      const balanceSheets = [{ id: 8 }, { id: 9 }];
+      const organizationId = 2;
+      mockResource(
+        'get',
+        `${URL}/v1/organization/${organizationId}/balancesheet`,
+        new Response(JSON.stringify(balanceSheets))
+      );
+      const response = await apiClient.getBalanceSheets(organizationId);
       expect(response).toEqual(balanceSheets);
     });
 

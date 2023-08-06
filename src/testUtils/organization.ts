@@ -2,6 +2,7 @@ import { Organization, OrganizationItems } from '../models/Organization';
 
 export const OrganizationMocks = {
   default: (): Organization => ({
+    id: 7,
     address: {
       city: 'Example City',
     },

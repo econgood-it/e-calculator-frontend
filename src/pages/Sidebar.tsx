@@ -10,7 +10,14 @@ import ListItemText from '@mui/material/ListItemText';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import { AppBar, Box, ListSubheader, useTheme } from '@mui/material';
+import {
+  AppBar,
+  Box,
+  ListSubheader,
+  MenuItem,
+  Select,
+  useTheme,
+} from '@mui/material';
 import { Trans } from 'react-i18next';
 import styled from 'styled-components';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -22,6 +29,7 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { useOrganizations } from '../hooks/organization';
 
 const FixedAppBar = styled(AppBar)`
   z-index: ${(props) => props.theme.zIndex.drawer + 1};
@@ -46,6 +54,7 @@ export default function Sidebar() {
   const theme = useTheme();
   const [open, setOpen] = useState<boolean>(true);
   const [balanceSheetItems, setBalanceSheetItems] = useBalanceSheetItems();
+  const { organizationItems } = useOrganizations();
   const navigate = useNavigate();
   const drawerWidth = 240;
   const api = useApi();
@@ -92,6 +101,16 @@ export default function Sidebar() {
       >
         <Toolbar />
         <Box>
+          <Select value={'default'}>
+            <MenuItem value={'default'}>
+              <Trans>My balance sheets</Trans>
+            </MenuItem>
+            {organizationItems.map((o) => (
+              <MenuItem key={o.id} value={o.id}>
+                <Trans>{`Organization ${o.id}`}</Trans>
+              </MenuItem>
+            ))}
+          </Select>
           <List
             subheader={
               <ListSubheader>

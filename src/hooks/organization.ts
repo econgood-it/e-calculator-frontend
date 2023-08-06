@@ -1,17 +1,29 @@
 import { useEffect, useState } from 'react';
 import { useApi } from '../contexts/ApiContext';
-import { Organization } from '../models/Organization';
+import { Organization, OrganizationItems } from '../models/Organization';
 
-export function useOrganization(): { organization: Organization | undefined } {
+export function useOrganizations(): {
+  organizationItems: OrganizationItems;
+  activeOrganization: Organization | undefined;
+  setActiveOrganizationById: (id: number) => Promise<void>;
+} {
   const api = useApi();
-  const [organization, setOrganization] = useState<Organization | undefined>();
+  const [organizationItems, setOrganizationItems] = useState<OrganizationItems>(
+    []
+  );
+  const [activeOrganization] = useState<Organization | undefined>();
+
+  async function setActiveOrganizationById(id: number) {
+    await api.getOrganization(id);
+  }
   useEffect(() => {
     (async () => {
-      const organizationItem = (await api.getOrganizations()).at(0);
-      if (organizationItem) {
-        setOrganization(await api.getOrganization(organizationItem.id));
-      }
+      setOrganizationItems(await api.getOrganizations());
     })();
   }, []);
-  return { organization };
+  return {
+    organizationItems,
+    activeOrganization: activeOrganization,
+    setActiveOrganizationById,
+  };
 }
