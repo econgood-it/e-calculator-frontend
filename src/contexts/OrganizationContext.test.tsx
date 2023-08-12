@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom';
 import { OrganizationProvider, useOrganizations } from './OrganizationContext';
 import { renderHookWithTheme } from '../testUtils/rendering';
 import { useApi } from './ApiContext';
@@ -8,13 +9,16 @@ import {
 import { act, waitFor } from '@testing-library/react';
 import { ReactElement } from 'react';
 import { AlertProvider } from './AlertContext';
-
-jest.mock('../contexts/ApiContext');
+jest.mock('./ApiContext');
 describe('useOrganizations', () => {
   const apiMock = {
     getOrganizations: jest.fn(),
     getOrganization: jest.fn(),
   };
+
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
 
   function Wrapper({ children }: { children: ReactElement }) {
     return (
@@ -58,12 +62,18 @@ describe('useOrganizations', () => {
   });
 
   it('should switch active organization', async function () {
+    const storageKey = 'activeOrganization';
+    const spyGetItem = jest.spyOn(window.localStorage, 'getItem');
+    const spySetItem = jest.spyOn(window.localStorage, 'setItem');
+    const spyRemoveItem = jest.spyOn(window.localStorage, 'removeItem');
+    window.localStorage.setItem(
+      storageKey,
+      JSON.stringify(OrganizationMocks.withId3())
+    );
     apiMock.getOrganizations.mockResolvedValue(
       OrganizationItemsMocks.default()
     );
-    apiMock.getOrganization.mockResolvedValue(
-      OrganizationItemsMocks.default()[1]
-    );
+    apiMock.getOrganization.mockResolvedValue(OrganizationMocks.default());
     (useApi as jest.Mock).mockImplementation(() => apiMock);
     const { result } = await act(() => {
       return renderHookWithTheme(() => useOrganizations(), {
@@ -73,22 +83,30 @@ describe('useOrganizations', () => {
     await waitFor(() =>
       expect(apiMock.getOrganizations).toHaveBeenCalledWith()
     );
-    expect(result.current.activeOrganization).toBeUndefined();
+    expect(spyGetItem).toHaveBeenCalledWith(storageKey);
+    expect(result.current.activeOrganization).toEqual(
+      OrganizationMocks.withId3()
+    );
     const idToSelect = OrganizationItemsMocks.default()[1].id;
     await act(async () => {
       await result.current.setActiveOrganizationById(idToSelect);
     });
+
     await waitFor(() =>
       expect(apiMock.getOrganization).toHaveBeenCalledWith(idToSelect)
+    );
+    expect(spySetItem).toHaveBeenCalledWith(
+      storageKey,
+      JSON.stringify(OrganizationMocks.default())
     );
 
     await waitFor(() =>
       expect(result.current.activeOrganization?.id).toEqual(idToSelect)
     );
-
     await act(async () => {
       await result.current.setActiveOrganizationById(undefined);
     });
+    expect(spyRemoveItem).toHaveBeenCalledWith(storageKey);
 
     await waitFor(() =>
       expect(apiMock.getOrganization).not.toHaveBeenLastCalledWith(undefined)

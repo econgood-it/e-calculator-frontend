@@ -7,6 +7,12 @@ export const OrganizationMocks = {
       city: 'Example City',
     },
   }),
+  withId3: (): Organization => ({
+    id: 3,
+    address: {
+      city: 'Example City 3',
+    },
+  }),
 };
 
 export const OrganizationItemsMocks = {

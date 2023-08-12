@@ -1,12 +1,18 @@
 import {
   createContext,
+  Dispatch,
   ReactElement,
+  SetStateAction,
   useContext,
   useEffect,
   useState,
 } from 'react';
 import { useApi } from './ApiContext';
-import { Organization, OrganizationItems } from '../models/Organization';
+import {
+  Organization,
+  OrganizationItems,
+  tmpSchema,
+} from '../models/Organization';
 
 interface IOrganizationContext {
   organizationItems: OrganizationItems;
@@ -22,14 +28,41 @@ type OrganizationProviderProps = {
   children: ReactElement;
 };
 
+function useActiveOrganization(): [
+  Organization | undefined,
+  Dispatch<SetStateAction<Organization | undefined>>
+] {
+  const localeStorageKey = 'activeOrganization';
+  const activeOrganizationString =
+    window.localStorage.getItem(localeStorageKey);
+
+  const [activeOrganization, setActiveOrganization] = useState(() => {
+    return activeOrganizationString
+      ? tmpSchema.parse(JSON.parse(activeOrganizationString))
+      : undefined;
+  });
+
+  useEffect(() => {
+    if (activeOrganization !== undefined) {
+      window.localStorage.setItem(
+        localeStorageKey,
+        JSON.stringify(activeOrganization)
+      );
+    } else {
+      window.localStorage.removeItem(localeStorageKey);
+    }
+  }, [activeOrganization]);
+
+  return [activeOrganization, setActiveOrganization];
+}
+
 export function OrganizationProvider({ children }: OrganizationProviderProps) {
   const api = useApi();
   const [organizationItems, setOrganizationItems] = useState<OrganizationItems>(
     []
   );
-  const [activeOrganization, setActiveOrganization] = useState<
-    Organization | undefined
-  >();
+
+  const [activeOrganization, setActiveOrganization] = useActiveOrganization();
 
   async function setActiveOrganizationById(id: number | undefined) {
     if (id !== undefined) {
