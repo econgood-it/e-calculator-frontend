@@ -12,7 +12,10 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { useOrganizations } from '../contexts/OrganizationContext';
-import { OrganizationItemsMocks } from '../testUtils/organization';
+import {
+  OrganizationItemsMocks,
+  OrganizationMocks,
+} from '../testUtils/organization';
 
 jest.mock('../contexts/ApiContext');
 jest.mock('../contexts/BalanceSheetListContext');
@@ -115,10 +118,54 @@ describe('Sidebar', () => {
       screen.getByRole('button', { name: /Create balance sheet/i })
     );
 
-    expect(apiMock.createBalanceSheet).toHaveBeenCalledWith({
-      type: BalanceSheetType.Full,
-      version: BalanceSheetVersion.v5_0_8,
+    expect(apiMock.createBalanceSheet).toHaveBeenCalledWith(
+      {
+        type: BalanceSheetType.Full,
+        version: BalanceSheetVersion.v5_0_8,
+      },
+      undefined
+    );
+    expect(
+      await screen.findByText('Navigated to Balance sheet 3')
+    ).toBeInTheDocument();
+  });
+
+  it('creates new balance sheet belonging to organization and navigates to it', async () => {
+    const user = userEvent.setup();
+
+    const balanceSheet = BalanceSheetMocks.balanceSheet1();
+    (useOrganizations as jest.Mock).mockReturnValue({
+      organizationItems: OrganizationItemsMocks.default(),
+      activeOrganization: OrganizationMocks.default(),
+      setActiveOrganizationById: setActiveOrganizationByIdMock,
     });
+    apiMock.createBalanceSheet.mockResolvedValue({ ...balanceSheet, id: 3 });
+    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    act(() => {
+      renderWithTheme(
+        <MemoryRouter initialEntries={[initialPathForRouting]}>
+          <Routes>
+            <Route path={initialPathForRouting} element={<Sidebar />} />
+            <Route
+              path={`/${initialPathForRouting}/3`}
+              element={<div>Navigated to Balance sheet 3</div>}
+            />
+          </Routes>
+        </MemoryRouter>
+      );
+    });
+
+    await user.click(
+      screen.getByRole('button', { name: /Create balance sheet/i })
+    );
+
+    expect(apiMock.createBalanceSheet).toHaveBeenCalledWith(
+      {
+        type: BalanceSheetType.Full,
+        version: BalanceSheetVersion.v5_0_8,
+      },
+      OrganizationMocks.default().id
+    );
     expect(
       await screen.findByText('Navigated to Balance sheet 3')
     ).toBeInTheDocument();

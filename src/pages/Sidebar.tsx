@@ -66,10 +66,13 @@ export default function Sidebar() {
   };
 
   const createBalanceSheet = async () => {
-    const newBalanceSheet = await api.createBalanceSheet({
-      type: BalanceSheetType.Full,
-      version: BalanceSheetVersion.v5_0_8,
-    });
+    const newBalanceSheet = await api.createBalanceSheet(
+      {
+        type: BalanceSheetType.Full,
+        version: BalanceSheetVersion.v5_0_8,
+      },
+      activeOrganization?.id
+    );
     const id = newBalanceSheet.id!;
     setBalanceSheetItems((prevBalanceSheets) =>
       prevBalanceSheets.concat({ id: id })

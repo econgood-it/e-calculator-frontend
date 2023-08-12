@@ -139,12 +139,15 @@ export class ApiClient {
   }
 
   async createBalanceSheet(
-    balanceSheet: BalanceSheetCreateRequestBody
+    balanceSheet: BalanceSheetCreateRequestBody,
+    organizationId?: number
   ): Promise<BalanceSheet> {
-    const response = await this.wretchInstance.post(
-      balanceSheet,
-      '/balancesheets'
-    );
+    const response = organizationId
+      ? await this.wretchInstance.post(
+          balanceSheet,
+          `/organization/${organizationId}/balancesheet`
+        )
+      : await this.wretchInstance.post(balanceSheet, '/balancesheets');
     return BalanceSheetResponseBodySchema.parse(await response.json());
   }
 }

@@ -180,6 +180,24 @@ describe('ApiClient', () => {
       const request = await requestPromise;
       await expect(request.json()).resolves.toEqual(balanceSheet);
     });
+
+    it('creates balance sheet belonging to organization', async () => {
+      const balanceSheet = BalanceSheetJsonMocks.request();
+      const organizationId = 2;
+      const requestPromise = mockResource(
+        'post',
+        `${URL}/v1/organization/${organizationId}/balancesheet`,
+        new Response(JSON.stringify(BalanceSheetMocks.balanceSheet1()))
+      );
+      const response = await apiClient.createBalanceSheet(
+        balanceSheet,
+        organizationId
+      );
+      expect(response).toEqual(BalanceSheetMocks.balanceSheet1());
+
+      const request = await requestPromise;
+      await expect(request.json()).resolves.toEqual(balanceSheet);
+    });
     it('returns balance sheet', async () => {
       const balanceSheet = BalanceSheetMocks.balanceSheet1();
       mockResource(
