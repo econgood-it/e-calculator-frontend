@@ -16,6 +16,7 @@ import {
   ListSubheader,
   MenuItem,
   Select,
+  SelectChangeEvent,
   useTheme,
 } from '@mui/material';
 import { Trans } from 'react-i18next';
@@ -29,7 +30,7 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { useOrganizations } from '../hooks/organization';
+import { useOrganizations } from '../contexts/OrganizationContext';
 
 const FixedAppBar = styled(AppBar)`
   z-index: ${(props) => props.theme.zIndex.drawer + 1};
@@ -54,7 +55,8 @@ export default function Sidebar() {
   const theme = useTheme();
   const [open, setOpen] = useState<boolean>(true);
   const [balanceSheetItems, setBalanceSheetItems] = useBalanceSheetItems();
-  const { organizationItems } = useOrganizations();
+  const { organizationItems, setActiveOrganizationById, activeOrganization } =
+    useOrganizations();
   const navigate = useNavigate();
   const drawerWidth = 240;
   const api = useApi();
@@ -74,6 +76,12 @@ export default function Sidebar() {
     );
     navigate(`${id}`);
   };
+
+  async function onOrganizationChange(v: SelectChangeEvent<number | string>) {
+    await setActiveOrganizationById(
+      v.target.value === 'default' ? undefined : Number(v.target.value)
+    );
+  }
 
   return (
     <>
@@ -101,7 +109,10 @@ export default function Sidebar() {
       >
         <Toolbar />
         <Box>
-          <Select value={'default'}>
+          <Select
+            value={activeOrganization?.id || 'default'}
+            onChange={onOrganizationChange}
+          >
             <MenuItem value={'default'}>
               <Trans>My balance sheets</Trans>
             </MenuItem>

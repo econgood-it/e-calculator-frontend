@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { useApi } from './ApiContext';
 import { BalanceSheetItem } from '../models/BalanceSheet';
+import { useOrganizations } from './OrganizationContext';
 
 interface IBalanceSheetListContext {
   balanceSheetItems: BalanceSheetItem[];
@@ -26,12 +27,13 @@ function BalanceSheetListProvider({ children }: BalanceSheetListProviderProps) {
   const [balanceSheetItems, setBalanceSheetItems] = useState<
     BalanceSheetItem[]
   >([]);
+  const { activeOrganization } = useOrganizations();
   const api = useApi();
   useEffect(() => {
     (async () => {
-      setBalanceSheetItems(await api.getBalanceSheets());
+      setBalanceSheetItems(await api.getBalanceSheets(activeOrganization?.id));
     })();
-  }, []);
+  }, [activeOrganization]);
 
   return (
     <BalanceSheetListContext.Provider

@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { act, fireEvent, screen } from '@testing-library/react';
+import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
 import Sidebar from './Sidebar';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -11,12 +11,12 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { useOrganizations } from '../hooks/organization';
+import { useOrganizations } from '../contexts/OrganizationContext';
 import { OrganizationItemsMocks } from '../testUtils/organization';
 
 jest.mock('../contexts/ApiContext');
 jest.mock('../contexts/BalanceSheetListContext');
-jest.mock('../hooks/organization');
+jest.mock('../contexts/OrganizationContext');
 jest.mock('../contexts/AlertContext');
 
 describe('Sidebar', () => {
@@ -27,6 +27,7 @@ describe('Sidebar', () => {
     get: jest.fn(),
     createBalanceSheet: jest.fn(),
   };
+  const setActiveOrganizationByIdMock = jest.fn();
 
   beforeEach(() => {
     (useBalanceSheetItems as jest.Mock).mockReturnValue([
@@ -35,6 +36,7 @@ describe('Sidebar', () => {
     ]);
     (useOrganizations as jest.Mock).mockReturnValue({
       organizationItems: OrganizationItemsMocks.default(),
+      setActiveOrganizationById: setActiveOrganizationByIdMock,
     });
   });
 
@@ -122,7 +124,7 @@ describe('Sidebar', () => {
     ).toBeInTheDocument();
   });
 
-  it('shows dropdown of organizations', async () => {
+  it('active organization changed if user selects organization from dropdown', async () => {
     const user = userEvent.setup();
     act(() => {
       renderWithTheme(
@@ -145,5 +147,17 @@ describe('Sidebar', () => {
       'My balance sheets',
       ...OrganizationItemsMocks.default().map((i) => `Organization ${i.id}`),
     ]);
+
+    const orgaItemToSelect = OrganizationItemsMocks.default()[1];
+    await user.click(
+      options.find(
+        (o) => o.textContent === `Organization ${orgaItemToSelect.id}`
+      )!
+    );
+    await waitFor(() =>
+      expect(setActiveOrganizationByIdMock).toHaveBeenCalledWith(
+        orgaItemToSelect.id
+      )
+    );
   });
 });
