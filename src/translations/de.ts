@@ -53,6 +53,11 @@ export const DE_TRANSLATIONS = {
   Customers: 'Kund*nnen und Mitunternehmen',
   Estimation: 'Einschätzung',
   'Failed to load workbook': 'Laden des Arbeitsbuches fehlgeschlagen',
-  'Your Organization': 'Ihre Organisation',
+  'Your organization': 'Ihre Organisation',
+  Street: 'Straße',
+  'House number': 'Hausnummer',
+  Zip: 'Postleitzahl',
+  City: 'Stadt',
+  'Balance sheets': 'Bilanzen',
   ...DE_ERROR_TRANSLATIONS,
 };

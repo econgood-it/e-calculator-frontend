@@ -1,11 +1,6 @@
 import { Typography } from '@mui/material';
 import { Trans } from 'react-i18next';
-import {
-  Organization,
-  OrganizationRequestBody,
-  tmpRequestSchema,
-  tmpSchema,
-} from '../../models/Organization';
+import { OrganizationRequestBody } from '../../models/Organization';
 import { FieldValues, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -13,12 +8,13 @@ import { SaveButton } from '../balanceSheet/forms/SaveButton';
 import { FormContainer } from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
 import { FormTextField } from '../balanceSheet/forms/FormTextField';
+import { OrganizationRequestSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
 
 type OrganizationFormProps = {
-  organization: Organization | undefined;
+  organization: OrganizationRequestBody | undefined;
   onSave: (organization: OrganizationRequestBody) => Promise<void>;
 };
-const FormInputSchema = tmpRequestSchema;
+const FormInputSchema = OrganizationRequestSchema;
 type FormInput = z.infer<typeof FormInputSchema>;
 
 export function OrganizationForm({
@@ -46,12 +42,36 @@ export function OrganizationForm({
           <Trans>Your organization</Trans>
         </Typography>
       </GridItem>
-      <GridItem xs={12}>
+      <GridItem xs={12} sm={6}>
+        <FormTextField
+          label={<Trans>Street</Trans>}
+          errors={errors}
+          register={register}
+          registerKey={'address.street'}
+        />
+      </GridItem>
+      <GridItem xs={12} sm={6}>
+        <FormTextField
+          label={<Trans>House number</Trans>}
+          errors={errors}
+          register={register}
+          registerKey={'address.houseNumber'}
+        />
+      </GridItem>
+      <GridItem xs={12} sm={6}>
         <FormTextField
           label={<Trans>City</Trans>}
           errors={errors}
           register={register}
           registerKey={'address.city'}
+        />
+      </GridItem>
+      <GridItem xs={12} sm={6}>
+        <FormTextField
+          label={<Trans>Zip</Trans>}
+          errors={errors}
+          register={register}
+          registerKey={'address.zip'}
         />
       </GridItem>
       <GridItem xs={12}>

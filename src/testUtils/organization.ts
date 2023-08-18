@@ -1,19 +1,38 @@
-import { Organization, OrganizationItems } from '../models/Organization';
+import _ from 'lodash';
+import {
+  Organization,
+  OrganizationItems,
+  OrganizationRequestBody,
+} from '../models/Organization';
 
-export const OrganizationMocks = {
-  default: (): Organization => ({
+export class OrganizationMockBuilder {
+  private organization: Organization = {
     id: 7,
     address: {
       city: 'Example City',
+      street: 'Example street',
+      houseNumber: '6',
+      zip: '79910',
     },
-  }),
-  withId3: (): Organization => ({
-    id: 3,
-    address: {
-      city: 'Example City 3',
-    },
-  }),
-};
+  };
+
+  public withId(id: number) {
+    this.organization.id = id;
+    return this;
+  }
+
+  public buildRequestBody(): OrganizationRequestBody {
+    return _.omit(this.organization, ['id']);
+  }
+
+  public buildResponseBody() {
+    return _.omit(this.organization);
+  }
+
+  public build(): Organization {
+    return this.organization;
+  }
+}
 
 export const OrganizationItemsMocks = {
   default: (): OrganizationItems => [

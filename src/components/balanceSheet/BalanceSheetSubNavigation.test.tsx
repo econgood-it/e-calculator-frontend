@@ -28,7 +28,7 @@ describe('BalanceSheetSubNavigation', () => {
   });
 
   it('navigates to company facts when Company Facts item is clicked', async () => {
-    const initialPathForRouting = '/balancesheets';
+    const initialPathForRouting = '/initial-path';
     const user = userEvent.setup();
     renderWithTheme(
       <MemoryRouter initialEntries={[initialPathForRouting]}>
@@ -40,7 +40,7 @@ describe('BalanceSheetSubNavigation', () => {
             }
           />
           <Route
-            path={`${initialPathForRouting}/${balanceSheetItem.id}/companyfacts`}
+            path={`/balancesheets/${balanceSheetItem.id}/companyfacts`}
             element={<div>Navigated to company facts of balance sheet 2</div>}
           />
         </Routes>
@@ -57,7 +57,7 @@ describe('BalanceSheetSubNavigation', () => {
   });
 
   it('navigates to ratings page of clicked stakeholder', async () => {
-    const initialPathForRouting = '/balancesheets';
+    const initialPathForRouting = '/initial-path';
     const user = userEvent.setup();
     const stakeholders = [
       'Suppliers',
@@ -77,23 +77,23 @@ describe('BalanceSheetSubNavigation', () => {
             }
           />
           <Route
-            path={`${initialPathForRouting}/${balanceSheetItem.id}/ratings/suppliers`}
+            path={`/balancesheets/${balanceSheetItem.id}/ratings/suppliers`}
             element={<div>{stakeholders[0]}</div>}
           />
           <Route
-            path={`${initialPathForRouting}/${balanceSheetItem.id}/ratings/finance`}
+            path={`/balancesheets/${balanceSheetItem.id}/ratings/finance`}
             element={<div>{stakeholders[1]}</div>}
           />
           <Route
-            path={`${initialPathForRouting}/${balanceSheetItem.id}/ratings/employees`}
+            path={`/balancesheets/${balanceSheetItem.id}/ratings/employees`}
             element={<div>{stakeholders[2]}</div>}
           />
           <Route
-            path={`${initialPathForRouting}/${balanceSheetItem.id}/ratings/customers`}
+            path={`/balancesheets/${balanceSheetItem.id}/ratings/customers`}
             element={<div>{stakeholders[3]}</div>}
           />
           <Route
-            path={`${initialPathForRouting}/${balanceSheetItem.id}/ratings/society`}
+            path={`/balancesheets/${balanceSheetItem.id}/ratings/society`}
             element={<div>{stakeholders[4]}</div>}
           />
         </Routes>

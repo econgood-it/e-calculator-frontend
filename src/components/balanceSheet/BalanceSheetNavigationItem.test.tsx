@@ -6,7 +6,7 @@ import { BalanceSheetNavigationItem } from './BalanceSheetNavigationItem';
 import { screen } from '@testing-library/react';
 
 describe('BalanceSheetNavigationItem', () => {
-  const initialPathForRouting = '/balancesheets';
+  const initialPathForRouting = '/initial-path';
 
   it('navigates to balance sheet when item is clicked', async () => {
     const user = userEvent.setup();
@@ -20,7 +20,7 @@ describe('BalanceSheetNavigationItem', () => {
             }
           />
           <Route
-            path={`${initialPathForRouting}/2`}
+            path={`/balancesheets/2`}
             element={<div>Navigated to balance sheet 2</div>}
           />
         </Routes>

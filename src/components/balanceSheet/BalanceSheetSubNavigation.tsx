@@ -42,7 +42,7 @@ function StakeholderRatingNavigationItem({
     <ListItem key="suppliers">
       <ListItemButton
         component={Link}
-        to={`${balanceSheetId}/ratings/${pathName}`}
+        to={`/balancesheets/${balanceSheetId}/ratings/${pathName}`}
       >
         <ListItemIcon>
           <FontAwesomeIcon icon={iconDefinition} />
@@ -74,7 +74,7 @@ const BalanceSheetSubNavigation = ({
       <ListItem key="company-facts">
         <ListItemButton
           component={Link}
-          to={`${balanceSheetItem.id}/companyfacts`}
+          to={`/balancesheets/${balanceSheetItem.id}/companyfacts`}
         >
           <ListItemIcon>
             <FontAwesomeIcon icon={faBuilding} />

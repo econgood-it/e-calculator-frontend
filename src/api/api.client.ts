@@ -1,6 +1,9 @@
 import wretch, { Wretch, WretchOptions, WretchResponse } from 'wretch';
 import { User } from '../authentication/User';
-import { OrganizationItemsResponseSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
+import {
+  OrganizationItemsResponseSchema,
+  OrganizationResponseSchema,
+} from '@ecogood/e-calculator-schemas/dist/organization.dto';
 import { z } from 'zod';
 import {
   BalanceSheet,
@@ -20,7 +23,7 @@ import { IndustryResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/i
 import {
   Organization,
   OrganizationItems,
-  tmpSchema,
+  OrganizationRequestBody,
 } from '../models/Organization';
 
 function language(language: string) {
@@ -99,6 +102,16 @@ export class ApiClient {
     return WorkbookResponseBodySchema.parse(await response.json());
   }
 
+  async createOrganization(
+    organization: OrganizationRequestBody
+  ): Promise<Organization> {
+    const response = await this.wretchInstance.post(
+      organization,
+      '/organization'
+    );
+    return OrganizationResponseSchema.parse(await response.json());
+  }
+
   async getOrganizations(): Promise<OrganizationItems> {
     const response = await this.wretchInstance.get('/organization');
     return OrganizationItemsResponseSchema.parse(await response.json());
@@ -106,7 +119,7 @@ export class ApiClient {
 
   async getOrganization(id: number): Promise<Organization> {
     const response = await this.wretchInstance.get(`/organization/${id}`);
-    return tmpSchema.parse(await response.json());
+    return OrganizationResponseSchema.parse(await response.json());
   }
 
   async getBalanceSheets(organizationId?: number): Promise<BalanceSheetItem[]> {

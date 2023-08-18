@@ -44,7 +44,12 @@ const EN_WORDS = [
   'Customers',
   'Estimation',
   'Failed to load workbook',
-  'Your Organization',
+  'Your organization',
+  'Street',
+  'House number',
+  'Zip',
+  'City',
+  'Balance sheets',
 ];
 
 export const EN_TRANSLATIONS = {

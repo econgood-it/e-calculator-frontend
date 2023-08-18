@@ -13,6 +13,7 @@ import { useState } from 'react';
 import {
   AppBar,
   Box,
+  ButtonGroup,
   ListSubheader,
   MenuItem,
   Select,
@@ -31,6 +32,7 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { useOrganizations } from '../contexts/OrganizationContext';
+import { OrganizationCreationDialog } from '../components/organization/OrganizationCreationDialog';
 
 const FixedAppBar = styled(AppBar)`
   z-index: ${(props) => props.theme.zIndex.drawer + 1};
@@ -60,6 +62,8 @@ export default function Sidebar() {
   const navigate = useNavigate();
   const drawerWidth = 240;
   const api = useApi();
+  const [organizationDialogOpen, setOrganizationDialogOpen] =
+    useState<boolean>(false);
 
   const toogleSidebar = () => {
     setOpen(!open);
@@ -77,7 +81,7 @@ export default function Sidebar() {
     setBalanceSheetItems((prevBalanceSheets) =>
       prevBalanceSheets.concat({ id: id })
     );
-    navigate(`${id}`);
+    navigate(`/balancesheets/${id}`);
   };
 
   async function onOrganizationChange(v: SelectChangeEvent<number | string>) {
@@ -88,6 +92,10 @@ export default function Sidebar() {
 
   return (
     <>
+      <OrganizationCreationDialog
+        open={organizationDialogOpen}
+        setOpen={setOrganizationDialogOpen}
+      />
       <FixedAppBar>
         <StyledToolbar>
           <IconButton aria-label="toogle sidebar" onClick={toogleSidebar}>
@@ -112,19 +120,37 @@ export default function Sidebar() {
       >
         <Toolbar />
         <Box>
-          <Select
-            value={activeOrganization?.id || 'default'}
-            onChange={onOrganizationChange}
-          >
-            <MenuItem value={'default'}>
-              <Trans>My balance sheets</Trans>
-            </MenuItem>
-            {organizationItems.map((o) => (
-              <MenuItem key={o.id} value={o.id}>
-                <Trans>{`Organization ${o.id}`}</Trans>
+          <ButtonGroup fullWidth>
+            <Select
+              variant="standard"
+              value={
+                (organizationItems.length > 0 && activeOrganization?.id) ||
+                'default'
+              }
+              onChange={onOrganizationChange}
+            >
+              <MenuItem value={'default'}>
+                <Trans>My balance sheets</Trans>
               </MenuItem>
-            ))}
-          </Select>
+              {organizationItems.map((o) => (
+                <MenuItem key={o.id} value={o.id}>
+                  <Trans>{`Organization ${o.id}`}</Trans>
+                </MenuItem>
+              ))}
+            </Select>
+            <IconButton
+              aria-label={'Create organization'}
+              onClick={() => setOrganizationDialogOpen(true)}
+              sx={{
+                borderRadius: 0,
+                border: '1px solid',
+                borderColor: 'primary.main',
+              }}
+            >
+              <FontAwesomeIcon icon={faPlus} />
+            </IconButton>
+          </ButtonGroup>
+
           <List
             subheader={
               <ListSubheader>

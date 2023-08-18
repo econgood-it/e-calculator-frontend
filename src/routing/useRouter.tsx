@@ -29,10 +29,14 @@ export function useRouter() {
       <Route>
         <Route path={'/'} element={<Navigate to="/balancesheets" />} />
         <Route path={'/login'} element={<LoginPage setUser={setUser} />} />
-        <Route path={'/balancesheets'} element={<RequiresAuth user={user} />}>
+        <Route element={<RequiresAuth user={user} />}>
           <Route element={<Sidebar />}>
-            <Route index element={<BalanceSheetListPage />} />
-            <Route path=":balanceSheetId" element={<WithActiveBalanceSheet />}>
+            <Route path={'/organization'} element={<div>Orga</div>} />
+            <Route path={'/balancesheets'} element={<BalanceSheetListPage />} />
+            <Route
+              path="/balancesheets/:balanceSheetId"
+              element={<WithActiveBalanceSheet />}
+            >
               <Route index element={<BalanceSheetOverviewPage />} />
               <Route path="companyfacts" element={<CompanyFactsPage />} />
               <Route

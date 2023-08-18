@@ -4,16 +4,18 @@ import { renderHookWithTheme } from '../testUtils/rendering';
 import { useApi } from './ApiContext';
 import {
   OrganizationItemsMocks,
-  OrganizationMocks,
+  OrganizationMockBuilder,
 } from '../testUtils/organization';
 import { act, waitFor } from '@testing-library/react';
 import { ReactElement } from 'react';
 import { AlertProvider } from './AlertContext';
+
 jest.mock('./ApiContext');
 describe('useOrganizations', () => {
   const apiMock = {
     getOrganizations: jest.fn(),
     getOrganization: jest.fn(),
+    createOrganization: jest.fn(),
   };
 
   beforeEach(() => {
@@ -32,7 +34,7 @@ describe('useOrganizations', () => {
     apiMock.getOrganizations.mockResolvedValue(
       OrganizationItemsMocks.default()
     );
-    const organization = OrganizationMocks.default();
+    const organization = new OrganizationMockBuilder().build();
     apiMock.getOrganization.mockResolvedValue(organization);
     (useApi as jest.Mock).mockImplementation(() => apiMock);
     const { result } = await act(() => {
@@ -61,6 +63,44 @@ describe('useOrganizations', () => {
     expect(result.current.organizationItems).toEqual([]);
   });
 
+  it('should create organization', async function () {
+    const orgaBuilder = new OrganizationMockBuilder();
+
+    apiMock.createOrganization.mockResolvedValue(orgaBuilder.build());
+    const initialOrgaItems = [{ id: 10 }];
+    apiMock.getOrganizations.mockResolvedValue(initialOrgaItems);
+    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    const { result } = await act(() => {
+      return renderHookWithTheme(() => useOrganizations(), {
+        wrapper: Wrapper,
+      });
+    });
+    await act(async () => {
+      await result.current.createOrganization(orgaBuilder.buildRequestBody());
+    });
+
+    await waitFor(() =>
+      expect(apiMock.createOrganization).toHaveBeenCalledWith(
+        orgaBuilder.buildRequestBody()
+      )
+    );
+
+    await waitFor(() =>
+      expect(result.current.organizationItems).toEqual([
+        ...initialOrgaItems,
+        {
+          id: orgaBuilder.buildResponseBody().id,
+        },
+      ])
+    );
+
+    await waitFor(() =>
+      expect(result.current.activeOrganization?.id).toEqual(
+        orgaBuilder.buildResponseBody().id
+      )
+    );
+  });
+
   it('should switch active organization', async function () {
     const storageKey = 'activeOrganization';
     const spyGetItem = jest.spyOn(window.localStorage, 'getItem');
@@ -68,12 +108,14 @@ describe('useOrganizations', () => {
     const spyRemoveItem = jest.spyOn(window.localStorage, 'removeItem');
     window.localStorage.setItem(
       storageKey,
-      JSON.stringify(OrganizationMocks.withId3())
+      JSON.stringify(new OrganizationMockBuilder().withId(3).build())
     );
     apiMock.getOrganizations.mockResolvedValue(
       OrganizationItemsMocks.default()
     );
-    apiMock.getOrganization.mockResolvedValue(OrganizationMocks.default());
+    apiMock.getOrganization.mockResolvedValue(
+      new OrganizationMockBuilder().build()
+    );
     (useApi as jest.Mock).mockImplementation(() => apiMock);
     const { result } = await act(() => {
       return renderHookWithTheme(() => useOrganizations(), {
@@ -85,7 +127,7 @@ describe('useOrganizations', () => {
     );
     expect(spyGetItem).toHaveBeenCalledWith(storageKey);
     expect(result.current.activeOrganization).toEqual(
-      OrganizationMocks.withId3()
+      new OrganizationMockBuilder().withId(3).build()
     );
     const idToSelect = OrganizationItemsMocks.default()[1].id;
     await act(async () => {
@@ -97,7 +139,7 @@ describe('useOrganizations', () => {
     );
     expect(spySetItem).toHaveBeenCalledWith(
       storageKey,
-      JSON.stringify(OrganizationMocks.default())
+      JSON.stringify(new OrganizationMockBuilder().build())
     );
 
     await waitFor(() =>

@@ -9,7 +9,7 @@ import { waitFor } from '@testing-library/react';
 import { AlertProvider } from './AlertContext';
 import { ReactElement } from 'react';
 import { useOrganizations } from './OrganizationContext';
-import { OrganizationMocks } from '../testUtils/organization';
+import { OrganizationMockBuilder } from '../testUtils/organization';
 
 jest.mock('../contexts/ApiContext');
 jest.mock('../contexts/OrganizationContext');
@@ -47,7 +47,7 @@ describe('useBalanceSheetItems', () => {
 
   it('should return balance sheet items of active organization from api', async () => {
     (useOrganizations as jest.Mock).mockReturnValue({
-      activeOrganization: OrganizationMocks.default(),
+      activeOrganization: new OrganizationMockBuilder().build(),
     });
     const mockedBalanceSheetItems = [{ id: 1 }, { id: 8 }];
     apiMock.getBalanceSheets.mockResolvedValue(mockedBalanceSheetItems);
@@ -58,7 +58,7 @@ describe('useBalanceSheetItems', () => {
     });
     await waitFor(() =>
       expect(apiMock.getBalanceSheets).toHaveBeenCalledWith(
-        OrganizationMocks.default().id
+        new OrganizationMockBuilder().build().id
       )
     );
     await waitFor(() =>

@@ -11,13 +11,15 @@ import { useApi } from './ApiContext';
 import {
   Organization,
   OrganizationItems,
-  tmpSchema,
+  OrganizationRequestBody,
 } from '../models/Organization';
+import { OrganizationResponseSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
 
 interface IOrganizationContext {
   organizationItems: OrganizationItems;
   activeOrganization: Organization | undefined;
   setActiveOrganizationById: (id: number | undefined) => Promise<void>;
+  createOrganization: (organization: OrganizationRequestBody) => Promise<void>;
 }
 
 const OrganizationContext = createContext<IOrganizationContext | undefined>(
@@ -38,7 +40,7 @@ function useActiveOrganization(): [
 
   const [activeOrganization, setActiveOrganization] = useState(() => {
     return activeOrganizationString
-      ? tmpSchema.parse(JSON.parse(activeOrganizationString))
+      ? OrganizationResponseSchema.parse(JSON.parse(activeOrganizationString))
       : undefined;
   });
 
@@ -71,6 +73,15 @@ export function OrganizationProvider({ children }: OrganizationProviderProps) {
       setActiveOrganization(undefined);
     }
   }
+
+  async function createOrganization(organization: OrganizationRequestBody) {
+    const newOrganization = await api.createOrganization(organization);
+    setOrganizationItems((prevState) =>
+      prevState.concat({ id: newOrganization.id })
+    );
+    setActiveOrganization(newOrganization);
+  }
+
   useEffect(() => {
     (async () => {
       setOrganizationItems(await api.getOrganizations());
@@ -83,6 +94,7 @@ export function OrganizationProvider({ children }: OrganizationProviderProps) {
         organizationItems,
         activeOrganization,
         setActiveOrganizationById,
+        createOrganization,
       }}
     >
       {children}
@@ -90,18 +102,10 @@ export function OrganizationProvider({ children }: OrganizationProviderProps) {
   );
 }
 
-export function useOrganizations(): {
-  organizationItems: OrganizationItems;
-  activeOrganization: Organization | undefined;
-  setActiveOrganizationById: (id: number | undefined) => Promise<void>;
-} {
+export function useOrganizations(): IOrganizationContext {
   const context = useContext(OrganizationContext);
   if (context === undefined) {
     throw new Error('useOrganizations must be within OrganizationProvider');
   }
-  return {
-    organizationItems: context.organizationItems,
-    activeOrganization: context.activeOrganization,
-    setActiveOrganizationById: context.setActiveOrganizationById,
-  };
+  return context;
 }

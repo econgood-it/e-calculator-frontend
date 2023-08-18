@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { act, fireEvent, screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
 import Sidebar from './Sidebar';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -14,8 +14,9 @@ import {
 import { useOrganizations } from '../contexts/OrganizationContext';
 import {
   OrganizationItemsMocks,
-  OrganizationMocks,
+  OrganizationMockBuilder,
 } from '../testUtils/organization';
+import { useAlert } from '../contexts/AlertContext';
 
 jest.mock('../contexts/ApiContext');
 jest.mock('../contexts/BalanceSheetListContext');
@@ -37,6 +38,7 @@ describe('Sidebar', () => {
       balanceSheetItems,
       setBalanceSheetItems,
     ]);
+    (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
     (useOrganizations as jest.Mock).mockReturnValue({
       organizationItems: OrganizationItemsMocks.default(),
       setActiveOrganizationById: setActiveOrganizationByIdMock,
@@ -97,16 +99,19 @@ describe('Sidebar', () => {
   });
 
   it('creates and navigates to new balance sheet if user clicks on Create balance sheet', async () => {
+    const user = userEvent.setup();
+
     const balanceSheet = BalanceSheetMocks.balanceSheet1();
     apiMock.createBalanceSheet.mockResolvedValue({ ...balanceSheet, id: 3 });
     (useApi as jest.Mock).mockImplementation(() => apiMock);
+    const initialPath = '/initial-path';
     act(() => {
       renderWithTheme(
-        <MemoryRouter initialEntries={[initialPathForRouting]}>
+        <MemoryRouter initialEntries={[initialPath]}>
           <Routes>
-            <Route path={initialPathForRouting} element={<Sidebar />} />
+            <Route path={initialPath} element={<Sidebar />} />
             <Route
-              path={`/${initialPathForRouting}/3`}
+              path={`/balancesheets/3`}
               element={<div>Navigated to Balance sheet 3</div>}
             />
           </Routes>
@@ -114,7 +119,7 @@ describe('Sidebar', () => {
       );
     });
 
-    fireEvent.click(
+    await user.click(
       screen.getByRole('button', { name: /Create balance sheet/i })
     );
 
@@ -136,7 +141,7 @@ describe('Sidebar', () => {
     const balanceSheet = BalanceSheetMocks.balanceSheet1();
     (useOrganizations as jest.Mock).mockReturnValue({
       organizationItems: OrganizationItemsMocks.default(),
-      activeOrganization: OrganizationMocks.default(),
+      activeOrganization: new OrganizationMockBuilder().build(),
       setActiveOrganizationById: setActiveOrganizationByIdMock,
     });
     apiMock.createBalanceSheet.mockResolvedValue({ ...balanceSheet, id: 3 });
@@ -164,11 +169,28 @@ describe('Sidebar', () => {
         type: BalanceSheetType.Full,
         version: BalanceSheetVersion.v5_0_8,
       },
-      OrganizationMocks.default().id
+      new OrganizationMockBuilder().build().id
     );
     expect(
       await screen.findByText('Navigated to Balance sheet 3')
     ).toBeInTheDocument();
+  });
+
+  it('opens OrganizationCreationDialog when create organization button clicked', async () => {
+    const user = userEvent.setup();
+
+    act(() => {
+      renderWithTheme(
+        <MemoryRouter initialEntries={[initialPathForRouting]}>
+          <Routes>
+            <Route path={initialPathForRouting} element={<Sidebar />} />
+          </Routes>
+        </MemoryRouter>
+      );
+    });
+
+    await user.click(screen.getByLabelText('Create organization'));
+    expect(await screen.findByText('Your organization')).toBeInTheDocument();
   });
 
   it('active organization changed if user selects organization from dropdown', async () => {

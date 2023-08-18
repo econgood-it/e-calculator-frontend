@@ -14,7 +14,7 @@ import {
 import { WorkbookResponseMocks } from '../testUtils/workbook';
 import { regionsMocks } from '../testUtils/regions';
 import { industriesMocks } from '../testUtils/industries';
-import { OrganizationMocks } from '../testUtils/organization';
+import { OrganizationMockBuilder } from '../testUtils/organization';
 
 jest.mock('react-router-dom');
 
@@ -79,6 +79,23 @@ describe('ApiClient', () => {
   });
 
   describe('Organization', () => {
+    it('creates organization', async () => {
+      const orgaBuilder = new OrganizationMockBuilder();
+      const requestPromise = mockResource(
+        'post',
+        `${URL}/v1/organization`,
+        new Response(JSON.stringify(orgaBuilder.buildResponseBody()))
+      );
+      const response = await apiClient.createOrganization(
+        orgaBuilder.buildRequestBody()
+      );
+      expect(response).toEqual(orgaBuilder.build());
+
+      const request = await requestPromise;
+      await expect(request.json()).resolves.toEqual(
+        orgaBuilder.buildRequestBody()
+      );
+    });
     it('returns organizations of user', async () => {
       const organizations = [{ id: 1 }, { id: 3 }];
       const requestPromise = mockResource(
@@ -92,15 +109,15 @@ describe('ApiClient', () => {
       expect(request.url.toString()).toContain('?lng=de');
     });
     it('returns organization', async () => {
-      const organization = OrganizationMocks.default();
+      const orgaBuilder = new OrganizationMockBuilder();
       const id = 1;
       mockResource(
         'get',
         `${URL}/v1/organization/${id}`,
-        new Response(JSON.stringify(organization))
+        new Response(JSON.stringify(orgaBuilder.buildResponseBody()))
       );
       const response = await apiClient.getOrganization(id);
-      expect(response).toEqual(organization);
+      expect(response).toEqual(orgaBuilder.build());
     });
   });
 
