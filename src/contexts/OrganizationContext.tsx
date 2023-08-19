@@ -13,12 +13,11 @@ import {
   OrganizationItems,
   OrganizationRequestBody,
 } from '../models/Organization';
-import { OrganizationResponseSchema } from '@ecogood/e-calculator-schemas/dist/organization.dto';
 
 interface IOrganizationContext {
   organizationItems: OrganizationItems;
   activeOrganization: Organization | undefined;
-  setActiveOrganizationById: (id: number | undefined) => Promise<void>;
+  setActiveOrganizationById: Dispatch<SetStateAction<number | undefined>>;
   createOrganization: (organization: OrganizationRequestBody) => Promise<void>;
 }
 
@@ -32,30 +31,36 @@ type OrganizationProviderProps = {
 
 function useActiveOrganization(): [
   Organization | undefined,
-  Dispatch<SetStateAction<Organization | undefined>>
+  Dispatch<SetStateAction<number | undefined>>
 ] {
-  const localeStorageKey = 'activeOrganization';
-  const activeOrganizationString =
-    window.localStorage.getItem(localeStorageKey);
+  const api = useApi();
+  const localeStorageKey = 'activeOrganizationId';
+  const localStorageValue = window.localStorage.getItem(localeStorageKey);
 
-  const [activeOrganization, setActiveOrganization] = useState(() => {
-    return activeOrganizationString
-      ? OrganizationResponseSchema.parse(JSON.parse(activeOrganizationString))
-      : undefined;
-  });
+  const [activeOrganizationId, setActiveOrganizationById] = useState<
+    number | undefined
+  >(localStorageValue ? Number(localStorageValue) : undefined);
+
+  const [activeOrganization, setActiveOrganization] = useState<
+    Organization | undefined
+  >();
 
   useEffect(() => {
-    if (activeOrganization !== undefined) {
-      window.localStorage.setItem(
-        localeStorageKey,
-        JSON.stringify(activeOrganization)
-      );
+    if (activeOrganizationId) {
+      (async () => {
+        setActiveOrganization(await api.getOrganization(activeOrganizationId));
+        window.localStorage.setItem(
+          localeStorageKey,
+          JSON.stringify(activeOrganizationId)
+        );
+      })();
     } else {
+      setActiveOrganization(undefined);
       window.localStorage.removeItem(localeStorageKey);
     }
-  }, [activeOrganization]);
+  }, [activeOrganizationId]);
 
-  return [activeOrganization, setActiveOrganization];
+  return [activeOrganization, setActiveOrganizationById];
 }
 
 export function OrganizationProvider({ children }: OrganizationProviderProps) {
@@ -64,22 +69,15 @@ export function OrganizationProvider({ children }: OrganizationProviderProps) {
     []
   );
 
-  const [activeOrganization, setActiveOrganization] = useActiveOrganization();
-
-  async function setActiveOrganizationById(id: number | undefined) {
-    if (id !== undefined) {
-      setActiveOrganization(await api.getOrganization(id));
-    } else {
-      setActiveOrganization(undefined);
-    }
-  }
+  const [activeOrganization, setActiveOrganizationById] =
+    useActiveOrganization();
 
   async function createOrganization(organization: OrganizationRequestBody) {
     const newOrganization = await api.createOrganization(organization);
     setOrganizationItems((prevState) =>
       prevState.concat({ id: newOrganization.id })
     );
-    setActiveOrganization(newOrganization);
+    setActiveOrganizationById(newOrganization.id);
   }
 
   useEffect(() => {

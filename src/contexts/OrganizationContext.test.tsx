@@ -69,6 +69,7 @@ describe('useOrganizations', () => {
     apiMock.createOrganization.mockResolvedValue(orgaBuilder.build());
     const initialOrgaItems = [{ id: 10 }];
     apiMock.getOrganizations.mockResolvedValue(initialOrgaItems);
+    apiMock.getOrganization.mockResolvedValue(orgaBuilder.build());
     (useApi as jest.Mock).mockImplementation(() => apiMock);
     const { result } = await act(() => {
       return renderHookWithTheme(() => useOrganizations(), {
@@ -102,22 +103,24 @@ describe('useOrganizations', () => {
   });
 
   it('should switch active organization', async function () {
-    const storageKey = 'activeOrganization';
+    const storageKey = 'activeOrganizationId';
     const spyGetItem = jest.spyOn(window.localStorage, 'getItem');
     const spySetItem = jest.spyOn(window.localStorage, 'setItem');
     const spyRemoveItem = jest.spyOn(window.localStorage, 'removeItem');
     window.localStorage.setItem(
       storageKey,
-      JSON.stringify(new OrganizationMockBuilder().withId(3).build())
+      JSON.stringify(new OrganizationMockBuilder().withId(3).build().id)
     );
     apiMock.getOrganizations.mockResolvedValue(
       OrganizationItemsMocks.default()
     );
-    apiMock.getOrganization.mockResolvedValue(
-      new OrganizationMockBuilder().build()
+    apiMock.getOrganization.mockImplementation((id) =>
+      id === 3
+        ? new OrganizationMockBuilder().withId(3).build()
+        : new OrganizationMockBuilder().build()
     );
     (useApi as jest.Mock).mockImplementation(() => apiMock);
-    const { result } = await act(() => {
+    const { result } = await act(async () => {
       return renderHookWithTheme(() => useOrganizations(), {
         wrapper: Wrapper,
       });
@@ -125,7 +128,12 @@ describe('useOrganizations', () => {
     await waitFor(() =>
       expect(apiMock.getOrganizations).toHaveBeenCalledWith()
     );
+
     expect(spyGetItem).toHaveBeenCalledWith(storageKey);
+    await waitFor(() =>
+      expect(apiMock.getOrganization).toHaveBeenCalledWith(3)
+    );
+
     expect(result.current.activeOrganization).toEqual(
       new OrganizationMockBuilder().withId(3).build()
     );
@@ -139,7 +147,7 @@ describe('useOrganizations', () => {
     );
     expect(spySetItem).toHaveBeenCalledWith(
       storageKey,
-      JSON.stringify(new OrganizationMockBuilder().build())
+      JSON.stringify(new OrganizationMockBuilder().build().id)
     );
 
     await waitFor(() =>
