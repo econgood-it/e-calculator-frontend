@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import {
   createTheme,
+  CssBaseline,
   ThemeOptions,
   ThemeProvider as MuiThemeProvider,
 } from '@mui/material';
@@ -15,9 +16,9 @@ const secondaryColor = '#00828b';
 
 export const themeOptions: ThemeOptions = {
   typography: {
-    allVariants: {
-      color: '#747474',
-    },
+    // allVariants: {
+    //   color: '#747474',
+    // },
     h1: {
       color: primaryColor,
     },
@@ -26,9 +27,10 @@ export const themeOptions: ThemeOptions = {
     },
   },
   palette: {
-    text: {
-      primary: '#747474',
-    },
+    mode: 'dark',
+    // text: {
+    //   primary: '#747474',
+    // },
     primary: {
       main: primaryColor,
       contrastText: 'rgba(255,255,255,0.8)',
@@ -53,6 +55,7 @@ function App() {
         <ThemeProvider theme={theme}>
           <AlertProvider>
             <>
+              <CssBaseline enableColorScheme />
               <RouterProvider router={router} />
               <NotificationList />
             </>

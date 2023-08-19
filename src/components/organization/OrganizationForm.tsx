@@ -38,7 +38,7 @@ export function OrganizationForm({
   return (
     <FormContainer spacing={3}>
       <GridItem xs={12}>
-        <Typography variant={'h1'}>
+        <Typography variant={'h2'}>
           <Trans>Your organization</Trans>
         </Typography>
       </GridItem>

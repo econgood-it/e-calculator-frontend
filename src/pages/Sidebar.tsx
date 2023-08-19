@@ -10,16 +10,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import {
-  AppBar,
-  Box,
-  ButtonGroup,
-  ListSubheader,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
-  useTheme,
-} from '@mui/material';
+import { AppBar, ListSubheader, useTheme } from '@mui/material';
 import { Trans } from 'react-i18next';
 import styled from 'styled-components';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -32,10 +23,13 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { useOrganizations } from '../contexts/OrganizationContext';
-import { OrganizationCreationDialog } from '../components/organization/OrganizationCreationDialog';
+import { OrganizationSelect } from '../components/organization/OrganizationSelect';
+import GridContainer from '../components/layout/GridContainer';
+import GridItem from '../components/layout/GridItem';
 
 const FixedAppBar = styled(AppBar)`
   z-index: ${(props) => props.theme.zIndex.drawer + 1};
+  background: ${(props) => props.theme.palette.primary.main};
 `;
 
 const StyledToolbar = styled(Toolbar)`
@@ -50,6 +44,8 @@ const DrawerWithFixedWidth = styled(Drawer)<{ $drawerWidth: number }>`
 
 const Content = styled.div<{ $open: boolean; $drawerWidth: number }>`
   margin-top: 16px;
+  margin-bottom: 16px;
+  margin-right: 16px;
   margin-left: ${(props) => (props.$open ? props.$drawerWidth + 16 : 16)}px;
 `;
 
@@ -57,13 +53,10 @@ export default function Sidebar() {
   const theme = useTheme();
   const [open, setOpen] = useState<boolean>(true);
   const [balanceSheetItems, setBalanceSheetItems] = useBalanceSheetItems();
-  const { organizationItems, setActiveOrganizationById, activeOrganization } =
-    useOrganizations();
   const navigate = useNavigate();
-  const drawerWidth = 240;
+  const drawerWidth = 260;
   const api = useApi();
-  const [organizationDialogOpen, setOrganizationDialogOpen] =
-    useState<boolean>(false);
+  const { activeOrganization } = useOrganizations();
 
   const toogleSidebar = () => {
     setOpen(!open);
@@ -84,18 +77,8 @@ export default function Sidebar() {
     navigate(`/balancesheets/${id}`);
   };
 
-  async function onOrganizationChange(v: SelectChangeEvent<number | string>) {
-    await setActiveOrganizationById(
-      v.target.value === 'default' ? undefined : Number(v.target.value)
-    );
-  }
-
   return (
     <>
-      <OrganizationCreationDialog
-        open={organizationDialogOpen}
-        setOpen={setOrganizationDialogOpen}
-      />
       <FixedAppBar>
         <StyledToolbar>
           <IconButton aria-label="toogle sidebar" onClick={toogleSidebar}>
@@ -119,67 +102,41 @@ export default function Sidebar() {
         $drawerWidth={drawerWidth}
       >
         <Toolbar />
-        <Box>
-          <ButtonGroup fullWidth>
-            <Select
-              variant="standard"
-              value={
-                (organizationItems.length > 0 && activeOrganization?.id) ||
-                'default'
+        <GridContainer spacing={2}>
+          <GridItem mt={2} xs={12}>
+            <OrganizationSelect />
+          </GridItem>
+          <GridItem xs={12}>
+            <List
+              subheader={
+                <ListSubheader>
+                  <Trans>Balance sheets</Trans>
+                </ListSubheader>
               }
-              onChange={onOrganizationChange}
             >
-              <MenuItem value={'default'}>
-                <Trans>My balance sheets</Trans>
-              </MenuItem>
-              {organizationItems.map((o) => (
-                <MenuItem key={o.id} value={o.id}>
-                  <Trans>{`Organization ${o.id}`}</Trans>
-                </MenuItem>
+              <ListItem key={'create-balance-sheet'} disablePadding>
+                <ListItemButton onClick={createBalanceSheet}>
+                  <ListItemIcon>
+                    <FontAwesomeIcon icon={faPlus} />
+                  </ListItemIcon>
+                  <ListItemText primary={<Trans>Create balance sheet</Trans>} />
+                </ListItemButton>
+              </ListItem>
+            </List>
+            <List component="nav">
+              {balanceSheetItems.map((b) => (
+                <BalanceSheetNavigationItem key={b.id} balanceSheetItem={b} />
               ))}
-            </Select>
-            <IconButton
-              aria-label={'Create organization'}
-              onClick={() => setOrganizationDialogOpen(true)}
-              sx={{
-                borderRadius: 0,
-                border: '1px solid',
-                borderColor: 'primary.main',
-              }}
-            >
-              <FontAwesomeIcon icon={faPlus} />
-            </IconButton>
-          </ButtonGroup>
-
-          <List
-            subheader={
-              <ListSubheader>
-                <Trans>Balance sheets</Trans>
-              </ListSubheader>
-            }
-          >
-            <ListItem key={'create-balance-sheet'} disablePadding>
-              <ListItemButton onClick={createBalanceSheet}>
-                <ListItemIcon>
-                  <FontAwesomeIcon icon={faPlus} />
-                </ListItemIcon>
-                <ListItemText primary={<Trans>Create balance sheet</Trans>} />
-              </ListItemButton>
-            </ListItem>
-          </List>
-          <List component="nav">
-            {balanceSheetItems.map((b) => (
-              <BalanceSheetNavigationItem key={b.id} balanceSheetItem={b} />
-            ))}
-          </List>
-        </Box>
+            </List>
+          </GridItem>
+        </GridContainer>
       </DrawerWithFixedWidth>
-      <Box>
+      <GridContainer>
         <Toolbar />
         <Content $open={open} $drawerWidth={drawerWidth}>
           <Outlet />
         </Content>
-      </Box>
+      </GridContainer>
     </>
   );
 }
