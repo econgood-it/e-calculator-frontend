@@ -11,6 +11,4 @@ const GridContainer = ({ children, ...props }: GridProps) => {
 
 export default GridContainer;
 
-export const FormContainer = styled(GridContainer)`
-  padding: 10px;
-`;
+export const FormContainer = styled(GridContainer)``;

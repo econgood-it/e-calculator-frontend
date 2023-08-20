@@ -43,8 +43,6 @@ const DrawerWithFixedWidth = styled(Drawer)<{ $drawerWidth: number }>`
 `;
 
 const Content = styled.div<{ $open: boolean; $drawerWidth: number }>`
-  margin-top: 16px;
-  margin-bottom: 16px;
   margin-right: 16px;
   margin-left: ${(props) => (props.$open ? props.$drawerWidth + 16 : 16)}px;
 `;
@@ -134,7 +132,7 @@ export default function Sidebar() {
           </GridItem>
         </GridContainer>
       </DrawerWithFixedWidth>
-      <GridContainer>
+      <GridContainer mt={10} mb={10}>
         <Toolbar />
         <Content $open={open} $drawerWidth={drawerWidth}>
           <Outlet />

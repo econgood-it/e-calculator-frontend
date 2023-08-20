@@ -4,6 +4,7 @@ import { useBalanceSheetItems } from '../contexts/BalanceSheetListContext';
 
 const BalanceSheetListPage = () => {
   const [balanceSheetItems] = useBalanceSheetItems();
+  console.log(balanceSheetItems);
   return (
     <>
       {balanceSheetItems.map((b) => (
