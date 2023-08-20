@@ -1,7 +1,9 @@
-import { Dialog } from '@mui/material';
+import { DialogContent, DialogTitle } from '@mui/material';
 import { OrganizationForm } from './OrganizationForm';
 import { OrganizationRequestBody } from '../../models/Organization';
 import { useOrganizations } from '../../contexts/OrganizationContext';
+import { Trans } from 'react-i18next';
+import { ClosableDialog } from '../lib/ClosableDialog';
 
 type OrganizationDialogProps = {
   open: boolean;
@@ -18,8 +20,13 @@ export function OrganizationCreationDialog({
     setOpen(false);
   }
   return (
-    <Dialog open={open}>
-      <OrganizationForm organization={undefined} onSave={onSave} />
-    </Dialog>
+    <ClosableDialog open={open} onClose={() => setOpen(false)}>
+      <DialogTitle>
+        <Trans>Your organization</Trans>
+      </DialogTitle>
+      <DialogContent>
+        <OrganizationForm organization={undefined} onSave={onSave} />
+      </DialogContent>
+    </ClosableDialog>
   );
 }

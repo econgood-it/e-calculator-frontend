@@ -59,5 +59,6 @@ export const DE_TRANSLATIONS = {
   Zip: 'Postleitzahl',
   City: 'Stadt',
   'Balance sheets': 'Bilanzen',
+  'Create organization': 'Organisation erstellen',
   ...DE_ERROR_TRANSLATIONS,
 };

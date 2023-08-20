@@ -28,6 +28,7 @@ export function FormTextField<T extends FieldValues>({
   const { t } = useTranslation();
   return (
     <TextField
+      fullWidth
       required
       label={label}
       {...register(registerKey)}

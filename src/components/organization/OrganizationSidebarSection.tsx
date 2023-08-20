@@ -1,15 +1,15 @@
-import { MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { MenuItem, Select, SelectChangeEvent, Tooltip } from '@mui/material';
 import { Trans } from 'react-i18next';
 import IconButton from '@mui/material/IconButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { OrganizationCreationDialog } from './OrganizationCreationDialog';
 import { useState } from 'react';
 import { useOrganizations } from '../../contexts/OrganizationContext';
 import GridContainer from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
 
-export function OrganizationSelect() {
+export function OrganizationSidebarSection() {
   const { organizationItems, setActiveOrganizationById, activeOrganization } =
     useOrganizations();
   const [organizationDialogOpen, setOrganizationDialogOpen] =
@@ -44,18 +44,15 @@ export function OrganizationSelect() {
           </Select>
         </GridItem>
         <GridItem xs={3}>
-          <IconButton
-            aria-label={'Create organization'}
-            onClick={() => setOrganizationDialogOpen(true)}
-            // sx={{
-            //   borderRadius: 0,
-            //   border: '1px solid',
-            //   borderColor: 'primary.main',
-            // }}
-            // color={'primary'}
-          >
-            <FontAwesomeIcon icon={faPlus} />
-          </IconButton>
+          <Tooltip title={<Trans>Create organization</Trans>}>
+            <IconButton
+              color={'primary'}
+              aria-label={'Create organization'}
+              onClick={() => setOrganizationDialogOpen(true)}
+            >
+              <FontAwesomeIcon icon={faSquarePlus} />
+            </IconButton>
+          </Tooltip>
         </GridItem>
       </GridContainer>
       <OrganizationCreationDialog

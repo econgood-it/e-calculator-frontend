@@ -20,7 +20,6 @@ describe('OrganizationForm', () => {
     renderWithTheme(
       <OrganizationForm organization={organization} onSave={onSave} />
     );
-    expect(screen.getByText('Your organization')).toBeInTheDocument();
     expect(screen.getByLabelText(/City/)).toHaveValue(
       organization.address.city
     );
@@ -33,7 +32,6 @@ describe('OrganizationForm', () => {
     renderWithTheme(
       <OrganizationForm organization={organization} onSave={onSave} />
     );
-    expect(screen.getByText('Your organization')).toBeInTheDocument();
 
     const cityField = screen.getByLabelText(/City/);
     await user.clear(cityField);

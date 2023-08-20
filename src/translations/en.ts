@@ -50,6 +50,7 @@ const EN_WORDS = [
   'Zip',
   'City',
   'Balance sheets',
+  'Create organization',
 ];
 
 export const EN_TRANSLATIONS = {

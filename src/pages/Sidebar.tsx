@@ -10,7 +10,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import { AppBar, ListSubheader, useTheme } from '@mui/material';
+import { AppBar, Divider, ListSubheader, useTheme } from '@mui/material';
 import { Trans } from 'react-i18next';
 import styled from 'styled-components';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -23,7 +23,7 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { useOrganizations } from '../contexts/OrganizationContext';
-import { OrganizationSelect } from '../components/organization/OrganizationSelect';
+import { OrganizationSidebarSection } from '../components/organization/OrganizationSidebarSection';
 import GridContainer from '../components/layout/GridContainer';
 import GridItem from '../components/layout/GridItem';
 
@@ -104,7 +104,10 @@ export default function Sidebar() {
         <Toolbar />
         <GridContainer spacing={2}>
           <GridItem mt={2} xs={12}>
-            <OrganizationSelect />
+            <OrganizationSidebarSection />
+          </GridItem>
+          <GridItem xs={12}>
+            <Divider variant="middle" />
           </GridItem>
           <GridItem xs={12}>
             <List

@@ -45,4 +45,15 @@ describe('OrganizationCreationDialog', () => {
     );
     expect(setOpen).toHaveBeenCalledWith(false);
   });
+
+  it('should close dialog when close button is clicked', async () => {
+    const user = userEvent.setup();
+    const setOpen = jest.fn();
+    renderWithTheme(
+      <OrganizationCreationDialog open={true} setOpen={setOpen} />
+    );
+
+    await user.click(screen.getByLabelText('Close dialog'));
+    await waitFor(() => expect(setOpen).toHaveBeenCalledWith(false));
+  });
 });

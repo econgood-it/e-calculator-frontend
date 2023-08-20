@@ -1,4 +1,3 @@
-import { Typography } from '@mui/material';
 import { Trans } from 'react-i18next';
 import { OrganizationRequestBody } from '../../models/Organization';
 import { FieldValues, useForm } from 'react-hook-form';
@@ -36,12 +35,7 @@ export function OrganizationForm({
   }
 
   return (
-    <FormContainer spacing={3}>
-      <GridItem xs={12}>
-        <Typography variant={'h2'}>
-          <Trans>Your organization</Trans>
-        </Typography>
-      </GridItem>
+    <FormContainer spacing={3} justifyContent="space-between">
       <GridItem xs={12} sm={6}>
         <FormTextField
           label={<Trans>Street</Trans>}
