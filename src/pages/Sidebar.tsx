@@ -132,7 +132,7 @@ export default function Sidebar() {
           </GridItem>
         </GridContainer>
       </DrawerWithFixedWidth>
-      <GridContainer mt={10} mb={10}>
+      <GridContainer>
         <Toolbar />
         <Content $open={open} $drawerWidth={drawerWidth}>
           <Outlet />
