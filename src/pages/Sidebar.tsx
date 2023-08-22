@@ -10,7 +10,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import { AppBar, Divider, ListSubheader, useTheme } from '@mui/material';
+import { AppBar, Box, Divider, ListSubheader, useTheme } from '@mui/material';
 import { Trans } from 'react-i18next';
 import styled from 'styled-components';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -43,8 +43,8 @@ const DrawerWithFixedWidth = styled(Drawer)<{ $drawerWidth: number }>`
 `;
 
 const Content = styled.div<{ $open: boolean; $drawerWidth: number }>`
-  margin-right: 16px;
-  margin-left: ${(props) => (props.$open ? props.$drawerWidth + 16 : 16)}px;
+  margin: 16px 16px 16px
+    ${(props) => (props.$open ? props.$drawerWidth + 16 : 16)}px;
 `;
 
 export default function Sidebar() {
@@ -132,12 +132,12 @@ export default function Sidebar() {
           </GridItem>
         </GridContainer>
       </DrawerWithFixedWidth>
-      <GridContainer>
+      <Box>
         <Toolbar />
         <Content $open={open} $drawerWidth={drawerWidth}>
           <Outlet />
         </Content>
-      </GridContainer>
+      </Box>
     </>
   );
 }

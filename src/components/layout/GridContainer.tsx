@@ -14,7 +14,3 @@ export default GridContainer;
 export const FormContainer = styled(GridContainer)`
   padding: 10px;
 `;
-
-export const ContainerWithTopMargin = styled.div`
-  margin-top: 80px;
-`;
