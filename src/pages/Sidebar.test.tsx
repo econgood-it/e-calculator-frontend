@@ -197,9 +197,13 @@ describe('Sidebar', () => {
     const user = userEvent.setup();
     act(() => {
       renderWithTheme(
-        <MemoryRouter initialEntries={[initialPathForRouting]}>
+        <MemoryRouter initialEntries={['/sidebar']}>
           <Routes>
-            <Route path={initialPathForRouting} element={<Sidebar />} />
+            <Route path={'/sidebar'} element={<Sidebar />} />
+            <Route
+              path={'/balancesheets'}
+              element={<div>Navigated to Balancesheets</div>}
+            />
           </Routes>
         </MemoryRouter>
       );
@@ -228,5 +232,8 @@ describe('Sidebar', () => {
         orgaItemToSelect.id
       )
     );
+    expect(
+      await screen.findByText('Navigated to Balancesheets')
+    ).toBeInTheDocument();
   });
 });

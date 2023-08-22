@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useOrganizations } from '../../contexts/OrganizationContext';
 import GridContainer from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
+import { useNavigate } from 'react-router-dom';
 
 export function OrganizationSidebarSection() {
   const { organizationItems, setActiveOrganizationById, activeOrganization } =
@@ -15,10 +16,13 @@ export function OrganizationSidebarSection() {
   const [organizationDialogOpen, setOrganizationDialogOpen] =
     useState<boolean>(false);
 
+  const navigate = useNavigate();
+
   function onOrganizationChange(v: SelectChangeEvent<number | string>) {
     setActiveOrganizationById(
       v.target.value === 'default' ? undefined : Number(v.target.value)
     );
+    navigate('/balancesheets');
   }
 
   return (
