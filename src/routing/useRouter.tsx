@@ -1,10 +1,4 @@
-import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  Navigate,
-  Outlet,
-  Route,
-} from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import { LoginPage } from '../pages/LoginPage';
 import { useState } from 'react';
 import { User } from '../authentication/User';
@@ -24,74 +18,91 @@ export function useRouter() {
     userString ? JSON.parse(userString) : undefined
   );
 
-  return createBrowserRouter(
-    createRoutesFromElements(
-      <Route>
-        <Route path={'/'} element={<Navigate to="/balancesheets" />} />
-        <Route path={'/login'} element={<LoginPage setUser={setUser} />} />
-        <Route element={<RequiresAuth user={user} />}>
-          <Route element={<Sidebar />}>
-            <Route path={'/organization'} element={<div>Orga</div>} />
-            <Route path={'/balancesheets'} element={<BalanceSheetListPage />} />
-            <Route
-              path="/balancesheets/:balanceSheetId"
-              element={<WithActiveBalanceSheet />}
-            >
-              <Route index element={<BalanceSheetOverviewPage />} />
-              <Route path="companyfacts" element={<CompanyFactsPage />} />
-              <Route
-                path="ratings"
-                element={
-                  <>
-                    <Outlet />
-                  </>
-                }
-              >
-                <Route
-                  path="suppliers"
-                  element={
-                    <RatingsPage
-                      stakeholderToFilterBy={StakholderShortNames.Suppliers}
-                    />
-                  }
-                />
-                <Route
-                  path="finance"
-                  element={
-                    <RatingsPage
-                      stakeholderToFilterBy={StakholderShortNames.Finance}
-                    />
-                  }
-                />
-                <Route
-                  path="employees"
-                  element={
-                    <RatingsPage
-                      stakeholderToFilterBy={StakholderShortNames.Employees}
-                    />
-                  }
-                />
-                <Route
-                  path="customers"
-                  element={
-                    <RatingsPage
-                      stakeholderToFilterBy={StakholderShortNames.Customers}
-                    />
-                  }
-                />
-                <Route
-                  path="society"
-                  element={
-                    <RatingsPage
-                      stakeholderToFilterBy={StakholderShortNames.Society}
-                    />
-                  }
-                />
-              </Route>
-            </Route>
-          </Route>
-        </Route>
-      </Route>
-    )
-  );
+  return createBrowserRouter([
+    {
+      path: '/',
+      element: <Navigate to="/balancesheets" />,
+    },
+    {
+      path: '/login',
+      element: <LoginPage setUser={setUser} />,
+    },
+    {
+      element: <RequiresAuth user={user} />,
+      children: [
+        {
+          element: <Sidebar />,
+          children: [
+            {
+              path: '/balancesheets',
+              element: <BalanceSheetListPage />,
+            },
+            {
+              path: '/balancesheets/:balanceSheetId',
+              element: <WithActiveBalanceSheet />,
+              children: [
+                {
+                  element: <BalanceSheetOverviewPage />,
+                },
+                {
+                  path: 'companyfacts',
+                  element: <CompanyFactsPage />,
+                },
+                {
+                  path: 'ratings',
+                  element: (
+                    <>
+                      <Outlet />
+                    </>
+                  ),
+                  children: [
+                    {
+                      path: 'suppliers',
+                      element: (
+                        <RatingsPage
+                          stakeholderToFilterBy={StakholderShortNames.Suppliers}
+                        />
+                      ),
+                    },
+                    {
+                      path: 'finance',
+                      element: (
+                        <RatingsPage
+                          stakeholderToFilterBy={StakholderShortNames.Finance}
+                        />
+                      ),
+                    },
+                    {
+                      path: 'employees',
+                      element: (
+                        <RatingsPage
+                          stakeholderToFilterBy={StakholderShortNames.Employees}
+                        />
+                      ),
+                    },
+                    {
+                      path: 'customers',
+                      element: (
+                        <RatingsPage
+                          stakeholderToFilterBy={StakholderShortNames.Customers}
+                        />
+                      ),
+                    },
+                    {
+                      path: 'society',
+                      element: (
+                        <RatingsPage
+                          stakeholderToFilterBy={StakholderShortNames.Society}
+                        />
+                      ),
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+  ]);
 }
