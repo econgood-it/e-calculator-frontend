@@ -44,6 +44,7 @@ describe('useOrganizations', () => {
     });
 
     expect(apiMock.getOrganizations).toHaveBeenCalledWith();
+    expect(result.current.isLoading).toBeFalsy();
     expect(result.current.organizationItems).toEqual(
       OrganizationItemsMocks.default()
     );

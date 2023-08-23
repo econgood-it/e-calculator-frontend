@@ -26,7 +26,11 @@ describe('OrganizationCreationDialog', () => {
     const user = userEvent.setup();
     const setOpen = jest.fn();
     renderWithTheme(
-      <OrganizationCreationDialog open={true} setOpen={setOpen} />
+      <OrganizationCreationDialog
+        open={true}
+        setOpen={setOpen}
+        closable={true}
+      />
     );
     const newOrga = new OrganizationMockBuilder().buildRequestBody();
     await user.type(screen.getByLabelText(/City/), newOrga.address.city);
@@ -50,10 +54,27 @@ describe('OrganizationCreationDialog', () => {
     const user = userEvent.setup();
     const setOpen = jest.fn();
     renderWithTheme(
-      <OrganizationCreationDialog open={true} setOpen={setOpen} />
+      <OrganizationCreationDialog
+        open={true}
+        setOpen={setOpen}
+        closable={true}
+      />
     );
 
     await user.click(screen.getByLabelText('Close dialog'));
     await waitFor(() => expect(setOpen).toHaveBeenCalledWith(false));
+  });
+
+  it('should not have close icon if closable is false', async () => {
+    const setOpen = jest.fn();
+    renderWithTheme(
+      <OrganizationCreationDialog
+        open={true}
+        setOpen={setOpen}
+        closable={false}
+      />
+    );
+
+    expect(screen.queryByLabelText('Close dialog')).not.toBeInTheDocument();
   });
 });

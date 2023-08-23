@@ -19,6 +19,7 @@ interface IOrganizationContext {
   activeOrganization: Organization | undefined;
   setActiveOrganizationById: Dispatch<SetStateAction<number | undefined>>;
   createOrganization: (organization: OrganizationRequestBody) => Promise<void>;
+  isLoading: boolean;
 }
 
 const OrganizationContext = createContext<IOrganizationContext | undefined>(
@@ -68,6 +69,7 @@ export function OrganizationProvider({ children }: OrganizationProviderProps) {
   const [organizationItems, setOrganizationItems] = useState<OrganizationItems>(
     []
   );
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [activeOrganization, setActiveOrganizationById] =
     useActiveOrganization();
@@ -83,6 +85,7 @@ export function OrganizationProvider({ children }: OrganizationProviderProps) {
   useEffect(() => {
     (async () => {
       setOrganizationItems(await api.getOrganizations());
+      setIsLoading(false);
     })();
   }, []);
 
@@ -93,6 +96,7 @@ export function OrganizationProvider({ children }: OrganizationProviderProps) {
         activeOrganization,
         setActiveOrganizationById,
         createOrganization,
+        isLoading,
       }}
     >
       {children}

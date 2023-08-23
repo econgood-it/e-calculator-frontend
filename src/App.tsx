@@ -49,6 +49,7 @@ const theme = createTheme(themeOptions);
 
 function App() {
   const router = useRouter();
+
   return (
     <Suspense fallback={'Loading'}>
       <MuiThemeProvider theme={theme}>

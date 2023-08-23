@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton';
 
 const CloseButton = styled(IconButton)`
   position: absolute;
-  left: 95%;
+  left: 96%;
   top: -5%;
 `;
 
@@ -17,11 +17,11 @@ const DialogWithtoutOverflow = styled(Dialog)`
 `;
 
 type ClosableDialogProps = {
-  onClose: () => void;
+  onCloseIconClicked: () => void;
 };
 
 export function ClosableDialog({
-  onClose,
+  onCloseIconClicked,
   children,
   ...props
 }: ClosableDialogProps & DialogProps) {
@@ -31,7 +31,7 @@ export function ClosableDialog({
         aria-label={'Close dialog'}
         color={'error'}
         size={'large'}
-        onClick={onClose}
+        onClick={onCloseIconClicked}
       >
         <FontAwesomeIcon icon={faCircleXmark} />
       </CloseButton>

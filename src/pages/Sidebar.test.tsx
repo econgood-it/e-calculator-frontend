@@ -98,43 +98,6 @@ describe('Sidebar', () => {
     ).toBeInTheDocument();
   });
 
-  it('creates and navigates to new balance sheet if user clicks on Create balance sheet', async () => {
-    const user = userEvent.setup();
-
-    const balanceSheet = BalanceSheetMocks.balanceSheet1();
-    apiMock.createBalanceSheet.mockResolvedValue({ ...balanceSheet, id: 3 });
-    (useApi as jest.Mock).mockImplementation(() => apiMock);
-    const initialPath = '/initial-path';
-    act(() => {
-      renderWithTheme(
-        <MemoryRouter initialEntries={[initialPath]}>
-          <Routes>
-            <Route path={initialPath} element={<Sidebar />} />
-            <Route
-              path={`/balancesheets/3`}
-              element={<div>Navigated to Balance sheet 3</div>}
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-    });
-
-    await user.click(
-      screen.getByRole('button', { name: /Create balance sheet/i })
-    );
-
-    expect(apiMock.createBalanceSheet).toHaveBeenCalledWith(
-      {
-        type: BalanceSheetType.Full,
-        version: BalanceSheetVersion.v5_0_8,
-      },
-      undefined
-    );
-    expect(
-      await screen.findByText('Navigated to Balance sheet 3')
-    ).toBeInTheDocument();
-  });
-
   it('creates new balance sheet belonging to organization and navigates to it', async () => {
     const user = userEvent.setup();
 
@@ -190,7 +153,29 @@ describe('Sidebar', () => {
     });
 
     await user.click(screen.getByLabelText('Create organization'));
-    expect(await screen.findByText('Your organization')).toBeInTheDocument();
+    expect(
+      await screen.findByRole('dialog', { name: 'Create organization' })
+    ).toBeInTheDocument();
+  });
+
+  it('should open OrganizationCreationDialog when list of organization items are empty', async () => {
+    (useOrganizations as jest.Mock).mockReturnValue({
+      organizationItems: [],
+      isLoading: false,
+    });
+    act(() => {
+      renderWithTheme(
+        <MemoryRouter initialEntries={['/sidebar']}>
+          <Routes>
+            <Route path={'/sidebar'} element={<Sidebar />} />
+          </Routes>
+        </MemoryRouter>
+      );
+    });
+    expect(
+      await screen.findByRole('dialog', { name: 'Create organization' })
+    ).toBeInTheDocument();
+    expect(screen.queryByLabelText('Close dialog')).not.toBeInTheDocument();
   });
 
   it('active organization changed if user selects organization from dropdown', async () => {
@@ -211,13 +196,13 @@ describe('Sidebar', () => {
 
     await user.click(
       screen.getByRole('button', {
-        name: 'My balance sheets',
+        name: 'Organization selection',
       })
     );
     const options = await screen.findAllByRole('option');
 
     expect(options.map((o) => o.textContent)).toEqual([
-      'My balance sheets',
+      'Organization selection',
       ...OrganizationItemsMocks.default().map((i) => `Organization ${i.id}`),
     ]);
 

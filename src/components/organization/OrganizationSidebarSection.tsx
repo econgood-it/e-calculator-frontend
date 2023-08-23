@@ -4,15 +4,20 @@ import IconButton from '@mui/material/IconButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { OrganizationCreationDialog } from './OrganizationCreationDialog';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useOrganizations } from '../../contexts/OrganizationContext';
 import GridContainer from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
 import { useNavigate } from 'react-router-dom';
 
 export function OrganizationSidebarSection() {
-  const { organizationItems, setActiveOrganizationById, activeOrganization } =
-    useOrganizations();
+  const {
+    organizationItems,
+    isLoading,
+    setActiveOrganizationById,
+    activeOrganization,
+  } = useOrganizations();
+  const noOrganizationYet = !isLoading && organizationItems.length === 0;
   const [organizationDialogOpen, setOrganizationDialogOpen] =
     useState<boolean>(false);
 
@@ -25,6 +30,12 @@ export function OrganizationSidebarSection() {
     navigate('/balancesheets');
   }
 
+  useEffect(() => {
+    if (noOrganizationYet) {
+      setOrganizationDialogOpen(true);
+    }
+  }, [noOrganizationYet]);
+
   return (
     <>
       <GridContainer justifyContent="space-around" alignItems="center">
@@ -33,12 +44,12 @@ export function OrganizationSidebarSection() {
             variant="standard"
             value={
               (organizationItems.length > 0 && activeOrganization?.id) ||
-              'default'
+              'placeholder'
             }
             onChange={onOrganizationChange}
           >
-            <MenuItem value={'default'}>
-              <Trans>My balance sheets</Trans>
+            <MenuItem value="placeholder" disabled>
+              <Trans>Organization selection</Trans>
             </MenuItem>
             {organizationItems.map((o) => (
               <MenuItem key={o.id} value={o.id}>
@@ -60,6 +71,7 @@ export function OrganizationSidebarSection() {
         </GridItem>
       </GridContainer>
       <OrganizationCreationDialog
+        closable={!noOrganizationYet}
         open={organizationDialogOpen}
         setOpen={setOrganizationDialogOpen}
       />

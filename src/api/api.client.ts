@@ -122,12 +122,11 @@ export class ApiClient {
     return OrganizationResponseSchema.parse(await response.json());
   }
 
-  async getBalanceSheets(organizationId?: number): Promise<BalanceSheetItem[]> {
-    const response = organizationId
-      ? await this.wretchInstance.get(
-          `/organization/${organizationId}/balancesheet`
-        )
-      : await this.wretchInstance.get('/balancesheets');
+  async getBalanceSheets(organizationId: number): Promise<BalanceSheetItem[]> {
+    const response = await this.wretchInstance.get(
+      `/organization/${organizationId}/balancesheet`
+    );
+
     return BalanceSheetItemsResponseSchema.parse(await response.json());
   }
 

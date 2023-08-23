@@ -161,17 +161,6 @@ describe('ApiClient', () => {
   });
 
   describe('BalanceSheet', () => {
-    it('returns balancesheets of user', async () => {
-      const balanceSheets = [{ id: 1 }, { id: 4 }];
-      mockResource(
-        'get',
-        `${URL}/v1/balancesheets`,
-        new Response(JSON.stringify(balanceSheets))
-      );
-      const response = await apiClient.getBalanceSheets();
-      expect(response).toEqual(balanceSheets);
-    });
-
     it('returns balancesheets of organization', async () => {
       const balanceSheets = [{ id: 8 }, { id: 9 }];
       const organizationId = 2;

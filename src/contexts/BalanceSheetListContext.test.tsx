@@ -26,23 +26,19 @@ describe('useBalanceSheetItems', () => {
     );
   }
 
-  it('should return balance sheet items from api', async () => {
+  it('should return empty list of balance sheet items if active organization is undefined', async () => {
     (useOrganizations as jest.Mock).mockReturnValue({
       activeOrganization: undefined,
     });
-    const mockedBalanceSheetItems = [{ id: 1 }, { id: 3 }];
-    apiMock.getBalanceSheets.mockResolvedValue(mockedBalanceSheetItems);
     (useApi as jest.Mock).mockImplementation(() => apiMock);
 
     const { result } = renderHookWithTheme(() => useBalanceSheetItems(), {
       wrapper: Wrapper,
     });
     await waitFor(() =>
-      expect(apiMock.getBalanceSheets).toHaveBeenCalledWith(undefined)
+      expect(apiMock.getBalanceSheets).not.toHaveBeenCalledWith(undefined)
     );
-    await waitFor(() =>
-      expect(result.current[0]).toEqual(mockedBalanceSheetItems)
-    );
+    await waitFor(() => expect(result.current[0]).toEqual([]));
   });
 
   it('should return balance sheet items of active organization from api', async () => {
