@@ -22,7 +22,7 @@ const RequiresAuth: FC<RequiresAuthProps> = ({ user }: RequiresAuthProps) => {
 
   return (
     <ApiProvider user={user}>
-      <OrganizationProvider>
+      <OrganizationProvider user={user}>
         <BalanceSheetListProvider>
           <Outlet />
         </BalanceSheetListProvider>

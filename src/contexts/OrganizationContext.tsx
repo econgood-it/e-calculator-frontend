@@ -13,6 +13,8 @@ import {
   OrganizationItems,
   OrganizationRequestBody,
 } from '../models/Organization';
+import { User } from '../authentication/User';
+import _ from 'lodash';
 
 interface IOrganizationContext {
   organizationItems: OrganizationItems;
@@ -27,16 +29,16 @@ const OrganizationContext = createContext<IOrganizationContext | undefined>(
 );
 
 type OrganizationProviderProps = {
+  user: User;
   children: ReactElement;
 };
 
-function useActiveOrganization(): [
-  Organization | undefined,
-  Dispatch<SetStateAction<number | undefined>>
-] {
+function useActiveOrganization(
+  user: User
+): [Organization | undefined, Dispatch<SetStateAction<number | undefined>>] {
   const api = useApi();
   const localeStorageKey = 'activeOrganizationId';
-  const localStorageValue = window.localStorage.getItem(localeStorageKey);
+  const localStorageValue = getCurrentStorageValue()[localeStorageKey];
 
   const [activeOrganizationId, setActiveOrganizationById] = useState<
     number | undefined
@@ -46,25 +48,37 @@ function useActiveOrganization(): [
     Organization | undefined
   >();
 
+  function getCurrentStorageValue() {
+    return JSON.parse(
+      window.localStorage.getItem(user.user.toString()) || JSON.stringify({})
+    );
+  }
+
   useEffect(() => {
     if (activeOrganizationId) {
       (async () => {
         setActiveOrganization(await api.getOrganization(activeOrganizationId));
         window.localStorage.setItem(
-          localeStorageKey,
-          JSON.stringify(activeOrganizationId)
+          user.user.toString(),
+          JSON.stringify({ [localeStorageKey]: activeOrganizationId })
         );
       })();
     } else {
       setActiveOrganization(undefined);
-      window.localStorage.removeItem(localeStorageKey);
+      window.localStorage.setItem(
+        user.user.toString(),
+        JSON.stringify(_.omit(getCurrentStorageValue(), localeStorageKey))
+      );
     }
   }, [activeOrganizationId]);
 
   return [activeOrganization, setActiveOrganizationById];
 }
 
-export function OrganizationProvider({ children }: OrganizationProviderProps) {
+export function OrganizationProvider({
+  children,
+  user,
+}: OrganizationProviderProps) {
   const api = useApi();
   const [organizationItems, setOrganizationItems] = useState<OrganizationItems>(
     []
@@ -72,7 +86,7 @@ export function OrganizationProvider({ children }: OrganizationProviderProps) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [activeOrganization, setActiveOrganizationById] =
-    useActiveOrganization();
+    useActiveOrganization(user);
 
   async function createOrganization(organization: OrganizationRequestBody) {
     const newOrganization = await api.createOrganization(organization);

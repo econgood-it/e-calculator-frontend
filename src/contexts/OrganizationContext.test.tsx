@@ -9,6 +9,7 @@ import {
 import { act, waitFor } from '@testing-library/react';
 import { ReactElement } from 'react';
 import { AlertProvider } from './AlertContext';
+import { UserMocks } from '../testUtils/user';
 
 jest.mock('./ApiContext');
 describe('useOrganizations', () => {
@@ -22,10 +23,12 @@ describe('useOrganizations', () => {
     window.localStorage.clear();
   });
 
+  const user = UserMocks.default();
+
   function Wrapper({ children }: { children: ReactElement }) {
     return (
       <AlertProvider>
-        <OrganizationProvider>{children}</OrganizationProvider>
+        <OrganizationProvider user={user}>{children}</OrganizationProvider>
       </AlertProvider>
     );
   }
@@ -107,10 +110,11 @@ describe('useOrganizations', () => {
     const storageKey = 'activeOrganizationId';
     const spyGetItem = jest.spyOn(window.localStorage, 'getItem');
     const spySetItem = jest.spyOn(window.localStorage, 'setItem');
-    const spyRemoveItem = jest.spyOn(window.localStorage, 'removeItem');
     window.localStorage.setItem(
-      storageKey,
-      JSON.stringify(new OrganizationMockBuilder().withId(3).build().id)
+      user.user.toString(),
+      JSON.stringify({
+        [storageKey]: new OrganizationMockBuilder().withId(3).build().id,
+      })
     );
     apiMock.getOrganizations.mockResolvedValue(
       OrganizationItemsMocks.default()
@@ -130,7 +134,7 @@ describe('useOrganizations', () => {
       expect(apiMock.getOrganizations).toHaveBeenCalledWith()
     );
 
-    expect(spyGetItem).toHaveBeenCalledWith(storageKey);
+    expect(spyGetItem).toHaveBeenCalledWith(user.user.toString());
     await waitFor(() =>
       expect(apiMock.getOrganization).toHaveBeenCalledWith(3)
     );
@@ -147,8 +151,8 @@ describe('useOrganizations', () => {
       expect(apiMock.getOrganization).toHaveBeenCalledWith(idToSelect)
     );
     expect(spySetItem).toHaveBeenCalledWith(
-      storageKey,
-      JSON.stringify(new OrganizationMockBuilder().build().id)
+      user.user.toString(),
+      JSON.stringify({ [storageKey]: new OrganizationMockBuilder().build().id })
     );
 
     await waitFor(() =>
@@ -157,7 +161,10 @@ describe('useOrganizations', () => {
     await act(async () => {
       await result.current.setActiveOrganizationById(undefined);
     });
-    expect(spyRemoveItem).toHaveBeenCalledWith(storageKey);
+    expect(spySetItem).toHaveBeenCalledWith(
+      user.user.toString(),
+      JSON.stringify({})
+    );
 
     await waitFor(() =>
       expect(apiMock.getOrganization).not.toHaveBeenLastCalledWith(undefined)
