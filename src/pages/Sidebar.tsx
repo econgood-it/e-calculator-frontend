@@ -72,7 +72,7 @@ export default function Sidebar() {
     setBalanceSheetItems((prevBalanceSheets) =>
       prevBalanceSheets.concat({ id: id })
     );
-    navigate(`/balancesheets/${id}`);
+    navigate(`balancesheet/${id}`);
   };
 
   return (

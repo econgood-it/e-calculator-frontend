@@ -11,14 +11,8 @@ import { API_URL } from '../configuration';
 import { useAlert } from '../contexts/AlertContext';
 import { useTranslation } from 'react-i18next';
 import { AuthApiClient, makeWretchInstance } from '../api/api.client';
+import { CenteredDiv } from '../components/layout/CenteredDiv';
 
-const CenteredDiv = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  min-height: 100vh;
-`;
 const LoginFormGrid = styled(Grid)`
   max-width: 400px;
 `;

@@ -8,4 +8,5 @@ export const exampleUser = {
 
 export const UserMocks = {
   default: (): User => ({ ...exampleUser }),
+  withId: (id: number): User => ({ ...exampleUser, user: id }),
 };

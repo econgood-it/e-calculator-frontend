@@ -6,8 +6,11 @@ import BalanceSheetSubNavigation from './BalanceSheetSubNavigation';
 import userEvent from '@testing-library/user-event';
 import { useApi } from '../../contexts/ApiContext';
 import { useBalanceSheetItems } from '../../contexts/BalanceSheetListContext';
+import { useOrganizations } from '../../contexts/OrganizationContext';
+import { OrganizationMockBuilder } from '../../testUtils/organization';
 jest.mock('../../contexts/ApiContext');
 jest.mock('../../contexts/BalanceSheetListContext');
+jest.mock('../../contexts/OrganizationContext');
 
 describe('BalanceSheetSubNavigation', () => {
   const balanceSheetItem = { id: 2 };
@@ -15,6 +18,8 @@ describe('BalanceSheetSubNavigation', () => {
   const balanceSheetItems = [{ id: 1 }, { id: 2 }];
   const setBalanceSheetItems = jest.fn();
 
+  const organizationIdFromUrl = 3;
+  const pathToOrganization = `/organization/${3}`;
   const apiMock = {
     deleteBalanceSheet: jest.fn(),
   };
@@ -24,23 +29,27 @@ describe('BalanceSheetSubNavigation', () => {
       balanceSheetItems,
       setBalanceSheetItems,
     ]);
+    (useOrganizations as jest.Mock).mockReturnValue({
+      activeOrganization: new OrganizationMockBuilder()
+        .withId(organizationIdFromUrl)
+        .build(),
+    });
     (useApi as jest.Mock).mockImplementation(() => apiMock);
   });
 
   it('navigates to company facts when Company Facts item is clicked', async () => {
-    const initialPathForRouting = '/initial-path';
     const user = userEvent.setup();
     renderWithTheme(
-      <MemoryRouter initialEntries={[initialPathForRouting]}>
+      <MemoryRouter initialEntries={[pathToOrganization]}>
         <Routes>
           <Route
-            path={initialPathForRouting}
+            path={pathToOrganization}
             element={
               <BalanceSheetSubNavigation balanceSheetItem={balanceSheetItem} />
             }
           />
           <Route
-            path={`/balancesheets/${balanceSheetItem.id}/companyfacts`}
+            path={`${pathToOrganization}/balancesheet/${balanceSheetItem.id}/companyfacts`}
             element={<div>Navigated to company facts of balance sheet 2</div>}
           />
         </Routes>
@@ -57,7 +66,6 @@ describe('BalanceSheetSubNavigation', () => {
   });
 
   it('navigates to ratings page of clicked stakeholder', async () => {
-    const initialPathForRouting = '/initial-path';
     const user = userEvent.setup();
     const stakeholders = [
       'Suppliers',
@@ -68,32 +76,32 @@ describe('BalanceSheetSubNavigation', () => {
     ];
 
     const ComponentWithRouting = () => (
-      <MemoryRouter initialEntries={[initialPathForRouting]}>
+      <MemoryRouter initialEntries={[pathToOrganization]}>
         <Routes>
           <Route
-            path={initialPathForRouting}
+            path={pathToOrganization}
             element={
               <BalanceSheetSubNavigation balanceSheetItem={balanceSheetItem} />
             }
           />
           <Route
-            path={`/balancesheets/${balanceSheetItem.id}/ratings/suppliers`}
+            path={`${pathToOrganization}/balancesheet/${balanceSheetItem.id}/ratings/suppliers`}
             element={<div>{stakeholders[0]}</div>}
           />
           <Route
-            path={`/balancesheets/${balanceSheetItem.id}/ratings/finance`}
+            path={`${pathToOrganization}/balancesheet/${balanceSheetItem.id}/ratings/finance`}
             element={<div>{stakeholders[1]}</div>}
           />
           <Route
-            path={`/balancesheets/${balanceSheetItem.id}/ratings/employees`}
+            path={`${pathToOrganization}/balancesheet/${balanceSheetItem.id}/ratings/employees`}
             element={<div>{stakeholders[2]}</div>}
           />
           <Route
-            path={`/balancesheets/${balanceSheetItem.id}/ratings/customers`}
+            path={`${pathToOrganization}/balancesheet/${balanceSheetItem.id}/ratings/customers`}
             element={<div>{stakeholders[3]}</div>}
           />
           <Route
-            path={`/balancesheets/${balanceSheetItem.id}/ratings/society`}
+            path={`${pathToOrganization}/balancesheet/${balanceSheetItem.id}/ratings/society`}
             element={<div>{stakeholders[4]}</div>}
           />
         </Routes>
@@ -108,20 +116,21 @@ describe('BalanceSheetSubNavigation', () => {
     }
   });
 
-  it('deletes balance sheet and navigates balancesheets list page when user clicks on Delete', async () => {
+  it('deletes balance sheet and navigates to organization page when user clicks on Delete', async () => {
     const user = userEvent.setup();
+    const initialPath = `${pathToOrganization}/balancesheet/2`;
     renderWithTheme(
-      <MemoryRouter initialEntries={['/balancesheets/2']}>
+      <MemoryRouter initialEntries={[initialPath]}>
         <Routes>
           <Route
-            path={'/balancesheets/2'}
+            path={initialPath}
             element={
               <BalanceSheetSubNavigation balanceSheetItem={balanceSheetItem} />
             }
           />
           <Route
-            path={`/balancesheets`}
-            element={<div>Navigated to balancesheets list page</div>}
+            path={pathToOrganization}
+            element={<div>Navigated to organization page</div>}
           />
         </Routes>
       </MemoryRouter>
@@ -136,7 +145,7 @@ describe('BalanceSheetSubNavigation', () => {
     );
 
     expect(
-      screen.getByText('Navigated to balancesheets list page')
+      screen.getByText('Navigated to organization page')
     ).toBeInTheDocument();
   });
 });

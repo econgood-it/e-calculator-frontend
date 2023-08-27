@@ -20,6 +20,7 @@ import { useApi } from '../../contexts/ApiContext';
 import { useBalanceSheetItems } from '../../contexts/BalanceSheetListContext';
 import { ListSubheader } from '@mui/material';
 import { BalanceSheetItem } from '../../models/BalanceSheet';
+import { useOrganizations } from '../../contexts/OrganizationContext';
 
 type BalanceSheetSubNavigationProps = {
   balanceSheetItem: BalanceSheetItem;
@@ -42,7 +43,7 @@ function StakeholderRatingNavigationItem({
     <ListItem key="suppliers">
       <ListItemButton
         component={Link}
-        to={`/balancesheets/${balanceSheetId}/ratings/${pathName}`}
+        to={`balancesheet/${balanceSheetId}/ratings/${pathName}`}
       >
         <ListItemIcon>
           <FontAwesomeIcon icon={iconDefinition} />
@@ -60,13 +61,14 @@ const BalanceSheetSubNavigation = ({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [, setBalanceSheetItems] = useBalanceSheetItems();
+  const { activeOrganization } = useOrganizations();
 
   const deleteBalanceSheet = async () => {
     await api.deleteBalanceSheet(balanceSheetItem.id);
     setBalanceSheetItems((prevState) =>
       prevState.filter((b) => b.id !== balanceSheetItem.id)
     );
-    navigate('/balancesheets');
+    navigate(`/organization/${activeOrganization?.id}`);
   };
 
   return (
@@ -74,7 +76,7 @@ const BalanceSheetSubNavigation = ({
       <ListItem key="company-facts">
         <ListItemButton
           component={Link}
-          to={`/balancesheets/${balanceSheetItem.id}/companyfacts`}
+          to={`balancesheet/${balanceSheetItem.id}/companyfacts`}
         >
           <ListItemIcon>
             <FontAwesomeIcon icon={faBuilding} />

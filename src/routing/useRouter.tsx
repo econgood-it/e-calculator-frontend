@@ -10,6 +10,8 @@ import BalanceSheetListPage from '../pages/BalanceSheetListPage';
 import WithActiveBalanceSheet from '../components/balanceSheet/WithActiveBalanceSheet';
 import BalanceSheetOverviewPage from '../pages/BalanceSheetOverviewPage';
 import CompanyFactsPage from '../pages/CompanyFactsPage';
+import { RedirectToActiveOrganization } from './RedirectToActiveOrganization';
+import { RequireActiveOrganization } from './RequireActiveOrganization';
 
 export function useRouter() {
   const userString = window.localStorage.getItem('user');
@@ -20,10 +22,6 @@ export function useRouter() {
 
   return createBrowserRouter([
     {
-      path: '/',
-      element: <Navigate to="/balancesheets" />,
-    },
-    {
       path: '/login',
       element: <LoginPage setUser={setUser} />,
     },
@@ -31,70 +29,86 @@ export function useRouter() {
       element: <RequiresAuth user={user} />,
       children: [
         {
-          element: <Sidebar />,
+          element: <RequireActiveOrganization />,
           children: [
+            { path: '/', element: <RedirectToActiveOrganization /> },
             {
-              path: '/balancesheets',
-              element: <BalanceSheetListPage />,
-            },
-            {
-              path: '/balancesheets/:balanceSheetId',
-              element: <WithActiveBalanceSheet />,
+              path: '/organization/:orgaId',
+              element: <Sidebar />,
               children: [
                 {
-                  element: <BalanceSheetOverviewPage />,
+                  element: <BalanceSheetListPage />,
                 },
                 {
-                  path: 'companyfacts',
-                  element: <CompanyFactsPage />,
-                },
-                {
-                  path: 'ratings',
-                  element: (
-                    <>
-                      <Outlet />
-                    </>
-                  ),
+                  path: 'balancesheet/:balanceSheetId',
+                  element: <WithActiveBalanceSheet />,
                   children: [
                     {
-                      path: 'suppliers',
-                      element: (
-                        <RatingsPage
-                          stakeholderToFilterBy={StakholderShortNames.Suppliers}
-                        />
-                      ),
+                      element: <BalanceSheetOverviewPage />,
                     },
                     {
-                      path: 'finance',
-                      element: (
-                        <RatingsPage
-                          stakeholderToFilterBy={StakholderShortNames.Finance}
-                        />
-                      ),
+                      path: 'companyfacts',
+                      element: <CompanyFactsPage />,
                     },
                     {
-                      path: 'employees',
+                      path: 'ratings',
                       element: (
-                        <RatingsPage
-                          stakeholderToFilterBy={StakholderShortNames.Employees}
-                        />
+                        <>
+                          <Outlet />
+                        </>
                       ),
-                    },
-                    {
-                      path: 'customers',
-                      element: (
-                        <RatingsPage
-                          stakeholderToFilterBy={StakholderShortNames.Customers}
-                        />
-                      ),
-                    },
-                    {
-                      path: 'society',
-                      element: (
-                        <RatingsPage
-                          stakeholderToFilterBy={StakholderShortNames.Society}
-                        />
-                      ),
+                      children: [
+                        {
+                          path: 'suppliers',
+                          element: (
+                            <RatingsPage
+                              stakeholderToFilterBy={
+                                StakholderShortNames.Suppliers
+                              }
+                            />
+                          ),
+                        },
+                        {
+                          path: 'finance',
+                          element: (
+                            <RatingsPage
+                              stakeholderToFilterBy={
+                                StakholderShortNames.Finance
+                              }
+                            />
+                          ),
+                        },
+                        {
+                          path: 'employees',
+                          element: (
+                            <RatingsPage
+                              stakeholderToFilterBy={
+                                StakholderShortNames.Employees
+                              }
+                            />
+                          ),
+                        },
+                        {
+                          path: 'customers',
+                          element: (
+                            <RatingsPage
+                              stakeholderToFilterBy={
+                                StakholderShortNames.Customers
+                              }
+                            />
+                          ),
+                        },
+                        {
+                          path: 'society',
+                          element: (
+                            <RatingsPage
+                              stakeholderToFilterBy={
+                                StakholderShortNames.Society
+                              }
+                            />
+                          ),
+                        },
+                      ],
                     },
                   ],
                 },
@@ -103,6 +117,10 @@ export function useRouter() {
           ],
         },
       ],
+    },
+    {
+      path: '*',
+      element: <Navigate to="/" />,
     },
   ]);
 }

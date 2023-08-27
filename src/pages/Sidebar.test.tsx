@@ -24,7 +24,7 @@ jest.mock('../contexts/OrganizationContext');
 jest.mock('../contexts/AlertContext');
 
 describe('Sidebar', () => {
-  const initialPathForRouting = '/balancesheets';
+  const initialPathForRouting = '/organization/3';
   const balanceSheetItems = [{ id: 1 }, { id: 2 }];
   const setBalanceSheetItems = jest.fn();
   const apiMock = {
@@ -80,7 +80,7 @@ describe('Sidebar', () => {
         <Routes>
           <Route path={initialPathForRouting} element={<Sidebar />} />
           <Route
-            path={`/${initialPathForRouting}/2`}
+            path={`/${initialPathForRouting}/balancesheet/2`}
             element={<div>Navigated to Balance sheet 2</div>}
           />
         </Routes>
@@ -115,7 +115,7 @@ describe('Sidebar', () => {
           <Routes>
             <Route path={initialPathForRouting} element={<Sidebar />} />
             <Route
-              path={`/${initialPathForRouting}/3`}
+              path={`${initialPathForRouting}/balancesheet/3`}
               element={<div>Navigated to Balance sheet 3</div>}
             />
           </Routes>
@@ -158,36 +158,19 @@ describe('Sidebar', () => {
     ).toBeInTheDocument();
   });
 
-  it('should open OrganizationCreationDialog when list of organization items are empty', async () => {
-    (useOrganizations as jest.Mock).mockReturnValue({
-      organizationItems: [],
-      isLoading: false,
-    });
-    act(() => {
-      renderWithTheme(
-        <MemoryRouter initialEntries={['/sidebar']}>
-          <Routes>
-            <Route path={'/sidebar'} element={<Sidebar />} />
-          </Routes>
-        </MemoryRouter>
-      );
-    });
-    expect(
-      await screen.findByRole('dialog', { name: 'Create organization' })
-    ).toBeInTheDocument();
-    expect(screen.queryByLabelText('Close dialog')).not.toBeInTheDocument();
-  });
-
   it('active organization changed if user selects organization from dropdown', async () => {
     const user = userEvent.setup();
+    const orgaItemToSelect = OrganizationItemsMocks.default()[1];
     act(() => {
       renderWithTheme(
-        <MemoryRouter initialEntries={['/sidebar']}>
+        <MemoryRouter initialEntries={[initialPathForRouting]}>
           <Routes>
-            <Route path={'/sidebar'} element={<Sidebar />} />
+            <Route path={initialPathForRouting} element={<Sidebar />} />
             <Route
-              path={'/balancesheets'}
-              element={<div>Navigated to Balancesheets</div>}
+              path={`organization/${orgaItemToSelect.id}`}
+              element={
+                <div>{`Navigated to Organization with id ${orgaItemToSelect.id}`}</div>
+              }
             />
           </Routes>
         </MemoryRouter>
@@ -206,7 +189,6 @@ describe('Sidebar', () => {
       ...OrganizationItemsMocks.default().map((i) => `Organization ${i.id}`),
     ]);
 
-    const orgaItemToSelect = OrganizationItemsMocks.default()[1];
     await user.click(
       options.find(
         (o) => o.textContent === `Organization ${orgaItemToSelect.id}`
@@ -218,7 +200,9 @@ describe('Sidebar', () => {
       )
     );
     expect(
-      await screen.findByText('Navigated to Balancesheets')
+      await screen.findByText(
+        `Navigated to Organization with id ${orgaItemToSelect.id}`
+      )
     ).toBeInTheDocument();
   });
 });

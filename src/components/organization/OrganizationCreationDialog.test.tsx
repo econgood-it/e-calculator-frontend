@@ -24,11 +24,11 @@ describe('OrganizationCreationDialog', () => {
 
   it('should call create organization api endpoint on submit', async () => {
     const user = userEvent.setup();
-    const setOpen = jest.fn();
+    const onClose = jest.fn();
     renderWithTheme(
       <OrganizationCreationDialog
         open={true}
-        setOpen={setOpen}
+        onClose={onClose}
         closable={true}
       />
     );
@@ -47,22 +47,22 @@ describe('OrganizationCreationDialog', () => {
         newOrga
       )
     );
-    expect(setOpen).toHaveBeenCalledWith(false);
+    expect(onClose).toHaveBeenCalledWith();
   });
 
   it('should close dialog when close button is clicked', async () => {
     const user = userEvent.setup();
-    const setOpen = jest.fn();
+    const onClose = jest.fn();
     renderWithTheme(
       <OrganizationCreationDialog
         open={true}
-        setOpen={setOpen}
+        onClose={onClose}
         closable={true}
       />
     );
 
     await user.click(screen.getByLabelText('Close dialog'));
-    await waitFor(() => expect(setOpen).toHaveBeenCalledWith(false));
+    await waitFor(() => expect(onClose).toHaveBeenCalledWith());
   });
 
   it('should not have close icon if closable is false', async () => {
@@ -70,7 +70,7 @@ describe('OrganizationCreationDialog', () => {
     renderWithTheme(
       <OrganizationCreationDialog
         open={true}
-        setOpen={setOpen}
+        onClose={setOpen}
         closable={false}
       />
     );

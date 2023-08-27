@@ -4,37 +4,25 @@ import IconButton from '@mui/material/IconButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { OrganizationCreationDialog } from './OrganizationCreationDialog';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useOrganizations } from '../../contexts/OrganizationContext';
 import GridContainer from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
 import { useNavigate } from 'react-router-dom';
 
 export function OrganizationSidebarSection() {
-  const {
-    organizationItems,
-    isLoading,
-    setActiveOrganizationById,
-    activeOrganization,
-  } = useOrganizations();
-  const noOrganizationYet = !isLoading && organizationItems.length === 0;
+  const { organizationItems, setActiveOrganizationById, activeOrganization } =
+    useOrganizations();
   const [organizationDialogOpen, setOrganizationDialogOpen] =
     useState<boolean>(false);
 
   const navigate = useNavigate();
 
   function onOrganizationChange(v: SelectChangeEvent<number | string>) {
-    setActiveOrganizationById(
-      v.target.value === 'default' ? undefined : Number(v.target.value)
-    );
-    navigate('/balancesheets');
+    const selectedOrgaId = Number(v.target.value);
+    setActiveOrganizationById(selectedOrgaId);
+    navigate(`/organization/${selectedOrgaId}`);
   }
-
-  useEffect(() => {
-    if (noOrganizationYet) {
-      setOrganizationDialogOpen(true);
-    }
-  }, [noOrganizationYet]);
 
   return (
     <>
@@ -71,9 +59,9 @@ export function OrganizationSidebarSection() {
         </GridItem>
       </GridContainer>
       <OrganizationCreationDialog
-        closable={!noOrganizationYet}
+        closable={true}
         open={organizationDialogOpen}
-        setOpen={setOrganizationDialogOpen}
+        onClose={() => setOrganizationDialogOpen(false)}
       />
     </>
   );

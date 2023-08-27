@@ -10,23 +10,23 @@ import React, { ReactElement } from 'react';
 
 type OrganizationDialogProps = {
   open: boolean;
-  setOpen: (open: boolean) => void;
+  onClose: () => void;
   closable: boolean;
 };
 
 export function OrganizationCreationDialog({
   open,
-  setOpen,
+  onClose,
   closable,
 }: OrganizationDialogProps) {
   const { createOrganization } = useOrganizations();
   async function onSave(organization: OrganizationRequestBody) {
     await createOrganization(organization);
-    setOpen(false);
+    onClose();
   }
 
   return (
-    <DialogComponent open={open} setOpen={setOpen} closable={closable}>
+    <DialogComponent open={open} onClose={onClose} closable={closable}>
       <>
         <DialogTitle variant={'h2'}>
           <Trans>Create organization</Trans>
@@ -51,7 +51,7 @@ export function OrganizationCreationDialog({
 
 function DialogComponent({
   open,
-  setOpen,
+  onClose,
   closable,
   children,
 }: OrganizationDialogProps & { children: ReactElement }) {
@@ -60,9 +60,9 @@ function DialogComponent({
       <ClosableDialog
         fullWidth
         maxWidth={'md'}
-        onCloseIconClicked={() => setOpen(false)}
+        onCloseIconClicked={() => onClose()}
         open={open}
-        onClose={() => setOpen(false)}
+        onClose={() => onClose()}
       >
         {children}
       </ClosableDialog>

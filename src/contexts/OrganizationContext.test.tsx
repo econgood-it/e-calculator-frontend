@@ -8,10 +8,12 @@ import {
 } from '../testUtils/organization';
 import { act, waitFor } from '@testing-library/react';
 import { ReactElement } from 'react';
-import { AlertProvider } from './AlertContext';
+import { useAlert } from './AlertContext';
 import { UserMocks } from '../testUtils/user';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 jest.mock('./ApiContext');
+jest.mock('./AlertContext');
 describe('useOrganizations', () => {
   const apiMock = {
     getOrganizations: jest.fn(),
@@ -21,16 +23,21 @@ describe('useOrganizations', () => {
 
   beforeEach(() => {
     window.localStorage.clear();
+    (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
   });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  const storageKey = 'activeOrganizationId';
+
+  const orgaIdFromUrl = 3;
 
   const user = UserMocks.default();
 
   function Wrapper({ children }: { children: ReactElement }) {
-    return (
-      <AlertProvider>
-        <OrganizationProvider user={user}>{children}</OrganizationProvider>
-      </AlertProvider>
-    );
+    return <OrganizationProvider user={user}>{children}</OrganizationProvider>;
   }
 
   it('should return organizations', async function () {
@@ -47,7 +54,6 @@ describe('useOrganizations', () => {
     });
 
     expect(apiMock.getOrganizations).toHaveBeenCalledWith();
-    expect(result.current.isLoading).toBeFalsy();
     expect(result.current.organizationItems).toEqual(
       OrganizationItemsMocks.default()
     );
@@ -106,16 +112,109 @@ describe('useOrganizations', () => {
     );
   });
 
+  function WrapperWithRouter({ children }: { children: ReactElement }) {
+    return (
+      <MemoryRouter initialEntries={[`/organization/${orgaIdFromUrl}`]}>
+        <Routes>
+          <Route
+            element={
+              <OrganizationProvider user={user}>
+                {children}
+              </OrganizationProvider>
+            }
+          >
+            <Route
+              path={'/organization/:orgaId'}
+              element={<div>Organization 3</div>}
+            />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    );
+  }
+
+  it('should prefer organization from url over local storage', async function () {
+    const spySetItem = jest.spyOn(window.localStorage, 'setItem');
+    const orgaIdInLocalStorage = 7;
+    window.localStorage.setItem(
+      user.user.toString(),
+      JSON.stringify({
+        [storageKey]: orgaIdInLocalStorage,
+      })
+    );
+    apiMock.getOrganizations.mockResolvedValue(
+      OrganizationItemsMocks.default()
+    );
+    apiMock.getOrganization.mockImplementation((id) =>
+      id === orgaIdFromUrl
+        ? new OrganizationMockBuilder().withId(orgaIdFromUrl).build()
+        : new OrganizationMockBuilder().withId(orgaIdInLocalStorage).build()
+    );
+    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    const { result } = await act(async () => {
+      return renderHookWithTheme(() => useOrganizations(), {
+        wrapper: WrapperWithRouter,
+      });
+    });
+
+    await waitFor(() =>
+      expect(spySetItem).toHaveBeenCalledWith(
+        user.user.toString(),
+        JSON.stringify({ [storageKey]: orgaIdFromUrl })
+      )
+    );
+    await waitFor(() =>
+      expect(apiMock.getOrganization).toHaveBeenCalledWith(orgaIdFromUrl)
+    );
+
+    await waitFor(() =>
+      expect(result.current.activeOrganization).toEqual(
+        new OrganizationMockBuilder().withId(orgaIdFromUrl).build()
+      )
+    );
+  });
+
+  it('should fallback to first organization as active organization', async function () {
+    const firstOrgaId = OrganizationItemsMocks.default()[0].id;
+    apiMock.getOrganizations.mockResolvedValue(
+      OrganizationItemsMocks.default()
+    );
+    apiMock.getOrganization.mockImplementation((id) =>
+      id === firstOrgaId
+        ? new OrganizationMockBuilder().withId(firstOrgaId).build()
+        : undefined
+    );
+    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    const { result } = await act(async () => {
+      return renderHookWithTheme(() => useOrganizations(), {
+        wrapper: Wrapper,
+      });
+    });
+    await waitFor(() =>
+      expect(apiMock.getOrganizations).toHaveBeenCalledWith()
+    );
+    await waitFor(() =>
+      expect(apiMock.getOrganization).toHaveBeenCalledWith(firstOrgaId)
+    );
+
+    await waitFor(() =>
+      expect(result.current.activeOrganization).toEqual(
+        new OrganizationMockBuilder().withId(firstOrgaId).build()
+      )
+    );
+  });
+
   it('should switch active organization', async function () {
-    const storageKey = 'activeOrganizationId';
     const spyGetItem = jest.spyOn(window.localStorage, 'getItem');
     const spySetItem = jest.spyOn(window.localStorage, 'setItem');
+
     window.localStorage.setItem(
       user.user.toString(),
       JSON.stringify({
         [storageKey]: new OrganizationMockBuilder().withId(3).build().id,
       })
     );
+
     apiMock.getOrganizations.mockResolvedValue(
       OrganizationItemsMocks.default()
     );
@@ -157,21 +256,6 @@ describe('useOrganizations', () => {
 
     await waitFor(() =>
       expect(result.current.activeOrganization?.id).toEqual(idToSelect)
-    );
-    await act(async () => {
-      await result.current.setActiveOrganizationById(undefined);
-    });
-    expect(spySetItem).toHaveBeenCalledWith(
-      user.user.toString(),
-      JSON.stringify({})
-    );
-
-    await waitFor(() =>
-      expect(apiMock.getOrganization).not.toHaveBeenLastCalledWith(undefined)
-    );
-
-    await waitFor(() =>
-      expect(result.current.activeOrganization).toBeUndefined()
     );
   });
 });
