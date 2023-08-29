@@ -16,6 +16,13 @@ import { useUser } from './UserProvider';
 jest.mock('./ApiProvider');
 jest.mock('./AlertContext');
 jest.mock('./UserProvider');
+
+const mockedUsedNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...(jest.requireActual('react-router-dom') as any),
+  useNavigate: () => mockedUsedNavigate,
+}));
 describe('useOrganizations', () => {
   const apiMock = {
     getOrganizations: jest.fn(),
@@ -24,15 +31,15 @@ describe('useOrganizations', () => {
   };
 
   const user = UserMocks.default();
-
+  let spySetItem: jest.SpyInstance;
+  let spyGetItem: jest.SpyInstance;
   beforeEach(() => {
+    spySetItem = jest.spyOn(window.localStorage, 'setItem');
+    spyGetItem = jest.spyOn(window.localStorage, 'getItem');
+
     window.localStorage.clear();
     (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
     (useUser as jest.Mock).mockReturnValue({ user });
-  });
-
-  afterEach(() => {
-    jest.restoreAllMocks();
   });
 
   const storageKey = 'activeOrganizationId';
@@ -99,6 +106,10 @@ describe('useOrganizations', () => {
       )
     );
 
+    expect(mockedUsedNavigate).toHaveBeenCalledWith(
+      `/organization/${orgaBuilder.build().id}`
+    );
+
     await waitFor(() =>
       expect(result.current.organizationItems).toEqual([
         ...initialOrgaItems,
@@ -133,7 +144,6 @@ describe('useOrganizations', () => {
   }
 
   it('should prefer organization from url over local storage', async function () {
-    const spySetItem = jest.spyOn(window.localStorage, 'setItem');
     const orgaIdInLocalStorage = 7;
     window.localStorage.setItem(
       user.user.toString(),
@@ -204,9 +214,6 @@ describe('useOrganizations', () => {
   });
 
   it('should switch active organization', async function () {
-    const spyGetItem = jest.spyOn(window.localStorage, 'getItem');
-    const spySetItem = jest.spyOn(window.localStorage, 'setItem');
-
     window.localStorage.setItem(
       user.user.toString(),
       JSON.stringify({

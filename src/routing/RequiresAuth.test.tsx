@@ -45,7 +45,6 @@ describe('RequiresAuth', () => {
     expect(screen.getByText('Login')).toBeInTheDocument();
   });
 
-  // TODO: Fix this test + update id in url params after creating organization
   it('navigates to secret page if user info valid', async () => {
     (useUser as jest.Mock).mockReturnValue({ user: UserMocks.default() });
 

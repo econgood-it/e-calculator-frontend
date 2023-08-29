@@ -9,7 +9,7 @@ import { useBalanceSheetItems } from '../contexts/BalanceSheetListProvider';
 jest.mock('../contexts/BalanceSheetListProvider');
 
 describe('BalanceSheetListPage', () => {
-  const initialPathForRouting = '/balancesheets';
+  const initialPathForRouting = '/organization/3';
   const balanceSheetItems = [{ id: 1 }, { id: 2 }];
   const setBalanceSheetItems = jest.fn();
 
@@ -30,7 +30,7 @@ describe('BalanceSheetListPage', () => {
               element={<BalanceSheetListPage />}
             />
             <Route
-              path={`${initialPathForRouting}/2`}
+              path={`${initialPathForRouting}/balancesheet/2`}
               element={<div>Page of Balance sheet 2</div>}
             />
           </Routes>

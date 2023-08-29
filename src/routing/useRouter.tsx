@@ -26,20 +26,19 @@ export function useRouter() {
         {
           element: (
             <OrganizationProvider>
-              <RequireActiveOrganization />
+              <BalanceSheetListProvider>
+                <RequireActiveOrganization />
+              </BalanceSheetListProvider>
             </OrganizationProvider>
           ),
           children: [
             { path: '/', element: <RedirectToActiveOrganization /> },
             {
               path: '/organization/:orgaId',
-              element: (
-                <BalanceSheetListProvider>
-                  <Sidebar />
-                </BalanceSheetListProvider>
-              ),
+              element: <Sidebar />,
               children: [
                 {
+                  path: '',
                   element: <BalanceSheetListPage />,
                 },
                 {
@@ -47,6 +46,7 @@ export function useRouter() {
                   element: <WithActiveBalanceSheet />,
                   children: [
                     {
+                      path: '',
                       element: <BalanceSheetOverviewPage />,
                     },
                     {

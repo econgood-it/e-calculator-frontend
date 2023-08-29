@@ -60,5 +60,7 @@ export const DE_TRANSLATIONS = {
   City: 'Stadt',
   'Balance sheets': 'Bilanzen',
   'Create organization': 'Organisation erstellen',
+  'Please create an organization to be able to create balance sheets for it later.':
+    'Bitte erzeugen Sie eine Organisation, um später für diese Bilanzen erstellen zu können.',
   ...DE_ERROR_TRANSLATIONS,
 };

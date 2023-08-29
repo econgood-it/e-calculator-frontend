@@ -8,7 +8,7 @@ const BalanceSheetListPage = () => {
     <>
       {balanceSheetItems.map((b) => (
         <div key={b.id}>
-          <Link to={`${b.id}`}>
+          <Link to={`balancesheet/${b.id}`}>
             <Trans>Balance sheet</Trans> {b.id}
           </Link>
         </div>

@@ -139,7 +139,7 @@ describe('Sidebar', () => {
     ).toBeInTheDocument();
   });
 
-  it('opens OrganizationCreationDialog when create organization button clicked', async () => {
+  it('creates organization and navigates to it clicked', async () => {
     const user = userEvent.setup();
 
     act(() => {

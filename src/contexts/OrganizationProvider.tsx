@@ -15,7 +15,7 @@ import {
   OrganizationRequestBody,
 } from '../models/Organization';
 import { User } from '../authentication/User';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { LoadingPage } from '../pages/LoadingPage';
 import { useUser } from './UserProvider';
 
@@ -85,11 +85,13 @@ function WithActiveOrganization({
     user,
     organizationItems
   );
+  const navigate = useNavigate();
 
   async function createOrganization(organization: OrganizationRequestBody) {
     const newOrganization = await api.createOrganization(organization);
     addOrganizationItem(newOrganization.id);
     setActiveOrganizationById(newOrganization.id);
+    navigate(`/organization/${newOrganization.id}`);
   }
   return (
     <OrganizationContext.Provider

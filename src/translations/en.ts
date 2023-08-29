@@ -51,6 +51,7 @@ const EN_WORDS = [
   'City',
   'Balance sheets',
   'Create organization',
+  'Please create an organization to be able to create balance sheets for it later.',
 ];
 
 export const EN_TRANSLATIONS = {

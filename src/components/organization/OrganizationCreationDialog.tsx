@@ -35,8 +35,8 @@ export function OrganizationCreationDialog({
           <GridContainer spacing={3}>
             <GridItem xs={12}>
               <Trans>
-                Please fill out the form to create an organization. For this
-                organization you can then later create balance sheets.
+                Please create an organization to be able to create balance
+                sheets for it later.
               </Trans>
             </GridItem>
             <GridItem xs={12}>

@@ -61,7 +61,9 @@ export function OrganizationSidebarSection() {
       <OrganizationCreationDialog
         closable={true}
         open={organizationDialogOpen}
-        onClose={() => setOrganizationDialogOpen(false)}
+        onClose={() => {
+          setOrganizationDialogOpen(false);
+        }}
       />
     </>
   );
