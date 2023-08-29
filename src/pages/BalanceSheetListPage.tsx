@@ -1,6 +1,6 @@
 import { Trans } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { useBalanceSheetItems } from '../contexts/BalanceSheetListContext';
+import { useBalanceSheetItems } from '../contexts/BalanceSheetListProvider';
 
 const BalanceSheetListPage = () => {
   const [balanceSheetItems] = useBalanceSheetItems();

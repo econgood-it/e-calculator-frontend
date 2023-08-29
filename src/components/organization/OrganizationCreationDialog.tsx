@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogTitle } from '@mui/material';
 import { OrganizationForm } from './OrganizationForm';
 import { OrganizationRequestBody } from '../../models/Organization';
-import { useOrganizations } from '../../contexts/OrganizationContext';
+import { useOrganizations } from '../../contexts/OrganizationProvider';
 import { Trans } from 'react-i18next';
 import { ClosableDialog } from '../lib/ClosableDialog';
 import GridContainer from '../layout/GridContainer';

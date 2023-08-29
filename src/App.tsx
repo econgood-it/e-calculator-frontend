@@ -10,6 +10,7 @@ import NotificationList from './components/alerts/NotificationList';
 import { ThemeProvider } from 'styled-components';
 import { RouterProvider } from 'react-router-dom';
 import { useRouter } from './routing/useRouter';
+import { UserProvider } from './contexts/UserProvider';
 
 const primaryColor = '#94a231';
 const secondaryColor = '#00828b';
@@ -57,7 +58,9 @@ function App() {
           <AlertProvider>
             <>
               <CssBaseline enableColorScheme />
-              <RouterProvider router={router} />
+              <UserProvider>
+                <RouterProvider router={router} />
+              </UserProvider>
               <NotificationList />
             </>
           </AlertProvider>

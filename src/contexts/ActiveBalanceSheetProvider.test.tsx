@@ -2,7 +2,7 @@ import { BalanceSheetMocks } from '../testUtils/balanceSheets';
 import { renderHookWithTheme } from '../testUtils/rendering';
 import { act, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { useApi } from '../contexts/ApiContext';
+import { useApi } from './ApiProvider';
 import ActiveBalanceSheetProvider, {
   useActiveBalanceSheet,
 } from './ActiveBalanceSheetProvider';
@@ -11,7 +11,7 @@ import { useAlert } from './AlertContext';
 import { RatingType } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import { ReactElement } from 'react';
 
-jest.mock('../contexts/ApiContext');
+jest.mock('../contexts/ApiProvider');
 jest.mock('../contexts/AlertContext');
 
 describe('WithActiveBalanceSheet', () => {

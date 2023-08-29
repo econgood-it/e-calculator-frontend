@@ -4,9 +4,9 @@ import renderWithTheme from '../testUtils/rendering';
 import BalanceSheetListPage from './BalanceSheetListPage';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { useBalanceSheetItems } from '../contexts/BalanceSheetListContext';
+import { useBalanceSheetItems } from '../contexts/BalanceSheetListProvider';
 
-jest.mock('../contexts/BalanceSheetListContext');
+jest.mock('../contexts/BalanceSheetListProvider');
 
 describe('BalanceSheetListPage', () => {
   const initialPathForRouting = '/balancesheets';

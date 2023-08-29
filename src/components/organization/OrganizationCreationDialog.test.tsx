@@ -3,13 +3,12 @@ import renderWithTheme from '../../testUtils/rendering';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useAlert } from '../../contexts/AlertContext';
-import { useApi } from '../../contexts/ApiContext';
 import { OrganizationCreationDialog } from './OrganizationCreationDialog';
 import { OrganizationMockBuilder } from '../../testUtils/organization';
-import { useOrganizations } from '../../contexts/OrganizationContext';
+import { useOrganizations } from '../../contexts/OrganizationProvider';
 
 jest.mock('../../contexts/AlertContext');
-jest.mock('../../contexts/OrganizationContext');
+jest.mock('../../contexts/OrganizationProvider');
 describe('OrganizationCreationDialog', () => {
   const useOrganizationMock = {
     createOrganization: jest.fn(),

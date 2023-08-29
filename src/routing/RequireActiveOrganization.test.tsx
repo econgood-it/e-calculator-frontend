@@ -1,11 +1,11 @@
 import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
-import { useOrganizations } from '../contexts/OrganizationContext';
+import { useOrganizations } from '../contexts/OrganizationProvider';
 import renderWithTheme from '../testUtils/rendering';
 import { RequireActiveOrganization } from './RequireActiveOrganization';
 import { useAlert } from '../contexts/AlertContext';
 
-jest.mock('../contexts/OrganizationContext');
+jest.mock('../contexts/OrganizationProvider');
 jest.mock('../contexts/AlertContext');
 describe('RequireAcitveOrganization', () => {
   it('shows loading page if active organization is undefined', async () => {

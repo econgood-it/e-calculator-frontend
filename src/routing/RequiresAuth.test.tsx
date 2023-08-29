@@ -1,35 +1,22 @@
 import '@testing-library/jest-dom';
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import RequiresAuth from './RequiresAuth';
-import { exampleUser } from '../testUtils/user';
-import { useOrganizations } from '../contexts/OrganizationContext';
-import {
-  OrganizationItemsMocks,
-  OrganizationMockBuilder,
-} from '../testUtils/organization';
-import { useApi } from '../contexts/ApiContext';
 
-jest.mock('../contexts/ApiContext');
+import { UserMocks } from '../testUtils/user';
+import { useUser } from '../contexts/UserProvider';
+import { RequiresAuth } from './RequiresAuth';
+
+jest.mock('../contexts/UserProvider');
 
 describe('RequiresAuth', () => {
-  const apiMock = {
-    getOrganizations: jest.fn(),
-    getOrganization: jest.fn(),
-  };
-  beforeEach(() => {
-    apiMock.getOrganizations.mockResolvedValue(
-      OrganizationItemsMocks.default()
-    );
-    (useApi as jest.Mock).mockImplementation(() => apiMock);
-  });
   it('navigates to login if user is not defined', async () => {
+    (useUser as jest.Mock).mockReturnValue({ user: undefined });
     renderWithTheme(
       <MemoryRouter initialEntries={['/secret']}>
         <Routes>
           <Route path={'/login'} element={<div>Login</div>} />
-          <Route path={'/secret'} element={<RequiresAuth user={undefined} />}>
+          <Route path={'/secret'} element={<RequiresAuth />}>
             <Route index element={<div>Secret Page</div>} />
           </Route>
         </Routes>
@@ -39,14 +26,17 @@ describe('RequiresAuth', () => {
   });
 
   it('navigates to login if user token empty', async () => {
+    (useUser as jest.Mock).mockReturnValue({
+      user: {
+        ...UserMocks.default(),
+        token: '',
+      },
+    });
     renderWithTheme(
       <MemoryRouter initialEntries={['/secret']}>
         <Routes>
           <Route path={'/login'} element={<div>Login</div>} />
-          <Route
-            path={'/secret'}
-            element={<RequiresAuth user={{ ...exampleUser, token: '' }} />}
-          >
+          <Route path={'/secret'} element={<RequiresAuth />}>
             <Route index element={<div>Secret Page</div>} />
           </Route>
         </Routes>
@@ -55,24 +45,21 @@ describe('RequiresAuth', () => {
     expect(screen.getByText('Login')).toBeInTheDocument();
   });
 
-  it.skip('navigates to secret page if user info valid', async () => {
+  // TODO: Fix this test + update id in url params after creating organization
+  it('navigates to secret page if user info valid', async () => {
+    (useUser as jest.Mock).mockReturnValue({ user: UserMocks.default() });
+
     renderWithTheme(
       <MemoryRouter initialEntries={['/secret']}>
         <Routes>
           <Route path={'/login'} element={<div>Login</div>} />
-          <Route
-            path={'/secret'}
-            element={<RequiresAuth user={{ ...exampleUser }} />}
-          >
+          <Route path={'/secret'} element={<RequiresAuth />}>
             <Route index element={<div>Secret Page</div>} />
           </Route>
         </Routes>
       </MemoryRouter>
     );
 
-    await waitFor(() =>
-      expect(apiMock.getOrganizations).toHaveBeenCalledWith()
-    );
     expect(screen.getByText('Secret Page')).toBeInTheDocument();
   });
 });

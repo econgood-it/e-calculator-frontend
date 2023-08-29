@@ -7,7 +7,7 @@ import {
 } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { useApi } from './ApiContext';
+import { useApi } from './ApiProvider';
 
 import { useAlert } from './AlertContext';
 import { useTranslation } from 'react-i18next';

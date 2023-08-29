@@ -4,23 +4,23 @@ import renderWithTheme from '../testUtils/rendering';
 import Sidebar from './Sidebar';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import { useApi } from '../contexts/ApiContext';
-import { useBalanceSheetItems } from '../contexts/BalanceSheetListContext';
+import { useApi } from '../contexts/ApiProvider';
+import { useBalanceSheetItems } from '../contexts/BalanceSheetListProvider';
 import { BalanceSheetMocks } from '../testUtils/balanceSheets';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { useOrganizations } from '../contexts/OrganizationContext';
+import { useOrganizations } from '../contexts/OrganizationProvider';
 import {
   OrganizationItemsMocks,
   OrganizationMockBuilder,
 } from '../testUtils/organization';
 import { useAlert } from '../contexts/AlertContext';
 
-jest.mock('../contexts/ApiContext');
-jest.mock('../contexts/BalanceSheetListContext');
-jest.mock('../contexts/OrganizationContext');
+jest.mock('../contexts/ApiProvider');
+jest.mock('../contexts/BalanceSheetListProvider');
+jest.mock('../contexts/OrganizationProvider');
 jest.mock('../contexts/AlertContext');
 
 describe('Sidebar', () => {

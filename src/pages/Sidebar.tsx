@@ -15,14 +15,14 @@ import { Trans } from 'react-i18next';
 import styled from 'styled-components';
 import { Outlet, useNavigate } from 'react-router-dom';
 
-import { useApi } from '../contexts/ApiContext';
+import { useApi } from '../contexts/ApiProvider';
 import { BalanceSheetNavigationItem } from '../components/balanceSheet/BalanceSheetNavigationItem';
-import { useBalanceSheetItems } from '../contexts/BalanceSheetListContext';
+import { useBalanceSheetItems } from '../contexts/BalanceSheetListProvider';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { useOrganizations } from '../contexts/OrganizationContext';
+import { useOrganizations } from '../contexts/OrganizationProvider';
 import { OrganizationSidebarSection } from '../components/organization/OrganizationSidebarSection';
 import GridContainer from '../components/layout/GridContainer';
 import GridItem from '../components/layout/GridItem';

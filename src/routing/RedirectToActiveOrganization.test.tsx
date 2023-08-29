@@ -2,11 +2,11 @@ import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
-import { useOrganizations } from '../contexts/OrganizationContext';
+import { useOrganizations } from '../contexts/OrganizationProvider';
 import { OrganizationMockBuilder } from '../testUtils/organization';
 import { RedirectToActiveOrganization } from './RedirectToActiveOrganization';
 
-jest.mock('../contexts/OrganizationContext');
+jest.mock('../contexts/OrganizationProvider');
 describe('RedirectToActiveOrganization', () => {
   it('shows loading page if active organization is undefined', () => {
     (useOrganizations as jest.Mock).mockReturnValue({

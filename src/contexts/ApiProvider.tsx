@@ -1,22 +1,24 @@
 import { createContext, ReactElement, useContext } from 'react';
 import { API_URL } from '../configuration';
-import { User } from '../authentication/User';
 import { useLanguage } from '../i18n';
 import { ApiClient, makeWretchInstanceWithAuth } from '../api/api.client';
+import { useUser } from './UserProvider';
 
 const ApiContext = createContext<ApiClient | undefined>(undefined);
 
 type ApiProviderProps = {
-  user: User;
   children: ReactElement;
 };
 
-function ApiProvider({ user, children }: ApiProviderProps) {
+function ApiProvider({ children }: ApiProviderProps) {
   const language = useLanguage();
+  const { user } = useUser();
 
   return (
     <ApiContext.Provider
-      value={new ApiClient(makeWretchInstanceWithAuth(API_URL, user, language))}
+      value={
+        new ApiClient(makeWretchInstanceWithAuth(API_URL, user!, language))
+      }
     >
       {children}
     </ApiContext.Provider>

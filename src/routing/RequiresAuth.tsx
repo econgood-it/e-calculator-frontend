@@ -1,15 +1,9 @@
-import { User } from '../authentication/User';
-import { FC } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
-import { ApiProvider } from '../contexts/ApiContext';
-import { BalanceSheetListProvider } from '../contexts/BalanceSheetListContext';
-import { OrganizationProvider } from '../contexts/OrganizationContext';
+import { ApiProvider } from '../contexts/ApiProvider';
+import { useUser } from '../contexts/UserProvider';
 
-type RequiresAuthProps = {
-  user: User | undefined;
-};
-
-const RequiresAuth: FC<RequiresAuthProps> = ({ user }: RequiresAuthProps) => {
+export function RequiresAuth() {
+  const { user } = useUser();
   if (!user || !user.token || user.token === '') {
     return (
       <Navigate
@@ -21,14 +15,8 @@ const RequiresAuth: FC<RequiresAuthProps> = ({ user }: RequiresAuthProps) => {
   }
 
   return (
-    <ApiProvider user={user}>
-      <OrganizationProvider user={user}>
-        <BalanceSheetListProvider>
-          <Outlet />
-        </BalanceSheetListProvider>
-      </OrganizationProvider>
+    <ApiProvider>
+      <Outlet />
     </ApiProvider>
   );
-};
-
-export default RequiresAuth;
+}

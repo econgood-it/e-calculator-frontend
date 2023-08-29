@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
-import { OrganizationProvider, useOrganizations } from './OrganizationContext';
+import { OrganizationProvider, useOrganizations } from './OrganizationProvider';
 import { renderHookWithTheme } from '../testUtils/rendering';
-import { useApi } from './ApiContext';
+import { useApi } from './ApiProvider';
 import {
   OrganizationItemsMocks,
   OrganizationMockBuilder,
@@ -11,9 +11,11 @@ import { ReactElement } from 'react';
 import { useAlert } from './AlertContext';
 import { UserMocks } from '../testUtils/user';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { useUser } from './UserProvider';
 
-jest.mock('./ApiContext');
+jest.mock('./ApiProvider');
 jest.mock('./AlertContext');
+jest.mock('./UserProvider');
 describe('useOrganizations', () => {
   const apiMock = {
     getOrganizations: jest.fn(),
@@ -21,9 +23,12 @@ describe('useOrganizations', () => {
     createOrganization: jest.fn(),
   };
 
+  const user = UserMocks.default();
+
   beforeEach(() => {
     window.localStorage.clear();
     (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
+    (useUser as jest.Mock).mockReturnValue({ user });
   });
 
   afterEach(() => {
@@ -34,10 +39,8 @@ describe('useOrganizations', () => {
 
   const orgaIdFromUrl = 3;
 
-  const user = UserMocks.default();
-
   function Wrapper({ children }: { children: ReactElement }) {
-    return <OrganizationProvider user={user}>{children}</OrganizationProvider>;
+    return <OrganizationProvider>{children}</OrganizationProvider>;
   }
 
   it('should return organizations', async function () {
@@ -117,11 +120,7 @@ describe('useOrganizations', () => {
       <MemoryRouter initialEntries={[`/organization/${orgaIdFromUrl}`]}>
         <Routes>
           <Route
-            element={
-              <OrganizationProvider user={user}>
-                {children}
-              </OrganizationProvider>
-            }
+            element={<OrganizationProvider>{children}</OrganizationProvider>}
           >
             <Route
               path={'/organization/:orgaId'}

@@ -6,7 +6,7 @@ import {
   useState,
 } from 'react';
 
-import { useApi } from './ApiContext';
+import { useApi } from './ApiProvider';
 import { IWorkbook, Workbook } from '../models/Workbook';
 import { useAlert } from './AlertContext';
 import { useTranslation } from 'react-i18next';

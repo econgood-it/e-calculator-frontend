@@ -1,4 +1,4 @@
-import { useOrganizations } from '../contexts/OrganizationContext';
+import { useOrganizations } from '../contexts/OrganizationProvider';
 
 import { Navigate } from 'react-router-dom';
 import { LoadingPage } from '../pages/LoadingPage';

@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
 import { OrganizationCreationDialog } from './OrganizationCreationDialog';
 import { useState } from 'react';
-import { useOrganizations } from '../../contexts/OrganizationContext';
+import { useOrganizations } from '../../contexts/OrganizationProvider';
 import GridContainer from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
 import { useNavigate } from 'react-router-dom';

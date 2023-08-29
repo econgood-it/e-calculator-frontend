@@ -1,8 +1,6 @@
 import { Button, Grid, TextField } from '@mui/material';
-import { Dispatch, SetStateAction } from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { User } from '../authentication/User';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,6 +10,7 @@ import { useAlert } from '../contexts/AlertContext';
 import { useTranslation } from 'react-i18next';
 import { AuthApiClient, makeWretchInstance } from '../api/api.client';
 import { CenteredDiv } from '../components/layout/CenteredDiv';
+import { useUser } from '../contexts/UserProvider';
 
 const LoginFormGrid = styled(Grid)`
   max-width: 400px;
@@ -21,19 +20,16 @@ const DoorLogo = styled.img`
   width: 80px;
 `;
 
-type LoginPageProps = {
-  setUser: Dispatch<SetStateAction<User | undefined>>;
-};
-
 const FormInputSchema = z.object({
   email: z.string().email('Email nicht valide'),
   password: z.string().min(8, 'Passwort muss mindestens 8 Zeichen lang sein'),
 });
 type FormInput = z.infer<typeof FormInputSchema>;
 
-export const LoginPage = ({ setUser }: LoginPageProps) => {
+export const LoginPage = () => {
   const { t } = useTranslation();
   const { addErrorAlert } = useAlert();
+  const { updateUser } = useUser();
   const navigate = useNavigate();
   const {
     register,
@@ -46,7 +42,7 @@ export const LoginPage = ({ setUser }: LoginPageProps) => {
       const result = new AuthApiClient(makeWretchInstance(API_URL, 'en'));
       const user = await result.login(data.email, data.password);
       window.localStorage.setItem('user', JSON.stringify(user));
-      setUser(user);
+      updateUser(user);
       navigate('/');
     } catch (e) {
       addErrorAlert(t`Login failed`);

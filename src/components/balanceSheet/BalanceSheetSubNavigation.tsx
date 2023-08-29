@@ -16,11 +16,11 @@ import ListItemText from '@mui/material/ListItemText';
 import { Trans, useTranslation } from 'react-i18next';
 import List from '@mui/material/List';
 import { Link, useNavigate } from 'react-router-dom';
-import { useApi } from '../../contexts/ApiContext';
-import { useBalanceSheetItems } from '../../contexts/BalanceSheetListContext';
+import { useApi } from '../../contexts/ApiProvider';
+import { useBalanceSheetItems } from '../../contexts/BalanceSheetListProvider';
 import { ListSubheader } from '@mui/material';
 import { BalanceSheetItem } from '../../models/BalanceSheet';
-import { useOrganizations } from '../../contexts/OrganizationContext';
+import { useOrganizations } from '../../contexts/OrganizationProvider';
 
 type BalanceSheetSubNavigationProps = {
   balanceSheetItem: BalanceSheetItem;

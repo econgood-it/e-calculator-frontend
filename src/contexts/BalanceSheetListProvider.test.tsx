@@ -1,18 +1,18 @@
 import { renderHookWithTheme } from '../testUtils/rendering';
 import '@testing-library/jest-dom';
-import { useApi } from './ApiContext';
+import { useApi } from './ApiProvider';
 import {
   BalanceSheetListProvider,
   useBalanceSheetItems,
-} from './BalanceSheetListContext';
+} from './BalanceSheetListProvider';
 import { waitFor } from '@testing-library/react';
 import { AlertProvider } from './AlertContext';
 import { ReactElement } from 'react';
-import { useOrganizations } from './OrganizationContext';
+import { useOrganizations } from './OrganizationProvider';
 import { OrganizationMockBuilder } from '../testUtils/organization';
 
-jest.mock('../contexts/ApiContext');
-jest.mock('../contexts/OrganizationContext');
+jest.mock('../contexts/ApiProvider');
+jest.mock('../contexts/OrganizationProvider');
 describe('useBalanceSheetItems', () => {
   const apiMock = {
     getBalanceSheets: jest.fn(),

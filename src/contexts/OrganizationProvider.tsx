@@ -8,7 +8,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { useApi } from './ApiContext';
+import { useApi } from './ApiProvider';
 import {
   Organization,
   OrganizationItems,
@@ -17,6 +17,7 @@ import {
 import { User } from '../authentication/User';
 import { useParams } from 'react-router-dom';
 import { LoadingPage } from '../pages/LoadingPage';
+import { useUser } from './UserProvider';
 
 interface IOrganizationContext {
   organizationItems: OrganizationItems;
@@ -30,15 +31,12 @@ const OrganizationContext = createContext<IOrganizationContext | undefined>(
 );
 
 type OrganizationProviderProps = {
-  user: User;
   children: ReactElement;
 };
 
-export function OrganizationProvider({
-  children,
-  user,
-}: OrganizationProviderProps) {
+export function OrganizationProvider({ children }: OrganizationProviderProps) {
   const api = useApi();
+  const { user } = useUser();
   const [organizationItems, setOrganizationItems] = useState<
     OrganizationItems | undefined
   >(undefined);
@@ -63,7 +61,7 @@ export function OrganizationProvider({
   return (
     <WithActiveOrganization
       organizationItems={organizationItems}
-      user={user}
+      user={user!}
       addOrganizationItem={addOrganizationItem}
     >
       {children}

@@ -1,10 +1,8 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import { LoginPage } from '../pages/LoginPage';
-import { useState } from 'react';
-import { User } from '../authentication/User';
 import RatingsPage from '../pages/RatingsPage';
 import { StakholderShortNames } from '../models/Rating';
-import RequiresAuth from './RequiresAuth';
+
 import Sidebar from '../pages/Sidebar';
 import BalanceSheetListPage from '../pages/BalanceSheetListPage';
 import WithActiveBalanceSheet from '../components/balanceSheet/WithActiveBalanceSheet';
@@ -12,29 +10,34 @@ import BalanceSheetOverviewPage from '../pages/BalanceSheetOverviewPage';
 import CompanyFactsPage from '../pages/CompanyFactsPage';
 import { RedirectToActiveOrganization } from './RedirectToActiveOrganization';
 import { RequireActiveOrganization } from './RequireActiveOrganization';
+import { OrganizationProvider } from '../contexts/OrganizationProvider';
+import { BalanceSheetListProvider } from '../contexts/BalanceSheetListProvider';
+import { RequiresAuth } from './RequiresAuth';
 
 export function useRouter() {
-  const userString = window.localStorage.getItem('user');
-
-  const [user, setUser] = useState<User | undefined>(
-    userString ? JSON.parse(userString) : undefined
-  );
-
   return createBrowserRouter([
     {
       path: '/login',
-      element: <LoginPage setUser={setUser} />,
+      element: <LoginPage />,
     },
     {
-      element: <RequiresAuth user={user} />,
+      element: <RequiresAuth />,
       children: [
         {
-          element: <RequireActiveOrganization />,
+          element: (
+            <OrganizationProvider>
+              <RequireActiveOrganization />
+            </OrganizationProvider>
+          ),
           children: [
             { path: '/', element: <RedirectToActiveOrganization /> },
             {
               path: '/organization/:orgaId',
-              element: <Sidebar />,
+              element: (
+                <BalanceSheetListProvider>
+                  <Sidebar />
+                </BalanceSheetListProvider>
+              ),
               children: [
                 {
                   element: <BalanceSheetListPage />,

@@ -7,9 +7,9 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { useApi } from './ApiContext';
+import { useApi } from './ApiProvider';
 import { BalanceSheetItem } from '../models/BalanceSheet';
-import { useOrganizations } from './OrganizationContext';
+import { useOrganizations } from './OrganizationProvider';
 
 interface IBalanceSheetListContext {
   balanceSheetItems: BalanceSheetItem[];

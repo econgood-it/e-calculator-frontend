@@ -1,12 +1,12 @@
 import { renderHookWithTheme } from '../testUtils/rendering';
 import { waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { useApi } from './ApiContext';
+import { useApi } from './ApiProvider';
 import WorkbookProvider, { useWorkbook } from './WorkbookProvider';
 import { useAlert } from './AlertContext';
 import { WorkbookResponseMocks } from '../testUtils/workbook';
 
-jest.mock('../contexts/ApiContext');
+jest.mock('../contexts/ApiProvider');
 jest.mock('../contexts/AlertContext');
 describe('WithWorkbook', () => {
   const apiMock = {

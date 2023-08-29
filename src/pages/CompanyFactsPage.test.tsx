@@ -5,14 +5,14 @@ import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
 import { BalanceSheetMocks } from '../testUtils/balanceSheets';
 import { regionsMocks } from '../testUtils/regions';
 import CompanyFactsPage from './CompanyFactsPage';
-import { useApi } from '../contexts/ApiContext';
+import { useApi } from '../contexts/ApiProvider';
 import { industriesMocks } from '../testUtils/industries';
 import { useAlert } from '../contexts/AlertContext';
 
 jest.mock('../contexts/ActiveBalanceSheetProvider');
 jest.mock('../contexts/AlertContext');
 
-jest.mock('../contexts/ApiContext');
+jest.mock('../contexts/ApiProvider');
 describe('CompanyFactsPage', () => {
   const apiMock = {
     getRegions: jest.fn(),

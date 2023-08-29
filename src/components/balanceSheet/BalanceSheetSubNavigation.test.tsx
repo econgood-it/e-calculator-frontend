@@ -4,13 +4,13 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import BalanceSheetSubNavigation from './BalanceSheetSubNavigation';
 import userEvent from '@testing-library/user-event';
-import { useApi } from '../../contexts/ApiContext';
-import { useBalanceSheetItems } from '../../contexts/BalanceSheetListContext';
-import { useOrganizations } from '../../contexts/OrganizationContext';
+import { useApi } from '../../contexts/ApiProvider';
+import { useBalanceSheetItems } from '../../contexts/BalanceSheetListProvider';
+import { useOrganizations } from '../../contexts/OrganizationProvider';
 import { OrganizationMockBuilder } from '../../testUtils/organization';
-jest.mock('../../contexts/ApiContext');
-jest.mock('../../contexts/BalanceSheetListContext');
-jest.mock('../../contexts/OrganizationContext');
+jest.mock('../../contexts/ApiProvider');
+jest.mock('../../contexts/BalanceSheetListProvider');
+jest.mock('../../contexts/OrganizationProvider');
 
 describe('BalanceSheetSubNavigation', () => {
   const balanceSheetItem = { id: 2 };
