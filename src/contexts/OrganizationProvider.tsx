@@ -49,9 +49,12 @@ export function OrganizationProvider({ children }: OrganizationProviderProps) {
     })();
   }, []);
 
-  function addOrganizationItem(organizationId: number) {
+  function addOrganizationItem(
+    organizationId: number,
+    organizationName: string
+  ) {
     setOrganizationItems((prevState) =>
-      prevState?.concat({ id: organizationId })
+      prevState?.concat({ id: organizationId, name: organizationName })
     );
   }
   if (!organizationItems) {
@@ -77,7 +80,10 @@ function WithActiveOrganization({
 }: {
   user: User;
   organizationItems: OrganizationItems;
-  addOrganizationItem: (organizationId: number) => void;
+  addOrganizationItem: (
+    organizationId: number,
+    organizationName: string
+  ) => void;
   children: ReactElement;
 }) {
   const api = useApi();
@@ -89,7 +95,7 @@ function WithActiveOrganization({
 
   async function createOrganization(organization: OrganizationRequestBody) {
     const newOrganization = await api.createOrganization(organization);
-    addOrganizationItem(newOrganization.id);
+    addOrganizationItem(newOrganization.id, newOrganization.name);
     setActiveOrganizationById(newOrganization.id);
     navigate(`/organization/${newOrganization.id}`);
   }

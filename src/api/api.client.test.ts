@@ -97,7 +97,10 @@ describe('ApiClient', () => {
       );
     });
     it('returns organizations of user', async () => {
-      const organizations = [{ id: 1 }, { id: 3 }];
+      const organizations = [
+        { id: 1, name: 'Orga 1' },
+        { id: 3, name: 'Orga 2' },
+      ];
       const requestPromise = mockResource(
         'get',
         `${URL}/v1/organization`,

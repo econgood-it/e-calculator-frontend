@@ -52,7 +52,7 @@ export function OrganizationSidebarSection() {
                 >
                   {organizationItems.map((o) => (
                     <MenuItem key={o.id} value={o.id}>
-                      <Trans>{`Organization ${o.id}`}</Trans>
+                      {o.name}
                     </MenuItem>
                   ))}
                 </Select>

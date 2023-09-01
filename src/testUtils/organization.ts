@@ -8,6 +8,7 @@ import {
 export class OrganizationMockBuilder {
   private organization: Organization = {
     id: 7,
+    name: 'My organization',
     address: {
       city: 'Example City',
       street: 'Example street',
@@ -38,7 +39,8 @@ export const OrganizationItemsMocks = {
   default: (): OrganizationItems => [
     {
       id: 3,
+      name: 'My Orga 3',
     },
-    { id: 7 },
+    { id: 7, name: 'My Orga 7' },
   ],
 };

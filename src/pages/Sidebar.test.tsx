@@ -184,19 +184,17 @@ describe('Sidebar', () => {
 
     await user.click(
       screen.getByRole('button', {
-        name: `Organization ${OrganizationItemsMocks.default()[0].id}`,
+        name: OrganizationItemsMocks.default()[0].name,
       })
     );
     const options = await screen.findAllByRole('option');
 
     expect(options.map((o) => o.textContent)).toEqual([
-      ...OrganizationItemsMocks.default().map((i) => `Organization ${i.id}`),
+      ...OrganizationItemsMocks.default().map((i) => i.name),
     ]);
 
     await user.click(
-      options.find(
-        (o) => o.textContent === `Organization ${orgaItemToSelect.id}`
-      )!
+      options.find((o) => o.textContent === orgaItemToSelect.name)!
     );
     await waitFor(() =>
       expect(setActiveOrganizationByIdMock).toHaveBeenCalledWith(

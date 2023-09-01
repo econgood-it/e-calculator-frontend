@@ -1200,10 +1200,10 @@
   resolved "https://registry.yarnpkg.com/@csstools/selector-specificity/-/selector-specificity-2.2.0.tgz#2cbcf822bf3764c9658c4d2e568bd0c0cb748016"
   integrity sha512-+OJ9konv95ClSTOJCmMZqpd5+YGsB2S+x6w3E1oaM8UuR5j8nTNHYSz8c9BEPGDOCMQYIEEGlVPj/VY64iTbGw==
 
-"@ecogood/e-calculator-schemas@^1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@ecogood/e-calculator-schemas/-/e-calculator-schemas-1.4.0.tgz#421de246f9f6c94d16faaa1aa431801a982e8526"
-  integrity sha512-dNDO6gk99p2OGThdtF7CaktzLHDsiTDyBfmK78NlHdbYVhu3dpQLQ6teQhF1v86rd2kdUcmYaaAKk0WvNN88wQ==
+"@ecogood/e-calculator-schemas@^1.5.1":
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/@ecogood/e-calculator-schemas/-/e-calculator-schemas-1.5.1.tgz#f6cd41bb4b3c9476a3dfd89a5e2861174cb3d195"
+  integrity sha512-4YXHWWiPlJmwRtfiHTxqIHVkixcnoko9C0Kf2qRAsFhftBrHV9NjjSESvfihxSk2oPkUY1U6KySIQ1iYNswHmQ==
   dependencies:
     eslint-plugin-n "^15.6.1"
     zod "^3.20.6"

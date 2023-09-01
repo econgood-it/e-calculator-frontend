@@ -115,6 +115,7 @@ describe('useOrganizations', () => {
         ...initialOrgaItems,
         {
           id: orgaBuilder.buildResponseBody().id,
+          name: orgaBuilder.buildResponseBody().name,
         },
       ])
     );

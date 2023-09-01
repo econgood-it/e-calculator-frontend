@@ -33,6 +33,12 @@ describe('OrganizationForm', () => {
       <OrganizationForm organization={organization} onSave={onSave} />
     );
 
+    const nameField = screen.getByLabelText(/Name/);
+    await user.clear(nameField);
+    const newName = 'My new organization';
+    await user.type(nameField, newName);
+    expect(nameField).toHaveValue(newName);
+
     const cityField = screen.getByLabelText(/City/);
     await user.clear(cityField);
     const newCity = 'The new city';
@@ -61,6 +67,7 @@ describe('OrganizationForm', () => {
     await user.click(saveButton);
     await waitFor(() =>
       expect(onSave).toHaveBeenCalledWith({
+        name: newName,
         address: {
           city: newCity,
           street: newStreet,

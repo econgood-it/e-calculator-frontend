@@ -36,6 +36,14 @@ export function OrganizationForm({
 
   return (
     <FormContainer spacing={3} justifyContent="space-between">
+      <GridItem xs={12}>
+        <FormTextField
+          label={<Trans>Name</Trans>}
+          errors={errors}
+          register={register}
+          registerKey={'name'}
+        />
+      </GridItem>
       <GridItem xs={12} sm={6}>
         <FormTextField
           label={<Trans>Street</Trans>}
