@@ -41,6 +41,9 @@ describe('Sidebar', () => {
     (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
     (useOrganizations as jest.Mock).mockReturnValue({
       organizationItems: OrganizationItemsMocks.default(),
+      activeOrganization: new OrganizationMockBuilder()
+        .withId(OrganizationItemsMocks.default()[0].id)
+        .build(),
       setActiveOrganizationById: setActiveOrganizationByIdMock,
     });
   });
@@ -152,7 +155,9 @@ describe('Sidebar', () => {
       );
     });
 
-    await user.click(screen.getByLabelText('Create organization'));
+    await user.click(
+      screen.getByRole('button', { name: 'Create organization' })
+    );
     expect(
       await screen.findByRole('dialog', { name: 'Create organization' })
     ).toBeInTheDocument();
@@ -179,13 +184,12 @@ describe('Sidebar', () => {
 
     await user.click(
       screen.getByRole('button', {
-        name: 'Organization selection',
+        name: `Organization ${OrganizationItemsMocks.default()[0].id}`,
       })
     );
     const options = await screen.findAllByRole('option');
 
     expect(options.map((o) => o.textContent)).toEqual([
-      'Organization selection',
       ...OrganizationItemsMocks.default().map((i) => `Organization ${i.id}`),
     ]);
 

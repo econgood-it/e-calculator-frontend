@@ -1,14 +1,18 @@
-import { MenuItem, Select, SelectChangeEvent, Tooltip } from '@mui/material';
+import { MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import { Trans } from 'react-i18next';
-import IconButton from '@mui/material/IconButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSquarePlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { OrganizationCreationDialog } from './OrganizationCreationDialog';
 import { useState } from 'react';
 import { useOrganizations } from '../../contexts/OrganizationProvider';
 import GridContainer from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
 import { useNavigate } from 'react-router-dom';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 
 export function OrganizationSidebarSection() {
   const { organizationItems, setActiveOrganizationById, activeOrganization } =
@@ -26,36 +30,35 @@ export function OrganizationSidebarSection() {
 
   return (
     <>
-      <GridContainer justifyContent="space-around" alignItems="center">
-        <GridItem xs={6}>
-          <Select
-            variant="standard"
-            value={
-              (organizationItems.length > 0 && activeOrganization?.id) ||
-              'placeholder'
-            }
-            onChange={onOrganizationChange}
-          >
-            <MenuItem value="placeholder" disabled>
-              <Trans>Organization selection</Trans>
-            </MenuItem>
-            {organizationItems.map((o) => (
-              <MenuItem key={o.id} value={o.id}>
-                <Trans>{`Organization ${o.id}`}</Trans>
-              </MenuItem>
-            ))}
-          </Select>
-        </GridItem>
-        <GridItem xs={3}>
-          <Tooltip title={<Trans>Create organization</Trans>}>
-            <IconButton
-              color={'primary'}
-              aria-label={'Create organization'}
-              onClick={() => setOrganizationDialogOpen(true)}
-            >
-              <FontAwesomeIcon icon={faSquarePlus} />
-            </IconButton>
-          </Tooltip>
+      <GridContainer>
+        <GridItem xs={12}>
+          <List>
+            <ListItem key={'create-organization'} disablePadding>
+              <ListItemButton onClick={() => setOrganizationDialogOpen(true)}>
+                <ListItemIcon>
+                  <FontAwesomeIcon icon={faPlus} />
+                </ListItemIcon>
+                <ListItemText primary={<Trans>Create organization</Trans>} />
+              </ListItemButton>
+            </ListItem>
+            {activeOrganization && (
+              <ListItem key={'select-organization'}>
+                <Select
+                  variant="standard"
+                  aria-label="Organization selection"
+                  fullWidth
+                  value={activeOrganization.id}
+                  onChange={onOrganizationChange}
+                >
+                  {organizationItems.map((o) => (
+                    <MenuItem key={o.id} value={o.id}>
+                      <Trans>{`Organization ${o.id}`}</Trans>
+                    </MenuItem>
+                  ))}
+                </Select>
+              </ListItem>
+            )}
+          </List>
         </GridItem>
       </GridContainer>
       <OrganizationCreationDialog
