@@ -28,6 +28,7 @@ describe('useOrganizations', () => {
     getOrganizations: jest.fn(),
     getOrganization: jest.fn(),
     createOrganization: jest.fn(),
+    updateOrganization: jest.fn(),
   };
 
   const user = UserMocks.default();
@@ -87,7 +88,7 @@ describe('useOrganizations', () => {
     const orgaBuilder = new OrganizationMockBuilder();
 
     apiMock.createOrganization.mockResolvedValue(orgaBuilder.build());
-    const initialOrgaItems = [{ id: 10 }];
+    const initialOrgaItems = [{ id: 10, name: 'My orga' }];
     apiMock.getOrganizations.mockResolvedValue(initialOrgaItems);
     apiMock.getOrganization.mockResolvedValue(orgaBuilder.build());
     (useApi as jest.Mock).mockImplementation(() => apiMock);
@@ -124,6 +125,50 @@ describe('useOrganizations', () => {
       expect(result.current.activeOrganization?.id).toEqual(
         orgaBuilder.buildResponseBody().id
       )
+    );
+  });
+
+  it('should update active organization', async function () {
+    const orgaBuilder = new OrganizationMockBuilder();
+
+    apiMock.updateOrganization.mockResolvedValue(orgaBuilder.build());
+    const activeOrganizationId = 10;
+    const initialOrgaItems = [
+      { id: activeOrganizationId, name: 'My old orga Name' },
+    ];
+    apiMock.getOrganizations.mockResolvedValue(initialOrgaItems);
+    apiMock.getOrganization.mockResolvedValue(
+      orgaBuilder.withId(activeOrganizationId).build()
+    );
+    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    const { result } = await act(() => {
+      return renderHookWithTheme(() => useOrganizations(), {
+        wrapper: Wrapper,
+      });
+    });
+    const newName = 'newName';
+    await act(async () => {
+      await result.current.updateActiveOrganization(
+        orgaBuilder
+          .withId(activeOrganizationId)
+          .withName(newName)
+          .buildRequestBody()
+      );
+    });
+    await waitFor(() =>
+      expect(apiMock.updateOrganization).toHaveBeenCalledWith(
+        activeOrganizationId,
+        orgaBuilder
+          .withId(activeOrganizationId)
+          .withName(newName)
+          .buildRequestBody()
+      )
+    );
+    await waitFor(() =>
+      expect(result.current.activeOrganization?.name).toEqual(newName)
+    );
+    await waitFor(() =>
+      expect(result.current.organizationItems[0]?.name).toEqual(newName)
     );
   });
 

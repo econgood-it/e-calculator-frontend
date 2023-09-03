@@ -4,15 +4,15 @@ import RatingsPage from '../pages/RatingsPage';
 import { StakholderShortNames } from '../models/Rating';
 
 import Sidebar from '../pages/Sidebar';
-import BalanceSheetListPage from '../pages/BalanceSheetListPage';
+import { OrganizationOverviewPage } from '../pages/OrganizationOverviewPage';
 import WithActiveBalanceSheet from '../components/balanceSheet/WithActiveBalanceSheet';
-import BalanceSheetOverviewPage from '../pages/BalanceSheetOverviewPage';
 import CompanyFactsPage from '../pages/CompanyFactsPage';
 import { RedirectToActiveOrganization } from './RedirectToActiveOrganization';
 import { RequireActiveOrganization } from './RequireActiveOrganization';
 import { OrganizationProvider } from '../contexts/OrganizationProvider';
 import { BalanceSheetListProvider } from '../contexts/BalanceSheetListProvider';
 import { RequiresAuth } from './RequiresAuth';
+import { BalanceSheetOverviewPage } from '../pages/BalanceSheetOverviewPage';
 
 export function useRouter() {
   return createBrowserRouter([
@@ -39,7 +39,7 @@ export function useRouter() {
               children: [
                 {
                   path: '',
-                  element: <BalanceSheetListPage />,
+                  element: <OrganizationOverviewPage />,
                 },
                 {
                   path: 'balancesheet/:balanceSheetId',

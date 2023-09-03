@@ -28,6 +28,7 @@ export function OrganizationForm({
     resolver: zodResolver(FormInputSchema),
     mode: 'onChange',
     defaultValues: organization,
+    values: organization,
   });
 
   async function onSaveClick(data: FieldValues) {

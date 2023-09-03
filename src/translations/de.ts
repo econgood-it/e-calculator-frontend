@@ -62,5 +62,7 @@ export const DE_TRANSLATIONS = {
   'Create organization': 'Organisation erstellen',
   'Please create an organization to be able to create balance sheets for it later.':
     'Bitte erzeugen Sie eine Organisation, um später für diese Bilanzen erstellen zu können.',
+  'Your Organization': 'Ihre Organisation',
+  'Updated organization': 'Organisation aktualisiert',
   ...DE_ERROR_TRANSLATIONS,
 };

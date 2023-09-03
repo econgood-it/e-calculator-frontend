@@ -112,6 +112,17 @@ export class ApiClient {
     return OrganizationResponseSchema.parse(await response.json());
   }
 
+  async updateOrganization(
+    id: number,
+    organization: OrganizationRequestBody
+  ): Promise<Organization> {
+    const response = await this.wretchInstance.put(
+      organization,
+      `/organization/${id}`
+    );
+    return OrganizationResponseSchema.parse(await response.json());
+  }
+
   async getOrganizations(): Promise<OrganizationItems> {
     const response = await this.wretchInstance.get('/organization');
     return OrganizationItemsResponseSchema.parse(await response.json());

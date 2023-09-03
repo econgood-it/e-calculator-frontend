@@ -34,6 +34,7 @@ export function FormTextField<T extends FieldValues>({
       {...register(registerKey)}
       error={!!error}
       helperText={!!error && t(`${error?.message}`)}
+      InputLabelProps={{ shrink: true }}
     />
   );
 }

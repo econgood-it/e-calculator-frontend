@@ -96,6 +96,26 @@ describe('ApiClient', () => {
         orgaBuilder.buildRequestBody()
       );
     });
+
+    it('updates organization', async () => {
+      const orgaBuilder = new OrganizationMockBuilder();
+      const id = orgaBuilder.build().id;
+      const requestPromise = mockResource(
+        'put',
+        `${URL}/v1/organization/${id}`,
+        new Response(JSON.stringify(orgaBuilder.buildResponseBody()))
+      );
+      const response = await apiClient.updateOrganization(
+        id,
+        orgaBuilder.buildRequestBody()
+      );
+      expect(response).toEqual(orgaBuilder.build());
+
+      const request = await requestPromise;
+      await expect(request.json()).resolves.toEqual(
+        orgaBuilder.buildRequestBody()
+      );
+    });
     it('returns organizations of user', async () => {
       const organizations = [
         { id: 1, name: 'Orga 1' },

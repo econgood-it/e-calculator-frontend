@@ -22,6 +22,11 @@ export class OrganizationMockBuilder {
     return this;
   }
 
+  public withName(name: string) {
+    this.organization.name = name;
+    return this;
+  }
+
   public buildRequestBody(): OrganizationRequestBody {
     return _.omit(this.organization, ['id']);
   }

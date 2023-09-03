@@ -24,6 +24,9 @@ interface IOrganizationContext {
   activeOrganization: Organization | undefined;
   setActiveOrganizationById: (id: number) => void;
   createOrganization: (organization: OrganizationRequestBody) => Promise<void>;
+  updateActiveOrganization: (
+    organization: OrganizationRequestBody
+  ) => Promise<void>;
 }
 
 const OrganizationContext = createContext<IOrganizationContext | undefined>(
@@ -57,6 +60,15 @@ export function OrganizationProvider({ children }: OrganizationProviderProps) {
       prevState?.concat({ id: organizationId, name: organizationName })
     );
   }
+
+  function renameOrganizationItem(id: number, newName: string) {
+    setOrganizationItems((prevState) =>
+      prevState?.map((item) =>
+        item.id === id ? { ...item, name: newName } : item
+      )
+    );
+  }
+
   if (!organizationItems) {
     return <LoadingPage />;
   }
@@ -66,6 +78,7 @@ export function OrganizationProvider({ children }: OrganizationProviderProps) {
       organizationItems={organizationItems}
       user={user!}
       addOrganizationItem={addOrganizationItem}
+      renameOrganizationItem={renameOrganizationItem}
     >
       {children}
     </WithActiveOrganization>
@@ -74,12 +87,14 @@ export function OrganizationProvider({ children }: OrganizationProviderProps) {
 
 function WithActiveOrganization({
   organizationItems,
+  renameOrganizationItem,
   user,
   addOrganizationItem,
   children,
 }: {
   user: User;
   organizationItems: OrganizationItems;
+  renameOrganizationItem: (id: number, newName: string) => void;
   addOrganizationItem: (
     organizationId: number,
     organizationName: string
@@ -87,10 +102,11 @@ function WithActiveOrganization({
   children: ReactElement;
 }) {
   const api = useApi();
-  const [activeOrganization, setActiveOrganizationById] = useActiveOrganization(
-    user,
-    organizationItems
-  );
+  const [
+    activeOrganization,
+    setActiveOrganizationById,
+    updateActiveOrganization,
+  ] = useActiveOrganization(user, organizationItems);
   const navigate = useNavigate();
 
   async function createOrganization(organization: OrganizationRequestBody) {
@@ -99,6 +115,14 @@ function WithActiveOrganization({
     setActiveOrganizationById(newOrganization.id);
     navigate(`/organization/${newOrganization.id}`);
   }
+
+  async function updateActiveOrganizationAndUpdateItems(
+    organization: OrganizationRequestBody
+  ) {
+    await updateActiveOrganization(organization);
+    renameOrganizationItem(activeOrganization!.id, organization.name);
+  }
+
   return (
     <OrganizationContext.Provider
       value={{
@@ -106,6 +130,7 @@ function WithActiveOrganization({
         activeOrganization,
         setActiveOrganizationById,
         createOrganization,
+        updateActiveOrganization: updateActiveOrganizationAndUpdateItems,
       }}
     >
       {children}
@@ -140,7 +165,11 @@ function useOrganizationStorage(
 function useActiveOrganization(
   user: User,
   organizationItems: OrganizationItems
-): [Organization | undefined, Dispatch<SetStateAction<number | undefined>>] {
+): [
+  Organization | undefined,
+  Dispatch<SetStateAction<number | undefined>>,
+  (organization: OrganizationRequestBody) => Promise<void>
+] {
   const api = useApi();
   const { orgaId: organizationIdFromUrl } = useParams();
   const [localStorageId, setLocalStorageId] = useOrganizationStorage(user);
@@ -159,6 +188,13 @@ function useActiveOrganization(
     Organization | undefined
   >();
 
+  async function updateActiveOrganization(
+    organization: OrganizationRequestBody
+  ) {
+    await api.updateOrganization(activeOrganizationId!, organization);
+    setActiveOrganization({ id: activeOrganizationId!, ...organization });
+  }
+
   useEffect(() => {
     if (activeOrganizationId) {
       (async () => {
@@ -168,7 +204,11 @@ function useActiveOrganization(
     }
   }, [activeOrganizationId]);
 
-  return [activeOrganization, setActiveOrganizationById];
+  return [
+    activeOrganization,
+    setActiveOrganizationById,
+    updateActiveOrganization,
+  ];
 }
 
 export function useOrganizations(): IOrganizationContext {
