@@ -64,5 +64,7 @@ export const DE_TRANSLATIONS = {
     'Bitte erzeugen Sie eine Organisation, um später für diese Bilanzen erstellen zu können.',
   'Your Organization': 'Ihre Organisation',
   'Updated organization': 'Organisation aktualisiert',
+  Organizations: 'Organisationen',
+  Overview: 'Übersicht',
   ...DE_ERROR_TRANSLATIONS,
 };

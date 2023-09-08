@@ -1,13 +1,18 @@
-import { MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import {
+  ListSubheader,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+} from '@mui/material';
 import { Trans } from 'react-i18next';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faHouse, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { OrganizationCreationDialog } from './OrganizationCreationDialog';
 import { useState } from 'react';
 import { useOrganizations } from '../../contexts/OrganizationProvider';
 import GridContainer from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -32,7 +37,24 @@ export function OrganizationSidebarSection() {
     <>
       <GridContainer>
         <GridItem xs={12}>
-          <List>
+          <List
+            subheader={
+              <ListSubheader>
+                <Trans>Organizations</Trans>
+              </ListSubheader>
+            }
+          >
+            <ListItem disablePadding>
+              <ListItemButton
+                component={Link}
+                to={`/organization/${activeOrganization?.id}`}
+              >
+                <ListItemIcon>
+                  <FontAwesomeIcon icon={faHouse} />
+                </ListItemIcon>
+                <ListItemText primary={<Trans>Overview</Trans>} />
+              </ListItemButton>
+            </ListItem>
             <ListItem key={'create-organization'} disablePadding>
               <ListItemButton onClick={() => setOrganizationDialogOpen(true)}>
                 <ListItemIcon>

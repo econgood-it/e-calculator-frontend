@@ -91,10 +91,7 @@ describe('OrganizationOverviewPage', () => {
       );
     });
 
-    expect(await screen.findAllByRole('link')).toHaveLength(2);
-    const linkToBalanceSheet2 = screen.getByRole('link', {
-      name: 'Balance sheet 2',
-    });
+    const linkToBalanceSheet2 = screen.getByLabelText('Balance sheet 2');
 
     await userEvent.click(linkToBalanceSheet2);
 

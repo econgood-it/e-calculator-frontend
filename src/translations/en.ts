@@ -54,6 +54,8 @@ const EN_WORDS = [
   'Please create an organization to be able to create balance sheets for it later.',
   'Your Organization',
   'Updated organization',
+  'Organizations',
+  'Overview',
 ];
 
 export const EN_TRANSLATIONS = {
