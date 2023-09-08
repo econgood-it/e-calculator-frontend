@@ -1,4 +1,4 @@
-import { BalanceSheetMocks } from '../testUtils/balanceSheets';
+import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets';
 import { renderHookWithTheme } from '../testUtils/rendering';
 import { act, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -23,17 +23,16 @@ describe('WithActiveBalanceSheet', () => {
   const alertMock = {
     addSuccessAlert: jest.fn(),
   };
+  const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
 
   beforeEach(() => {
-    apiMock.getBalanceSheet.mockResolvedValue(
-      BalanceSheetMocks.balanceSheet1()
-    );
+    apiMock.getBalanceSheet.mockResolvedValue(balanceSheetMockBuilder.build());
     (useAlert as jest.Mock).mockImplementation(() => alertMock);
   });
 
   function Wrapper({ children }: { children: ReactElement }) {
     const initialPathForRouting = `/balancesheets/${
-      BalanceSheetMocks.balanceSheet1().id
+      balanceSheetMockBuilder.build().id
     }`;
     return (
       <MemoryRouter initialEntries={[initialPathForRouting]}>
@@ -75,9 +74,11 @@ describe('WithActiveBalanceSheet', () => {
       },
     ];
 
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
+
     const updatedBalanceSheet = {
-      ...BalanceSheetMocks.balanceSheet1(),
-      ratings: BalanceSheetMocks.balanceSheet1().ratings.map((r) => {
+      ...balanceSheetMockBuilder.buildResponseBody(),
+      ratings: balanceSheetMockBuilder.buildResponseBody().ratings.map((r) => {
         const foundRating = ratingsUpdate.find(
           (ur: { shortName: string; estimations: number }) =>
             r.shortName === ur.shortName
@@ -98,7 +99,7 @@ describe('WithActiveBalanceSheet', () => {
 
     await waitFor(() =>
       expect(apiMock.updateBalanceSheet).toHaveBeenCalledWith(
-        BalanceSheetMocks.balanceSheet1().id,
+        balanceSheetMockBuilder.buildResponseBody().id,
         {
           ratings: [
             {
@@ -129,8 +130,9 @@ describe('WithActiveBalanceSheet', () => {
       ],
       mainOriginOfOtherSuppliers: 'DEU',
     };
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
     const updatedBalanceSheet = {
-      ...BalanceSheetMocks.balanceSheet1(),
+      ...balanceSheetMockBuilder.build(),
       companyFacts: {
         ...companyFactsUpdate,
         mainOriginOfOtherSuppliers: {
@@ -153,7 +155,7 @@ describe('WithActiveBalanceSheet', () => {
 
     await waitFor(() =>
       expect(apiMock.updateBalanceSheet).toHaveBeenCalledWith(
-        BalanceSheetMocks.balanceSheet1().id,
+        balanceSheetMockBuilder.build().id,
         {
           companyFacts: companyFactsUpdate,
         }

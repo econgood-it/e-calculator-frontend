@@ -4,7 +4,7 @@ import { useAlert } from '../../contexts/AlertContext';
 import { useActiveBalanceSheet } from '../../contexts/ActiveBalanceSheetProvider';
 import renderWithTheme from '../../testUtils/rendering';
 import { RatingsForm } from './RatingsForm';
-import { RatingsMocks } from '../../testUtils/balanceSheets';
+import { RatingsMockBuilder } from '../../testUtils/balanceSheets';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { saveForm } from '../../testUtils/form';
@@ -33,7 +33,7 @@ describe('RatingsForm', () => {
     });
   });
   it('should render ratings', async () => {
-    const ratings = RatingsMocks.ratings1();
+    const ratings = new RatingsMockBuilder().build();
     renderWithTheme(<RatingsForm stakeholderName={''} ratings={ratings} />);
     for (const [index, rating] of ratings.entries()) {
       expect(
@@ -46,7 +46,7 @@ describe('RatingsForm', () => {
 
   it('should show workbook tooltip', async () => {
     const user = userEvent.setup();
-    const ratings = RatingsMocks.ratings1();
+    const ratings = new RatingsMockBuilder().build();
     renderWithTheme(<RatingsForm stakeholderName={''} ratings={ratings} />);
     const infoIcons = screen.getAllByLabelText('info');
     const workbook = new Workbook(WorkbookResponseMocks.default());
@@ -59,7 +59,7 @@ describe('RatingsForm', () => {
 
   it('should modify and save estimations of some ratings', async () => {
     const user = userEvent.setup();
-    const ratings = RatingsMocks.ratings1();
+    const ratings = new RatingsMockBuilder().build();
     renderWithTheme(<RatingsForm stakeholderName={''} ratings={ratings} />);
     const input = within(
       screen.getByLabelText(`ratings.${0}.estimations`)

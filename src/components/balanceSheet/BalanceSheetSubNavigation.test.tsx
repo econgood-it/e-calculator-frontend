@@ -25,10 +25,10 @@ describe('BalanceSheetSubNavigation', () => {
   };
   beforeEach(() => {
     apiMock.deleteBalanceSheet.mockImplementation();
-    (useBalanceSheetItems as jest.Mock).mockReturnValue([
+    (useBalanceSheetItems as jest.Mock).mockReturnValue({
       balanceSheetItems,
       setBalanceSheetItems,
-    ]);
+    });
     (useOrganizations as jest.Mock).mockReturnValue({
       activeOrganization: new OrganizationMockBuilder()
         .withId(organizationIdFromUrl)

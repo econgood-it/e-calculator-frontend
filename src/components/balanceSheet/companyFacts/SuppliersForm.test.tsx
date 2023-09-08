@@ -4,7 +4,7 @@ import SuppliersForm from './SuppliersForm';
 import userEvent from '@testing-library/user-event';
 import renderWithTheme from '../../../testUtils/rendering';
 import {
-  CompanyFactsMocks,
+  CompanyFactsMockBuilder,
   SuppliersMocks,
 } from '../../../testUtils/balanceSheets';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
@@ -32,16 +32,17 @@ describe('SuppliersForm', () => {
 
   it('should set default value and validate all modifications for the field total purchase from suppliers', async () => {
     const user = userEvent.setup();
+    const companyFactsMockBuilder = new CompanyFactsMockBuilder();
     renderWithTheme(
       <SuppliersForm
-        formData={CompanyFactsMocks.companyFacts1()}
+        formData={companyFactsMockBuilder.build()}
         regions={regionsMocks.regions1()}
         industries={industriesMocks.industries1()}
       />
     );
     const input = screen.getByLabelText('Total purchases from suppliers');
     expect(input).toHaveValue(
-      CompanyFactsMocks.companyFacts1().totalPurchaseFromSuppliers.toString()
+      companyFactsMockBuilder.build().totalPurchaseFromSuppliers.toString()
     );
 
     await user.clear(input);
@@ -86,7 +87,7 @@ describe('SuppliersForm', () => {
   });
 
   it('renders supply fractions', async () => {
-    const formData = CompanyFactsMocks.companyFacts1();
+    const formData = new CompanyFactsMockBuilder().build();
     renderWithTheme(
       <SuppliersForm
         formData={formData}
@@ -122,16 +123,16 @@ describe('SuppliersForm', () => {
     for (const index in formData.supplyFractions) {
       await fillNumberField(user, `supplyFractions.${index}.costs`, newCosts);
     }
+    const companyFactsMockBuilder = new CompanyFactsMockBuilder();
     const saveButton = screen.getByRole('button', { name: 'Save' });
     await user.click(saveButton);
     expect(updateCompanyFacts).toHaveBeenCalledWith({
       totalPurchaseFromSuppliers: formData.totalPurchaseFromSuppliers,
-      supplyFractions: CompanyFactsMocks.companyFacts1().supplyFractions.map(
-        (s) => ({ ...s, costs: newCosts })
-      ),
+      supplyFractions: companyFactsMockBuilder
+        .build()
+        .supplyFractions.map((s) => ({ ...s, costs: newCosts })),
       mainOriginOfOtherSuppliers:
-        CompanyFactsMocks.companyFacts1().mainOriginOfOtherSuppliers
-          .countryCode,
+        companyFactsMockBuilder.build().mainOriginOfOtherSuppliers.countryCode,
     });
   });
 

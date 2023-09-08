@@ -60,7 +60,7 @@ const BalanceSheetSubNavigation = ({
   const api = useApi();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [, setBalanceSheetItems] = useBalanceSheetItems();
+  const { setBalanceSheetItems } = useBalanceSheetItems();
   const { activeOrganization } = useOrganizations();
 
   const deleteBalanceSheet = async () => {

@@ -9,6 +9,7 @@ import {
   BalanceSheet,
   BalanceSheetCreateRequestBody,
 } from '../models/BalanceSheet';
+import _ from 'lodash';
 
 export const CustomersMocks = {
   customers1: () => ({
@@ -60,45 +61,8 @@ export const SuppliersMocks = {
   }),
 };
 
-export const SuppliersJsonMocks = {
-  create: () => ({
-    totalPurchaseFromSuppliers: 900,
-    supplyFractions: [
-      {
-        countryCode: 'EGY',
-        industryCode: 'A',
-        costs: 388,
-      },
-      {
-        countryCode: 'AFG',
-        industryCode: 'A',
-        costs: 54,
-      },
-    ],
-    mainOriginOfOtherSuppliers: 'BEL',
-  }),
-};
-
-export const CompanyFactsMocks = {
-  companyFacts1: (): CompanyFacts => ({
-    ...SuppliersMocks.suppliers1(),
-    ...OwnersAndFinancialServicesMocks.ownersAndFinancialServices1(),
-    ...EmployeesMocks.employees1(),
-    ...CustomersMocks.customers1(),
-  }),
-};
-
-export const CompanyFactsJsonMocks = {
-  create: () => ({
-    ...SuppliersJsonMocks.create(),
-    ...OwnersAndFinancialServicesMocks.ownersAndFinancialServices1(),
-    ...EmployeesMocks.employees1(),
-    ...CustomersMocks.customers1(),
-  }),
-};
-
-export const RatingsMocks = {
-  ratings1: (): Rating[] => [
+export class RatingsMockBuilder {
+  private ratings: Rating[] = [
     {
       shortName: 'A1',
       name: 'Menschenwürde in der Zulieferkette',
@@ -139,26 +103,85 @@ export const RatingsMocks = {
       maxPoints: 0,
       points: 0,
     },
-  ],
-};
+  ];
 
-export const BalanceSheetMocks = {
-  balanceSheet1: (): BalanceSheet => ({
+  public buildRequestBody() {
+    return this.ratings.map((r) => ({
+      shortName: r.shortName,
+      weight: r.weight,
+      estimations: r.estimations,
+    }));
+  }
+
+  public buildResponseBody(): Rating[] {
+    return this.build();
+  }
+
+  public build(): Rating[] {
+    return this.ratings;
+  }
+}
+
+export class CompanyFactsMockBuilder {
+  private companyFacts: CompanyFacts = {
+    ...SuppliersMocks.suppliers1(),
+    ...OwnersAndFinancialServicesMocks.ownersAndFinancialServices1(),
+    ...EmployeesMocks.employees1(),
+    ...CustomersMocks.customers1(),
+  };
+
+  public buildRequestBody() {
+    return {
+      ...this.companyFacts,
+      mainOriginOfOtherSuppliers:
+        this.companyFacts.mainOriginOfOtherSuppliers.countryCode,
+    };
+  }
+
+  public buildResponseBody(): CompanyFacts {
+    return this.companyFacts;
+  }
+
+  public build(): CompanyFacts {
+    return this.companyFacts;
+  }
+}
+
+export class BalanceSheetMockBuilder {
+  private balanceSheet = {
     id: 3,
     type: BalanceSheetType.Full,
     version: BalanceSheetVersion.v5_0_8,
-    companyFacts: CompanyFactsMocks.companyFacts1(),
-    ratings: RatingsMocks.ratings1(),
+    companyFacts: new CompanyFactsMockBuilder(),
+    ratings: new RatingsMockBuilder(),
     stakeholderWeights: [],
-  }),
-};
+  };
 
-export const BalanceSheetJsonMocks = {
-  request: (): BalanceSheetCreateRequestBody => ({
-    type: BalanceSheetType.Full,
-    version: BalanceSheetVersion.v5_0_8,
-    companyFacts: CompanyFactsJsonMocks.create(),
-    ratings: RatingsMocks.ratings1(),
-    stakeholderWeights: [],
-  }),
-};
+  public withId(id: number) {
+    this.balanceSheet.id = id;
+    return this;
+  }
+
+  public buildRequestBody(): BalanceSheetCreateRequestBody {
+    return _.omit(
+      {
+        ...this.balanceSheet,
+        companyFacts: this.balanceSheet.companyFacts.buildRequestBody(),
+        ratings: this.balanceSheet.ratings.buildRequestBody(),
+      },
+      ['id']
+    );
+  }
+
+  public buildResponseBody() {
+    return this.build();
+  }
+
+  public build(): BalanceSheet {
+    return {
+      ...this.balanceSheet,
+      companyFacts: this.balanceSheet.companyFacts.build(),
+      ratings: this.balanceSheet.ratings.build(),
+    };
+  }
+}

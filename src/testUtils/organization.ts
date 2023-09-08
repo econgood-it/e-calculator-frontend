@@ -32,7 +32,7 @@ export class OrganizationMockBuilder {
   }
 
   public buildResponseBody() {
-    return _.omit(this.organization);
+    return this.organization;
   }
 
   public build(): Organization {

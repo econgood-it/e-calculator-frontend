@@ -10,7 +10,7 @@ import { OrganizationRequestBody } from '../models/Organization';
 import { Link } from 'react-router-dom';
 
 export function OrganizationOverviewPage() {
-  const [balanceSheetItems] = useBalanceSheetItems();
+  const { balanceSheetItems } = useBalanceSheetItems();
   const { addSuccessAlert } = useAlert();
   const { t } = useTranslation();
   const { activeOrganization, updateActiveOrganization } = useOrganizations();

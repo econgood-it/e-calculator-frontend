@@ -13,16 +13,13 @@ import { useState } from 'react';
 import { AppBar, Box, Divider, ListSubheader, useTheme } from '@mui/material';
 import { Trans } from 'react-i18next';
 import styled from 'styled-components';
-import { Outlet, useNavigate } from 'react-router-dom';
-
-import { useApi } from '../contexts/ApiProvider';
+import { Outlet } from 'react-router-dom';
 import { BalanceSheetNavigationItem } from '../components/balanceSheet/BalanceSheetNavigationItem';
 import { useBalanceSheetItems } from '../contexts/BalanceSheetListProvider';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { useOrganizations } from '../contexts/OrganizationProvider';
 import { OrganizationSidebarSection } from '../components/organization/OrganizationSidebarSection';
 import GridContainer from '../components/layout/GridContainer';
 import GridItem from '../components/layout/GridItem';
@@ -50,29 +47,19 @@ const Content = styled.div<{ $open: boolean; $drawerWidth: number }>`
 export default function Sidebar() {
   const theme = useTheme();
   const [open, setOpen] = useState<boolean>(true);
-  const [balanceSheetItems, setBalanceSheetItems] = useBalanceSheetItems();
-  const navigate = useNavigate();
+  const { balanceSheetItems, createBalanceSheet } = useBalanceSheetItems();
+
   const drawerWidth = 260;
-  const api = useApi();
-  const { activeOrganization } = useOrganizations();
 
   const toogleSidebar = () => {
     setOpen(!open);
   };
 
-  const createBalanceSheet = async () => {
-    const newBalanceSheet = await api.createBalanceSheet(
-      {
-        type: BalanceSheetType.Full,
-        version: BalanceSheetVersion.v5_0_8,
-      },
-      activeOrganization?.id
-    );
-    const id = newBalanceSheet.id!;
-    setBalanceSheetItems((prevBalanceSheets) =>
-      prevBalanceSheets.concat({ id: id })
-    );
-    navigate(`balancesheet/${id}`);
+  const onCreateBalanceSheet = async () => {
+    await createBalanceSheet({
+      type: BalanceSheetType.Full,
+      version: BalanceSheetVersion.v5_0_8,
+    });
   };
 
   return (
@@ -116,7 +103,7 @@ export default function Sidebar() {
               }
             >
               <ListItem key={'create-balance-sheet'} disablePadding>
-                <ListItemButton onClick={createBalanceSheet}>
+                <ListItemButton onClick={onCreateBalanceSheet}>
                   <ListItemIcon>
                     <FontAwesomeIcon icon={faPlus} />
                   </ListItemIcon>

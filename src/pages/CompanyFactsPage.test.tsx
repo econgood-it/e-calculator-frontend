@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
 import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
-import { BalanceSheetMocks } from '../testUtils/balanceSheets';
+import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets';
 import { regionsMocks } from '../testUtils/regions';
 import CompanyFactsPage from './CompanyFactsPage';
 import { useApi } from '../contexts/ApiProvider';
@@ -21,7 +21,7 @@ describe('CompanyFactsPage', () => {
   beforeEach(() => {
     (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
     (useActiveBalanceSheet as jest.Mock).mockReturnValue({
-      balanceSheet: BalanceSheetMocks.balanceSheet1(),
+      balanceSheet: new BalanceSheetMockBuilder().build(),
     });
     apiMock.getRegions.mockResolvedValue(regionsMocks.regions1());
     apiMock.getIndustries.mockResolvedValue(industriesMocks.industries1());

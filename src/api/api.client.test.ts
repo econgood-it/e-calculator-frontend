@@ -7,10 +7,7 @@ import {
   makeWretchInstanceWithAuth,
 } from './api.client';
 import { exampleUser, UserMocks } from '../testUtils/user';
-import {
-  BalanceSheetJsonMocks,
-  BalanceSheetMocks,
-} from '../testUtils/balanceSheets';
+import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets';
 import { WorkbookResponseMocks } from '../testUtils/workbook';
 import { regionsMocks } from '../testUtils/regions';
 import { industriesMocks } from '../testUtils/industries';
@@ -197,66 +194,83 @@ describe('ApiClient', () => {
     });
 
     it('creates balancesheet', async () => {
-      const balanceSheet = BalanceSheetJsonMocks.request();
+      const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
       const requestPromise = mockResource(
         'post',
         `${URL}/v1/balancesheets`,
-        new Response(JSON.stringify(BalanceSheetMocks.balanceSheet1()))
+        new Response(
+          JSON.stringify(balanceSheetMockBuilder.buildResponseBody())
+        )
       );
-      const response = await apiClient.createBalanceSheet(balanceSheet);
-      expect(response).toEqual(BalanceSheetMocks.balanceSheet1());
+      const response = await apiClient.createBalanceSheet(
+        balanceSheetMockBuilder.buildRequestBody()
+      );
+      expect(response).toEqual(balanceSheetMockBuilder.build());
 
       const request = await requestPromise;
-      await expect(request.json()).resolves.toEqual(balanceSheet);
+      await expect(request.json()).resolves.toEqual(
+        balanceSheetMockBuilder.buildRequestBody()
+      );
     });
 
     it('creates balance sheet belonging to organization', async () => {
-      const balanceSheet = BalanceSheetJsonMocks.request();
+      const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
       const organizationId = 2;
       const requestPromise = mockResource(
         'post',
         `${URL}/v1/organization/${organizationId}/balancesheet`,
-        new Response(JSON.stringify(BalanceSheetMocks.balanceSheet1()))
+        new Response(
+          JSON.stringify(balanceSheetMockBuilder.buildResponseBody())
+        )
       );
       const response = await apiClient.createBalanceSheet(
-        balanceSheet,
+        balanceSheetMockBuilder.buildRequestBody(),
         organizationId
       );
-      expect(response).toEqual(BalanceSheetMocks.balanceSheet1());
+      expect(response).toEqual(balanceSheetMockBuilder.build());
 
       const request = await requestPromise;
-      await expect(request.json()).resolves.toEqual(balanceSheet);
+      await expect(request.json()).resolves.toEqual(
+        balanceSheetMockBuilder.buildRequestBody()
+      );
     });
     it('returns balance sheet', async () => {
-      const balanceSheet = BalanceSheetMocks.balanceSheet1();
+      const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
       mockResource(
         'get',
-        `${URL}/v1/balancesheets/${balanceSheet.id}`,
-        new Response(JSON.stringify(balanceSheet))
+        `${URL}/v1/balancesheets/${balanceSheetMockBuilder.build().id}`,
+        new Response(
+          JSON.stringify(balanceSheetMockBuilder.buildResponseBody())
+        )
       );
-      const response = await apiClient.getBalanceSheet(balanceSheet.id!);
-      expect(response).toEqual(balanceSheet);
+      const response = await apiClient.getBalanceSheet(
+        balanceSheetMockBuilder.build().id!
+      );
+      expect(response).toEqual(balanceSheetMockBuilder.build());
     });
 
     it('updates balance sheet', async () => {
-      const balanceSheetJson = BalanceSheetJsonMocks.request();
-      const balanceSheet = BalanceSheetMocks.balanceSheet1();
+      const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
       const requestPromise = mockResource(
         'patch',
-        `${URL}/v1/balancesheets/${balanceSheet.id}`,
-        new Response(JSON.stringify(balanceSheet))
+        `${URL}/v1/balancesheets/${balanceSheetMockBuilder.build().id}`,
+        new Response(
+          JSON.stringify(balanceSheetMockBuilder.buildResponseBody())
+        )
       );
       const response = await apiClient.updateBalanceSheet(
-        balanceSheet.id!,
-        balanceSheetJson
+        balanceSheetMockBuilder.build().id!,
+        balanceSheetMockBuilder.buildRequestBody()
       );
-      expect(response).toEqual(balanceSheet);
+      expect(response).toEqual(balanceSheetMockBuilder.build());
       const request = await requestPromise;
-      await expect(request.json()).resolves.toEqual(balanceSheetJson);
+      await expect(request.json()).resolves.toEqual(
+        balanceSheetMockBuilder.buildRequestBody()
+      );
     });
 
     it('deletes balance sheet', async () => {
-      const balanceSheet = BalanceSheetMocks.balanceSheet1();
+      const balanceSheet = new BalanceSheetMockBuilder().build();
       mockResource('delete', `${URL}/v1/balancesheets/${balanceSheet.id}`);
       await apiClient.deleteBalanceSheet(balanceSheet.id!);
     });

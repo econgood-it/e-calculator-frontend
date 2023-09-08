@@ -8,12 +8,19 @@ import {
   useState,
 } from 'react';
 import { useApi } from './ApiProvider';
-import { BalanceSheetItem } from '../models/BalanceSheet';
+import {
+  BalanceSheetCreateRequestBody,
+  BalanceSheetItem,
+} from '../models/BalanceSheet';
 import { useOrganizations } from './OrganizationProvider';
+import { useNavigate } from 'react-router-dom';
 
 interface IBalanceSheetListContext {
   balanceSheetItems: BalanceSheetItem[];
   setBalanceSheetItems: Dispatch<SetStateAction<BalanceSheetItem[]>>;
+  createBalanceSheet: (
+    balanceSheet: BalanceSheetCreateRequestBody
+  ) => Promise<void>;
 }
 
 const BalanceSheetListContext = createContext<
@@ -28,6 +35,7 @@ function BalanceSheetListProvider({ children }: BalanceSheetListProviderProps) {
     BalanceSheetItem[]
   >([]);
   const { activeOrganization } = useOrganizations();
+  const navigate = useNavigate();
   const api = useApi();
   useEffect(() => {
     (async () => {
@@ -37,11 +45,27 @@ function BalanceSheetListProvider({ children }: BalanceSheetListProviderProps) {
     })();
   }, [activeOrganization]);
 
+  async function createBalanceSheet(
+    balanceSheet: BalanceSheetCreateRequestBody
+  ) {
+    const newBalanceSheet = await api.createBalanceSheet(
+      balanceSheet,
+      activeOrganization?.id
+    );
+    setBalanceSheetItems((prevState) =>
+      prevState.concat({ id: newBalanceSheet.id! })
+    );
+    navigate(
+      `/organization/${activeOrganization?.id}/balancesheet/${newBalanceSheet.id}`
+    );
+  }
+
   return (
     <BalanceSheetListContext.Provider
       value={{
         balanceSheetItems,
         setBalanceSheetItems,
+        createBalanceSheet,
       }}
     >
       {children}
@@ -49,16 +73,13 @@ function BalanceSheetListProvider({ children }: BalanceSheetListProviderProps) {
   );
 }
 
-export const useBalanceSheetItems = (): [
-  BalanceSheetItem[],
-  Dispatch<SetStateAction<BalanceSheetItem[]>>
-] => {
+export const useBalanceSheetItems = (): IBalanceSheetListContext => {
   const context = useContext(BalanceSheetListContext);
   if (context === undefined) {
     throw new Error(
       'useBalanceSheetListContext must be within BalanceSheetListProvider'
     );
   }
-  return [context.balanceSheetItems, context.setBalanceSheetItems];
+  return context;
 };
 export { BalanceSheetListProvider };

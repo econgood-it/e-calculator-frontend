@@ -33,10 +33,10 @@ describe('OrganizationOverviewPage', () => {
   const addSuccessAlertMock = jest.fn();
 
   beforeEach(() => {
-    (useBalanceSheetItems as jest.Mock).mockReturnValue([
+    (useBalanceSheetItems as jest.Mock).mockReturnValue({
       balanceSheetItems,
       setBalanceSheetItems,
-    ]);
+    });
     (useAlert as jest.Mock).mockReturnValue({
       addErrorAlert: jest.fn(),
       addSuccessAlert: addSuccessAlertMock,
