@@ -8,6 +8,7 @@ import { Rating } from '../models/Rating';
 import {
   BalanceSheet,
   BalanceSheetCreateRequestBody,
+  BalanceSheetItem,
 } from '../models/BalanceSheet';
 import _ from 'lodash';
 
@@ -183,5 +184,52 @@ export class BalanceSheetMockBuilder {
       companyFacts: this.balanceSheet.companyFacts.build(),
       ratings: this.balanceSheet.ratings.build(),
     };
+  }
+}
+
+export class BalanceSheetItemMockBuilder {
+  private balanceSheetItem = {
+    id: 3,
+  };
+
+  public withId(id: number) {
+    this.balanceSheetItem.id = id;
+    return this;
+  }
+
+  public buildRequestBody() {
+    return this.build();
+  }
+
+  public buildResponseBody() {
+    return this.build();
+  }
+
+  public build(): BalanceSheetItem {
+    return this.balanceSheetItem;
+  }
+}
+
+export class BalanceSheetItemsMockBuilder {
+  private balanceSheetItemsBuilder = [
+    new BalanceSheetItemMockBuilder().withId(7),
+    new BalanceSheetItemMockBuilder().withId(3),
+  ];
+
+  public addItem(balanceSheetItemBuilder: BalanceSheetItemMockBuilder) {
+    this.balanceSheetItemsBuilder.push(balanceSheetItemBuilder);
+    return this;
+  }
+
+  public buildRequestBody() {
+    return this.build();
+  }
+
+  public buildResponseBody() {
+    return this.build();
+  }
+
+  public build(): BalanceSheetItem[] {
+    return this.balanceSheetItemsBuilder.map((b) => b.build());
   }
 }

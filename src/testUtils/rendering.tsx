@@ -8,6 +8,7 @@ import { ThemeProvider } from 'styled-components';
 import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material';
 import { themeOptions } from '../App';
 import { FC, ReactElement, ReactNode } from 'react';
+import userEvent from '@testing-library/user-event';
 
 const theme = createTheme({ ...themeOptions });
 
@@ -22,7 +23,10 @@ export const AllTheProviders: FC<{ children: ReactNode }> = ({ children }) => {
 const renderWithTheme = (
   ui: ReactElement,
   options?: Omit<RenderOptions, 'wrapper'>
-) => render(ui, { wrapper: AllTheProviders, ...options });
+) => {
+  const user = userEvent.setup();
+  return { result: render(ui, { wrapper: AllTheProviders, ...options }), user };
+};
 
 export function renderHookWithTheme<TProps, TResult>(
   callback: (props: TProps) => TResult,
@@ -39,6 +43,7 @@ export function renderHookWithTheme<TProps, TResult>(
       </AllTheProviders>
     );
   }
+
   return renderHook(callback, { ...options, wrapper: Wrapper });
 }
 

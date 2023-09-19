@@ -5,7 +5,10 @@ import Sidebar from './Sidebar';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { useBalanceSheetItems } from '../contexts/BalanceSheetListProvider';
-import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets';
+import {
+  BalanceSheetItemsMockBuilder,
+  BalanceSheetMockBuilder,
+} from '../testUtils/balanceSheets';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
@@ -23,7 +26,7 @@ jest.mock('../contexts/AlertContext');
 
 describe('Sidebar', () => {
   const initialPathForRouting = '/organization/3';
-  const balanceSheetItems = [{ id: 1 }, { id: 2 }];
+  const balanceSheetItems = new BalanceSheetItemsMockBuilder().build();
 
   const balanceSheetListMock = {
     balanceSheetItems,
@@ -69,8 +72,9 @@ describe('Sidebar', () => {
       </MemoryRouter>
     );
     expect(await screen.findAllByText(/Balance sheet \d/)).toHaveLength(2);
-    expect(screen.getByText('Balance sheet 1')).toBeInTheDocument();
-    expect(screen.getByText('Balance sheet 2')).toBeInTheDocument();
+    balanceSheetItems.forEach((b) => {
+      expect(screen.getByText(`Balance sheet ${b.id}`)).toBeInTheDocument();
+    });
   });
 
   it('navigates to balance sheet if user click on balance sheet navigation item', async () => {
@@ -81,58 +85,22 @@ describe('Sidebar', () => {
         <Routes>
           <Route path={initialPathForRouting} element={<Sidebar />} />
           <Route
-            path={`/${initialPathForRouting}/balancesheet/2`}
-            element={<div>Navigated to Balance sheet 2</div>}
+            path={`/${initialPathForRouting}/balancesheet/3`}
+            element={<div>Navigated to Balance sheet 3</div>}
           />
         </Routes>
       </MemoryRouter>
     );
 
     const balanceSheetsNavButton = await screen.findByRole('link', {
-      name: /Balance sheet 2/i,
+      name: /Balance sheet 3/i,
     });
 
     await user.click(balanceSheetsNavButton);
 
     expect(
-      await screen.findByText('Navigated to Balance sheet 2')
+      await screen.findByText('Navigated to Balance sheet 3')
     ).toBeInTheDocument();
-  });
-
-  it('creates new balance sheet belonging to organization', async () => {
-    const user = userEvent.setup();
-
-    const balanceSheet = new BalanceSheetMockBuilder().build();
-    (useOrganizations as jest.Mock).mockReturnValue({
-      organizationItems: OrganizationItemsMocks.default(),
-      activeOrganization: new OrganizationMockBuilder().build(),
-      setActiveOrganizationById: setActiveOrganizationByIdMock,
-    });
-    balanceSheetListMock.createBalanceSheet.mockResolvedValue({
-      ...balanceSheet,
-      id: 3,
-    });
-    (useBalanceSheetItems as jest.Mock).mockImplementation(
-      () => balanceSheetListMock
-    );
-    act(() => {
-      renderWithTheme(
-        <MemoryRouter initialEntries={[initialPathForRouting]}>
-          <Routes>
-            <Route path={initialPathForRouting} element={<Sidebar />} />
-          </Routes>
-        </MemoryRouter>
-      );
-    });
-
-    await user.click(
-      screen.getByRole('button', { name: /Create balance sheet/i })
-    );
-
-    expect(balanceSheetListMock.createBalanceSheet).toHaveBeenCalledWith({
-      type: BalanceSheetType.Full,
-      version: BalanceSheetVersion.v5_0_8,
-    });
   });
 
   it('creates organization and navigates to it clicked', async () => {

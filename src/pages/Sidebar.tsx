@@ -1,28 +1,18 @@
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBars, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { useState } from 'react';
-import { AppBar, Box, Divider, ListSubheader, useTheme } from '@mui/material';
+import { AppBar, Box, Divider, useTheme } from '@mui/material';
 import { Trans } from 'react-i18next';
 import styled from 'styled-components';
 import { Outlet } from 'react-router-dom';
-import { BalanceSheetNavigationItem } from '../components/balanceSheet/BalanceSheetNavigationItem';
-import { useBalanceSheetItems } from '../contexts/BalanceSheetListProvider';
-import {
-  BalanceSheetType,
-  BalanceSheetVersion,
-} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { OrganizationSidebarSection } from '../components/organization/OrganizationSidebarSection';
 import GridContainer from '../components/layout/GridContainer';
 import GridItem from '../components/layout/GridItem';
+import { BalanceSheetSidebarSection } from '../components/balanceSheet/BalanceSheetSidebarSection';
 
 const FixedAppBar = styled(AppBar)`
   z-index: ${(props) => props.theme.zIndex.drawer + 1};
@@ -47,19 +37,11 @@ const Content = styled.div<{ $open: boolean; $drawerWidth: number }>`
 export default function Sidebar() {
   const theme = useTheme();
   const [open, setOpen] = useState<boolean>(true);
-  const { balanceSheetItems, createBalanceSheet } = useBalanceSheetItems();
 
   const drawerWidth = 260;
 
   const toogleSidebar = () => {
     setOpen(!open);
-  };
-
-  const onCreateBalanceSheet = async () => {
-    await createBalanceSheet({
-      type: BalanceSheetType.Full,
-      version: BalanceSheetVersion.v5_0_8,
-    });
   };
 
   return (
@@ -95,27 +77,7 @@ export default function Sidebar() {
             <Divider variant="middle" />
           </GridItem>
           <GridItem xs={12}>
-            <List
-              subheader={
-                <ListSubheader>
-                  <Trans>Balance sheets</Trans>
-                </ListSubheader>
-              }
-            >
-              <ListItem key={'create-balance-sheet'} disablePadding>
-                <ListItemButton onClick={onCreateBalanceSheet}>
-                  <ListItemIcon>
-                    <FontAwesomeIcon icon={faPlus} />
-                  </ListItemIcon>
-                  <ListItemText primary={<Trans>Create balance sheet</Trans>} />
-                </ListItemButton>
-              </ListItem>
-            </List>
-            <List component="nav">
-              {balanceSheetItems.map((b) => (
-                <BalanceSheetNavigationItem key={b.id} balanceSheetItem={b} />
-              ))}
-            </List>
+            <BalanceSheetSidebarSection />
           </GridItem>
         </GridContainer>
       </DrawerWithFixedWidth>
