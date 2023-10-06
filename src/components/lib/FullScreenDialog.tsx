@@ -1,4 +1,3 @@
-import React from 'react';
 import { Dialog, DialogProps } from '@mui/material';
 import { FixedToolbar } from './FixedToolbar';
 import Toolbar from '@mui/material/Toolbar';
