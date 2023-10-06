@@ -1,5 +1,5 @@
 import { DialogContent, DialogTitle, MenuItem } from '@mui/material';
-import { Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { ClosableDialog } from '../lib/ClosableDialog';
 import GridContainer, { FormContainer } from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
@@ -61,6 +61,7 @@ type FormInput = z.infer<typeof FormInputSchema>;
 export function BalanceSheetCreationForm({
   onSave,
 }: BalanceSheetCreationFormProps) {
+  const { t } = useTranslation();
   const { control, handleSubmit } = useForm<FormInput>({
     resolver: zodResolver(FormInputSchema),
     mode: 'onChange',
@@ -77,7 +78,7 @@ export function BalanceSheetCreationForm({
           fullWidth
           control={control}
           defaultValue={BalanceSheetType.Full}
-          label={'Select type'}
+          label={t`Select type`}
           name={'type'}
         >
           <MenuItem value={BalanceSheetType.Compact}>
@@ -93,7 +94,7 @@ export function BalanceSheetCreationForm({
           fullWidth
           control={control}
           defaultValue={BalanceSheetVersion.v5_0_8}
-          label={'Select version'}
+          label={t`Select version`}
           name={'version'}
         >
           <MenuItem value={BalanceSheetVersion.v5_0_8}>5.08</MenuItem>

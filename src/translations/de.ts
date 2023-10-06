@@ -66,5 +66,9 @@ export const DE_TRANSLATIONS = {
   'Updated organization': 'Organisation aktualisiert',
   Organizations: 'Organisationen',
   Overview: 'Übersicht',
+  'Select version': 'Wählen Sie eine Version',
+  'Select type': 'Wählen Sie einen Bilanztyp',
+  Compact: 'Kompaktbilanz',
+  Full: 'Vollbilanz',
   ...DE_ERROR_TRANSLATIONS,
 };

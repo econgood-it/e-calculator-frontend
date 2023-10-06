@@ -56,6 +56,10 @@ const EN_WORDS = [
   'Updated organization',
   'Organizations',
   'Overview',
+  'Select version',
+  'Select type',
+  'Compact',
+  'Full',
 ];
 
 export const EN_TRANSLATIONS = {
