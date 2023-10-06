@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTitle } from '@mui/material';
+import { DialogContent, DialogTitle } from '@mui/material';
 import { OrganizationForm } from './OrganizationForm';
 import { OrganizationRequestBody } from '../../models/Organization';
 import { useOrganizations } from '../../contexts/OrganizationProvider';
@@ -7,8 +7,7 @@ import { ClosableDialog } from '../lib/ClosableDialog';
 import GridContainer from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
 import React, { ReactElement } from 'react';
-import { FixedToolbar } from '../lib/FixedToolbar';
-import Toolbar from '@mui/material/Toolbar';
+import { FullScreenDialog } from '../lib/FullScreenDialog';
 
 type OrganizationDialogProps = {
   open: boolean;
@@ -30,12 +29,6 @@ export function OrganizationCreationDialog({
   return (
     <DialogComponent open={open} onClose={onClose} fullScreen={fullScreen}>
       <>
-        {fullScreen && (
-          <>
-            <FixedToolbar />
-            <Toolbar />
-          </>
-        )}
         <DialogTitle variant={'h2'}>
           <Trans>Create organization</Trans>
         </DialogTitle>
@@ -76,16 +69,6 @@ function DialogComponent({
       </ClosableDialog>
     );
   } else {
-    return (
-      <Dialog
-        fullWidth
-        fullScreen
-        maxWidth={'md'}
-        onClose={() => {}}
-        open={open}
-      >
-        {children}
-      </Dialog>
-    );
+    return <FullScreenDialog open={open}>{children}</FullScreenDialog>;
   }
 }
