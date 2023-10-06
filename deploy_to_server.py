@@ -3,9 +3,42 @@ import logging
 import os
 import shutil
 import subprocess
+import git
 
 yarn = 'yarn'
 run = 'run'
+
+
+def has_unpushed_changes():
+    try:
+        repo = git.Repo('.')
+        remote_branch = repo.active_branch.tracking_branch()
+
+        if remote_branch:
+            # Get the number of commits ahead of the remote tracking branch
+            commits_ahead = repo.iter_commits(f'{remote_branch.name}..{repo.active_branch.name}')
+            num_commits_ahead = sum(1 for _ in commits_ahead)
+
+            if num_commits_ahead > 0:
+                logging.info(f"There are {num_commits_ahead} committed but unpushed changes.")
+                return True
+            else:
+                logging.info("Branch is up to date. No unpushed changes.")
+                return False
+        else:
+            logging.info("The branch is not tracking a remote branch.")
+            return False
+    except git.exc.InvalidGitRepositoryError:
+        logging.error("Error: Not a valid Git repository.")
+        return False
+
+
+def check_for_uncommitted_files():
+    repo = git.Repo('.')
+    if repo.is_dirty():
+        raise Exception('Please commit your changes before a deployment')
+    if has_unpushed_changes():
+        raise Exception('Please push your changes before a deployment')
 
 
 def install_dependencies():
@@ -41,6 +74,7 @@ def rm_folder(folder: str):
 
 def main(args):
     logging.info(f"Start build and deployment process for the environment {args.environment}")
+    check_for_uncommitted_files()
     logging.info(f"Install dependencies")
     rm_folder(folder='node_modules')
     install_dependencies()
