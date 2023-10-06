@@ -4,6 +4,7 @@ import { User } from '../authentication/User';
 interface IUserContext {
   user: User | undefined;
   updateUser: (user: User) => void;
+  logout: () => void;
 }
 const UserContext = createContext<IUserContext | undefined>(undefined);
 
@@ -24,8 +25,13 @@ function UserProvider({ children }: UserProviderProps) {
     window.localStorage.setItem(storageKey, JSON.stringify(user));
   }
 
+  function logout() {
+    window.localStorage.removeItem(storageKey);
+    setUser(undefined);
+  }
+
   return (
-    <UserContext.Provider value={{ user, updateUser }}>
+    <UserContext.Provider value={{ user, updateUser, logout }}>
       {children}
     </UserContext.Provider>
   );

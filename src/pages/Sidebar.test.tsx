@@ -2,26 +2,27 @@ import '@testing-library/jest-dom';
 import { act, screen, waitFor } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
 import Sidebar from './Sidebar';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import {
+  createMemoryRouter,
+  MemoryRouter,
+  Route,
+  RouterProvider,
+  Routes,
+} from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { useBalanceSheetItems } from '../contexts/BalanceSheetListProvider';
-import {
-  BalanceSheetItemsMockBuilder,
-  BalanceSheetMockBuilder,
-} from '../testUtils/balanceSheets';
-import {
-  BalanceSheetType,
-  BalanceSheetVersion,
-} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { BalanceSheetItemsMockBuilder } from '../testUtils/balanceSheets';
 import { useOrganizations } from '../contexts/OrganizationProvider';
 import {
   OrganizationItemsMocks,
   OrganizationMockBuilder,
 } from '../testUtils/organization';
 import { useAlert } from '../contexts/AlertContext';
+import { useUser } from '../contexts/UserProvider';
 
 jest.mock('../contexts/BalanceSheetListProvider');
 jest.mock('../contexts/OrganizationProvider');
+jest.mock('../contexts/UserProvider');
 jest.mock('../contexts/AlertContext');
 
 describe('Sidebar', () => {
@@ -34,12 +35,18 @@ describe('Sidebar', () => {
     createBalanceSheet: jest.fn(),
   };
   const setActiveOrganizationByIdMock = jest.fn();
+  const logoutMock = jest.fn();
 
   beforeEach(() => {
     (useBalanceSheetItems as jest.Mock).mockImplementation(
       () => balanceSheetListMock
     );
-    (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
+    (useUser as jest.Mock).mockReturnValue({
+      logout: logoutMock,
+    });
+    (useAlert as jest.Mock).mockReturnValue({
+      addErrorAlert: jest.fn(),
+    });
     (useOrganizations as jest.Mock).mockReturnValue({
       organizationItems: OrganizationItemsMocks.default(),
       activeOrganization: new OrganizationMockBuilder()
@@ -167,5 +174,30 @@ describe('Sidebar', () => {
         `Navigated to Organization with id ${orgaItemToSelect.id}`
       )
     ).toBeInTheDocument();
+  });
+
+  it('should logout user if logout button is clicked', async () => {
+    const orgaItemToSelect = OrganizationItemsMocks.default()[1];
+    const initialPath = `/organization/${orgaItemToSelect.id}`;
+    const router = createMemoryRouter(
+      [
+        {
+          path: initialPath,
+          element: <Sidebar />,
+        },
+        {
+          path: '/',
+          element: <div>User logout</div>,
+        },
+      ],
+      { initialEntries: [initialPath] }
+    );
+
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
+
+    await user.click(screen.getByLabelText('logout'));
+    expect(logoutMock).toHaveBeenCalledWith();
+
+    expect(await screen.findByText('User logout')).toBeInTheDocument();
   });
 });

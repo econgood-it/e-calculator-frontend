@@ -84,7 +84,7 @@ export function OrganizationSidebarSection() {
         </GridItem>
       </GridContainer>
       <OrganizationCreationDialog
-        closable={true}
+        fullScreen={false}
         open={organizationDialogOpen}
         onClose={() => {
           setOrganizationDialogOpen(false);

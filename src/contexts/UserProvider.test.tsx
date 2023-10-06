@@ -10,9 +10,12 @@ jest.mock('../contexts/ApiProvider');
 describe('UserProvider', () => {
   let spyGetItem: jest.SpyInstance;
   let spySetItem: jest.SpyInstance;
+  let spyRemoveItem: jest.SpyInstance;
   beforeEach(() => {
     spyGetItem = jest.spyOn(window.localStorage, 'getItem');
     spySetItem = jest.spyOn(window.localStorage, 'setItem');
+    spyRemoveItem = jest.spyOn(window.localStorage, 'removeItem');
+    window.localStorage.clear();
   });
 
   function Wrapper({ children }: { children: ReactElement }) {
@@ -42,5 +45,19 @@ describe('UserProvider', () => {
     await waitFor(() =>
       expect(result.current.user).toEqual(UserMocks.default())
     );
+  });
+
+  it('remove user from local storage on logout', async () => {
+    window.localStorage.setItem('user', JSON.stringify(UserMocks.default()));
+    const { result } = renderHookWithTheme(() => useUser(), {
+      wrapper: Wrapper,
+    });
+    expect(spyGetItem).toHaveBeenCalledWith('user');
+
+    act(() => {
+      result.current.logout();
+    });
+    expect(spyRemoveItem).toHaveBeenCalledWith('user');
+    expect(result.current.user).toEqual(undefined);
   });
 });

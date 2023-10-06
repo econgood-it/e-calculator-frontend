@@ -12,11 +12,13 @@ export function RequireActiveOrganization() {
 
   if (noOrganizationYet) {
     return (
-      <OrganizationCreationDialog
-        closable={false}
-        open={organizationDialogOpen}
-        onClose={() => setOrganizationDialogOpen(false)}
-      />
+      <>
+        <OrganizationCreationDialog
+          fullScreen={true}
+          open={organizationDialogOpen}
+          onClose={() => setOrganizationDialogOpen(false)}
+        />
+      </>
     );
   } else {
     return <Outlet />;

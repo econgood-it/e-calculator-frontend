@@ -4,10 +4,19 @@ import { useOrganizations } from '../contexts/OrganizationProvider';
 import renderWithTheme from '../testUtils/rendering';
 import { RequireActiveOrganization } from './RequireActiveOrganization';
 import { useAlert } from '../contexts/AlertContext';
+import { useUser } from '../contexts/UserProvider';
 
 jest.mock('../contexts/OrganizationProvider');
+jest.mock('../contexts/UserProvider');
 jest.mock('../contexts/AlertContext');
+
+jest.mock('react-router-dom');
+
 describe('RequireAcitveOrganization', () => {
+  beforeEach(() => {
+    (useUser as jest.Mock).mockReturnValue({ logout: jest.fn() });
+  });
+
   it('shows loading page if active organization is undefined', async () => {
     (useOrganizations as jest.Mock).mockReturnValue({
       organizationItems: [],

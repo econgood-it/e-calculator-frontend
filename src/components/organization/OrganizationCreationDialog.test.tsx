@@ -6,15 +6,28 @@ import { useAlert } from '../../contexts/AlertContext';
 import { OrganizationCreationDialog } from './OrganizationCreationDialog';
 import { OrganizationMockBuilder } from '../../testUtils/organization';
 import { useOrganizations } from '../../contexts/OrganizationProvider';
+import { useUser } from '../../contexts/UserProvider';
 
 jest.mock('../../contexts/AlertContext');
 jest.mock('../../contexts/OrganizationProvider');
+jest.mock('../../contexts/UserProvider');
+
+const mockedUsedNavigate = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  ...(jest.requireActual('react-router-dom') as any),
+  useNavigate: () => mockedUsedNavigate,
+}));
+
 describe('OrganizationCreationDialog', () => {
   const useOrganizationMock = {
     createOrganization: jest.fn(),
   };
 
+  const logoutMock = jest.fn();
+
   beforeEach(() => {
+    (useUser as jest.Mock).mockReturnValue({ logout: logoutMock });
     (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
     (useOrganizations as jest.Mock).mockImplementation(
       () => useOrganizationMock
@@ -28,7 +41,7 @@ describe('OrganizationCreationDialog', () => {
       <OrganizationCreationDialog
         open={true}
         onClose={onClose}
-        closable={true}
+        fullScreen={false}
       />
     );
     const newOrga = new OrganizationMockBuilder().buildRequestBody();
@@ -57,7 +70,7 @@ describe('OrganizationCreationDialog', () => {
       <OrganizationCreationDialog
         open={true}
         onClose={onClose}
-        closable={true}
+        fullScreen={false}
       />
     );
 
@@ -71,10 +84,25 @@ describe('OrganizationCreationDialog', () => {
       <OrganizationCreationDialog
         open={true}
         onClose={setOpen}
-        closable={false}
+        fullScreen={true}
       />
     );
 
     expect(screen.queryByLabelText('Close dialog')).not.toBeInTheDocument();
+  });
+
+  it('should call logout when logout is clicked', async () => {
+    const setOpen = jest.fn();
+    const { user } = renderWithTheme(
+      <OrganizationCreationDialog
+        open={true}
+        onClose={setOpen}
+        fullScreen={true}
+      />
+    );
+    await user.click(screen.getByLabelText('logout'));
+
+    expect(logoutMock).toHaveBeenCalledWith();
+    expect(mockedUsedNavigate).toHaveBeenCalledWith('/');
   });
 });

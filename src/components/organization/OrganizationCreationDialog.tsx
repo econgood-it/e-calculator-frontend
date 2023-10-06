@@ -7,17 +7,19 @@ import { ClosableDialog } from '../lib/ClosableDialog';
 import GridContainer from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
 import React, { ReactElement } from 'react';
+import { FixedToolbar } from '../lib/FixedToolbar';
+import Toolbar from '@mui/material/Toolbar';
 
 type OrganizationDialogProps = {
   open: boolean;
   onClose: () => void;
-  closable: boolean;
+  fullScreen: boolean;
 };
 
 export function OrganizationCreationDialog({
   open,
   onClose,
-  closable,
+  fullScreen,
 }: OrganizationDialogProps) {
   const { createOrganization } = useOrganizations();
   async function onSave(organization: OrganizationRequestBody) {
@@ -26,8 +28,14 @@ export function OrganizationCreationDialog({
   }
 
   return (
-    <DialogComponent open={open} onClose={onClose} closable={closable}>
+    <DialogComponent open={open} onClose={onClose} fullScreen={fullScreen}>
       <>
+        {fullScreen && (
+          <>
+            <FixedToolbar />
+            <Toolbar />
+          </>
+        )}
         <DialogTitle variant={'h2'}>
           <Trans>Create organization</Trans>
         </DialogTitle>
@@ -52,10 +60,10 @@ export function OrganizationCreationDialog({
 function DialogComponent({
   open,
   onClose,
-  closable,
+  fullScreen,
   children,
 }: OrganizationDialogProps & { children: ReactElement }) {
-  if (closable) {
+  if (!fullScreen) {
     return (
       <ClosableDialog
         fullWidth
@@ -69,7 +77,13 @@ function DialogComponent({
     );
   } else {
     return (
-      <Dialog fullWidth maxWidth={'md'} onClose={() => {}} open={open}>
+      <Dialog
+        fullWidth
+        fullScreen
+        maxWidth={'md'}
+        onClose={() => {}}
+        open={open}
+      >
         {children}
       </Dialog>
     );
