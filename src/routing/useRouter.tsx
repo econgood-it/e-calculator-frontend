@@ -13,6 +13,7 @@ import { OrganizationProvider } from '../contexts/OrganizationProvider';
 import { BalanceSheetListProvider } from '../contexts/BalanceSheetListProvider';
 import { RequiresAuth } from './RequiresAuth';
 import { BalanceSheetOverviewPage } from '../pages/BalanceSheetOverviewPage';
+import { BalanceSheetSettingsPage } from '../pages/BalanceSheetSettingsPage';
 
 export function useRouter() {
   return createBrowserRouter([
@@ -48,6 +49,10 @@ export function useRouter() {
                     {
                       path: 'overview',
                       element: <BalanceSheetOverviewPage />,
+                    },
+                    {
+                      path: 'settings',
+                      element: <BalanceSheetSettingsPage />,
                     },
                     {
                       path: 'companyfacts',

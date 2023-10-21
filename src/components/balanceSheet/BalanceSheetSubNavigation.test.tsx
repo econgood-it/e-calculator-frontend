@@ -1,14 +1,19 @@
 import '@testing-library/jest-dom';
 import renderWithTheme from '../../testUtils/rendering';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import {
+  createMemoryRouter,
+  MemoryRouter,
+  Route,
+  RouterProvider,
+  Routes,
+} from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import BalanceSheetSubNavigation from './BalanceSheetSubNavigation';
 import userEvent from '@testing-library/user-event';
-import { useApi } from '../../contexts/ApiProvider';
 import { useBalanceSheetItems } from '../../contexts/BalanceSheetListProvider';
 import { useOrganizations } from '../../contexts/OrganizationProvider';
 import { OrganizationMockBuilder } from '../../testUtils/organization';
-jest.mock('../../contexts/ApiProvider');
+
 jest.mock('../../contexts/BalanceSheetListProvider');
 jest.mock('../../contexts/OrganizationProvider');
 
@@ -20,11 +25,8 @@ describe('BalanceSheetSubNavigation', () => {
 
   const organizationIdFromUrl = 3;
   const pathToOrganization = `/organization/${3}`;
-  const apiMock = {
-    deleteBalanceSheet: jest.fn(),
-  };
+
   beforeEach(() => {
-    apiMock.deleteBalanceSheet.mockImplementation();
     (useBalanceSheetItems as jest.Mock).mockReturnValue({
       balanceSheetItems,
       setBalanceSheetItems,
@@ -34,7 +36,6 @@ describe('BalanceSheetSubNavigation', () => {
         .withId(organizationIdFromUrl)
         .build(),
     });
-    (useApi as jest.Mock).mockImplementation(() => apiMock);
   });
 
   it('navigates to overview page overview item is clicked', async () => {
@@ -142,36 +143,30 @@ describe('BalanceSheetSubNavigation', () => {
     }
   });
 
-  it('deletes balance sheet and navigates to organization page when user clicks on Delete', async () => {
+  it('navigates to settings page when user clicks on Settings', async () => {
     const user = userEvent.setup();
-    const initialPath = `${pathToOrganization}/balancesheet/2`;
-    renderWithTheme(
-      <MemoryRouter initialEntries={[initialPath]}>
-        <Routes>
-          <Route
-            path={initialPath}
-            element={
-              <BalanceSheetSubNavigation balanceSheetItem={balanceSheetItem} />
-            }
-          />
-          <Route
-            path={pathToOrganization}
-            element={<div>Navigated to organization page</div>}
-          />
-        </Routes>
-      </MemoryRouter>
+    const initialPath = pathToOrganization;
+    const router = createMemoryRouter(
+      [
+        {
+          path: initialPath,
+          element: (
+            <BalanceSheetSubNavigation balanceSheetItem={balanceSheetItem} />
+          ),
+        },
+        {
+          path: `${initialPath}/balancesheet/2/settings`,
+          element: <div>Navigated to settings page</div>,
+        },
+      ],
+      { initialEntries: [initialPath] }
     );
+    renderWithTheme(<RouterProvider router={router} />);
 
-    const deleteButton = await screen.findByText('Delete');
+    const settingsButton = await screen.findByText('Settings');
 
-    await user.click(deleteButton);
+    await user.click(settingsButton);
 
-    expect(apiMock.deleteBalanceSheet).toHaveBeenCalledWith(
-      balanceSheetItem.id
-    );
-
-    expect(
-      screen.getByText('Navigated to organization page')
-    ).toBeInTheDocument();
+    expect(screen.getByText('Navigated to settings page')).toBeInTheDocument();
   });
 });

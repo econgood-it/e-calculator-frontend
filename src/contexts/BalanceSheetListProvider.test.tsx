@@ -25,6 +25,7 @@ describe('useBalanceSheetItems', () => {
   const apiMock = {
     getBalanceSheets: jest.fn(),
     createBalanceSheet: jest.fn(),
+    deleteBalanceSheet: jest.fn(),
   };
 
   function Wrapper({ children }: { children: ReactElement }) {
@@ -111,6 +112,34 @@ describe('useBalanceSheetItems', () => {
       `/organization/${activeOrganization.id}/balancesheet/${
         balanceSheetMockBuilder.build().id
       }/overview`
+    );
+  });
+
+  it('should delete balance sheet', async () => {
+    const activeOrganization = new OrganizationMockBuilder().build();
+    (useOrganizations as jest.Mock).mockReturnValue({
+      activeOrganization,
+    });
+    const balanceSheetToDelete = 8;
+    const mockedBalanceSheetItems = [{ id: 1 }, { id: balanceSheetToDelete }];
+    apiMock.getBalanceSheets.mockResolvedValue(mockedBalanceSheetItems);
+    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    const { result } = renderHookWithTheme(() => useBalanceSheetItems(), {
+      wrapper: Wrapper,
+    });
+    await waitFor(() =>
+      expect(result.current.balanceSheetItems).toEqual(mockedBalanceSheetItems)
+    );
+    await act(async () => {
+      await result.current.deleteBalanceSheet(balanceSheetToDelete);
+    });
+    await waitFor(() =>
+      expect(apiMock.deleteBalanceSheet).toHaveBeenCalledWith(
+        balanceSheetToDelete
+      )
+    );
+    expect(mockedUsedNavigate).toHaveBeenCalledWith(
+      `/organization/${activeOrganization.id}`
     );
   });
 });

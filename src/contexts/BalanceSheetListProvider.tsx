@@ -21,6 +21,7 @@ interface IBalanceSheetListContext {
   createBalanceSheet: (
     balanceSheet: BalanceSheetCreateRequestBody
   ) => Promise<void>;
+  deleteBalanceSheet: (id: number) => Promise<void>;
 }
 
 const BalanceSheetListContext = createContext<
@@ -59,6 +60,11 @@ function BalanceSheetListProvider({ children }: BalanceSheetListProviderProps) {
       `/organization/${activeOrganization?.id}/balancesheet/${newBalanceSheet.id}/overview`
     );
   }
+  async function deleteBalanceSheet(id: number) {
+    await api.deleteBalanceSheet(id);
+    setBalanceSheetItems((prevState) => prevState.filter((b) => b.id !== id));
+    navigate(`/organization/${activeOrganization?.id}`);
+  }
 
   return (
     <BalanceSheetListContext.Provider
@@ -66,6 +72,7 @@ function BalanceSheetListProvider({ children }: BalanceSheetListProviderProps) {
         balanceSheetItems,
         setBalanceSheetItems,
         createBalanceSheet,
+        deleteBalanceSheet,
       }}
     >
       {children}
