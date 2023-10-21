@@ -34,7 +34,7 @@ export const BalanceSheetNavigationItem = ({
       <ListItem disablePadding>
         <ListItemButton
           component={Link}
-          to={`balancesheet/${balanceSheetItem.id}`}
+          to={`balancesheet/${balanceSheetItem.id}/overview`}
           onClick={handleClick}
           selected={isSelected}
         >

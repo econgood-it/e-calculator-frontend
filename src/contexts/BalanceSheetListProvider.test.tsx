@@ -110,7 +110,7 @@ describe('useBalanceSheetItems', () => {
     expect(mockedUsedNavigate).toHaveBeenCalledWith(
       `/organization/${activeOrganization.id}/balancesheet/${
         balanceSheetMockBuilder.build().id
-      }`
+      }/overview`
     );
   });
 });

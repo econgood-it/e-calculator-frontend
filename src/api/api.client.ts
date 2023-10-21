@@ -25,6 +25,8 @@ import {
   OrganizationItems,
   OrganizationRequestBody,
 } from '../models/Organization';
+import { MatrixBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto';
+import { Matrix } from '../models/Matrix';
 
 function language(language: string) {
   return function (
@@ -144,6 +146,13 @@ export class ApiClient {
   async getBalanceSheet(id: number): Promise<BalanceSheet> {
     const response = await this.wretchInstance.get(`/balancesheets/${id}`);
     return BalanceSheetResponseBodySchema.parse(await response.json());
+  }
+
+  async getBalanceSheetAsMatrix(id: number): Promise<Matrix> {
+    const response = await this.wretchInstance.get(
+      `/balancesheets/${id}/matrix`
+    );
+    return MatrixBodySchema.parse(await response.json());
   }
 
   async updateBalanceSheet(

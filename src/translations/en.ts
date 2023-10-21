@@ -60,6 +60,15 @@ const EN_WORDS = [
   'Select type',
   'Compact',
   'Full',
+  'Score reached',
+  'Percentage reached',
+  'Not considered in weighting',
+  'No reasonable specification',
+  'Matrix representation',
+  'Human dignity',
+  'Solidarity and social justice',
+  'Environmental sustainability',
+  'Transparency and co-determination',
 ];
 
 export const EN_TRANSLATIONS = {

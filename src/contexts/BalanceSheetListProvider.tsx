@@ -56,7 +56,7 @@ function BalanceSheetListProvider({ children }: BalanceSheetListProviderProps) {
       prevState.concat({ id: newBalanceSheet.id! })
     );
     navigate(
-      `/organization/${activeOrganization?.id}/balancesheet/${newBalanceSheet.id}`
+      `/organization/${activeOrganization?.id}/balancesheet/${newBalanceSheet.id}/overview`
     );
   }
 

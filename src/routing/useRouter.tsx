@@ -46,7 +46,7 @@ export function useRouter() {
                   element: <WithActiveBalanceSheet />,
                   children: [
                     {
-                      path: '',
+                      path: 'overview',
                       element: <BalanceSheetOverviewPage />,
                     },
                     {

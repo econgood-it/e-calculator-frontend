@@ -20,7 +20,7 @@ describe('BalanceSheetNavigationItem', () => {
             }
           />
           <Route
-            path={`${initialPathForRouting}/balancesheet/2`}
+            path={`${initialPathForRouting}/balancesheet/2/overview`}
             element={<div>Navigated to balance sheet 2</div>}
           />
         </Routes>

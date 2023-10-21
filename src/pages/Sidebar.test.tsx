@@ -92,7 +92,7 @@ describe('Sidebar', () => {
         <Routes>
           <Route path={initialPathForRouting} element={<Sidebar />} />
           <Route
-            path={`/${initialPathForRouting}/balancesheet/3`}
+            path={`/${initialPathForRouting}/balancesheet/3/overview`}
             element={<div>Navigated to Balance sheet 3</div>}
           />
         </Routes>

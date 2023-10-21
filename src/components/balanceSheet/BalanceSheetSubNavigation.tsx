@@ -4,13 +4,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faBuilding,
-  faCoins,
-  faGlobe,
-  faPeopleGroup,
+  faHouse,
   faTrash,
-  faTruckRampBox,
-  faUserGroup,
-  IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
 import ListItemText from '@mui/material/ListItemText';
 import { Trans, useTranslation } from 'react-i18next';
@@ -18,9 +13,12 @@ import List from '@mui/material/List';
 import { Link, useNavigate } from 'react-router-dom';
 import { useApi } from '../../contexts/ApiProvider';
 import { useBalanceSheetItems } from '../../contexts/BalanceSheetListProvider';
-import { ListSubheader } from '@mui/material';
+import { Divider, ListSubheader } from '@mui/material';
 import { BalanceSheetItem } from '../../models/BalanceSheet';
 import { useOrganizations } from '../../contexts/OrganizationProvider';
+import { ReactNode } from 'react';
+import { StakeholderIcon } from '../lib/StakeholderIcon';
+import GridItem from '../layout/GridItem';
 
 type BalanceSheetSubNavigationProps = {
   balanceSheetItem: BalanceSheetItem;
@@ -29,14 +27,14 @@ type BalanceSheetSubNavigationProps = {
 type StakeholderRatingNavigationItemProps = {
   balanceSheetId: number;
   pathName: string;
-  iconDefinition: IconDefinition;
+  icon: ReactNode;
   navItemText: string;
 };
 
 function StakeholderRatingNavigationItem({
   balanceSheetId,
   navItemText,
-  iconDefinition,
+  icon,
   pathName,
 }: StakeholderRatingNavigationItemProps) {
   return (
@@ -45,9 +43,7 @@ function StakeholderRatingNavigationItem({
         component={Link}
         to={`balancesheet/${balanceSheetId}/ratings/${pathName}`}
       >
-        <ListItemIcon>
-          <FontAwesomeIcon icon={iconDefinition} />
-        </ListItemIcon>
+        <ListItemIcon>{icon}</ListItemIcon>
         <ListItemText primary={navItemText} />
       </ListItemButton>
     </ListItem>
@@ -73,6 +69,20 @@ const BalanceSheetSubNavigation = ({
 
   return (
     <List component="div">
+      <ListItem key="overview">
+        <ListItemButton
+          component={Link}
+          to={`balancesheet/${balanceSheetItem.id}/overview`}
+        >
+          <ListItemIcon>
+            <FontAwesomeIcon icon={faHouse} />
+          </ListItemIcon>
+          <ListItemText primary={<Trans>Overview</Trans>} />
+        </ListItemButton>
+      </ListItem>
+      <GridItem xs={12}>
+        <Divider variant="middle" />
+      </GridItem>
       <ListItem key="company-facts">
         <ListItemButton
           component={Link}
@@ -84,37 +94,40 @@ const BalanceSheetSubNavigation = ({
           <ListItemText primary={<Trans>Company Facts</Trans>} />
         </ListItemButton>
       </ListItem>
+      <GridItem xs={12}>
+        <Divider variant="middle" />
+      </GridItem>
       <ListSubheader>
         <Trans>Ratings</Trans>
       </ListSubheader>
       <StakeholderRatingNavigationItem
         balanceSheetId={balanceSheetItem.id}
         pathName={'suppliers'}
-        iconDefinition={faTruckRampBox}
+        icon={<StakeholderIcon stakeholderKey="A" />}
         navItemText={t`Suppliers`}
       />
       <StakeholderRatingNavigationItem
         balanceSheetId={balanceSheetItem.id}
         pathName={'finance'}
-        iconDefinition={faCoins}
+        icon={<StakeholderIcon stakeholderKey="B" />}
         navItemText={t`Financial service providers`}
       />
       <StakeholderRatingNavigationItem
         balanceSheetId={balanceSheetItem.id}
         pathName={'employees'}
-        iconDefinition={faPeopleGroup}
+        icon={<StakeholderIcon stakeholderKey="C" />}
         navItemText={t`Employees`}
       />
       <StakeholderRatingNavigationItem
         balanceSheetId={balanceSheetItem.id}
         pathName={'customers'}
-        iconDefinition={faUserGroup}
+        icon={<StakeholderIcon stakeholderKey="D" />}
         navItemText={t`Customers and other companies`}
       />
       <StakeholderRatingNavigationItem
         balanceSheetId={balanceSheetItem.id}
         pathName={'society'}
-        iconDefinition={faGlobe}
+        icon={<StakeholderIcon stakeholderKey="E" />}
         navItemText={t`Social environment`}
       />
       <ListItem key="delete">

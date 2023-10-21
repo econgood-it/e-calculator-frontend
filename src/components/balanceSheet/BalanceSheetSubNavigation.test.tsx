@@ -37,6 +37,32 @@ describe('BalanceSheetSubNavigation', () => {
     (useApi as jest.Mock).mockImplementation(() => apiMock);
   });
 
+  it('navigates to overview page overview item is clicked', async () => {
+    const user = userEvent.setup();
+    renderWithTheme(
+      <MemoryRouter initialEntries={[pathToOrganization]}>
+        <Routes>
+          <Route
+            path={pathToOrganization}
+            element={
+              <BalanceSheetSubNavigation balanceSheetItem={balanceSheetItem} />
+            }
+          />
+          <Route
+            path={`${pathToOrganization}/balancesheet/${balanceSheetItem.id}/overview`}
+            element={<div>Navigated to overview page</div>}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const overviewButton = await screen.findByText('Overview');
+
+    await user.click(overviewButton);
+
+    expect(screen.getByText('Navigated to overview page')).toBeInTheDocument();
+  });
+
   it('navigates to company facts when Company Facts item is clicked', async () => {
     const user = userEvent.setup();
     renderWithTheme(

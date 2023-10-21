@@ -1,0 +1,167 @@
+import { Matrix } from '../models/Matrix';
+
+export class MatrixMockBuilder {
+  private matrix = {
+    ratings: [
+      {
+        shortName: 'A1',
+        name: 'Menschenwürde in der Zulieferkette',
+        points: -203,
+        maxPoints: 113,
+        notApplicable: false,
+      },
+      {
+        shortName: 'A2',
+        name: 'Solidarität und Gerechtigkeit in der Zulieferkette',
+        points: -203,
+        maxPoints: 113,
+        notApplicable: false,
+      },
+      {
+        shortName: 'A3',
+        name: 'Ökologische Nachhaltigkeit in der Zulieferkette',
+        points: 11,
+        maxPoints: 113,
+        percentageReached: 10,
+        notApplicable: false,
+      },
+      {
+        shortName: 'A4',
+        name: 'Transparenz und Mitentscheidung in der Zulieferkette',
+        points: 0,
+        maxPoints: 113,
+        percentageReached: 0,
+        notApplicable: false,
+      },
+      {
+        shortName: 'B1',
+        name: 'Ethische Haltung im Umgang mit Geldmitteln',
+        points: 13,
+        maxPoints: 28,
+        percentageReached: 50,
+        notApplicable: false,
+      },
+      {
+        shortName: 'B2',
+        name: 'Soziale Haltung im Umgang mit Geldmitteln',
+        points: 0,
+        maxPoints: 28,
+        percentageReached: 0,
+        notApplicable: false,
+      },
+      {
+        shortName: 'B3',
+        name: 'Sozial-ökologische Investitionen und Mittelverwendung',
+        points: 0,
+        maxPoints: 28,
+        percentageReached: 0,
+        notApplicable: false,
+      },
+      {
+        shortName: 'B4',
+        name: 'Eigentum und Mitentscheidung',
+        points: 0,
+        maxPoints: 14,
+        percentageReached: 0,
+        notApplicable: false,
+      },
+      {
+        shortName: 'C1',
+        name: 'Menschenwürde am Arbeitsplatz',
+        points: 1,
+        maxPoints: 28,
+        percentageReached: 0,
+        notApplicable: false,
+      },
+      {
+        shortName: 'C2',
+        name: 'Ausgestaltung der Arbeitsverträge',
+        points: -1,
+        maxPoints: 28,
+        notApplicable: false,
+      },
+      {
+        shortName: 'C3',
+        name: 'Förderung des ökologischen Verhaltens der Mitarbeitenden',
+        points: -4,
+        maxPoints: 14,
+        notApplicable: false,
+      },
+      {
+        shortName: 'C4',
+        name: 'Innerbetriebliche Mitentscheidung und Transparenz',
+        points: 0,
+        maxPoints: 14,
+        percentageReached: 0,
+        notApplicable: false,
+      },
+      {
+        shortName: 'D1',
+        name: 'Ethische Kund*innenbeziehungen',
+        points: 0,
+        maxPoints: 0,
+        notApplicable: true,
+      },
+      {
+        shortName: 'D2',
+        name: 'Kooperation und Solidarität mit Mitunternehmen',
+        points: 0,
+        maxPoints: 56,
+        percentageReached: 0,
+        notApplicable: false,
+      },
+      {
+        shortName: 'D3',
+        name: 'Ökologische Auswirkung durch Nutzung und Entsorgung von Produkten und Dienstleistungen',
+        points: 0,
+        maxPoints: 56,
+        percentageReached: 0,
+        notApplicable: false,
+      },
+      {
+        shortName: 'D4',
+        name: 'Kund*innen-Mitwirkung und Produkttransparenz',
+        points: -62,
+        maxPoints: 56,
+        notApplicable: false,
+      },
+      {
+        shortName: 'E1',
+        name: 'Sinn und gesellschaftliche Wirkung der Produkte und Dienstleistungen',
+        points: -87,
+        maxPoints: 56,
+        notApplicable: false,
+      },
+      {
+        shortName: 'E2',
+        name: 'Beitrag zum Gemeinwesen',
+        points: 51,
+        maxPoints: 56,
+        percentageReached: 90,
+        notApplicable: false,
+      },
+      {
+        shortName: 'E3',
+        name: 'Reduktion ökologischer Auswirkungen',
+        points: -3,
+        maxPoints: 56,
+        notApplicable: false,
+      },
+      {
+        shortName: 'E4',
+        name: 'Transparenz und gesellschaftliche Mitentscheidung',
+        points: 1,
+        maxPoints: 28,
+        percentageReached: 10,
+        notApplicable: false,
+      },
+    ],
+    totalPoints: -485.63380281690144,
+  };
+
+  public build(): Matrix {
+    return {
+      ...this.matrix,
+    };
+  }
+}

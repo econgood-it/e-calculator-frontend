@@ -12,6 +12,7 @@ import { WorkbookResponseMocks } from '../testUtils/workbook';
 import { regionsMocks } from '../testUtils/regions';
 import { industriesMocks } from '../testUtils/industries';
 import { OrganizationMockBuilder } from '../testUtils/organization';
+import { MatrixMockBuilder } from '../testUtils/matrix';
 
 jest.mock('react-router-dom');
 
@@ -247,6 +248,18 @@ describe('ApiClient', () => {
         balanceSheetMockBuilder.build().id!
       );
       expect(response).toEqual(balanceSheetMockBuilder.build());
+    });
+
+    it('returns balance sheet in matrix representation', async () => {
+      const mockId = 6;
+      const matrixMockBuilder = new MatrixMockBuilder();
+      mockResource(
+        'get',
+        `${URL}/v1/balancesheets/${mockId}/matrix`,
+        new Response(JSON.stringify(matrixMockBuilder.build()))
+      );
+      const response = await apiClient.getBalanceSheetAsMatrix(mockId);
+      expect(response).toEqual(matrixMockBuilder.build());
     });
 
     it('updates balance sheet', async () => {
