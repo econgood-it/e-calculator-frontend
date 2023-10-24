@@ -69,6 +69,11 @@ const EN_WORDS = [
   'Solidarity and social justice',
   'Environmental sustainability',
   'Transparency and co-determination',
+  'Delete this balance sheet',
+  'Once you delete a balance sheet, there is no going back. Please be certain.',
+  'Danger Zone',
+  'Ok',
+  'Cancel',
 ];
 
 export const EN_TRANSLATIONS = {

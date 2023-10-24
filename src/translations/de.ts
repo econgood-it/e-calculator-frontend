@@ -79,5 +79,11 @@ export const DE_TRANSLATIONS = {
   'Solidarity and social justice': 'Solidarität und Gerechtigkeit',
   'Environmental sustainability': 'Ökologische Nachhaltigkeit',
   'Transparency and co-determination': 'Transparenz und Mitentscheidung',
+  'Delete this balance sheet': 'Diese Bilanz löschen',
+  'Once you delete a balance sheet, there is no going back. Please be certain.':
+    'Wenn Sie eine Bilanz einmal gelöscht haben, gibt es kein Zurück mehr. Bitte seien Sie sicher.',
+  'Danger Zone': 'Gefahrenzone',
+  Ok: 'Ok',
+  Cancel: 'Abbrechen',
   ...DE_ERROR_TRANSLATIONS,
 };

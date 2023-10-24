@@ -83,7 +83,7 @@ describe('OrganizationOverviewPage', () => {
               element={<OrganizationOverviewPage />}
             />
             <Route
-              path={`${initialPathForRouting}/balancesheet/2`}
+              path={`${initialPathForRouting}/balancesheet/2/overview`}
               element={<div>Page of Balance sheet 2</div>}
             />
           </Routes>

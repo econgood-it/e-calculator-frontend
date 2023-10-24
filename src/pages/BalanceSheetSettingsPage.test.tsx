@@ -1,23 +1,8 @@
-import userEvent from '@testing-library/user-event/index';
 import renderWithTheme from '../testUtils/rendering';
-import {
-  createMemoryRouter,
-  MemoryRouter,
-  Route,
-  RouterProvider,
-  Routes,
-} from 'react-router-dom';
-import BalanceSheetSubNavigation from '../components/balanceSheet/BalanceSheetSubNavigation';
-import { screen, waitFor } from '@testing-library/react';
-import { useAlert } from '../contexts/AlertContext';
+import { createMemoryRouter, RouterProvider } from 'react-router-dom';
+import { screen, waitFor, within } from '@testing-library/react';
 import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
-import { useApi } from '../contexts/ApiProvider';
-import {
-  OrganizationItemsMocks,
-  OrganizationMockBuilder,
-} from '../testUtils/organization';
 import { useBalanceSheetItems } from '../contexts/BalanceSheetListProvider';
-import { useOrganizations } from '../contexts/OrganizationProvider';
 import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets';
 import { BalanceSheetSettingsPage } from './BalanceSheetSettingsPage';
 
@@ -48,7 +33,14 @@ describe('BalanceSheetSettingsPage', () => {
       { initialEntries: [initialPath] }
     );
     const { user } = renderWithTheme(<RouterProvider router={router} />);
-    await user.click(screen.getByText('Delete this balance sheet'));
+    await user.click(
+      screen.getByRole('button', { name: 'Delete this balance sheet' })
+    );
+    const dialog = await screen.findByRole('dialog', {
+      name: 'Delete this balance sheet',
+    });
+    await user.click(within(dialog).getByRole('button', { name: 'Ok' }));
+
     await waitFor(() =>
       expect(deleteBalanceSheetMock).toHaveBeenCalledWith(mockedBalanceSheet.id)
     );

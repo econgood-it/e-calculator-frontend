@@ -38,7 +38,7 @@ export function OrganizationOverviewPage() {
       </GridItem>
       {balanceSheetItems.map((b) => (
         <GridItem key={b.id} xs={12} sm={3}>
-          <CardActionArea component={Link} to={`balancesheet/${b.id}`}>
+          <CardActionArea component={Link} to={`balancesheet/${b.id}/overview`}>
             <Card aria-label={`Balance sheet ${b.id}`}>
               <CardContent>
                 <Typography variant="h5" component="div">
