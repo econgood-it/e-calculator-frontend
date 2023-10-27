@@ -74,6 +74,7 @@ const EN_WORDS = [
   'Danger Zone',
   'Ok',
   'Cancel',
+  'Organization name',
 ];
 
 export const EN_TRANSLATIONS = {

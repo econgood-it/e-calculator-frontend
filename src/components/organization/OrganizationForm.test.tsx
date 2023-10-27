@@ -33,7 +33,7 @@ describe('OrganizationForm', () => {
       <OrganizationForm organization={organization} onSave={onSave} />
     );
 
-    const nameField = screen.getByLabelText(/Name/);
+    const nameField = screen.getByLabelText(/Organization name/);
     await user.clear(nameField);
     const newName = 'My new organization';
     await user.type(nameField, newName);

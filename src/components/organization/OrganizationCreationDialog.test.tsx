@@ -45,7 +45,7 @@ describe('OrganizationCreationDialog', () => {
       />
     );
     const newOrga = new OrganizationMockBuilder().buildRequestBody();
-    await user.type(screen.getByLabelText(/Name/), newOrga.name);
+    await user.type(screen.getByLabelText(/Organization name/), newOrga.name);
     await user.type(screen.getByLabelText(/City/), newOrga.address.city);
     await user.type(screen.getByLabelText(/Zip/), newOrga.address.zip);
     await user.type(screen.getByLabelText(/Street/), newOrga.address.street);

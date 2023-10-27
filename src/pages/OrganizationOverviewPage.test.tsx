@@ -59,7 +59,7 @@ describe('OrganizationOverviewPage', () => {
       renderWithTheme(<RouterProvider router={router} />);
     });
     const newName = 'My new orga name';
-    const nameField = screen.getByLabelText(/Name/);
+    const nameField = screen.getByLabelText(/Organization name/);
     await user.clear(nameField);
     await user.type(nameField, newName);
     const saveButton = screen.getByRole('button', { name: 'Save' });

@@ -39,7 +39,7 @@ export function OrganizationForm({
     <FormContainer spacing={3} justifyContent="space-between">
       <GridItem xs={12}>
         <FormTextField
-          label={<Trans>Name</Trans>}
+          label={<Trans>Organization name</Trans>}
           errors={errors}
           register={register}
           registerKey={'name'}

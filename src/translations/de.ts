@@ -85,5 +85,6 @@ export const DE_TRANSLATIONS = {
   'Danger Zone': 'Gefahrenzone',
   Ok: 'Ok',
   Cancel: 'Abbrechen',
+  'Organization name': 'Organisationsname',
   ...DE_ERROR_TRANSLATIONS,
 };
