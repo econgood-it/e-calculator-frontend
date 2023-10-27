@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  web:
+    image: nginx
+    #user: "1000:1001"
+    ports:
+      - "1050:80"
+    volumes:
+      - ./volumes/conf.d:/etc/nginx/conf.d
+      - ./volumes/www:/var/www/html
+
