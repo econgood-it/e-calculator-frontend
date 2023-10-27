@@ -14,6 +14,7 @@ import { UserProvider } from './contexts/UserProvider';
 
 const primaryColor = '#94a231';
 const secondaryColor = '#00828b';
+const contrastColor = 'rgba(255,255,255,0.8)';
 
 export const themeOptions: ThemeOptions = {
   typography: {
@@ -33,16 +34,36 @@ export const themeOptions: ThemeOptions = {
     },
     primary: {
       main: primaryColor,
-      contrastText: 'rgba(255,255,255,0.8)',
+      contrastText: contrastColor,
     },
     secondary: {
       main: secondaryColor,
-      contrastText: 'rgba(255,255,255,0.8)',
+      contrastText: contrastColor,
     },
     error: { main: '#C2887C' },
   },
   shape: {
     borderRadius: 0,
+  },
+  components: {
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          '&.Mui-selected': {
+            backgroundColor: secondaryColor,
+            color: contrastColor,
+            '&:hover': {
+              backgroundColor: secondaryColor,
+              color: contrastColor,
+            },
+            '&.MuiListItemIcon-root': {
+              backgroundColor: contrastColor,
+              color: `${contrastColor} !important`,
+            },
+          },
+        },
+      },
+    },
   },
 };
 const theme = createTheme(themeOptions);

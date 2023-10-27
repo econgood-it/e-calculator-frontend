@@ -12,7 +12,7 @@ import { useState } from 'react';
 import { useOrganizations } from '../../contexts/OrganizationProvider';
 import GridContainer from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useMatch, useNavigate } from 'react-router-dom';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -24,6 +24,7 @@ export function OrganizationSidebarSection() {
     useOrganizations();
   const [organizationDialogOpen, setOrganizationDialogOpen] =
     useState<boolean>(false);
+  const matchOrgaView = useMatch('organization/:id');
 
   const navigate = useNavigate();
 
@@ -46,6 +47,7 @@ export function OrganizationSidebarSection() {
           >
             <ListItem disablePadding>
               <ListItemButton
+                selected={matchOrgaView !== null}
                 component={Link}
                 to={`/organization/${activeOrganization?.id}`}
               >

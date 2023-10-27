@@ -36,7 +36,6 @@ export const BalanceSheetNavigationItem = ({
           component={Link}
           to={`balancesheet/${balanceSheetItem.id}/overview`}
           onClick={handleClick}
-          selected={isSelected}
         >
           <ListItemText
             primary={<Trans>Balance sheet {{ id: balanceSheetItem.id }}</Trans>}

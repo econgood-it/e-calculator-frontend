@@ -24,6 +24,7 @@ const Content = styled.div<{ $open: boolean; $drawerWidth: number }>`
 export default function Sidebar() {
   const drawerWidth = 260;
   const [open, setOpen] = useState<boolean>(true);
+
   const toogleSidebar = () => {
     setOpen(!open);
   };

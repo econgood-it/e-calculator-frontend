@@ -6,7 +6,7 @@ import { faBuilding, faGear, faHouse } from '@fortawesome/free-solid-svg-icons';
 import ListItemText from '@mui/material/ListItemText';
 import { Trans, useTranslation } from 'react-i18next';
 import List from '@mui/material/List';
-import { Link } from 'react-router-dom';
+import { Link, useMatch } from 'react-router-dom';
 import { Divider, ListSubheader } from '@mui/material';
 import { BalanceSheetItem } from '../../models/BalanceSheet';
 import { ReactNode } from 'react';
@@ -30,10 +30,14 @@ function StakeholderRatingNavigationItem({
   icon,
   pathName,
 }: StakeholderRatingNavigationItemProps) {
+  const matchRoute = useMatch(
+    `organization/:id/balancesheet/${balanceSheetId}/ratings/${pathName}`
+  );
   return (
     <ListItem key="suppliers">
       <ListItemButton
         component={Link}
+        selected={matchRoute !== null}
         to={`balancesheet/${balanceSheetId}/ratings/${pathName}`}
       >
         <ListItemIcon>{icon}</ListItemIcon>
@@ -47,12 +51,16 @@ const BalanceSheetSubNavigation = ({
   balanceSheetItem,
 }: BalanceSheetSubNavigationProps) => {
   const { t } = useTranslation();
+  const matchRoute = useMatch(
+    `organization/:id/balancesheet/${balanceSheetItem.id}/:navItem`
+  );
 
   return (
     <List component="div">
       <ListItem key="overview">
         <ListItemButton
           component={Link}
+          selected={matchRoute?.params.navItem === 'overview'}
           to={`balancesheet/${balanceSheetItem.id}/overview`}
         >
           <ListItemIcon>
@@ -67,6 +75,7 @@ const BalanceSheetSubNavigation = ({
       <ListItem key="company-facts">
         <ListItemButton
           component={Link}
+          selected={matchRoute?.params.navItem === 'companyfacts'}
           to={`balancesheet/${balanceSheetItem.id}/companyfacts`}
         >
           <ListItemIcon>
@@ -116,6 +125,7 @@ const BalanceSheetSubNavigation = ({
       </GridItem>
       <ListItem key="settings">
         <ListItemButton
+          selected={matchRoute?.params.navItem === 'settings'}
           component={Link}
           to={`balancesheet/${balanceSheetItem.id}/settings`}
         >
