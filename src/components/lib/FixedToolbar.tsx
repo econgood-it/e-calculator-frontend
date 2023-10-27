@@ -47,7 +47,10 @@ export function FixedToolbar({ onToogleSidebar }: FixedToolbarProps) {
           disabled={onToogleSidebar === undefined}
           onClick={onToogleSidebar}
         >
-          <FontAwesomeIcon icon={faBars} />
+          <FontAwesomeIcon
+            color={theme.palette.primary.contrastText}
+            icon={faBars}
+          />
         </IconButton>
         <ApplicationName
           variant="h6"
@@ -57,7 +60,10 @@ export function FixedToolbar({ onToogleSidebar }: FixedToolbarProps) {
         </ApplicationName>
         <Tooltip title="Logout">
           <IconButton aria-label="logout" onClick={onLogoutClicked}>
-            <FontAwesomeIcon icon={faArrowRightFromBracket} />
+            <FontAwesomeIcon
+              color={theme.palette.primary.contrastText}
+              icon={faArrowRightFromBracket}
+            />
           </IconButton>
         </Tooltip>
       </StyledToolbar>

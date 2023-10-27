@@ -28,10 +28,9 @@ export const themeOptions: ThemeOptions = {
     },
   },
   palette: {
-    mode: 'dark',
-    // text: {
-    //   primary: '#747474',
-    // },
+    text: {
+      primary: '#747474',
+    },
     primary: {
       main: primaryColor,
       contrastText: 'rgba(255,255,255,0.8)',
