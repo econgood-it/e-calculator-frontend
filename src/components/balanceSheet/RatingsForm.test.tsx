@@ -5,7 +5,7 @@ import { useActiveBalanceSheet } from '../../contexts/ActiveBalanceSheetProvider
 import renderWithTheme from '../../testUtils/rendering';
 import { RatingsForm } from './RatingsForm';
 import { RatingsMockBuilder } from '../../testUtils/balanceSheets';
-import { screen, within } from '@testing-library/react';
+import { fireEvent, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { saveForm } from '../../testUtils/form';
 
@@ -61,11 +61,8 @@ describe('RatingsForm', () => {
     const user = userEvent.setup();
     const ratings = new RatingsMockBuilder().build();
     renderWithTheme(<RatingsForm stakeholderName={''} ratings={ratings} />);
-    const input = within(
-      screen.getByLabelText(`ratings.${0}.estimations`)
-    ).getByRole('textbox');
-    await user.clear(input);
-    await user.type(input, '4');
+    const input = screen.getByLabelText(`ratings.${0}.estimations`);
+    fireEvent.click(within(input).getByLabelText('4 Stars'));
     await saveForm(user);
 
     expect(updateRatings).toHaveBeenCalledWith([

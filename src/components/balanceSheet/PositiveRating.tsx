@@ -1,9 +1,10 @@
 import Rating from '@mui/material/Rating';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { Box } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSeedling } from '@fortawesome/free-solid-svg-icons/faSeedling';
 import styled from 'styled-components';
+import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 
 const StyledRating = styled(Rating)`
   & .MuiRating-iconFilled {
@@ -14,17 +15,17 @@ const StyledRating = styled(Rating)`
   }
 `;
 
-type PositiveRatingProps = {
-  value: number;
-  readOnly: boolean;
-  onChange: (value: number) => void;
+type PositiveRatingProps<T extends FieldValues> = {
+  control: Control<T>;
+  name: Path<T>;
+  label: ReactNode;
 };
 
-export default function PositiveRating({
-  value,
-  onChange,
-  readOnly,
-}: PositiveRatingProps) {
+export default function PositiveRating<T extends FieldValues>({
+  control,
+  name,
+  label,
+}: PositiveRatingProps<T>) {
   const [hover, setHover] = useState(-1);
   const getLabel = (currentValue: number): string => {
     if (currentValue === 1) {
@@ -41,34 +42,40 @@ export default function PositiveRating({
   };
 
   return (
-    <Box
-      sx={{
-        width: 400,
-        display: 'flex',
-        alignItems: 'center',
+    <Controller
+      render={({ field, fieldState }) => {
+        return (
+          <Box
+            sx={{
+              width: 400,
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <StyledRating
+              aria-label={name}
+              value={field.value}
+              onChange={(e, newValue) => {
+                field.onChange(newValue);
+              }}
+              max={10}
+              precision={1}
+              icon={<FontAwesomeIcon icon={faSeedling} />}
+              emptyIcon={<FontAwesomeIcon icon={faSeedling} />}
+              onChangeActive={(event, newHover) => {
+                setHover(newHover);
+              }}
+            />
+            {field.value !== null && (
+              <Box sx={{ ml: 2, width: 150 }}>
+                {getLabel(hover !== -1 ? hover : field.value)}
+              </Box>
+            )}
+          </Box>
+        );
       }}
-    >
-      <StyledRating
-        aria-label="positive-rating-input"
-        name="hover-feedback"
-        value={value}
-        readOnly={readOnly}
-        max={10}
-        precision={1}
-        icon={<FontAwesomeIcon icon={faSeedling} />}
-        emptyIcon={<FontAwesomeIcon icon={faSeedling} />}
-        onChange={(event, newValue) => {
-          onChange(Number(newValue));
-        }}
-        onChangeActive={(event, newHover) => {
-          setHover(newHover);
-        }}
-      />
-      {value !== null && (
-        <Box sx={{ ml: 2, width: 150 }}>
-          {getLabel(hover !== -1 ? hover : value)}
-        </Box>
-      )}
-    </Box>
+      name={name}
+      control={control}
+    />
   );
 }

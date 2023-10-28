@@ -14,6 +14,7 @@ import { RatingResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/rat
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { useWorkbook } from '../../contexts/WorkbookProvider';
+import PositiveRating from './PositiveRating';
 
 type RatingsFormProps = {
   ratings: Rating[];
@@ -71,14 +72,25 @@ export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
             <GridItem xs={12} sm={7}>
               <Typography variant={'body1'}>{r.name}</Typography>
             </GridItem>
-            <GridItem xs={12} sm={3}>
-              <NumberInput<RatingsFormInput>
-                register={register}
-                errors={errors}
-                label={<Trans>Estimation</Trans>}
-                registerKey={`${fieldArrayName}.${index}.estimations`}
-              />
-            </GridItem>
+            {r.isPositive ? (
+              <GridItem xs={12} sm={3}>
+                <PositiveRating
+                  control={control}
+                  name={`${fieldArrayName}.${index}.estimations`}
+                  label={<Trans>Estimation</Trans>}
+                />
+              </GridItem>
+            ) : (
+              <GridItem xs={12} sm={3}>
+                <NumberInput<RatingsFormInput>
+                  register={register}
+                  errors={errors}
+                  label={<Trans>Estimation</Trans>}
+                  registerKey={`${fieldArrayName}.${index}.estimations`}
+                />
+              </GridItem>
+            )}
+
             <GridItem xs={12} sm={1}>
               {workbook && workbook.hasSection(r.shortName) && (
                 <Tooltip
