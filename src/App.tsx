@@ -56,8 +56,7 @@ export const themeOptions: ThemeOptions = {
               backgroundColor: secondaryColor,
               color: contrastColor,
             },
-            '&.MuiListItemIcon-root': {
-              backgroundColor: contrastColor,
+            '& .MuiListItemIcon-root': {
               color: `${contrastColor} !important`,
             },
           },
