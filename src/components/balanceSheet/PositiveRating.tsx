@@ -1,10 +1,12 @@
 import Rating from '@mui/material/Rating';
 import { ReactNode, useState } from 'react';
-import { Box } from '@mui/material';
+import { Badge, Chip } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSeedling } from '@fortawesome/free-solid-svg-icons/faSeedling';
 import styled from 'styled-components';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
+import { faSeedling } from '@fortawesome/free-solid-svg-icons/faSeedling';
+import GridContainer from '../layout/GridContainer';
+import GridItem from '../layout/GridItem';
 
 const StyledRating = styled(Rating)`
   & .MuiRating-iconFilled {
@@ -45,37 +47,65 @@ export default function PositiveRating<T extends FieldValues>({
     <Controller
       render={({ field, fieldState }) => {
         return (
-          <Box
-            sx={{
-              width: 400,
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            <StyledRating
-              aria-label={name}
-              value={field.value}
-              onChange={(e, newValue) => {
-                field.onChange(newValue);
-              }}
-              max={10}
-              precision={1}
-              icon={<FontAwesomeIcon icon={faSeedling} />}
-              emptyIcon={<FontAwesomeIcon icon={faSeedling} />}
-              onChangeActive={(event, newHover) => {
-                setHover(newHover);
-              }}
-            />
-            {field.value !== null && (
-              <Box sx={{ ml: 2, width: 150 }}>
-                {getLabel(hover !== -1 ? hover : field.value)}
-              </Box>
-            )}
-          </Box>
+          <GridContainer justifyContent={'space-between'}>
+            <GridItem xs={12} sm={7}>
+              <StyledRating
+                aria-label={name}
+                value={field.value}
+                onChange={(e, newValue) => {
+                  field.onChange(newValue);
+                }}
+                max={10}
+                precision={1}
+                IconContainerComponent={({ value, onClick, ...other }) => {
+                  return (
+                    <FontAwesomeRatingIcon
+                      currentValue={field.value}
+                      value={value}
+                      props={other}
+                      hover={hover}
+                    />
+                  );
+                }}
+                onChangeActive={(event, newHover) => {
+                  setHover(newHover);
+                }}
+              />
+            </GridItem>
+            <GridItem xs={12} sm={4}>
+              {field.value !== null && (
+                <Chip label={getLabel(hover !== -1 ? hover : field.value)} />
+              )}
+            </GridItem>
+          </GridContainer>
         );
       }}
       name={name}
       control={control}
     />
+  );
+}
+
+function FontAwesomeRatingIcon({
+  value,
+  currentValue,
+  props,
+  hover,
+}: {
+  value: number;
+  currentValue: number;
+  props: any;
+  hover: number;
+}) {
+  return (
+    <>
+      <Badge
+        badgeContent={value}
+        color="primary"
+        invisible={hover !== -1 ? value !== hover : value !== currentValue}
+      >
+        <FontAwesomeIcon icon={faSeedling} {...props} />
+      </Badge>
+    </>
   );
 }
