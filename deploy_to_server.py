@@ -61,7 +61,7 @@ def run_tests():
 def build_and_deploy_remotely(server_domain: str, backend_url: str):
     commands = [
         'cd /var/docker/e-calculator-frontend',
-        'git pull',
+        #'git pull',
         "rm -r node_modules",
         f"{yarn} install",
         "rm -r build",
