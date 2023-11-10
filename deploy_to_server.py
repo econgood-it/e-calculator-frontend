@@ -60,15 +60,15 @@ def run_tests():
 
 def build_and_deploy_remotely(server_domain: str, backend_url: str):
     commands = [
-        'cd /var/docker/e-calculator-frontend',
-        #'git pull',
-        "rm -r node_modules",
+        'source .nvm/nvm.sh',
+        'cd e-calculator-frontend',
+        'git pull',
+        "rm -rf node_modules",
         f"{yarn} install",
-        "rm -r build",
-        f"REACT_APP_BACKEND_DOMAIN={backend_url} GENERATE_SOURCEMAP=false yarn build"
-        f"mv ./build ./volumes/www"
+        "rm -rf build",
+        f"export REACT_APP_BACKEND_DOMAIN={backend_url}; export GENERATE_SOURCEMAP=false; yarn build",
         f"{docker} {compose} down",
-        f"{docker} {compose} up"
+        f"{docker} {compose} up -d"
     ]
     full_command = " && ".join(commands)
     subprocess.run(['ssh', server_domain, full_command], check=True)
@@ -81,16 +81,16 @@ def rm_folder(folder: str):
 
 def main(args):
     logging.info(f"Start build and deployment process for the environment {args.environment}")
-    # check_for_uncommitted_files()
-    # logging.info(f"Install dependencies")
-    # rm_folder(folder='node_modules')
-    # install_dependencies()
-    # logging.info(f"Check linting")
-    # check_linting()
-    # logging.info(f"Run tests")
-    # run_tests()
+    check_for_uncommitted_files()
+    logging.info(f"Install dependencies")
+    rm_folder(folder='node_modules')
+    install_dependencies()
+    logging.info(f"Check linting")
+    check_linting()
+    logging.info(f"Run tests")
+    run_tests()
     server_domain = 'ecg@prod.econgood.org' if args.environment == 'prod' else 'ecg@dev.econgood.org'
-    backend_url = 'https://balance-sheet-api.prod.econgood.org/' if args.environment == 'prod' else 'https://balance-sheet-api.dev.econgood.org/'
+    backend_url = 'https://balance-sheet-api.prod.econgood.org' if args.environment == 'prod' else 'https://balance-sheet-api.dev.econgood.org'
     logging.info(f"Build and deploy to {server_domain} and using backend api {backend_url}")
     build_and_deploy_remotely(server_domain=server_domain, backend_url=backend_url)
     logging.info(f"Deployment finished")
