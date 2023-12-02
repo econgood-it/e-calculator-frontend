@@ -56,7 +56,7 @@ describe('ApiClient', () => {
 
   describe('User', () => {
     it('should login with credentials', async () => {
-      const user = UserMocks.default();
+      const user = UserMocks.defaultOld();
       const credentials = {
         email: 'user@example.com',
         password: 'fjdklsareuqjkdjfkl',

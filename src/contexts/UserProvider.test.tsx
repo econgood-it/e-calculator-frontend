@@ -23,13 +23,13 @@ describe('UserProvider', () => {
   }
 
   it('returns user from local storage', async () => {
-    window.localStorage.setItem('user', JSON.stringify(UserMocks.default()));
+    window.localStorage.setItem('user', JSON.stringify(UserMocks.defaultOld()));
     const { result } = renderHookWithTheme(() => useUser(), {
       wrapper: Wrapper,
     });
     expect(spyGetItem).toHaveBeenCalledWith('user');
 
-    expect(result.current.user).toEqual(UserMocks.default());
+    expect(result.current.user).toEqual(UserMocks.defaultOld());
   });
 
   it('updates user if setUser is called', async () => {
@@ -37,18 +37,18 @@ describe('UserProvider', () => {
       wrapper: Wrapper,
     });
     expect(result.current.user).toEqual(undefined);
-    act(() => result.current.updateUser(UserMocks.default()));
+    act(() => result.current.updateUser(UserMocks.defaultOld()));
     expect(spySetItem).toHaveBeenCalledWith(
       'user',
-      JSON.stringify(UserMocks.default())
+      JSON.stringify(UserMocks.defaultOld())
     );
     await waitFor(() =>
-      expect(result.current.user).toEqual(UserMocks.default())
+      expect(result.current.user).toEqual(UserMocks.defaultOld())
     );
   });
 
   it('remove user from local storage on logout', async () => {
-    window.localStorage.setItem('user', JSON.stringify(UserMocks.default()));
+    window.localStorage.setItem('user', JSON.stringify(UserMocks.defaultOld()));
     const { result } = renderHookWithTheme(() => useUser(), {
       wrapper: Wrapper,
     });

@@ -31,7 +31,7 @@ describe('useOrganizations', () => {
     updateOrganization: jest.fn(),
   };
 
-  const user = UserMocks.default();
+  const user = UserMocks.defaultOld();
   let spySetItem: jest.SpyInstance;
   let spyGetItem: jest.SpyInstance;
   beforeEach(() => {

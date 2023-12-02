@@ -1,22 +1,16 @@
-import { Navigate, Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { ApiProvider } from '../contexts/ApiProvider';
-import { useUser } from '../contexts/UserProvider';
+import { useAuth } from 'oidc-react';
+import { LoadingPage } from '../pages/LoadingPage';
 
 export function RequiresAuth() {
-  const { user } = useUser();
-  if (!user || !user.token || user.token === '') {
+  const { isLoading, userData } = useAuth();
+  if (!isLoading && userData) {
     return (
-      <Navigate
-        to={{
-          pathname: '/login',
-        }}
-      />
+      <ApiProvider>
+        <Outlet />
+      </ApiProvider>
     );
   }
-
-  return (
-    <ApiProvider>
-      <Outlet />
-    </ApiProvider>
-  );
+  return <LoadingPage />;
 }
