@@ -18,15 +18,7 @@ function ApiProvider({ children }: ApiProviderProps) {
     <ApiContext.Provider
       value={
         new ApiClient(
-          makeWretchInstanceWithAuth(
-            API_URL,
-            {
-              token: userData!.access_token,
-              expires: '2022-02-18T14:24:37+01:00',
-              user: 3,
-            },
-            language
-          )
+          makeWretchInstanceWithAuth(API_URL, userData!.access_token, language)
         )
       }
     >

@@ -4,17 +4,20 @@ import { useOrganizations } from '../contexts/OrganizationProvider';
 import renderWithTheme from '../testUtils/rendering';
 import { RequireActiveOrganization } from './RequireActiveOrganization';
 import { useAlert } from '../contexts/AlertContext';
-import { useUser } from '../contexts/UserProvider';
+import { useAuth } from 'oidc-react';
 
 jest.mock('../contexts/OrganizationProvider');
-jest.mock('../contexts/UserProvider');
+
 jest.mock('../contexts/AlertContext');
 
 jest.mock('react-router-dom');
+jest.mock('oidc-react', () => ({
+  useAuth: jest.fn(),
+}));
 
 describe('RequireAcitveOrganization', () => {
   beforeEach(() => {
-    (useUser as jest.Mock).mockReturnValue({ logout: jest.fn() });
+    (useAuth as jest.Mock).mockReturnValue({ signOut: jest.fn() });
   });
 
   it('shows loading page if active organization is undefined', async () => {

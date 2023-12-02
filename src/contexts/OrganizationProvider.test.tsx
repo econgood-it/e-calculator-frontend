@@ -9,16 +9,16 @@ import {
 import { act, waitFor } from '@testing-library/react';
 import { ReactElement } from 'react';
 import { useAlert } from './AlertContext';
-import { UserMocks } from '../testUtils/user';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { useUser } from './UserProvider';
+import { useAuth } from 'oidc-react';
 
 jest.mock('./ApiProvider');
 jest.mock('./AlertContext');
-jest.mock('./UserProvider');
 
 const mockedUsedNavigate = jest.fn();
-
+jest.mock('oidc-react', () => ({
+  useAuth: jest.fn(),
+}));
 jest.mock('react-router-dom', () => ({
   ...(jest.requireActual('react-router-dom') as any),
   useNavigate: () => mockedUsedNavigate,
@@ -31,7 +31,7 @@ describe('useOrganizations', () => {
     updateOrganization: jest.fn(),
   };
 
-  const user = UserMocks.defaultOld();
+  const userId = 'userId';
   let spySetItem: jest.SpyInstance;
   let spyGetItem: jest.SpyInstance;
   beforeEach(() => {
@@ -40,7 +40,9 @@ describe('useOrganizations', () => {
 
     window.localStorage.clear();
     (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
-    (useUser as jest.Mock).mockReturnValue({ user });
+    (useAuth as jest.Mock).mockReturnValue({
+      userData: { profile: { sub: userId } },
+    });
   });
 
   const storageKey = 'activeOrganizationId';
@@ -192,7 +194,7 @@ describe('useOrganizations', () => {
   it('should prefer organization from url over local storage', async function () {
     const orgaIdInLocalStorage = 7;
     window.localStorage.setItem(
-      user.user.toString(),
+      userId,
       JSON.stringify({
         [storageKey]: orgaIdInLocalStorage,
       })
@@ -214,7 +216,7 @@ describe('useOrganizations', () => {
 
     await waitFor(() =>
       expect(spySetItem).toHaveBeenCalledWith(
-        user.user.toString(),
+        userId,
         JSON.stringify({ [storageKey]: orgaIdFromUrl })
       )
     );
@@ -261,7 +263,7 @@ describe('useOrganizations', () => {
 
   it('should switch active organization', async function () {
     window.localStorage.setItem(
-      user.user.toString(),
+      userId,
       JSON.stringify({
         [storageKey]: new OrganizationMockBuilder().withId(3).build().id,
       })
@@ -285,7 +287,7 @@ describe('useOrganizations', () => {
       expect(apiMock.getOrganizations).toHaveBeenCalledWith()
     );
 
-    expect(spyGetItem).toHaveBeenCalledWith(user.user.toString());
+    expect(spyGetItem).toHaveBeenCalledWith(userId);
     await waitFor(() =>
       expect(apiMock.getOrganization).toHaveBeenCalledWith(3)
     );
@@ -302,7 +304,7 @@ describe('useOrganizations', () => {
       expect(apiMock.getOrganization).toHaveBeenCalledWith(idToSelect)
     );
     expect(spySetItem).toHaveBeenCalledWith(
-      user.user.toString(),
+      userId,
       JSON.stringify({ [storageKey]: new OrganizationMockBuilder().build().id })
     );
 

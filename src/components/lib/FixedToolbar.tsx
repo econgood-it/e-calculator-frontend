@@ -6,11 +6,10 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { Trans } from 'react-i18next';
 import { AppBar, Tooltip, useTheme } from '@mui/material';
-import { useUser } from '../../contexts/UserProvider';
-import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import { useAuth } from 'oidc-react';
 
 const FixedAppBar = styled(AppBar)`
   z-index: ${(props) => props.theme.zIndex.drawer + 1};
@@ -31,12 +30,10 @@ type FixedToolbarProps = {
 
 export function FixedToolbar({ onToogleSidebar }: FixedToolbarProps) {
   const theme = useTheme();
-  const { logout } = useUser();
-  const navigate = useNavigate();
+  const { signOutRedirect } = useAuth();
 
-  function onLogoutClicked() {
-    logout();
-    navigate('/');
+  async function onLogoutClicked() {
+    await signOutRedirect();
   }
 
   return (

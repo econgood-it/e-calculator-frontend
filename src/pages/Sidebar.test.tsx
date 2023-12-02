@@ -18,12 +18,15 @@ import {
   OrganizationMockBuilder,
 } from '../testUtils/organization';
 import { useAlert } from '../contexts/AlertContext';
-import { useUser } from '../contexts/UserProvider';
+import { useAuth } from 'oidc-react';
 
 jest.mock('../contexts/BalanceSheetListProvider');
 jest.mock('../contexts/OrganizationProvider');
-jest.mock('../contexts/UserProvider');
 jest.mock('../contexts/AlertContext');
+
+jest.mock('oidc-react', () => ({
+  useAuth: jest.fn(),
+}));
 
 describe('Sidebar', () => {
   const initialPathForRouting = '/organization/3';
@@ -41,8 +44,8 @@ describe('Sidebar', () => {
     (useBalanceSheetItems as jest.Mock).mockImplementation(
       () => balanceSheetListMock
     );
-    (useUser as jest.Mock).mockReturnValue({
-      logout: logoutMock,
+    (useAuth as jest.Mock).mockReturnValue({
+      signOutRedirect: logoutMock,
     });
     (useAlert as jest.Mock).mockReturnValue({
       addErrorAlert: jest.fn(),
@@ -185,10 +188,6 @@ describe('Sidebar', () => {
           path: initialPath,
           element: <Sidebar />,
         },
-        {
-          path: '/',
-          element: <div>User logout</div>,
-        },
       ],
       { initialEntries: [initialPath] }
     );
@@ -197,7 +196,5 @@ describe('Sidebar', () => {
 
     await user.click(screen.getByLabelText('logout'));
     expect(logoutMock).toHaveBeenCalledWith();
-
-    expect(await screen.findByText('User logout')).toBeInTheDocument();
   });
 });

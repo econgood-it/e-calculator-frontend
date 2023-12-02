@@ -14,10 +14,9 @@ import {
   OrganizationItems,
   OrganizationRequestBody,
 } from '../models/Organization';
-import { User } from '../authentication/User';
 import { useNavigate, useParams } from 'react-router-dom';
 import { LoadingPage } from '../pages/LoadingPage';
-import { useUser } from './UserProvider';
+import { useAuth } from 'oidc-react';
 
 interface IOrganizationContext {
   organizationItems: OrganizationItems;
@@ -39,7 +38,7 @@ type OrganizationProviderProps = {
 
 export function OrganizationProvider({ children }: OrganizationProviderProps) {
   const api = useApi();
-  const { user } = useUser();
+  const { userData } = useAuth();
   const [organizationItems, setOrganizationItems] = useState<
     OrganizationItems | undefined
   >(undefined);
@@ -76,7 +75,7 @@ export function OrganizationProvider({ children }: OrganizationProviderProps) {
   return (
     <WithActiveOrganization
       organizationItems={organizationItems}
-      user={user!}
+      userId={userData!.profile!.sub}
       addOrganizationItem={addOrganizationItem}
       renameOrganizationItem={renameOrganizationItem}
     >
@@ -88,11 +87,11 @@ export function OrganizationProvider({ children }: OrganizationProviderProps) {
 function WithActiveOrganization({
   organizationItems,
   renameOrganizationItem,
-  user,
+  userId,
   addOrganizationItem,
   children,
 }: {
-  user: User;
+  userId: string;
   organizationItems: OrganizationItems;
   renameOrganizationItem: (id: number, newName: string) => void;
   addOrganizationItem: (
@@ -106,7 +105,7 @@ function WithActiveOrganization({
     activeOrganization,
     setActiveOrganizationById,
     updateActiveOrganization,
-  ] = useActiveOrganization(user, organizationItems);
+  ] = useActiveOrganization(userId, organizationItems);
   const navigate = useNavigate();
 
   async function createOrganization(organization: OrganizationRequestBody) {
@@ -139,31 +138,31 @@ function WithActiveOrganization({
 }
 
 function useOrganizationStorage(
-  user: User
+  userId: string
 ): [number, (activeOrganizationId: number) => void] {
   const localeStorageKey = 'activeOrganizationId';
 
   const organizationIdFromStorage = Number(
-    JSON.parse(
-      window.localStorage.getItem(user.user.toString()) || JSON.stringify({})
-    )[localeStorageKey]
+    JSON.parse(window.localStorage.getItem(userId) || JSON.stringify({}))[
+      localeStorageKey
+    ]
   );
 
   const writeOrganizationIdToStorage = useCallback(
     (activeOrganizationId: number) => {
       window.localStorage.setItem(
-        user.user.toString(),
+        userId,
         JSON.stringify({ [localeStorageKey]: activeOrganizationId })
       );
     },
-    [user, localeStorageKey]
+    [userId, localeStorageKey]
   );
 
   return [organizationIdFromStorage, writeOrganizationIdToStorage];
 }
 
 function useActiveOrganization(
-  user: User,
+  userId: string,
   organizationItems: OrganizationItems
 ): [
   Organization | undefined,
@@ -172,7 +171,7 @@ function useActiveOrganization(
 ] {
   const api = useApi();
   const { orgaId: organizationIdFromUrl } = useParams();
-  const [localStorageId, setLocalStorageId] = useOrganizationStorage(user);
+  const [localStorageId, setLocalStorageId] = useOrganizationStorage(userId);
 
   const [activeOrganizationId, setActiveOrganizationById] = useState<
     number | undefined

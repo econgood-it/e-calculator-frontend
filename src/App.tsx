@@ -10,7 +10,8 @@ import NotificationList from './components/alerts/NotificationList';
 import { ThemeProvider } from 'styled-components';
 import { RouterProvider } from 'react-router-dom';
 import { useRouter } from './routing/useRouter';
-import { UserProvider } from './contexts/UserProvider';
+import { AuthProvider } from 'oidc-react';
+import { AuthProviderProps } from 'oidc-react/build/src/AuthContextInterface';
 
 const primaryColor = '#94a231';
 const secondaryColor = '#00828b';
@@ -67,6 +68,14 @@ export const themeOptions: ThemeOptions = {
 };
 const theme = createTheme(themeOptions);
 
+const oidcConfig: AuthProviderProps = {
+  authority: 'https://econgood-kmtyuy.zitadel.cloud',
+  clientId: '243348809789290637@econgood',
+  responseType: 'code',
+  redirectUri: 'http://localhost:3000/',
+  scope: 'openid email profile',
+};
+
 function App() {
   const router = useRouter();
 
@@ -77,9 +86,9 @@ function App() {
           <AlertProvider>
             <>
               <CssBaseline enableColorScheme />
-              <UserProvider>
+              <AuthProvider {...oidcConfig}>
                 <RouterProvider router={router} />
-              </UserProvider>
+              </AuthProvider>
               <NotificationList />
             </>
           </AlertProvider>

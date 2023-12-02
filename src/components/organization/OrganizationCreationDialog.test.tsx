@@ -6,17 +6,13 @@ import { useAlert } from '../../contexts/AlertContext';
 import { OrganizationCreationDialog } from './OrganizationCreationDialog';
 import { OrganizationMockBuilder } from '../../testUtils/organization';
 import { useOrganizations } from '../../contexts/OrganizationProvider';
-import { useUser } from '../../contexts/UserProvider';
+import { useAuth } from 'oidc-react';
 
 jest.mock('../../contexts/AlertContext');
 jest.mock('../../contexts/OrganizationProvider');
-jest.mock('../../contexts/UserProvider');
 
-const mockedUsedNavigate = jest.fn();
-
-jest.mock('react-router-dom', () => ({
-  ...(jest.requireActual('react-router-dom') as any),
-  useNavigate: () => mockedUsedNavigate,
+jest.mock('oidc-react', () => ({
+  useAuth: jest.fn(),
 }));
 
 describe('OrganizationCreationDialog', () => {
@@ -27,7 +23,7 @@ describe('OrganizationCreationDialog', () => {
   const logoutMock = jest.fn();
 
   beforeEach(() => {
-    (useUser as jest.Mock).mockReturnValue({ logout: logoutMock });
+    (useAuth as jest.Mock).mockReturnValue({ signOutRedirect: logoutMock });
     (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
     (useOrganizations as jest.Mock).mockImplementation(
       () => useOrganizationMock
@@ -103,6 +99,5 @@ describe('OrganizationCreationDialog', () => {
     await user.click(screen.getByLabelText('logout'));
 
     expect(logoutMock).toHaveBeenCalledWith();
-    expect(mockedUsedNavigate).toHaveBeenCalledWith('/');
   });
 });

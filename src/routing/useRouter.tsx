@@ -1,5 +1,4 @@
 import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
-import { LoginPage } from '../pages/LoginPage';
 import RatingsPage from '../pages/RatingsPage';
 import { StakholderShortNames } from '../models/Rating';
 
@@ -17,10 +16,6 @@ import { BalanceSheetSettingsPage } from '../pages/BalanceSheetSettingsPage';
 
 export function useRouter() {
   return createBrowserRouter([
-    {
-      path: '/login',
-      element: <LoginPage />,
-    },
     {
       element: <RequiresAuth />,
       children: [

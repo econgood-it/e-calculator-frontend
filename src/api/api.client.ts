@@ -1,5 +1,5 @@
 import wretch, { Wretch, WretchOptions, WretchResponse } from 'wretch';
-import { User } from '../authentication/User';
+
 import {
   OrganizationItemsResponseSchema,
   OrganizationResponseSchema,
@@ -27,6 +27,7 @@ import {
 } from '../models/Organization';
 import { MatrixBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto';
 import { Matrix } from '../models/Matrix';
+import { User } from 'oidc-react';
 
 function language(language: string) {
   return function (
@@ -52,15 +53,15 @@ export const Middlewares = {
 
 export function makeWretchInstanceWithAuth(
   apiUrl: string,
-  user: User,
+  accessToken: string,
   language: string
 ) {
   return makeWretchInstance(apiUrl, language)
-    .headers({ Authorization: `Bearer ${user.token}` })
+    .headers({ Authorization: `Bearer ${accessToken}` })
     .resolve((r) =>
       r
         .unauthorized(() => {
-          window.location.pathname = '/login';
+          window.location.pathname = '/';
         })
         .res()
     );

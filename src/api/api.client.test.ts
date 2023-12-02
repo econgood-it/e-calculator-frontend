@@ -6,7 +6,7 @@ import {
   makeWretchInstance,
   makeWretchInstanceWithAuth,
 } from './api.client';
-import { exampleUser, UserMocks } from '../testUtils/user';
+import { UserMocks } from '../testUtils/user';
 import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets';
 import { WorkbookResponseMocks } from '../testUtils/workbook';
 import { regionsMocks } from '../testUtils/regions';
@@ -45,7 +45,7 @@ function mockResource(
 }
 const URL = 'https://calculator.test.ecogood.org';
 const apiClient = new ApiClient(
-  makeWretchInstanceWithAuth(URL, exampleUser, 'de')
+  makeWretchInstanceWithAuth(URL, UserMocks.default().access_token, 'de')
 );
 const authApiClient = new AuthApiClient(makeWretchInstance(URL, 'en'));
 
