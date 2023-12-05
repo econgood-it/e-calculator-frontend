@@ -58,7 +58,7 @@ def run_tests():
     subprocess.run([yarn, run, 'test'], env=my_env, check=True)
 
 
-def build_and_deploy_remotely(server_domain: str, backend_url: str):
+def build_and_deploy_remotely(server_domain: str, backend_url: str, frontend_url: str):
     commands = [
         'source .nvm/nvm.sh',
         'cd e-calculator-frontend',
@@ -66,7 +66,7 @@ def build_and_deploy_remotely(server_domain: str, backend_url: str):
         "rm -rf node_modules",
         f"{yarn} install",
         "rm -rf build",
-        f"export REACT_APP_BACKEND_DOMAIN={backend_url}; export GENERATE_SOURCEMAP=false; yarn build",
+        f"export REACT_APP_BACKEND_DOMAIN={backend_url}; export REACT_APP_FRONTEND_DOMAIN={frontend_url}; export GENERATE_SOURCEMAP=false; yarn build",
         f"{docker} {compose} down",
         f"{docker} {compose} up -d"
     ]
@@ -91,8 +91,9 @@ def main(args):
     run_tests()
     server_domain = 'ecg@prod.econgood.org' if args.environment == 'prod' else 'ecg@dev.econgood.org'
     backend_url = 'https://balance-sheet-api.prod.econgood.org' if args.environment == 'prod' else 'https://balance-sheet-api.dev.econgood.org'
-    logging.info(f"Build and deploy to {server_domain} and using backend api {backend_url}")
-    build_and_deploy_remotely(server_domain=server_domain, backend_url=backend_url)
+    frontend_url = 'https://balance-sheet.prod.econgood.org' if args.environment == 'prod' else 'https://balance-sheet.dev.econgood.org'
+    logging.info(f"Build and deploy to {server_domain} and using backend api {backend_url} and frontend url {frontend_url}")
+    build_and_deploy_remotely(server_domain=server_domain, backend_url=backend_url, frontend_url=frontend_url)
     logging.info(f"Deployment finished")
 
 

@@ -12,6 +12,7 @@ import { RouterProvider } from 'react-router-dom';
 import { useRouter } from './routing/useRouter';
 import { AuthProvider } from 'oidc-react';
 import { AuthProviderProps } from 'oidc-react/build/src/AuthContextInterface';
+import { FRONTEND_URL } from './configuration';
 
 const primaryColor = '#94a231';
 const secondaryColor = '#00828b';
@@ -72,7 +73,7 @@ const oidcConfig: AuthProviderProps = {
   authority: 'https://econgood-kmtyuy.zitadel.cloud',
   clientId: '243348809789290637@econgood',
   responseType: 'code',
-  redirectUri: 'http://localhost:3000/',
+  redirectUri: FRONTEND_URL,
   scope: 'openid email profile',
 };
 
