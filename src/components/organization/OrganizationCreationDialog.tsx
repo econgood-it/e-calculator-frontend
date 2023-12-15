@@ -29,7 +29,7 @@ export function OrganizationCreationDialog({
   return (
     <DialogComponent open={open} onClose={onClose} fullScreen={fullScreen}>
       <>
-        <DialogTitle variant={'h2'}>
+        <DialogTitle variant={'h1'}>
           <Trans>Create organization</Trans>
         </DialogTitle>
         <DialogContent>

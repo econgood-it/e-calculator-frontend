@@ -15,7 +15,10 @@ import { SaveButton } from './forms/SaveButton';
 import { useActiveBalanceSheet } from '../../contexts/ActiveBalanceSheetProvider';
 import { useEffect, useRef } from 'react';
 import { Rating } from '../../models/Rating';
-import { RatingResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/rating.dto';
+import {
+  RatingResponseBodySchema,
+  RatingType,
+} from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { useWorkbook } from '../../contexts/WorkbookProvider';
@@ -64,19 +67,35 @@ export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
 
   return (
     <FormContainer spacing={3}>
-      {ratingsFields.map((r, index) => (
-        <Aspect
-          key={r.id}
-          rating={r}
-          name={`${fieldArrayName}.${index}.estimations`}
-          control={control}
-          workbook={workbook}
-        />
-      ))}
+      {ratingsFields.map((r, index) => {
+        return r.type === RatingType.topic ? (
+          <Topic key={r.id} rating={r} />
+        ) : (
+          <Aspect
+            key={r.id}
+            rating={r}
+            name={`${fieldArrayName}.${index}.estimations`}
+            control={control}
+            workbook={workbook}
+          />
+        );
+      })}
       <GridItem xs={12}>
         <SaveButton handleSubmit={handleSubmit} onSaveClick={onSaveClick} />
       </GridItem>
     </FormContainer>
+  );
+}
+
+type TopicProps = {
+  rating: FieldArrayWithId<RatingsFormInput>;
+};
+
+function Topic({ rating }: TopicProps) {
+  return (
+    <GridItem key={rating.shortName} xs={12}>
+      <Typography variant={'h1'}>{rating.name}</Typography>
+    </GridItem>
   );
 }
 

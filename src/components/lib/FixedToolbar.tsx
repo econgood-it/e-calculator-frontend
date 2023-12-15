@@ -50,7 +50,7 @@ export function FixedToolbar({ onToogleSidebar }: FixedToolbarProps) {
           />
         </IconButton>
         <ApplicationName
-          variant="h6"
+          variant="h3"
           color={theme.palette.primary.contrastText}
         >
           <Trans>ECG Calculator</Trans>

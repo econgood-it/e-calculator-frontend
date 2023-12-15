@@ -21,9 +21,9 @@ export function BalanceSheetOverviewPage() {
     })();
   }, [balanceSheet]);
   return (
-    <GridContainer>
+    <GridContainer spacing={2}>
       <GridItem xs={12}>
-        <Typography variant="h2">
+        <Typography variant="h1">
           <Trans>Matrix representation</Trans>
         </Typography>
       </GridItem>

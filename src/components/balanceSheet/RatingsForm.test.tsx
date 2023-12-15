@@ -32,15 +32,17 @@ describe('RatingsForm', () => {
       updateRatings: updateRatings,
     });
   });
-  it('should render ratings', async () => {
+  it('should render aspects', async () => {
     const ratings = new RatingsMockBuilder().build();
     renderWithTheme(<RatingsForm stakeholderName={''} ratings={ratings} />);
     for (const [index, rating] of ratings.entries()) {
-      expect(
-        screen.getByLabelText(`ratings.${index}.estimations`)
-      ).toBeInTheDocument();
-      expect(screen.getByText(`${rating.shortName}`)).toBeInTheDocument();
-      expect(screen.getByText(`${rating.name}`)).toBeInTheDocument();
+      if (rating.type === RatingType.aspect) {
+        expect(
+          screen.getByLabelText(`ratings.${index}.estimations`)
+        ).toBeInTheDocument();
+        expect(screen.getByText(`${rating.shortName}`)).toBeInTheDocument();
+        expect(screen.getByText(`${rating.name}`)).toBeInTheDocument();
+      }
     }
   });
 
@@ -61,19 +63,20 @@ describe('RatingsForm', () => {
     const user = userEvent.setup();
     const ratings = new RatingsMockBuilder().build();
     renderWithTheme(<RatingsForm stakeholderName={''} ratings={ratings} />);
-    const positiveRating = screen.getByLabelText(`ratings.${0}.estimations`);
+    const positiveRating = screen.getByLabelText(`ratings.${1}.estimations`);
     fireEvent.click(within(positiveRating).getByLabelText('4 Stars'));
 
-    const negativeRating = screen.getByLabelText(`ratings.${2}.estimations`);
+    const negativeRating = screen.getByLabelText(`ratings.${3}.estimations`);
     fireEvent.change(negativeRating, { target: { value: -15 } });
 
     await saveForm(user);
 
     expect(updateRatings).toHaveBeenCalledWith([
-      { ...ratings[0], estimations: 4 },
-      ratings[1],
-      { ...ratings[2], estimations: -15 },
-      ...ratings.slice(3),
+      ratings[0],
+      { ...ratings[1], estimations: 4 },
+      ratings[2],
+      { ...ratings[3], estimations: -15 },
+      ...ratings.slice(4),
     ]);
   });
   function TestSwitchRatingsComponent({

@@ -34,7 +34,7 @@ export function BalanceSheetCreationDialog({
   return (
     <ClosableDialog open={open} onCloseIconClicked={() => onClose()}>
       <>
-        <DialogTitle variant={'h2'}>
+        <DialogTitle variant={'h1'}>
           <Trans>Create balance sheet</Trans>
         </DialogTitle>
         <DialogContent>

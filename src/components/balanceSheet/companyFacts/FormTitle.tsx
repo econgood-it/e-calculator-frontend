@@ -8,7 +8,7 @@ type FormTitleProps = {
 };
 
 export function FormTitle({ precedingCharacter, title }: FormTitleProps) {
-  const typoVariant: keyof TypographyVariants = 'h2';
+  const typoVariant: keyof TypographyVariants = 'h1';
   return (
     <GridContainer spacing={3} alignItems={'center'}>
       <GridItem>

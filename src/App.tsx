@@ -20,14 +20,25 @@ const contrastColor = 'rgba(255,255,255,0.8)';
 
 export const themeOptions: ThemeOptions = {
   typography: {
-    // allVariants: {
-    //   color: '#747474',
-    // },
     h1: {
-      color: primaryColor,
+      fontSize: '2rem', // Customize the font size for h1
+      color: secondaryColor,
     },
     h2: {
-      color: secondaryColor,
+      fontSize: '1.75rem', // Customize the font size for h2
+      color: primaryColor,
+    },
+    h3: {
+      fontSize: '1.5rem', // Customize the font size for h3
+    },
+    h4: {
+      fontSize: '1.25rem', // Customize the font size for h4
+    },
+    h5: {
+      fontSize: '1rem', // Customize the font size for h5
+    },
+    h6: {
+      fontSize: '0.75rem', // Customize the font size for h6
     },
   },
   palette: {

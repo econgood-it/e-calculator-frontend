@@ -21,7 +21,7 @@ export function OrganizationOverviewPage() {
   return (
     <GridContainer spacing={3}>
       <GridItem xs={12}>
-        <Typography variant={'h2'}>
+        <Typography variant={'h1'}>
           <Trans>Your Organization</Trans>
         </Typography>
       </GridItem>
@@ -32,7 +32,7 @@ export function OrganizationOverviewPage() {
         />
       </GridItem>
       <GridItem xs={12}>
-        <Typography variant={'h2'}>
+        <Typography variant={'h1'}>
           <Trans>Balance sheets</Trans>
         </Typography>
       </GridItem>
