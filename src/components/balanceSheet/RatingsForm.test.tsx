@@ -61,13 +61,19 @@ describe('RatingsForm', () => {
     const user = userEvent.setup();
     const ratings = new RatingsMockBuilder().build();
     renderWithTheme(<RatingsForm stakeholderName={''} ratings={ratings} />);
-    const input = screen.getByLabelText(`ratings.${0}.estimations`);
-    fireEvent.click(within(input).getByLabelText('4 Stars'));
+    const positiveRating = screen.getByLabelText(`ratings.${0}.estimations`);
+    fireEvent.click(within(positiveRating).getByLabelText('4 Stars'));
+
+    const negativeRating = screen.getByLabelText(`ratings.${2}.estimations`);
+    fireEvent.change(negativeRating, { target: { value: -15 } });
+
     await saveForm(user);
 
     expect(updateRatings).toHaveBeenCalledWith([
       { ...ratings[0], estimations: 4 },
-      ...ratings.slice(1),
+      ratings[1],
+      { ...ratings[2], estimations: -15 },
+      ...ratings.slice(3),
     ]);
   });
   function TestSwitchRatingsComponent({

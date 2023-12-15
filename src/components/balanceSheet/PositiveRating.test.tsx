@@ -23,7 +23,7 @@ describe('PositiveRating', () => {
       mode: 'onChange',
       defaultValues: defaultValues,
     });
-    return <PositiveRating control={control} name={name} label={label} />;
+    return <PositiveRating control={control} name={name} />;
   }
 
   it('renders Vorbildlich', () => {

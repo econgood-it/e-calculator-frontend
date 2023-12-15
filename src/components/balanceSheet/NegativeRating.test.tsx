@@ -1,105 +1,46 @@
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import NegativeRating from './NegativeRating';
+import { fireEvent, screen } from '@testing-library/react';
+import { NegativeRating } from './NegativeRating';
+import renderWithTheme from '../../testUtils/rendering';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 describe('NegativeRating', () => {
-  const onEstimationsChange = jest
-    .fn()
-    .mockImplementation((value: number) => {});
-
-  const onError = jest.fn();
-
-  it('renders', () => {
-    render(
-      <NegativeRating
-        readOnly={false}
-        estimations={0}
-        onEstimationsChange={onEstimationsChange}
-        onError={onError}
-      />
-    );
-    expect(screen.getByLabelText('negative-rating-input')).toHaveValue(0);
-    expect(
-      screen.getByText('Wert zwischen -200 und 0 eintragen')
-    ).toBeInTheDocument();
-  });
-
-  it('triggers onChange if user changes value', async () => {
-    render(
-      <NegativeRating
-        readOnly={false}
-        estimations={0}
-        onEstimationsChange={onEstimationsChange}
-        onError={onError}
-      />
-    );
-    fireEvent.change(screen.getByLabelText('negative-rating-input'), {
-      target: { value: -20 },
+  function TestComponent<T extends z.ZodTypeAny>({
+    formSchema,
+    name,
+    defaultValues,
+  }: {
+    formSchema: T;
+    name: any;
+    defaultValues: any;
+  }) {
+    const { control } = useForm<T>({
+      resolver: zodResolver(formSchema),
+      mode: 'onChange',
+      defaultValues: defaultValues,
     });
-    await waitFor(() => expect(onEstimationsChange).toHaveBeenCalledWith(-20));
-  });
+    return <NegativeRating control={control} name={name} />;
+  }
 
-  it('renders validation error if value > 0', async () => {
-    render(
-      <NegativeRating
-        readOnly={false}
-        estimations={-2}
-        onEstimationsChange={onEstimationsChange}
-        onError={onError}
+  it('should update slider value', async () => {
+    const FormSchema = z.object({
+      estimations: z.number().min(0).max(200),
+    });
+    renderWithTheme(
+      <TestComponent
+        formSchema={FormSchema}
+        name="estimations"
+        defaultValues={{ estimations: 0 }}
       />
     );
-    fireEvent.change(screen.getByLabelText('negative-rating-input'), {
-      target: { value: 9 },
-    });
 
-    await waitFor(() =>
-      expect(
-        screen.getByText('Wert sollte kleiner oder gleich 0 sein')
-      ).toBeInTheDocument()
-    );
-    expect(onError).toHaveBeenCalled();
-    expect(onEstimationsChange).not.toHaveBeenCalled();
-  });
+    const slider = screen.getByLabelText('estimations');
+    expect(slider).toHaveValue('0');
 
-  it('renders validation error if value < -200', async () => {
-    render(
-      <NegativeRating
-        readOnly={false}
-        estimations={0}
-        onEstimationsChange={onEstimationsChange}
-        onError={onError}
-      />
-    );
-    fireEvent.change(screen.getByLabelText('negative-rating-input'), {
-      target: { value: -201 },
-    });
+    fireEvent.change(slider, { target: { value: -104 } });
 
-    await waitFor(() =>
-      expect(
-        screen.getByText('Wert sollte größer oder gleich -200 sein')
-      ).toBeInTheDocument()
-    );
-    expect(onError).toHaveBeenCalled();
-    expect(onEstimationsChange).not.toHaveBeenCalled();
-  });
-
-  it('renders validation error if value not a number', async () => {
-    render(
-      <NegativeRating
-        readOnly={false}
-        estimations={0}
-        onEstimationsChange={onEstimationsChange}
-        onError={onError}
-      />
-    );
-    fireEvent.change(screen.getByLabelText('negative-rating-input'), {
-      target: { value: '-2hallo' },
-    });
-
-    await waitFor(() =>
-      expect(screen.getByText('Zahl erwartet')).toBeInTheDocument()
-    );
-    expect(onError).toHaveBeenCalled();
-    expect(onEstimationsChange).not.toHaveBeenCalled();
+    expect(slider).toHaveValue('-104');
   });
 });

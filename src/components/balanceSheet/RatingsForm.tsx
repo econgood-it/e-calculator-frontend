@@ -1,8 +1,6 @@
 import { FieldValues, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { NumberInput } from './forms/NumberInputs';
-import { Trans } from 'react-i18next';
 import GridItem from '../layout/GridItem';
 import GridContainer, { FormContainer } from '../layout/GridContainer';
 import { IconButton, Tooltip, Typography } from '@mui/material';
@@ -15,6 +13,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { useWorkbook } from '../../contexts/WorkbookProvider';
 import PositiveRating from './PositiveRating';
+import { NegativeRating } from './NegativeRating';
 
 type RatingsFormProps = {
   ratings: Rating[];
@@ -31,13 +30,7 @@ export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
   const workbook = useWorkbook();
 
   const stakeholderRef = useRef(stakeholderName);
-  const {
-    register,
-    formState: { errors },
-    control,
-    handleSubmit,
-    reset,
-  } = useForm<RatingsFormInput>({
+  const { control, handleSubmit, reset } = useForm<RatingsFormInput>({
     resolver: zodResolver(RatingsFormSchema),
     mode: 'onChange',
     defaultValues: { ratings: ratings },
@@ -65,7 +58,7 @@ export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
     <FormContainer spacing={3}>
       {ratingsFields.map((r, index) => (
         <GridItem key={r.shortName} xs={12}>
-          <GridContainer alignItems={'center'}>
+          <GridContainer alignItems={'center'} spacing={2}>
             <GridItem xs={12} sm={1}>
               <Typography variant={'body1'}>{r.shortName}</Typography>
             </GridItem>
@@ -77,16 +70,13 @@ export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
                 <PositiveRating
                   control={control}
                   name={`${fieldArrayName}.${index}.estimations`}
-                  label={<Trans>Estimation</Trans>}
                 />
               </GridItem>
             ) : (
               <GridItem xs={12} sm={3}>
-                <NumberInput<RatingsFormInput>
-                  register={register}
-                  errors={errors}
-                  label={<Trans>Estimation</Trans>}
-                  registerKey={`${fieldArrayName}.${index}.estimations`}
+                <NegativeRating
+                  control={control}
+                  name={`${fieldArrayName}.${index}.estimations`}
                 />
               </GridItem>
             )}

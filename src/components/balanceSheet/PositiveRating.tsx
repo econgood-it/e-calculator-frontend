@@ -1,5 +1,5 @@
 import Rating from '@mui/material/Rating';
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 import GridContainer from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
@@ -20,13 +20,11 @@ const StyledRating = styled(Rating)`
 type PositiveRatingProps<T extends FieldValues> = {
   control: Control<T>;
   name: Path<T>;
-  label: ReactNode;
 };
 
 export default function PositiveRating<T extends FieldValues>({
   control,
   name,
-  label,
 }: PositiveRatingProps<T>) {
   const [hover, setHover] = useState<number>(-1);
   const getLabel = (currentValue: number): string => {
