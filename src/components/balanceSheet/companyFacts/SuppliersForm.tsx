@@ -112,7 +112,7 @@ const SuppliersForm = ({
         />
       </GridItem>
       <GridItem xs={12}>
-        <Typography variant={'h6'}>
+        <Typography variant={'h2'}>
           <Trans>
             Enter the 5 most important industry sectors whose products or
             services you use.
@@ -121,6 +121,7 @@ const SuppliersForm = ({
       </GridItem>
       <GridItem xs={12}>
         <FieldArrayAppendButton
+          label={<Trans>Add supplier</Trans>}
           onClick={() =>
             append({
               countryCode: undefined,

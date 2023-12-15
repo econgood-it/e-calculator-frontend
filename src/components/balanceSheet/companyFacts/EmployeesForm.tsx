@@ -104,6 +104,7 @@ export function EmployeesForm({ formData, regions }: EmployeesFormProps) {
       </GridItem>
       <GridItem xs={12}>
         <FieldArrayAppendButton
+          label={<Trans>Add employees origin</Trans>}
           onClick={() => append({ countryCode: undefined, percentage: 0 })}
         ></FieldArrayAppendButton>
       </GridItem>

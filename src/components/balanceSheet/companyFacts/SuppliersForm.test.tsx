@@ -149,7 +149,7 @@ describe('SuppliersForm', () => {
       />
     );
     const addSupplierButton = screen.getByRole('button', {
-      name: 'Add',
+      name: 'Add supplier',
     });
     await user.click(addSupplierButton);
     await saveForm(user);

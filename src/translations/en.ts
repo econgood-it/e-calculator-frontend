@@ -24,6 +24,7 @@ const EN_WORDS = [
   'Choose an industry sector',
   'Form data is invalid',
   'Add supplier',
+  'Add industry sector',
   'Enter the 5 most important industry sectors whose products or services you use.',
   'Financial costs',
   'Owners, equity- and financial service providers',

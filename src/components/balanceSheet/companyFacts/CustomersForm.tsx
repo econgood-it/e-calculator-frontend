@@ -81,7 +81,7 @@ export function CustomersForm({ formData, industries }: CustomersFormProps) {
             />
           </GridItem>
           <GridItem xs={12}>
-            <Typography variant={'h6'}>
+            <Typography variant={'h2'}>
               <Trans>
                 Enter the 3 most important industry sectors which your company
                 is active in, including a rough share of turnover
@@ -90,6 +90,7 @@ export function CustomersForm({ formData, industries }: CustomersFormProps) {
           </GridItem>
           <GridItem xs={12}>
             <FieldArrayAppendButton
+              label={<Trans>Add industry sector</Trans>}
               onClick={() =>
                 append({
                   industryCode: undefined,

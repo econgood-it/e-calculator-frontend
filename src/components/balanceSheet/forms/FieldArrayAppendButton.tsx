@@ -1,13 +1,15 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { Trans } from 'react-i18next';
 import { Button } from '@mui/material';
+import { ReactNode } from 'react';
 
 type FieldArrayAppendButtonProps = {
+  label: ReactNode;
   onClick: () => void;
 };
 
 export function FieldArrayAppendButton({
+  label,
   onClick,
 }: FieldArrayAppendButtonProps) {
   return (
@@ -16,7 +18,7 @@ export function FieldArrayAppendButton({
       startIcon={<FontAwesomeIcon icon={faPlus} />}
       onClick={onClick}
     >
-      <Trans>Add</Trans>
+      {label}
     </Button>
   );
 }

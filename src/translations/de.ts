@@ -28,6 +28,7 @@ export const DE_TRANSLATIONS = {
     'Eigentümer*innen und Finanzpartner*innen',
   'Financial costs': 'Finanzierungskosten',
   'Add supplier': 'Lieferant hinzufügen',
+  'Add industry sector': 'Branche hinzufügen',
   'Enter the 5 most important industry sectors whose products or services you use.':
     'Tragen Sie nachstehend, bitte die 5 wichtigsten Branchen ein, aus denen Sie Produkte/Dienstleistungen beziehen.',
   'Income from financial investments': 'Erträge aus Finanzanlagen',
@@ -49,7 +50,6 @@ export const DE_TRANSLATIONS = {
   'Enter the 3 most important industry sectors which your company is active in, including a rough share of turnover':
     'Tragen Sie nachstehend, bitte die 3 wichtigsten Branchen ein, in denen Ihr Unternehmen tätig ist, inklusive ungefährem Umsatzanteil',
   Turnover: 'Umsatz',
-  'Add industry sector': 'Branche hinzufügen',
   Customers: 'Kund*nnen und Mitunternehmen',
   Estimation: 'Einschätzung',
   'Failed to load workbook': 'Laden des Arbeitsbuches fehlgeschlagen',

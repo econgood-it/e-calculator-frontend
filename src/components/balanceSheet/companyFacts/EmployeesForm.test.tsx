@@ -100,7 +100,7 @@ describe('EmployeesForm', () => {
       />
     );
     const addEmployeesOriginButton = screen.getByRole('button', {
-      name: 'Add',
+      name: 'Add employees origin',
     });
     await user.click(addEmployeesOriginButton);
     await saveForm(user);
@@ -115,7 +115,7 @@ describe('EmployeesForm', () => {
       <EmployeesForm formData={formData} regions={regionsMocks.regions1()} />
     );
     const addEmployeesOriginButton = screen.getByRole('button', {
-      name: 'Add',
+      name: 'Add employees origin',
     });
     await user.click(addEmployeesOriginButton);
     const indexOfAddedEmployeesFraction =
