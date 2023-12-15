@@ -1,4 +1,11 @@
-import { FieldValues, useFieldArray, useForm } from 'react-hook-form';
+import {
+  Control,
+  FieldArrayWithId,
+  FieldValues,
+  Path,
+  useFieldArray,
+  useForm,
+} from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import GridItem from '../layout/GridItem';
@@ -14,6 +21,7 @@ import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { useWorkbook } from '../../contexts/WorkbookProvider';
 import PositiveRating from './PositiveRating';
 import { NegativeRating } from './NegativeRating';
+import { IWorkbook } from '../../models/Workbook';
 
 type RatingsFormProps = {
   ratings: Rating[];
@@ -57,47 +65,59 @@ export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
   return (
     <FormContainer spacing={3}>
       {ratingsFields.map((r, index) => (
-        <GridItem key={r.shortName} xs={12}>
-          <GridContainer alignItems={'center'} spacing={2}>
-            <GridItem xs={12} sm={1}>
-              <Typography variant={'body1'}>{r.shortName}</Typography>
-            </GridItem>
-            <GridItem xs={12} sm={7}>
-              <Typography variant={'body1'}>{r.name}</Typography>
-            </GridItem>
-            {r.isPositive ? (
-              <GridItem xs={12} sm={3}>
-                <PositiveRating
-                  control={control}
-                  name={`${fieldArrayName}.${index}.estimations`}
-                />
-              </GridItem>
-            ) : (
-              <GridItem xs={12} sm={3}>
-                <NegativeRating
-                  control={control}
-                  name={`${fieldArrayName}.${index}.estimations`}
-                />
-              </GridItem>
-            )}
-
-            <GridItem xs={12} sm={1}>
-              {workbook && workbook.hasSection(r.shortName) && (
-                <Tooltip
-                  title={`Title: ${workbook.getSection(r.shortName)?.title}`}
-                >
-                  <IconButton aria-label={'info'} color={'secondary'}>
-                    <FontAwesomeIcon icon={faCircleInfo} />
-                  </IconButton>
-                </Tooltip>
-              )}
-            </GridItem>
-          </GridContainer>
-        </GridItem>
+        <Aspect
+          key={r.id}
+          rating={r}
+          name={`${fieldArrayName}.${index}.estimations`}
+          control={control}
+          workbook={workbook}
+        />
       ))}
       <GridItem xs={12}>
         <SaveButton handleSubmit={handleSubmit} onSaveClick={onSaveClick} />
       </GridItem>
     </FormContainer>
+  );
+}
+
+type AspectProps = {
+  rating: FieldArrayWithId<RatingsFormInput>;
+  name: Path<RatingsFormInput>;
+  control: Control<RatingsFormInput>;
+  workbook?: IWorkbook;
+};
+
+function Aspect({ rating, name, control, workbook }: AspectProps) {
+  return (
+    <GridItem key={rating.shortName} xs={12}>
+      <GridContainer alignItems={'center'} spacing={2}>
+        <GridItem xs={12} sm={1}>
+          <Typography variant={'body1'}>{rating.shortName}</Typography>
+        </GridItem>
+        <GridItem xs={12} sm={7}>
+          <Typography variant={'body1'}>{rating.name}</Typography>
+        </GridItem>
+        {rating.isPositive ? (
+          <GridItem xs={12} sm={3}>
+            <PositiveRating control={control} name={name} />
+          </GridItem>
+        ) : (
+          <GridItem xs={12} sm={3}>
+            <NegativeRating control={control} name={name} />
+          </GridItem>
+        )}
+        <GridItem xs={12} sm={1}>
+          {workbook && workbook.hasSection(rating.shortName) && (
+            <Tooltip
+              title={`Title: ${workbook.getSection(rating.shortName)?.title}`}
+            >
+              <IconButton aria-label={'info'} color={'secondary'}>
+                <FontAwesomeIcon icon={faCircleInfo} />
+              </IconButton>
+            </Tooltip>
+          )}
+        </GridItem>
+      </GridContainer>
+    </GridItem>
   );
 }
