@@ -22,7 +22,6 @@ type CompanyFactsPatchRequestBody = z.infer<
 
 interface IActiveBalanceSheetContext {
   balanceSheet?: BalanceSheet;
-  updateRating: (rating: Rating) => Promise<void>;
   updateRatings: (ratings: Rating[]) => Promise<void>;
   updateCompanyFacts: (
     companyFacts: CompanyFactsPatchRequestBody
@@ -47,21 +46,12 @@ export default function ActiveBalanceSheetProvider({
   const api = useApi();
   const { balanceSheetId } = useParams();
 
-  const updateRating = async (rating: Rating) => {
-    const response = await api.updateBalanceSheet(Number(balanceSheetId), {
-      ratings: [
-        { shortName: rating.shortName, estimations: rating.estimations },
-      ],
-    });
-    setBalanceSheet(response);
-    addSuccessAlert(t`Modifications saved`);
-  };
-
   const updateRatings = async (ratings: Rating[]) => {
     const response = await api.updateBalanceSheet(Number(balanceSheetId), {
       ratings: ratings.map((r) => ({
         shortName: r.shortName,
         estimations: r.estimations,
+        weight: r.isWeightSelectedByUser ? r.weight : undefined,
       })),
     });
     setBalanceSheet(response);
@@ -90,7 +80,6 @@ export default function ActiveBalanceSheetProvider({
     <ActiveBalanceSheetContext.Provider
       value={{
         balanceSheet,
-        updateRating,
         updateRatings,
         updateCompanyFacts,
       }}

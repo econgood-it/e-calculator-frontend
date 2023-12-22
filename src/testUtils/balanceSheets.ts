@@ -71,6 +71,7 @@ export class RatingsMockBuilder {
       isPositive: true,
       type: RatingType.topic,
       weight: 0,
+      isWeightSelectedByUser: true,
       maxPoints: 0,
       points: 0,
     },
@@ -81,6 +82,7 @@ export class RatingsMockBuilder {
       isPositive: true,
       type: RatingType.aspect,
       weight: 0,
+      isWeightSelectedByUser: false,
       maxPoints: 0,
       points: 0,
     },
@@ -91,6 +93,7 @@ export class RatingsMockBuilder {
       isPositive: false,
       type: RatingType.aspect,
       weight: 0,
+      isWeightSelectedByUser: false,
       maxPoints: 0,
       points: 0,
     },
@@ -101,15 +104,24 @@ export class RatingsMockBuilder {
       isPositive: false,
       type: RatingType.aspect,
       weight: 0,
+      isWeightSelectedByUser: false,
       maxPoints: 0,
       points: 0,
     },
   ];
 
+  public replaceRatings(ratings: Rating[]) {
+    this.ratings = this.ratings.map((r) => {
+      const foundRating = ratings.find((r2) => r2.shortName === r.shortName);
+      return foundRating || r;
+    });
+    return this;
+  }
+
   public buildRequestBody() {
     return this.ratings.map((r) => ({
       shortName: r.shortName,
-      weight: r.weight,
+      weight: r.isWeightSelectedByUser ? r.weight : undefined,
       estimations: r.estimations,
     }));
   }
@@ -160,6 +172,12 @@ export class BalanceSheetMockBuilder {
 
   public withId(id: number) {
     this.balanceSheet.id = id;
+    return this;
+  }
+
+  public replaceRatings(ratings: Rating[]) {
+    this.balanceSheet.ratings =
+      this.balanceSheet.ratings.replaceRatings(ratings);
     return this;
   }
 

@@ -59,6 +59,20 @@ describe('RatingsForm', () => {
     );
   });
 
+  it('should update weights of topic', async () => {
+    const ratings = new RatingsMockBuilder().build();
+    const { user } = renderWithTheme(
+      <RatingsForm stakeholderName={''} ratings={ratings} />
+    );
+    const infoIcons = screen.getAllByLabelText('info');
+    const workbook = new Workbook(WorkbookResponseMocks.default());
+    expect(infoIcons).toHaveLength(2);
+    await user.hover(infoIcons[0]);
+    expect(
+      await screen.findByText(`Title: ${workbook.getSections()[0]!.title}`)
+    );
+  });
+
   it('should modify and save estimations of some ratings', async () => {
     const user = userEvent.setup();
     const ratings = new RatingsMockBuilder().build();
@@ -110,6 +124,7 @@ describe('RatingsForm', () => {
         isPositive: true,
         type: RatingType.topic,
         weight: 0,
+        isWeightSelectedByUser: false,
         maxPoints: 0,
         points: 0,
       },
@@ -120,6 +135,7 @@ describe('RatingsForm', () => {
         isPositive: true,
         type: RatingType.aspect,
         weight: 0,
+        isWeightSelectedByUser: false,
         maxPoints: 0,
         points: 0,
       },
@@ -132,6 +148,7 @@ describe('RatingsForm', () => {
         isPositive: true,
         type: RatingType.topic,
         weight: 0,
+        isWeightSelectedByUser: false,
         maxPoints: 0,
         points: 0,
       },
@@ -142,6 +159,7 @@ describe('RatingsForm', () => {
         isPositive: true,
         type: RatingType.aspect,
         weight: 0,
+        isWeightSelectedByUser: false,
         maxPoints: 0,
         points: 0,
       },

@@ -58,7 +58,8 @@ describe('WithActiveBalanceSheet', () => {
         estimations: 7,
         type: RatingType.aspect,
         isPositive: true,
-        weight: 0,
+        weight: 1.5,
+        isWeightSelectedByUser: false,
         maxPoints: 0,
         points: 0,
       },
@@ -68,7 +69,8 @@ describe('WithActiveBalanceSheet', () => {
         estimations: -20,
         type: RatingType.aspect,
         isPositive: true,
-        weight: 0,
+        weight: 2,
+        isWeightSelectedByUser: true,
         maxPoints: 0,
         points: 0,
       },
@@ -76,16 +78,9 @@ describe('WithActiveBalanceSheet', () => {
 
     const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
 
-    const updatedBalanceSheet = {
-      ...balanceSheetMockBuilder.buildResponseBody(),
-      ratings: balanceSheetMockBuilder.buildResponseBody().ratings.map((r) => {
-        const foundRating = ratingsUpdate.find(
-          (ur: { shortName: string; estimations: number }) =>
-            r.shortName === ur.shortName
-        );
-        return foundRating ? { ...r, estimations: foundRating.estimations } : r;
-      }),
-    };
+    const updatedBalanceSheet = balanceSheetMockBuilder
+      .replaceRatings(ratingsUpdate)
+      .buildResponseBody();
     apiMock.updateBalanceSheet.mockResolvedValue(updatedBalanceSheet);
     (useApi as jest.Mock).mockImplementation(() => apiMock);
     const { result } = renderHookWithTheme(() => useActiveBalanceSheet(), {
@@ -109,6 +104,7 @@ describe('WithActiveBalanceSheet', () => {
             {
               shortName: ratingsUpdate[1].shortName,
               estimations: ratingsUpdate[1].estimations,
+              weight: ratingsUpdate[1].weight,
             },
           ],
         }

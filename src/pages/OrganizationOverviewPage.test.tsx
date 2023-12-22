@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { act, screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
 import { OrganizationOverviewPage } from './OrganizationOverviewPage';
 import {
@@ -18,6 +18,11 @@ import {
   OrganizationMockBuilder,
 } from '../testUtils/organization';
 import { useAlert } from '../contexts/AlertContext';
+import { z } from 'zod';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 jest.mock('../contexts/OrganizationProvider');
 jest.mock('../contexts/BalanceSheetListProvider');
@@ -26,6 +31,7 @@ describe('OrganizationOverviewPage', () => {
   const initialPathForRouting = '/organization/3';
   const balanceSheetItems = [{ id: 1 }, { id: 2 }];
   const setBalanceSheetItems = jest.fn();
+  const createBalanceSheetMock = jest.fn();
 
   const updateActiveOrganizationMock = jest.fn();
   const activeOrganization = new OrganizationMockBuilder().build();
@@ -36,6 +42,7 @@ describe('OrganizationOverviewPage', () => {
     (useBalanceSheetItems as jest.Mock).mockReturnValue({
       balanceSheetItems,
       setBalanceSheetItems,
+      createBalanceSheet: createBalanceSheetMock,
     });
     (useAlert as jest.Mock).mockReturnValue({
       addErrorAlert: jest.fn(),
@@ -71,6 +78,34 @@ describe('OrganizationOverviewPage', () => {
       })
     );
     expect(addSuccessAlertMock).toHaveBeenCalledWith(['Updated organization']);
+  });
+
+  it('adds balance sheet if create balance sheet button is clicked', async () => {
+    const router = createMemoryRouter(
+      [{ path: initialPathForRouting, element: <OrganizationOverviewPage /> }],
+      { initialEntries: [initialPathForRouting] }
+    );
+
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
+
+    const createBalanceSheetButton = screen.getByRole('button', {
+      name: 'Create balance sheet',
+    });
+
+    await user.click(createBalanceSheetButton);
+
+    await user.click(
+      within(
+        screen.getByRole('dialog', { name: 'Create balance sheet' })
+      ).getByRole('button', { name: 'Save' })
+    );
+
+    await waitFor(() =>
+      expect(createBalanceSheetMock).toHaveBeenCalledWith({
+        type: BalanceSheetType.Full,
+        version: BalanceSheetVersion.v5_0_8,
+      })
+    );
   });
 
   it('renders balance sheet items and navigates on click', async () => {
