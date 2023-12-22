@@ -1,8 +1,8 @@
 import {
+  ArrayPath,
   Control,
   FieldArrayWithId,
   FieldValues,
-  Path,
   useFieldArray,
   useForm,
 } from 'react-hook-form';
@@ -25,6 +25,7 @@ import { useWorkbook } from '../../contexts/WorkbookProvider';
 import PositiveRating from './PositiveRating';
 import { NegativeRating } from './NegativeRating';
 import { IWorkbook } from '../../models/Workbook';
+import { ReactHookFormSwitch } from '../lib/ReactHookFormSwitch';
 
 type RatingsFormProps = {
   ratings: Rating[];
@@ -74,7 +75,8 @@ export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
           <Aspect
             key={r.id}
             rating={r}
-            name={`${fieldArrayName}.${index}.estimations`}
+            name={fieldArrayName}
+            index={index}
             control={control}
             workbook={workbook}
           />
@@ -101,12 +103,13 @@ function Topic({ rating }: TopicProps) {
 
 type AspectProps = {
   rating: FieldArrayWithId<RatingsFormInput>;
-  name: Path<RatingsFormInput>;
+  name: ArrayPath<RatingsFormInput>;
+  index: number;
   control: Control<RatingsFormInput>;
   workbook?: IWorkbook;
 };
 
-function Aspect({ rating, name, control, workbook }: AspectProps) {
+function Aspect({ rating, name, index, control, workbook }: AspectProps) {
   return (
     <GridItem key={rating.shortName} xs={12}>
       <GridContainer alignItems={'center'} spacing={2}>
@@ -117,12 +120,27 @@ function Aspect({ rating, name, control, workbook }: AspectProps) {
           <Typography variant={'body1'}>{rating.name}</Typography>
         </GridItem>
         {rating.isPositive ? (
-          <GridItem xs={12} sm={3}>
-            <PositiveRating control={control} name={name} />
-          </GridItem>
+          <>
+            <GridItem xs={12} sm={3}>
+              <PositiveRating
+                control={control}
+                name={`${name}.${index}.estimations`}
+              />
+            </GridItem>
+            <GridItem xs={12} sm={1}>
+              <ReactHookFormSwitch
+                control={control}
+                name={`${name}.${index}.isWeightSelectedByUser`}
+                label={'Weight'}
+              />
+            </GridItem>
+          </>
         ) : (
           <GridItem xs={12} sm={3}>
-            <NegativeRating control={control} name={name} />
+            <NegativeRating
+              control={control}
+              name={`${name}.${index}.estimations`}
+            />
           </GridItem>
         )}
         <GridItem xs={12} sm={1}>

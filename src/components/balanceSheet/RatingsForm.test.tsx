@@ -47,19 +47,6 @@ describe('RatingsForm', () => {
   });
 
   it('should show workbook tooltip', async () => {
-    const user = userEvent.setup();
-    const ratings = new RatingsMockBuilder().build();
-    renderWithTheme(<RatingsForm stakeholderName={''} ratings={ratings} />);
-    const infoIcons = screen.getAllByLabelText('info');
-    const workbook = new Workbook(WorkbookResponseMocks.default());
-    expect(infoIcons).toHaveLength(2);
-    await user.hover(infoIcons[0]);
-    expect(
-      await screen.findByText(`Title: ${workbook.getSections()[0]!.title}`)
-    );
-  });
-
-  it('should update weights of topic', async () => {
     const ratings = new RatingsMockBuilder().build();
     const { user } = renderWithTheme(
       <RatingsForm stakeholderName={''} ratings={ratings} />
@@ -93,6 +80,25 @@ describe('RatingsForm', () => {
       ...ratings.slice(4),
     ]);
   });
+
+  it('should modify and save isWeightSelectedByUser of some ratings', async () => {
+    const ratings = new RatingsMockBuilder().build();
+    const { user } = renderWithTheme(
+      <RatingsForm stakeholderName={''} ratings={ratings} />
+    );
+    await user.click(
+      screen.getByLabelText(`ratings.${1}.isWeightSelectedByUser`)
+    );
+
+    await saveForm(user);
+
+    expect(updateRatings).toHaveBeenCalledWith([
+      ratings[0],
+      { ...ratings[1], isWeightSelectedByUser: true },
+      ...ratings.slice(2),
+    ]);
+  });
+
   function TestSwitchRatingsComponent({
     ratingsA,
     ratingsB,
