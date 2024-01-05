@@ -71,7 +71,7 @@ export class RatingsMockBuilder {
       isPositive: true,
       type: RatingType.topic,
       weight: 0,
-      isWeightSelectedByUser: true,
+      isWeightSelectedByUser: false,
       maxPoints: 0,
       points: 0,
     },

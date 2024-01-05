@@ -88,15 +88,14 @@ describe('RatingsForm', () => {
       <RatingsForm stakeholderName={''} ratings={ratings} />
     );
     await user.click(
-      screen.getByLabelText(`ratings.${1}.isWeightSelectedByUser`)
+      screen.getByLabelText(`ratings.${0}.isWeightSelectedByUser`)
     );
 
     await saveForm(user);
 
     expect(updateRatings).toHaveBeenCalledWith([
-      ratings[0],
-      { ...ratings[1], isWeightSelectedByUser: true },
-      ...ratings.slice(2),
+      { ...ratings[0], isWeightSelectedByUser: true },
+      ...ratings.slice(1),
     ]);
   });
 
@@ -106,7 +105,7 @@ describe('RatingsForm', () => {
       <RatingsForm stakeholderName={''} ratings={ratings} />
     );
     await user.click(
-      screen.getByLabelText(`ratings.${1}.isWeightSelectedByUser`)
+      screen.getByLabelText(`ratings.${0}.isWeightSelectedByUser`)
     );
 
     await user.click(
@@ -125,9 +124,8 @@ describe('RatingsForm', () => {
     await saveForm(user);
 
     expect(updateRatings).toHaveBeenCalledWith([
-      ratings[0],
-      { ...ratings[1], weight: 2, isWeightSelectedByUser: true },
-      ...ratings.slice(2),
+      { ...ratings[0], weight: 2, isWeightSelectedByUser: true },
+      ...ratings.slice(1),
     ]);
   });
 

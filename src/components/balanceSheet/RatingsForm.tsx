@@ -49,6 +49,7 @@ export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
     resolver: zodResolver(RatingsFormSchema),
     mode: 'onChange',
     defaultValues: { ratings: ratings },
+    values: { ratings: ratings },
   });
 
   useEffect(() => {
@@ -78,10 +79,16 @@ export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
     <FormContainer spacing={3}>
       {ratingsFields.map((r, index) => {
         return r.type === RatingType.topic ? (
-          <Topic key={r.id} rating={r} />
+          <Topic
+            ratingWatcher={watchedFieldArray}
+            key={r.id}
+            rating={r}
+            name={fieldArrayName}
+            index={index}
+            control={control}
+          />
         ) : (
           <Aspect
-            ratingWatcher={watchedFieldArray}
             key={r.id}
             rating={r}
             name={fieldArrayName}
@@ -99,19 +106,49 @@ export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
 }
 
 type TopicProps = {
+  ratingWatcher: Rating[];
   rating: FieldArrayWithId<RatingsFormInput>;
+  name: ArrayPath<RatingsFormInput>;
+  index: number;
+  control: Control<RatingsFormInput>;
 };
 
-function Topic({ rating }: TopicProps) {
+function Topic({ ratingWatcher, rating, name, index, control }: TopicProps) {
   return (
     <GridItem key={rating.shortName} xs={12}>
-      <Typography variant={'h1'}>{rating.name}</Typography>
+      <GridContainer alignItems={'center'} spacing={2}>
+        <GridItem key={rating.shortName} xs={12}>
+          <Typography variant={'h1'}>{rating.name}</Typography>
+        </GridItem>
+        <GridItem xs={12} sm={1}>
+          <ReactHookFormSwitch
+            control={control}
+            name={`${name}.${index}.isWeightSelectedByUser`}
+            label={'Select weight manually'}
+          />
+        </GridItem>
+        {ratingWatcher[index].isWeightSelectedByUser && (
+          <GridItem xs={12} sm={1}>
+            <ReactHookFormSelect
+              control={control}
+              name={`${name}.${index}.weight`}
+              label={'Weight'}
+              defaultValue={1}
+            >
+              {WEIGHT_VALUES.map((weight, index) => (
+                <MenuItem key={index} value={weight}>
+                  {weight}
+                </MenuItem>
+              ))}
+            </ReactHookFormSelect>
+          </GridItem>
+        )}
+      </GridContainer>
     </GridItem>
   );
 }
 
 type AspectProps = {
-  ratingWatcher: Rating[];
   rating: FieldArrayWithId<RatingsFormInput>;
   name: ArrayPath<RatingsFormInput>;
   index: number;
@@ -119,14 +156,7 @@ type AspectProps = {
   workbook?: IWorkbook;
 };
 
-function Aspect({
-  rating,
-  name,
-  index,
-  control,
-  workbook,
-  ratingWatcher,
-}: AspectProps) {
+function Aspect({ rating, name, index, control, workbook }: AspectProps) {
   return (
     <GridItem key={rating.shortName} xs={12}>
       <GridContainer alignItems={'center'} spacing={2}>
@@ -144,29 +174,6 @@ function Aspect({
                 name={`${name}.${index}.estimations`}
               />
             </GridItem>
-            <GridItem xs={12} sm={1}>
-              <ReactHookFormSwitch
-                control={control}
-                name={`${name}.${index}.isWeightSelectedByUser`}
-                label={'Select weight manually'}
-              />
-            </GridItem>
-            {ratingWatcher[index].isWeightSelectedByUser && (
-              <GridItem xs={12} sm={1}>
-                <ReactHookFormSelect
-                  control={control}
-                  name={`${name}.${index}.weight`}
-                  label={'Weight'}
-                  defaultValue={1}
-                >
-                  {WEIGHT_VALUES.map((weight, index) => (
-                    <MenuItem key={index} value={weight}>
-                      {weight}
-                    </MenuItem>
-                  ))}
-                </ReactHookFormSelect>
-              </GridItem>
-            )}
           </>
         ) : (
           <GridItem xs={12} sm={3}>
