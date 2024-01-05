@@ -5,12 +5,13 @@ import {
   FieldValues,
   useFieldArray,
   useForm,
+  useWatch,
 } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import GridItem from '../layout/GridItem';
 import GridContainer, { FormContainer } from '../layout/GridContainer';
-import { IconButton, Tooltip, Typography } from '@mui/material';
+import { IconButton, MenuItem, Tooltip, Typography } from '@mui/material';
 import { SaveButton } from './forms/SaveButton';
 import { useActiveBalanceSheet } from '../../contexts/ActiveBalanceSheetProvider';
 import { useEffect, useRef } from 'react';
@@ -26,6 +27,8 @@ import PositiveRating from './PositiveRating';
 import { NegativeRating } from './NegativeRating';
 import { IWorkbook } from '../../models/Workbook';
 import { ReactHookFormSwitch } from '../lib/ReactHookFormSwitch';
+import { ReactHookFormSelect } from '../lib/ReactHookFormSelect';
+import { WEIGHT_VALUES } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 type RatingsFormProps = {
   ratings: Rating[];
@@ -61,6 +64,11 @@ export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
     name: fieldArrayName, // unique name for your Field Array
   });
 
+  const watchedFieldArray = useWatch({
+    control,
+    name: fieldArrayName,
+  });
+
   const onSaveClick = async (data: FieldValues) => {
     const newRatings = RatingsFormSchema.parse(data);
     await updateRatings(newRatings.ratings);
@@ -73,6 +81,7 @@ export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
           <Topic key={r.id} rating={r} />
         ) : (
           <Aspect
+            ratingWatcher={watchedFieldArray}
             key={r.id}
             rating={r}
             name={fieldArrayName}
@@ -102,6 +111,7 @@ function Topic({ rating }: TopicProps) {
 }
 
 type AspectProps = {
+  ratingWatcher: Rating[];
   rating: FieldArrayWithId<RatingsFormInput>;
   name: ArrayPath<RatingsFormInput>;
   index: number;
@@ -109,7 +119,14 @@ type AspectProps = {
   workbook?: IWorkbook;
 };
 
-function Aspect({ rating, name, index, control, workbook }: AspectProps) {
+function Aspect({
+  rating,
+  name,
+  index,
+  control,
+  workbook,
+  ratingWatcher,
+}: AspectProps) {
   return (
     <GridItem key={rating.shortName} xs={12}>
       <GridContainer alignItems={'center'} spacing={2}>
@@ -131,9 +148,25 @@ function Aspect({ rating, name, index, control, workbook }: AspectProps) {
               <ReactHookFormSwitch
                 control={control}
                 name={`${name}.${index}.isWeightSelectedByUser`}
-                label={'Weight'}
+                label={'Select weight manually'}
               />
             </GridItem>
+            {ratingWatcher[index].isWeightSelectedByUser && (
+              <GridItem xs={12} sm={1}>
+                <ReactHookFormSelect
+                  control={control}
+                  name={`${name}.${index}.weight`}
+                  label={'Weight'}
+                  defaultValue={1}
+                >
+                  {WEIGHT_VALUES.map((weight, index) => (
+                    <MenuItem key={index} value={weight}>
+                      {weight}
+                    </MenuItem>
+                  ))}
+                </ReactHookFormSelect>
+              </GridItem>
+            )}
           </>
         ) : (
           <GridItem xs={12} sm={3}>

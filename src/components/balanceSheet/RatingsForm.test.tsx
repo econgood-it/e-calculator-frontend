@@ -16,6 +16,7 @@ import { Rating } from '../../models/Rating';
 import { useWorkbook } from '../../contexts/WorkbookProvider';
 import { WorkbookResponseMocks } from '../../testUtils/workbook';
 import { Workbook } from '../../models/Workbook';
+import { WEIGHT_VALUES } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 jest.mock('../../contexts/ActiveBalanceSheetProvider');
 jest.mock('../../contexts/AlertContext');
@@ -95,6 +96,37 @@ describe('RatingsForm', () => {
     expect(updateRatings).toHaveBeenCalledWith([
       ratings[0],
       { ...ratings[1], isWeightSelectedByUser: true },
+      ...ratings.slice(2),
+    ]);
+  });
+
+  it('should modify weight of some ratings', async () => {
+    const ratings = new RatingsMockBuilder().build();
+    const { user } = renderWithTheme(
+      <RatingsForm stakeholderName={''} ratings={ratings} />
+    );
+    await user.click(
+      screen.getByLabelText(`ratings.${1}.isWeightSelectedByUser`)
+    );
+
+    await user.click(
+      screen.getByRole('button', {
+        name: /Weight/,
+      })
+    );
+
+    const weightOptions = await screen.findAllByRole('option');
+    expect(weightOptions.map((o) => o.textContent)).toEqual(
+      WEIGHT_VALUES.map((w) => w.toString())
+    );
+
+    await user.click(weightOptions.find((o) => o.textContent === '2')!);
+
+    await saveForm(user);
+
+    expect(updateRatings).toHaveBeenCalledWith([
+      ratings[0],
+      { ...ratings[1], weight: 2, isWeightSelectedByUser: true },
       ...ratings.slice(2),
     ]);
   });
