@@ -41,8 +41,9 @@ describe('RatingsForm', () => {
         expect(
           screen.getByLabelText(`ratings.${index}.estimations`)
         ).toBeInTheDocument();
-        expect(screen.getByText(`${rating.shortName}`)).toBeInTheDocument();
-        expect(screen.getByText(`${rating.name}`)).toBeInTheDocument();
+        expect(
+          screen.getByText(`${rating.shortName} ${rating.name}`)
+        ).toBeInTheDocument();
       }
     }
   });
@@ -204,20 +205,25 @@ describe('RatingsForm', () => {
     renderWithTheme(
       <TestSwitchRatingsComponent ratingsA={ratingsA} ratingsB={ratingsB} />
     );
+
     ratingsA.forEach((r) => {
-      expect(screen.queryByText(r.name)).toBeInTheDocument();
+      expect(screen.queryByText(new RegExp(r.name, 'i'))).toBeInTheDocument();
     });
     ratingsB.forEach((r) => {
-      expect(screen.queryByText(r.name)).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(new RegExp(r.name, 'i'))
+      ).not.toBeInTheDocument();
     });
     const switchToBButton = screen.getByRole('button', { name: 'Switch B' });
     await user.click(switchToBButton);
 
     ratingsA.forEach((r) => {
-      expect(screen.queryByText(r.name)).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(new RegExp(r.name, 'i'))
+      ).not.toBeInTheDocument();
     });
     ratingsB.forEach((r) => {
-      expect(screen.queryByText(r.name)).toBeInTheDocument();
+      expect(screen.queryByText(new RegExp(r.name, 'i'))).toBeInTheDocument();
     });
   });
 });

@@ -33,8 +33,18 @@ describe('RatingsPage', () => {
         r.shortName.startsWith(StakholderShortNames.Suppliers)
       );
 
-    ratingsOfStakeholderSuppliers.forEach((r: Rating) => {
-      expect(screen.getByText(r.shortName)).toBeInTheDocument();
-    });
+    ratingsOfStakeholderSuppliers
+      .filter((r) => r.type === 'topic')
+      .forEach((r: Rating) => {
+        expect(screen.getByText(`${r.name}`)).toBeInTheDocument();
+      });
+
+    ratingsOfStakeholderSuppliers
+      .filter((r) => r.type === 'aspect')
+      .forEach((r: Rating) => {
+        expect(
+          screen.getByText(`${r.shortName} ${r.name}`)
+        ).toBeInTheDocument();
+      });
   });
 });
