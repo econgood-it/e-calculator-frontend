@@ -1,12 +1,12 @@
 import Rating from '@mui/material/Rating';
 import { useState } from 'react';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
-import GridContainer from '../layout/GridContainer';
-import GridItem from '../layout/GridItem';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSeedling } from '@fortawesome/free-solid-svg-icons';
-import { Chip } from '@mui/material';
+import { Chip, Typography } from '@mui/material';
+import GridContainer from '../layout/GridContainer';
+import GridItem from '../layout/GridItem';
 
 const StyledRating = styled(Rating)`
   & .MuiRating-iconFilled {
@@ -45,7 +45,11 @@ export default function PositiveRating<T extends FieldValues>({
     <Controller
       render={({ field, fieldState }) => {
         return (
-          <GridContainer spacing={1}>
+          <GridContainer
+            alignItems="center"
+            justifyContent={'flex-end'}
+            spacing={3}
+          >
             <GridItem>
               <StyledRating
                 aria-label={name}
@@ -62,14 +66,20 @@ export default function PositiveRating<T extends FieldValues>({
               />
             </GridItem>
             {field.value !== null && (
-              <>
-                <GridItem>
-                  <Chip label={hover !== -1 ? hover : field.value} />
-                </GridItem>
-                <GridItem>
-                  <Chip label={getLabel(hover !== -1 ? hover : field.value)} />
-                </GridItem>
-              </>
+              <GridItem sx={{ width: 200 }}>
+                <GridContainer alignItems="center">
+                  <GridItem xs={12}>
+                    <Typography variant={'h2'}>
+                      {`${hover !== -1 ? hover : field.value} Points`}
+                    </Typography>
+                  </GridItem>
+                  <GridItem xs={12}>
+                    <Chip
+                      label={getLabel(hover !== -1 ? hover : field.value)}
+                    />
+                  </GridItem>
+                </GridContainer>
+              </GridItem>
             )}
           </GridContainer>
         );

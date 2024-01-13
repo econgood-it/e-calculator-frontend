@@ -76,6 +76,8 @@ const EN_WORDS = [
   'Ok',
   'Cancel',
   'Organization name',
+  'Select weight manually',
+  'Weight',
 ];
 
 export const EN_TRANSLATIONS = {

@@ -27,20 +27,14 @@ describe('RatingsPage', () => {
     renderWithTheme(
       <RatingsPage stakeholderToFilterBy={StakholderShortNames.Suppliers} />
     );
-    const aspectsOfStakeholderSuppliers = balanceSheetMockBuilder
+    const ratingsOfStakeholderSuppliers = balanceSheetMockBuilder
       .build()
       .ratings.filter((r: Rating) =>
         r.shortName.startsWith(StakholderShortNames.Suppliers)
-      )
-      .filter((r: Rating) => r.type === RatingType.aspect);
-    aspectsOfStakeholderSuppliers.forEach((r: Rating) => {
+      );
+
+    ratingsOfStakeholderSuppliers.forEach((r: Rating) => {
       expect(screen.getByText(r.shortName)).toBeInTheDocument();
     });
-    new BalanceSheetMockBuilder()
-      .build()
-      .ratings.filter((r: Rating) => r.type === RatingType.topic)
-      .forEach((r: Rating) => {
-        expect(screen.queryByText(r.shortName)).not.toBeInTheDocument();
-      });
   });
 });

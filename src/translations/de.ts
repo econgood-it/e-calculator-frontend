@@ -86,5 +86,7 @@ export const DE_TRANSLATIONS = {
   Ok: 'Ok',
   Cancel: 'Abbrechen',
   'Organization name': 'Organisationsname',
+  'Select weight manually': 'Gewicht manuell setzen',
+  Weight: 'Gewicht',
   ...DE_ERROR_TRANSLATIONS,
 };

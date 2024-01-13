@@ -7,11 +7,12 @@ import {
   PathValue,
 } from 'react-hook-form';
 import { SelectProps } from '@mui/material/Select/Select';
+import { ReactNode } from 'react';
 
 type ReactHookFormSelectProps<T extends FieldValues> = {
   control: Control<T>;
   name: Path<T>;
-  label: string;
+  label: ReactNode;
   defaultValue: PathValue<T, Path<T>>;
 };
 
@@ -28,7 +29,7 @@ export function ReactHookFormSelect<T extends FieldValues>({
       <InputLabel id={labelId}>{label}</InputLabel>
       <Controller
         render={({ field, fieldState }) => (
-          <Select {...field} labelId={labelId} label={label}>
+          <Select autoWidth {...field} labelId={labelId} label={label}>
             {children}
           </Select>
         )}

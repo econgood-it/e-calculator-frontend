@@ -37,12 +37,12 @@ const BigNumber = styled(Typography)<{ $color: string }>`
   color: ${(props) => props.$color};
 `;
 
-const ShortNameAvatar = styled(Avatar)`
+export const ShortNameAvatar = styled(Avatar)`
   background-color: ${(props) => props.theme.palette.secondary.main};
   color: ${(props) => props.theme.palette.secondary.contrastText};
 `;
 
-const StakeholderAvatar = styled(Avatar)`
+export const StakeholderAvatar = styled(Avatar)`
   background-color: ${(props) => props.theme.palette.primary.main};
 `;
 

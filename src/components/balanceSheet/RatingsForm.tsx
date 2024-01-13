@@ -1,7 +1,6 @@
 import {
   ArrayPath,
   Control,
-  FieldArrayWithId,
   FieldValues,
   useFieldArray,
   useForm,
@@ -11,24 +10,25 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import GridItem from '../layout/GridItem';
 import GridContainer, { FormContainer } from '../layout/GridContainer';
-import { IconButton, MenuItem, Tooltip, Typography } from '@mui/material';
+import { Card, CardContent, MenuItem, Typography } from '@mui/material';
 import { SaveButton } from './forms/SaveButton';
 import { useActiveBalanceSheet } from '../../contexts/ActiveBalanceSheetProvider';
-import { useEffect, useRef } from 'react';
+import { Fragment, useEffect, useRef } from 'react';
 import { Rating } from '../../models/Rating';
 import {
   RatingResponseBodySchema,
   RatingType,
 } from '@ecogood/e-calculator-schemas/dist/rating.dto';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import { useWorkbook } from '../../contexts/WorkbookProvider';
 import PositiveRating from './PositiveRating';
 import { NegativeRating } from './NegativeRating';
 import { IWorkbook } from '../../models/Workbook';
 import { ReactHookFormSwitch } from '../lib/ReactHookFormSwitch';
-import { ReactHookFormSelect } from '../lib/ReactHookFormSelect';
 import { WEIGHT_VALUES } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { ReactHookFormSelect } from '../lib/ReactHookFormSelect';
+import styled from 'styled-components';
+import { ShortNameAvatar } from '../matrix/MatrixView';
+import { Trans } from 'react-i18next';
 
 type RatingsFormProps = {
   ratings: Rating[];
@@ -65,39 +65,46 @@ export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
     name: fieldArrayName, // unique name for your Field Array
   });
 
-  const watchedFieldArray = useWatch({
-    control,
-    name: fieldArrayName,
-  });
-
   const onSaveClick = async (data: FieldValues) => {
     const newRatings = RatingsFormSchema.parse(data);
     await updateRatings(newRatings.ratings);
   };
 
+  const ratingsWatcher = useWatch({
+    control,
+    name: fieldArrayName,
+  });
+
   return (
     <FormContainer spacing={3}>
-      {ratingsFields.map((r, index) => {
-        return r.type === RatingType.topic ? (
-          <Topic
-            ratingWatcher={watchedFieldArray}
-            key={r.id}
-            rating={r}
-            name={fieldArrayName}
-            index={index}
-            control={control}
-          />
-        ) : (
-          <Aspect
-            key={r.id}
-            rating={r}
-            name={fieldArrayName}
-            index={index}
-            control={control}
-            workbook={workbook}
-          />
-        );
-      })}
+      {ratingsFields.map(({ type, shortName, name, isPositive }, index) => (
+        <Fragment key={shortName}>
+          <GridItem xs={12}>
+            {type === RatingType.topic ? (
+              <Topic
+                fieldArrayName={fieldArrayName}
+                shortName={shortName}
+                name={name}
+                index={index}
+                isWeightSelectedByUser={
+                  ratingsWatcher[index].isWeightSelectedByUser
+                }
+                control={control}
+              />
+            ) : (
+              <Aspect
+                shortName={shortName}
+                name={name}
+                isPositive={isPositive}
+                fieldArrayName={fieldArrayName}
+                index={index}
+                control={control}
+                workbook={workbook}
+              />
+            )}
+          </GridItem>
+        </Fragment>
+      ))}
       <GridItem xs={12}>
         <SaveButton handleSubmit={handleSubmit} onSaveClick={onSaveClick} />
       </GridItem>
@@ -105,96 +112,132 @@ export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
   );
 }
 
+const StyledDiv = styled.div`
+  min-width: 120px;
+`;
+
 type TopicProps = {
-  ratingWatcher: Rating[];
-  rating: FieldArrayWithId<RatingsFormInput>;
-  name: ArrayPath<RatingsFormInput>;
+  shortName: string;
+  name: string;
+  fieldArrayName: ArrayPath<RatingsFormInput>;
   index: number;
+  isWeightSelectedByUser: boolean;
   control: Control<RatingsFormInput>;
 };
 
-function Topic({ ratingWatcher, rating, name, index, control }: TopicProps) {
+function Topic({
+  shortName,
+  name,
+  fieldArrayName,
+  index,
+  isWeightSelectedByUser,
+  control,
+}: TopicProps) {
   return (
-    <GridItem key={rating.shortName} xs={12}>
-      <GridContainer alignItems={'center'} spacing={2}>
-        <GridItem key={rating.shortName} xs={12}>
-          <Typography variant={'h1'}>{rating.name}</Typography>
-        </GridItem>
-        <GridItem xs={12} sm={1}>
-          <ReactHookFormSwitch
-            control={control}
-            name={`${name}.${index}.isWeightSelectedByUser`}
-            label={'Select weight manually'}
-          />
-        </GridItem>
-        {ratingWatcher[index].isWeightSelectedByUser && (
-          <GridItem xs={12} sm={1}>
-            <ReactHookFormSelect
-              control={control}
-              name={`${name}.${index}.weight`}
-              label={'Weight'}
-              defaultValue={1}
-            >
-              {WEIGHT_VALUES.map((weight, index) => (
-                <MenuItem key={index} value={weight}>
-                  {weight}
-                </MenuItem>
-              ))}
-            </ReactHookFormSelect>
+    <Card>
+      <CardContent>
+        <GridContainer
+          alignItems={'center'}
+          justifyContent="space-between"
+          spacing={2}
+        >
+          <GridItem>
+            <GridContainer alignItems="center" spacing={1}>
+              <GridItem>
+                <ShortNameAvatar>{shortName}</ShortNameAvatar>
+              </GridItem>
+              <GridItem>
+                <Typography variant={'body1'}>{name}</Typography>
+              </GridItem>
+            </GridContainer>
           </GridItem>
-        )}
-      </GridContainer>
-    </GridItem>
+          <GridItem>
+            <GridContainer alignItems="center">
+              <GridItem>
+                <ReactHookFormSwitch
+                  control={control}
+                  name={`${fieldArrayName}.${index}.isWeightSelectedByUser`}
+                  label={<Trans>Select weight manually</Trans>}
+                />
+              </GridItem>
+              <GridItem>
+                {isWeightSelectedByUser && (
+                  <StyledDiv>
+                    <ReactHookFormSelect
+                      control={control}
+                      name={`${fieldArrayName}.${index}.weight`}
+                      label={<Trans>Weight</Trans>}
+                      defaultValue={1}
+                    >
+                      {WEIGHT_VALUES.map((weight, index) => (
+                        <MenuItem key={index} value={weight}>
+                          {weight}
+                        </MenuItem>
+                      ))}
+                    </ReactHookFormSelect>
+                  </StyledDiv>
+                )}
+              </GridItem>
+            </GridContainer>
+          </GridItem>
+        </GridContainer>
+      </CardContent>
+    </Card>
   );
 }
 
 type AspectProps = {
-  rating: FieldArrayWithId<RatingsFormInput>;
-  name: ArrayPath<RatingsFormInput>;
+  shortName: string;
+  name: string;
+  isPositive: boolean;
+  fieldArrayName: ArrayPath<RatingsFormInput>;
   index: number;
   control: Control<RatingsFormInput>;
   workbook?: IWorkbook;
 };
 
-function Aspect({ rating, name, index, control, workbook }: AspectProps) {
+function Aspect({
+  shortName,
+  name,
+  isPositive,
+  fieldArrayName,
+  index,
+  control,
+  workbook,
+}: AspectProps) {
   return (
-    <GridItem key={rating.shortName} xs={12}>
-      <GridContainer alignItems={'center'} spacing={2}>
-        <GridItem xs={12} sm={1}>
-          <Typography variant={'body1'}>{rating.shortName}</Typography>
-        </GridItem>
-        <GridItem xs={12} sm={7}>
-          <Typography variant={'body1'}>{rating.name}</Typography>
-        </GridItem>
-        {rating.isPositive ? (
-          <>
-            <GridItem xs={12} sm={3}>
+    <Card>
+      <CardContent>
+        <GridContainer
+          alignItems={'center'}
+          justifyContent="space-between"
+          spacing={2}
+        >
+          <GridItem>
+            <GridContainer alignItems={'center'} spacing={1}>
+              <GridItem>
+                <Typography variant="body1">{shortName}</Typography>
+              </GridItem>
+              <GridItem>
+                <Typography variant={'body1'}>{name}</Typography>
+              </GridItem>
+            </GridContainer>
+          </GridItem>
+          <GridItem>
+            {isPositive ? (
               <PositiveRating
                 control={control}
-                name={`${name}.${index}.estimations`}
+                name={`${fieldArrayName}.${index}.estimations`}
               />
-            </GridItem>
-          </>
-        ) : (
-          <GridItem xs={12} sm={3}>
-            <NegativeRating
-              control={control}
-              name={`${name}.${index}.estimations`}
-            />
+            ) : (
+              <NegativeRating
+                control={control}
+                name={`${fieldArrayName}.${index}.estimations`}
+              />
+            )}
           </GridItem>
-        )}
-        <GridItem xs={12} sm={1}>
-          {workbook && workbook.hasSection(rating.shortName) && (
-            <Tooltip
-              title={`Title: ${workbook.getSection(rating.shortName)?.title}`}
-            >
-              <IconButton aria-label={'info'} color={'secondary'}>
-                <FontAwesomeIcon icon={faCircleInfo} />
-              </IconButton>
-            </Tooltip>
-          )}
-        </GridItem>
-      </GridContainer>
-    </GridItem>
+        </GridContainer>
+      </CardContent>
+    </Card>
   );
 }
