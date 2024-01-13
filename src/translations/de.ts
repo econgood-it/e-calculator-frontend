@@ -88,5 +88,6 @@ export const DE_TRANSLATIONS = {
   'Organization name': 'Organisationsname',
   'Select weight manually': 'Gewicht manuell setzen',
   Weight: 'Gewicht',
+  Points: 'Punkte',
   ...DE_ERROR_TRANSLATIONS,
 };

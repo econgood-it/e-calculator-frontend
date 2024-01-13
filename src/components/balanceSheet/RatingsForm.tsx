@@ -10,7 +10,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import GridItem from '../layout/GridItem';
 import GridContainer, { FormContainer } from '../layout/GridContainer';
-import { Card, CardContent, MenuItem, Typography } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  MenuItem,
+  Typography,
+} from '@mui/material';
 import { SaveButton } from './forms/SaveButton';
 import { useActiveBalanceSheet } from '../../contexts/ActiveBalanceSheetProvider';
 import { Fragment, useEffect, useRef } from 'react';
@@ -79,8 +85,8 @@ export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
     <FormContainer spacing={3}>
       {ratingsFields.map(({ type, shortName, name, isPositive }, index) => (
         <Fragment key={shortName}>
-          <GridItem xs={12}>
-            {type === RatingType.topic ? (
+          {type === RatingType.topic ? (
+            <GridItem xs={12}>
               <Topic
                 fieldArrayName={fieldArrayName}
                 shortName={shortName}
@@ -91,7 +97,9 @@ export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
                 }
                 control={control}
               />
-            ) : (
+            </GridItem>
+          ) : (
+            <GridItem md={12} lg={4}>
               <Aspect
                 shortName={shortName}
                 name={name}
@@ -101,8 +109,8 @@ export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
                 control={control}
                 workbook={workbook}
               />
-            )}
-          </GridItem>
+            </GridItem>
+          )}
         </Fragment>
       ))}
       <GridItem xs={12}>
@@ -152,7 +160,11 @@ function Topic({
             </GridContainer>
           </GridItem>
           <GridItem>
-            <GridContainer alignItems="center">
+            <GridContainer
+              alignItems="center"
+              spacing={2}
+              justifyContent={'center'}
+            >
               <GridItem>
                 <ReactHookFormSwitch
                   control={control}
@@ -207,36 +219,23 @@ function Aspect({
 }: AspectProps) {
   return (
     <Card>
+      <CardHeader
+        title={
+          <Typography variant="body1">{`${shortName} ${name}`}</Typography>
+        }
+      />
       <CardContent>
-        <GridContainer
-          alignItems={'center'}
-          justifyContent="space-between"
-          spacing={2}
-        >
-          <GridItem>
-            <GridContainer alignItems={'center'} spacing={1}>
-              <GridItem>
-                <Typography variant="body1">{shortName}</Typography>
-              </GridItem>
-              <GridItem>
-                <Typography variant={'body1'}>{name}</Typography>
-              </GridItem>
-            </GridContainer>
-          </GridItem>
-          <GridItem>
-            {isPositive ? (
-              <PositiveRating
-                control={control}
-                name={`${fieldArrayName}.${index}.estimations`}
-              />
-            ) : (
-              <NegativeRating
-                control={control}
-                name={`${fieldArrayName}.${index}.estimations`}
-              />
-            )}
-          </GridItem>
-        </GridContainer>
+        {isPositive ? (
+          <PositiveRating
+            control={control}
+            name={`${fieldArrayName}.${index}.estimations`}
+          />
+        ) : (
+          <NegativeRating
+            control={control}
+            name={`${fieldArrayName}.${index}.estimations`}
+          />
+        )}
       </CardContent>
     </Card>
   );

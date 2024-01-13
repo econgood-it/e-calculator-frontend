@@ -4,9 +4,10 @@ import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSeedling } from '@fortawesome/free-solid-svg-icons';
-import { Chip, Typography } from '@mui/material';
+import { Chip, Divider, Typography } from '@mui/material';
 import GridContainer from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
+import { useTranslation } from 'react-i18next';
 
 const StyledRating = styled(Rating)`
   & .MuiRating-iconFilled {
@@ -27,8 +28,11 @@ export default function PositiveRating<T extends FieldValues>({
   name,
 }: PositiveRatingProps<T>) {
   const [hover, setHover] = useState<number>(-1);
-  const getLabel = (currentValue: number): string => {
-    if (currentValue === 1) {
+  const { t } = useTranslation();
+  const getLabel = (currentValue?: number): string => {
+    if (currentValue == null) {
+      return 'Basislinie';
+    } else if (currentValue === 1) {
       return 'Erste Schritte';
     } else if (currentValue >= 2 && currentValue <= 3) {
       return 'Fortgeschritten';
@@ -47,8 +51,8 @@ export default function PositiveRating<T extends FieldValues>({
         return (
           <GridContainer
             alignItems="center"
-            justifyContent={'flex-end'}
             spacing={3}
+            justifyContent={'center'}
           >
             <GridItem>
               <StyledRating
@@ -65,22 +69,18 @@ export default function PositiveRating<T extends FieldValues>({
                 }}
               />
             </GridItem>
-            {field.value !== null && (
-              <GridItem sx={{ width: 200 }}>
-                <GridContainer alignItems="center">
-                  <GridItem xs={12}>
-                    <Typography variant={'h2'}>
-                      {`${hover !== -1 ? hover : field.value} Points`}
-                    </Typography>
-                  </GridItem>
-                  <GridItem xs={12}>
-                    <Chip
-                      label={getLabel(hover !== -1 ? hover : field.value)}
-                    />
-                  </GridItem>
-                </GridContainer>
-              </GridItem>
-            )}
+            <GridItem xs={12}>
+              <Divider>
+                <Chip label={getLabel(hover !== -1 ? hover : field.value)} />
+              </Divider>
+            </GridItem>
+            <GridItem>
+              {field.value !== null && (
+                <Typography variant={'h2'}>
+                  {`${hover !== -1 ? hover : field.value} ${t`Points`}`}
+                </Typography>
+              )}
+            </GridItem>
           </GridContainer>
         );
       }}

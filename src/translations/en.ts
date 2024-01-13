@@ -78,6 +78,7 @@ const EN_WORDS = [
   'Organization name',
   'Select weight manually',
   'Weight',
+  'Points',
 ];
 
 export const EN_TRANSLATIONS = {
