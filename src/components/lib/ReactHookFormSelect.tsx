@@ -28,7 +28,7 @@ export function ReactHookFormSelect<T extends FieldValues>({
     <FormControl fullWidth>
       <InputLabel id={labelId}>{label}</InputLabel>
       <Controller
-        render={({ field, fieldState }) => (
+        render={({ field }) => (
           <Select autoWidth {...field} labelId={labelId} label={label}>
             {children}
           </Select>

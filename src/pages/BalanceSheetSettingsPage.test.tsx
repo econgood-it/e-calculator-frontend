@@ -5,17 +5,19 @@ import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
 import { useBalanceSheetItems } from '../contexts/BalanceSheetListProvider';
 import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets';
 import { BalanceSheetSettingsPage } from './BalanceSheetSettingsPage';
+import {beforeEach, describe, expect, it, Mock, vi} from "vitest";
 
-jest.mock('../contexts/BalanceSheetListProvider');
-jest.mock('../contexts/ActiveBalanceSheetProvider');
+
+vi.mock('../contexts/BalanceSheetListProvider');
+vi.mock('../contexts/ActiveBalanceSheetProvider');
 describe('BalanceSheetSettingsPage', () => {
-  const deleteBalanceSheetMock = jest.fn();
+  const deleteBalanceSheetMock = vi.fn();
   const mockedBalanceSheet = new BalanceSheetMockBuilder().build();
   beforeEach(() => {
-    (useBalanceSheetItems as jest.Mock).mockReturnValue({
+    (useBalanceSheetItems as Mock).mockReturnValue({
       deleteBalanceSheet: deleteBalanceSheetMock,
     });
-    (useActiveBalanceSheet as jest.Mock).mockReturnValue({
+    (useActiveBalanceSheet as Mock).mockReturnValue({
       balanceSheet: mockedBalanceSheet,
     });
   });

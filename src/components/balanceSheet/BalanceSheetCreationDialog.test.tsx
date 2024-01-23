@@ -10,28 +10,33 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { BalanceSheetCreationDialog } from './BalanceSheetCreationDialog';
+import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 
-jest.mock('../../contexts/AlertContext');
-jest.mock('../../contexts/BalanceSheetListProvider');
+vi.mock('../../contexts/AlertContext');
+vi.mock('../../contexts/BalanceSheetListProvider');
 describe('BalanceSheetCreationDialog', () => {
-  const createBalanceSheetMock = jest.fn();
+  const createBalanceSheetMock = vi.fn();
 
   beforeEach(() => {
-    (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
-    (useBalanceSheetItems as jest.Mock).mockReturnValue({
+    (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
+    (useBalanceSheetItems as Mock).mockReturnValue({
       createBalanceSheet: createBalanceSheetMock,
     });
   });
 
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
+
   it('should call create balance sheet on submit', async () => {
     const user = userEvent.setup();
-    const onClose = jest.fn();
+    const onClose = vi.fn();
     renderWithTheme(
       <BalanceSheetCreationDialog open={true} onClose={onClose} />
     );
 
     await user.click(
-      screen.getByRole('button', {
+      screen.getByRole('combobox', {
         name: /Select type/,
       })
     );
@@ -40,7 +45,7 @@ describe('BalanceSheetCreationDialog', () => {
     await user.click(typeOptions.find((o) => o.textContent === 'Compact')!);
 
     await user.click(
-      screen.getByRole('button', {
+      screen.getByRole('combobox', {
         name: /Select version/,
       })
     );
@@ -62,7 +67,7 @@ describe('BalanceSheetCreationDialog', () => {
 
   it('should close dialog when close button is clicked', async () => {
     const user = userEvent.setup();
-    const onClose = jest.fn();
+    const onClose = vi.fn();
     renderWithTheme(
       <BalanceSheetCreationDialog open={true} onClose={onClose} />
     );

@@ -100,7 +100,7 @@ export function CustomersForm({ formData, industries }: CustomersFormProps) {
               }
             ></FieldArrayAppendButton>
           </GridItem>
-          {industrySectors.map((is, index) => (
+          {industrySectors.map((_, index) => (
             <GridItem key={index} xs={12}>
               <GridContainer spacing={3}>
                 <GridItem xs={12} sm={6}>

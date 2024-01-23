@@ -1,32 +1,34 @@
-import '@testing-library/jest-dom';
+
 import { screen } from '@testing-library/react';
 import { useOrganizations } from '../contexts/OrganizationProvider';
 import renderWithTheme from '../testUtils/rendering';
 import { RequireActiveOrganization } from './RequireActiveOrganization';
 import { useAlert } from '../contexts/AlertContext';
 import { useAuth } from 'oidc-react';
+import {beforeEach, describe, expect, it, Mock, vi} from "vitest";
 
-jest.mock('../contexts/OrganizationProvider');
 
-jest.mock('../contexts/AlertContext');
+vi.mock('../contexts/OrganizationProvider');
 
-jest.mock('react-router-dom');
-jest.mock('oidc-react', () => ({
-  useAuth: jest.fn(),
+vi.mock('../contexts/AlertContext');
+
+vi.mock('react-router-dom');
+vi.mock('oidc-react', () => ({
+  useAuth: vi.fn(),
 }));
 
 describe('RequireAcitveOrganization', () => {
   beforeEach(() => {
-    (useAuth as jest.Mock).mockReturnValue({ signOut: jest.fn() });
+    (useAuth as Mock).mockReturnValue({ signOut: vi.fn() });
   });
 
   it('shows loading page if active organization is undefined', async () => {
-    (useOrganizations as jest.Mock).mockReturnValue({
+    (useOrganizations as Mock).mockReturnValue({
       organizationItems: [],
       activeOrganization: undefined,
     });
-    (useAlert as jest.Mock).mockReturnValue({
-      addErrorAlert: jest.fn(),
+    (useAlert as Mock).mockReturnValue({
+      addErrorAlert: vi.fn(),
     });
 
     renderWithTheme(<RequireActiveOrganization />);

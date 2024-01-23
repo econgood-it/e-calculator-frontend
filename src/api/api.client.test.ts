@@ -1,11 +1,11 @@
 import { MockedRequest, rest } from 'msw';
-import { mswServer } from './mswServer';
+import { mswServer } from './mswServer.ts';
 import {
   ApiClient,
   AuthApiClient,
   makeWretchInstance,
   makeWretchInstanceWithAuth,
-} from './api.client';
+} from './api.client.ts';
 import { UserMocks } from '../testUtils/user';
 import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets';
 import { WorkbookResponseMocks } from '../testUtils/workbook';
@@ -13,8 +13,9 @@ import { regionsMocks } from '../testUtils/regions';
 import { industriesMocks } from '../testUtils/industries';
 import { OrganizationMockBuilder } from '../testUtils/organization';
 import { MatrixMockBuilder } from '../testUtils/matrix';
+import {afterAll, afterEach, beforeAll, describe, expect, it, vi} from "vitest";
 
-jest.mock('react-router-dom');
+vi.mock('react-router-dom');
 
 function mockResource(
   method: keyof typeof rest,

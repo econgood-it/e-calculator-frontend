@@ -4,7 +4,8 @@ import { screen } from '@testing-library/react';
 import { ReactHookFormSwitch } from './ReactHookFormSwitch';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod/dist/zod';
+import {describe, expect, it} from "vitest";
+import {zodResolver} from "@hookform/resolvers/zod";
 
 describe('ReactHookFormSwitch', () => {
   function TestComponent<T extends z.ZodTypeAny>({

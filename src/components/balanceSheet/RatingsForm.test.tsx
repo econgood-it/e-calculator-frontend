@@ -1,5 +1,3 @@
-import '@testing-library/jest-dom';
-
 import { useAlert } from '../../contexts/AlertContext';
 import { useActiveBalanceSheet } from '../../contexts/ActiveBalanceSheetProvider';
 import renderWithTheme from '../../testUtils/rendering';
@@ -17,29 +15,37 @@ import { useWorkbook } from '../../contexts/WorkbookProvider';
 import { WorkbookResponseMocks } from '../../testUtils/workbook';
 import { Workbook } from '../../models/Workbook';
 import { WEIGHT_VALUES } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 
-jest.mock('../../contexts/ActiveBalanceSheetProvider');
-jest.mock('../../contexts/AlertContext');
-jest.mock('../../contexts/WorkbookProvider');
+vi.mock('../../contexts/ActiveBalanceSheetProvider');
+vi.mock('../../contexts/AlertContext');
+vi.mock('../../contexts/WorkbookProvider');
 
 describe('RatingsForm', () => {
-  const updateRatings = jest.fn();
+  const updateRatings = vi.fn();
   beforeEach(() => {
-    (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
-    (useWorkbook as jest.Mock).mockReturnValue(
+    (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
+    (useWorkbook as Mock).mockReturnValue(
       new Workbook(WorkbookResponseMocks.default())
     );
-    (useActiveBalanceSheet as jest.Mock).mockReturnValue({
+    (useActiveBalanceSheet as Mock).mockReturnValue({
       updateRatings: updateRatings,
     });
   });
+
+  afterEach(() => {
+    vi.resetAllMocks();
+  });
+
   it('should render aspects', async () => {
     const ratings = new RatingsMockBuilder().build();
     renderWithTheme(<RatingsForm stakeholderName={''} ratings={ratings} />);
-    for (const [index, rating] of ratings.entries()) {
+    for (const [, rating] of ratings.entries()) {
       if (rating.type === RatingType.aspect) {
         expect(
-          screen.getByLabelText(`ratings.${index}.estimations`)
+          screen.getByLabelText(
+            `Estimations of the ratings ${rating.shortName}`
+          )
         ).toBeInTheDocument();
         expect(
           screen.getByText(`${rating.shortName} ${rating.name}`)

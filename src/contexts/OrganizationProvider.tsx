@@ -46,7 +46,6 @@ export function OrganizationProvider({ children }: OrganizationProviderProps) {
   useEffect(() => {
     (async () => {
       const response = await api.getOrganizations();
-
       setOrganizationItems(response);
     })();
   }, []);

@@ -1,22 +1,23 @@
-import '@testing-library/jest-dom';
+
 import renderWithTheme from '../../testUtils/rendering';
 import { screen, waitFor } from '@testing-library/react';
 import { OrganizationForm } from './OrganizationForm';
 import { OrganizationMockBuilder } from '../../testUtils/organization';
 import userEvent from '@testing-library/user-event';
 import { useAlert } from '../../contexts/AlertContext';
+import {beforeEach, describe, expect, it, Mock, vi} from "vitest";
 
-jest.mock('../../contexts/AlertContext');
+vi.mock('../../contexts/AlertContext');
 
 describe('OrganizationForm', () => {
-  const addErrorAlert = jest.fn();
+  const addErrorAlert = vi.fn();
   beforeEach(() => {
-    (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: addErrorAlert });
+    (useAlert as Mock).mockReturnValue({ addErrorAlert: addErrorAlert });
   });
 
   it('should render given organization info', async () => {
     const organization = new OrganizationMockBuilder().buildRequestBody();
-    const onSave = jest.fn();
+    const onSave = vi.fn();
     renderWithTheme(
       <OrganizationForm organization={organization} onSave={onSave} />
     );
@@ -28,7 +29,7 @@ describe('OrganizationForm', () => {
   it('should update organization on submit', async () => {
     const organization = new OrganizationMockBuilder().buildRequestBody();
     const user = userEvent.setup();
-    const onSave = jest.fn();
+    const onSave = vi.fn();
     renderWithTheme(
       <OrganizationForm organization={organization} onSave={onSave} />
     );
@@ -81,7 +82,7 @@ describe('OrganizationForm', () => {
   it('should show error message if organization fields invalid', async () => {
     const organization = new OrganizationMockBuilder().buildRequestBody();
     const user = userEvent.setup();
-    const onSave = jest.fn();
+    const onSave = vi.fn();
     renderWithTheme(
       <OrganizationForm organization={organization} onSave={onSave} />
     );

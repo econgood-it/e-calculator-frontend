@@ -45,7 +45,6 @@ export default function ActiveBalanceSheetProvider({
 
   const api = useApi();
   const { balanceSheetId } = useParams();
-
   const updateRatings = async (ratings: Rating[]) => {
     const response = await api.updateBalanceSheet(Number(balanceSheetId), {
       ratings: ratings.map((r) => ({
@@ -55,6 +54,7 @@ export default function ActiveBalanceSheetProvider({
       })),
     });
     setBalanceSheet(response);
+    //
     addSuccessAlert(t`Modifications saved`);
   };
 

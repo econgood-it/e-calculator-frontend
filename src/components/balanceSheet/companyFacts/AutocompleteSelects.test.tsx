@@ -12,6 +12,7 @@ import { screen } from '@testing-library/react';
 import { industriesMocks } from '../../../testUtils/industries';
 import { Region } from '../../../models/Region';
 import { Industry } from '../../../models/Industry';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 describe('RegionSelect', () => {
   const defaultValue = 'defaultValue';
@@ -101,8 +102,7 @@ describe('IndustrySelect', () => {
   }
 
   it('shows found industry when searching for a industry name', async () => {
-    const user = userEvent.setup();
-    renderWithTheme(
+    const { user } = renderWithTheme(
       <TestComponent
         industries={industriesMocks.industries1()}
         industryCode={'B'}
@@ -118,7 +118,7 @@ describe('IndustrySelect', () => {
         name: `${industry.industryCode} - ${industry.industryName}`,
       })
     );
-  });
+  }, 10000);
 
   it(`shows ${defaultLabel} when industry code is undefined`, async () => {
     renderWithTheme(

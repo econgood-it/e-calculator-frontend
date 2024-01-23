@@ -6,7 +6,7 @@ import { Trans } from 'react-i18next';
 import { ClosableDialog } from '../lib/ClosableDialog';
 import GridContainer from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 import { FullScreenDialog } from '../lib/FullScreenDialog';
 
 type OrganizationDialogProps = {

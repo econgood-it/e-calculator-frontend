@@ -4,6 +4,7 @@ import { useLanguage } from '../i18n';
 import { ApiClient, makeWretchInstanceWithAuth } from '../api/api.client';
 import { useAuth } from 'oidc-react';
 
+
 const ApiContext = createContext<ApiClient | undefined>(undefined);
 
 type ApiProviderProps = {

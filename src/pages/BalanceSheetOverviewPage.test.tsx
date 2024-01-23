@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom';
 import renderWithTheme from '../testUtils/rendering';
 import { useAlert } from '../contexts/AlertContext';
 import { BalanceSheetOverviewPage } from './BalanceSheetOverviewPage';
@@ -7,25 +6,25 @@ import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets';
 import { useApi } from '../contexts/ApiProvider';
 import { MatrixMockBuilder } from '../testUtils/matrix';
 import { screen, waitFor } from '@testing-library/react';
-
-jest.mock('../contexts/AlertContext');
-jest.mock('../contexts/ApiProvider');
-jest.mock('../contexts/ActiveBalanceSheetProvider');
+import {beforeEach, describe, expect, it, Mock, vi} from "vitest";
+vi.mock('../contexts/AlertContext');
+vi.mock('../contexts/ApiProvider');
+vi.mock('../contexts/ActiveBalanceSheetProvider');
 
 describe('BalanceSheetOverviewPage', () => {
   const mockedBalanceSheet = new BalanceSheetMockBuilder().build();
   const apiMock = {
-    getBalanceSheetAsMatrix: jest.fn(),
+    getBalanceSheetAsMatrix: vi.fn(),
   };
   beforeEach(() => {
-    (useAlert as jest.Mock).mockReturnValue({
-      addErrorAlert: jest.fn(),
-      addSuccessAlert: jest.fn(),
+    (useAlert as Mock).mockReturnValue({
+      addErrorAlert: vi.fn(),
+      addSuccessAlert: vi.fn(),
     });
-    (useActiveBalanceSheet as jest.Mock).mockReturnValue({
+    (useActiveBalanceSheet as Mock).mockReturnValue({
       balanceSheet: mockedBalanceSheet,
     });
-    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    (useApi as Mock).mockImplementation(() => apiMock);
   });
 
   it('renders', async () => {

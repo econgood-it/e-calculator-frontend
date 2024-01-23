@@ -1,4 +1,4 @@
-import '@testing-library/jest-dom';
+
 import renderWithTheme from '../../testUtils/rendering';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -7,32 +7,33 @@ import { OrganizationCreationDialog } from './OrganizationCreationDialog';
 import { OrganizationMockBuilder } from '../../testUtils/organization';
 import { useOrganizations } from '../../contexts/OrganizationProvider';
 import { useAuth } from 'oidc-react';
+import {beforeEach, describe, expect, it, Mock, vi} from "vitest";
 
-jest.mock('../../contexts/AlertContext');
-jest.mock('../../contexts/OrganizationProvider');
+vi.mock('../../contexts/AlertContext');
+vi.mock('../../contexts/OrganizationProvider');
 
-jest.mock('oidc-react', () => ({
-  useAuth: jest.fn(),
+vi.mock('oidc-react', () => ({
+  useAuth: vi.fn(),
 }));
 
 describe('OrganizationCreationDialog', () => {
   const useOrganizationMock = {
-    createOrganization: jest.fn(),
+    createOrganization: vi.fn(),
   };
 
-  const logoutMock = jest.fn();
+  const logoutMock = vi.fn();
 
   beforeEach(() => {
-    (useAuth as jest.Mock).mockReturnValue({ signOutRedirect: logoutMock });
-    (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
-    (useOrganizations as jest.Mock).mockImplementation(
+    (useAuth as Mock).mockReturnValue({ signOutRedirect: logoutMock });
+    (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
+    (useOrganizations as Mock).mockImplementation(
       () => useOrganizationMock
     );
   });
 
   it('should call create organization api endpoint on submit', async () => {
     const user = userEvent.setup();
-    const onClose = jest.fn();
+    const onClose = vi.fn();
     renderWithTheme(
       <OrganizationCreationDialog
         open={true}
@@ -61,7 +62,7 @@ describe('OrganizationCreationDialog', () => {
 
   it('should close dialog when close button is clicked', async () => {
     const user = userEvent.setup();
-    const onClose = jest.fn();
+    const onClose = vi.fn();
     renderWithTheme(
       <OrganizationCreationDialog
         open={true}
@@ -75,7 +76,7 @@ describe('OrganizationCreationDialog', () => {
   });
 
   it('should not have close icon if closable is false', async () => {
-    const setOpen = jest.fn();
+    const setOpen = vi.fn();
     renderWithTheme(
       <OrganizationCreationDialog
         open={true}
@@ -88,7 +89,7 @@ describe('OrganizationCreationDialog', () => {
   });
 
   it('should call logout when logout is clicked', async () => {
-    const setOpen = jest.fn();
+    const setOpen = vi.fn();
     const { user } = renderWithTheme(
       <OrganizationCreationDialog
         open={true}

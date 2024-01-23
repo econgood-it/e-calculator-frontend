@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
 import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
@@ -8,24 +7,26 @@ import CompanyFactsPage from './CompanyFactsPage';
 import { useApi } from '../contexts/ApiProvider';
 import { industriesMocks } from '../testUtils/industries';
 import { useAlert } from '../contexts/AlertContext';
+import {beforeEach, describe, expect, it, Mock, vi} from "vitest";
 
-jest.mock('../contexts/ActiveBalanceSheetProvider');
-jest.mock('../contexts/AlertContext');
 
-jest.mock('../contexts/ApiProvider');
+vi.mock('../contexts/ActiveBalanceSheetProvider');
+vi.mock('../contexts/AlertContext');
+
+vi.mock('../contexts/ApiProvider');
 describe('CompanyFactsPage', () => {
   const apiMock = {
-    getRegions: jest.fn(),
-    getIndustries: jest.fn(),
+    getRegions: vi.fn(),
+    getIndustries: vi.fn(),
   };
   beforeEach(() => {
-    (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
-    (useActiveBalanceSheet as jest.Mock).mockReturnValue({
+    (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
+    (useActiveBalanceSheet as Mock).mockReturnValue({
       balanceSheet: new BalanceSheetMockBuilder().build(),
     });
     apiMock.getRegions.mockResolvedValue(regionsMocks.regions1());
     apiMock.getIndustries.mockResolvedValue(industriesMocks.industries1());
-    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    (useApi as Mock).mockImplementation(() => apiMock);
   });
 
   it('renders balance sheet items and navigates on click', async () => {

@@ -1,31 +1,28 @@
-import { renderHookWithTheme } from '../testUtils/rendering';
-import '@testing-library/jest-dom';
-import { useApi } from './ApiProvider';
-import {
-  BalanceSheetListProvider,
-  useBalanceSheetItems,
-} from './BalanceSheetListProvider';
-import { act, waitFor } from '@testing-library/react';
-import { AlertProvider } from './AlertContext';
-import { ReactElement } from 'react';
-import { useOrganizations } from './OrganizationProvider';
-import { OrganizationMockBuilder } from '../testUtils/organization';
-import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets';
+import {renderHookWithTheme} from '../testUtils/rendering';
+import {useApi} from './ApiProvider';
+import {BalanceSheetListProvider, useBalanceSheetItems,} from './BalanceSheetListProvider';
+import {act, waitFor} from '@testing-library/react';
+import {AlertProvider} from './AlertContext';
+import {ReactElement} from 'react';
+import {useOrganizations} from './OrganizationProvider';
+import {OrganizationMockBuilder} from '../testUtils/organization';
+import {BalanceSheetMockBuilder} from '../testUtils/balanceSheets';
+import {describe, expect, it, Mock, vi} from "vitest";
 
-jest.mock('../contexts/ApiProvider');
-jest.mock('../contexts/OrganizationProvider');
+vi.mock('../contexts/ApiProvider');
+vi.mock('../contexts/OrganizationProvider');
 
-const mockedUsedNavigate = jest.fn();
+const mockedUsedNavigate = vi.fn();
 
-jest.mock('react-router-dom', () => ({
-  ...(jest.requireActual('react-router-dom') as any),
+vi.mock('react-router-dom', () => ({
+  ...(vi.importActual('react-router-dom') as any),
   useNavigate: () => mockedUsedNavigate,
 }));
 describe('useBalanceSheetItems', () => {
   const apiMock = {
-    getBalanceSheets: jest.fn(),
-    createBalanceSheet: jest.fn(),
-    deleteBalanceSheet: jest.fn(),
+    getBalanceSheets: vi.fn(),
+    createBalanceSheet: vi.fn(),
+    deleteBalanceSheet: vi.fn(),
   };
 
   function Wrapper({ children }: { children: ReactElement }) {
@@ -37,10 +34,10 @@ describe('useBalanceSheetItems', () => {
   }
 
   it('should return empty list of balance sheet items if active organization is undefined', async () => {
-    (useOrganizations as jest.Mock).mockReturnValue({
+    (useOrganizations as Mock).mockReturnValue({
       activeOrganization: undefined,
     });
-    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    (useApi as Mock).mockImplementation(() => apiMock);
 
     const { result } = renderHookWithTheme(() => useBalanceSheetItems(), {
       wrapper: Wrapper,
@@ -52,12 +49,12 @@ describe('useBalanceSheetItems', () => {
   });
 
   it('should return balance sheet items of active organization from api', async () => {
-    (useOrganizations as jest.Mock).mockReturnValue({
+    (useOrganizations as Mock).mockReturnValue({
       activeOrganization: new OrganizationMockBuilder().build(),
     });
     const mockedBalanceSheetItems = [{ id: 1 }, { id: 8 }];
     apiMock.getBalanceSheets.mockResolvedValue(mockedBalanceSheetItems);
-    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    (useApi as Mock).mockImplementation(() => apiMock);
 
     const { result } = renderHookWithTheme(() => useBalanceSheetItems(), {
       wrapper: Wrapper,
@@ -74,7 +71,7 @@ describe('useBalanceSheetItems', () => {
 
   it('should create balance sheet', async () => {
     const activeOrganization = new OrganizationMockBuilder().build();
-    (useOrganizations as jest.Mock).mockReturnValue({
+    (useOrganizations as Mock).mockReturnValue({
       activeOrganization,
     });
     const balanceSheetMockBuilder = new BalanceSheetMockBuilder().withId(999);
@@ -83,7 +80,7 @@ describe('useBalanceSheetItems', () => {
     );
     const mockedBalanceSheetItems = [{ id: 1 }, { id: 8 }];
     apiMock.getBalanceSheets.mockResolvedValue(mockedBalanceSheetItems);
-    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    (useApi as Mock).mockImplementation(() => apiMock);
 
     const { result } = renderHookWithTheme(() => useBalanceSheetItems(), {
       wrapper: Wrapper,
@@ -117,13 +114,13 @@ describe('useBalanceSheetItems', () => {
 
   it('should delete balance sheet', async () => {
     const activeOrganization = new OrganizationMockBuilder().build();
-    (useOrganizations as jest.Mock).mockReturnValue({
+    (useOrganizations as Mock).mockReturnValue({
       activeOrganization,
     });
     const balanceSheetToDelete = 8;
     const mockedBalanceSheetItems = [{ id: 1 }, { id: balanceSheetToDelete }];
     apiMock.getBalanceSheets.mockResolvedValue(mockedBalanceSheetItems);
-    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    (useApi as Mock).mockImplementation(() => apiMock);
     const { result } = renderHookWithTheme(() => useBalanceSheetItems(), {
       wrapper: Wrapper,
     });

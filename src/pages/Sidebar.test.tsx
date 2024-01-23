@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom';
 import { act, screen, waitFor } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
 import Sidebar from './Sidebar';
@@ -19,13 +18,14 @@ import {
 } from '../testUtils/organization';
 import { useAlert } from '../contexts/AlertContext';
 import { useAuth } from 'oidc-react';
+import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 
-jest.mock('../contexts/BalanceSheetListProvider');
-jest.mock('../contexts/OrganizationProvider');
-jest.mock('../contexts/AlertContext');
+vi.mock('../contexts/BalanceSheetListProvider');
+vi.mock('../contexts/OrganizationProvider');
+vi.mock('../contexts/AlertContext');
 
-jest.mock('oidc-react', () => ({
-  useAuth: jest.fn(),
+vi.mock('oidc-react', () => ({
+  useAuth: vi.fn(),
 }));
 
 describe('Sidebar', () => {
@@ -34,29 +34,33 @@ describe('Sidebar', () => {
 
   const balanceSheetListMock = {
     balanceSheetItems,
-    setBalanceSheetItems: jest.fn(),
-    createBalanceSheet: jest.fn(),
+    setBalanceSheetItems: vi.fn(),
+    createBalanceSheet: vi.fn(),
   };
-  const setActiveOrganizationByIdMock = jest.fn();
-  const logoutMock = jest.fn();
+  const setActiveOrganizationByIdMock = vi.fn();
+  const logoutMock = vi.fn();
 
   beforeEach(() => {
-    (useBalanceSheetItems as jest.Mock).mockImplementation(
+    (useBalanceSheetItems as Mock).mockImplementation(
       () => balanceSheetListMock
     );
-    (useAuth as jest.Mock).mockReturnValue({
+    (useAuth as Mock).mockReturnValue({
       signOutRedirect: logoutMock,
     });
-    (useAlert as jest.Mock).mockReturnValue({
-      addErrorAlert: jest.fn(),
+    (useAlert as Mock).mockReturnValue({
+      addErrorAlert: vi.fn(),
     });
-    (useOrganizations as jest.Mock).mockReturnValue({
+    (useOrganizations as Mock).mockReturnValue({
       organizationItems: OrganizationItemsMocks.default(),
       activeOrganization: new OrganizationMockBuilder()
         .withId(OrganizationItemsMocks.default()[0].id)
         .build(),
       setActiveOrganizationById: setActiveOrganizationByIdMock,
     });
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it('renders Balance sheets subheader and Create balance sheet navigation item', async () => {
@@ -135,29 +139,26 @@ describe('Sidebar', () => {
   });
 
   it('active organization changed if user selects organization from dropdown', async () => {
-    const user = userEvent.setup();
     const orgaItemToSelect = OrganizationItemsMocks.default()[1];
-    act(() => {
-      renderWithTheme(
-        <MemoryRouter initialEntries={[initialPathForRouting]}>
-          <Routes>
-            <Route path={initialPathForRouting} element={<Sidebar />} />
-            <Route
-              path={`organization/${orgaItemToSelect.id}`}
-              element={
-                <div>{`Navigated to Organization with id ${orgaItemToSelect.id}`}</div>
-              }
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-    });
+
+    const { user } = renderWithTheme(
+      <MemoryRouter initialEntries={[initialPathForRouting]}>
+        <Routes>
+          <Route path={initialPathForRouting} element={<Sidebar />} />
+          <Route
+            path={`organization/${orgaItemToSelect.id}`}
+            element={
+              <div>{`Navigated to Organization with id ${orgaItemToSelect.id}`}</div>
+            }
+          />
+        </Routes>
+      </MemoryRouter>
+    );
 
     await user.click(
-      screen.getByRole('button', {
-        name: OrganizationItemsMocks.default()[0].name,
-      })
+      await screen.findByText(OrganizationItemsMocks.default()[0].name)
     );
+
     const options = await screen.findAllByRole('option');
 
     expect(options.map((o) => o.textContent)).toEqual([

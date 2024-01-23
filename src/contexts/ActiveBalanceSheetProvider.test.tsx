@@ -1,7 +1,6 @@
 import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets';
 import { renderHookWithTheme } from '../testUtils/rendering';
 import { act, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import { useApi } from './ApiProvider';
 import ActiveBalanceSheetProvider, {
   useActiveBalanceSheet,
@@ -10,24 +9,25 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { useAlert } from './AlertContext';
 import { RatingType } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import { ReactElement } from 'react';
+import {beforeEach, describe, expect, it, Mock, vi} from "vitest";
 
-jest.mock('../contexts/ApiProvider');
-jest.mock('../contexts/AlertContext');
+vi.mock('../contexts/ApiProvider');
+vi.mock('../contexts/AlertContext');
 
 describe('WithActiveBalanceSheet', () => {
   const apiMock = {
-    getBalanceSheet: jest.fn(),
-    updateBalanceSheet: jest.fn(),
+    getBalanceSheet: vi.fn(),
+    updateBalanceSheet: vi.fn(),
   };
 
   const alertMock = {
-    addSuccessAlert: jest.fn(),
+    addSuccessAlert: vi.fn(),
   };
   const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
 
   beforeEach(() => {
     apiMock.getBalanceSheet.mockResolvedValue(balanceSheetMockBuilder.build());
-    (useAlert as jest.Mock).mockImplementation(() => alertMock);
+    (useAlert as Mock).mockImplementation(() => alertMock);
   });
 
   function Wrapper({ children }: { children: ReactElement }) {
@@ -82,7 +82,7 @@ describe('WithActiveBalanceSheet', () => {
       .replaceRatings(ratingsUpdate)
       .buildResponseBody();
     apiMock.updateBalanceSheet.mockResolvedValue(updatedBalanceSheet);
-    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    (useApi as Mock).mockImplementation(() => apiMock);
     const { result } = renderHookWithTheme(() => useActiveBalanceSheet(), {
       wrapper: Wrapper,
     });
@@ -139,7 +139,7 @@ describe('WithActiveBalanceSheet', () => {
     };
 
     apiMock.updateBalanceSheet.mockResolvedValue(updatedBalanceSheet);
-    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    (useApi as Mock).mockImplementation(() => apiMock);
     const { result } = renderHookWithTheme(() => useActiveBalanceSheet(), {
       wrapper: Wrapper,
     });

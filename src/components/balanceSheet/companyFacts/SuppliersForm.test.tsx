@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom';
 import { screen, waitFor, within } from '@testing-library/react';
 import SuppliersForm from './SuppliersForm';
 import userEvent from '@testing-library/user-event';
@@ -16,18 +15,23 @@ import {
   saveForm,
   selectRegion,
 } from '../../../testUtils/form';
+import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 
-jest.mock('../../../contexts/ActiveBalanceSheetProvider');
-jest.mock('../../../contexts/AlertContext');
+vi.mock('../../../contexts/ActiveBalanceSheetProvider');
+vi.mock('../../../contexts/AlertContext');
 
 describe('SuppliersForm', () => {
-  const updateCompanyFacts = jest.fn();
+  const updateCompanyFacts = vi.fn();
 
   beforeEach(() => {
-    (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
-    (useActiveBalanceSheet as jest.Mock).mockReturnValue({
+    (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
+    (useActiveBalanceSheet as Mock).mockReturnValue({
       updateCompanyFacts: updateCompanyFacts,
     });
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it('should set default value and validate all modifications for the field total purchase from suppliers', async () => {
@@ -48,7 +52,7 @@ describe('SuppliersForm', () => {
     await user.clear(input);
     await user.type(input, 'a7');
     expect(input).toHaveValue('a7');
-    expect(screen.getByText('Number expected')).toBeInTheDocument();
+    expect(screen.getByText('Number expected')).not.toBeNull();
 
     await user.clear(input);
     await user.type(input, '-7');
@@ -58,8 +62,8 @@ describe('SuppliersForm', () => {
     );
 
     await user.clear(input);
-    await user.type(input, '7');
-    expect(input).toHaveValue('7');
+    await user.type(input, '8');
+    expect(input).toHaveValue('8');
   });
 
   it('saves changes on total purchase from suppliers field', async () => {

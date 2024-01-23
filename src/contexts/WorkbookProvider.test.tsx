@@ -1,29 +1,30 @@
 import { renderHookWithTheme } from '../testUtils/rendering';
 import { waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
+
 import { useApi } from './ApiProvider';
 import WorkbookProvider, { useWorkbook } from './WorkbookProvider';
 import { useAlert } from './AlertContext';
 import { WorkbookResponseMocks } from '../testUtils/workbook';
+import {beforeEach, describe, expect, it, Mock, vi} from "vitest";
 
-jest.mock('../contexts/ApiProvider');
-jest.mock('../contexts/AlertContext');
+vi.mock('../contexts/ApiProvider');
+vi.mock('../contexts/AlertContext');
 describe('WithWorkbook', () => {
   const apiMock = {
-    getWorkbook: jest.fn(),
+    getWorkbook: vi.fn(),
   };
 
   const alertMock = {
-    addErrorAlert: jest.fn(),
+    addErrorAlert: vi.fn(),
   };
   beforeEach(() => {
-    (useAlert as jest.Mock).mockImplementation(() => alertMock);
+    (useAlert as Mock).mockImplementation(() => alertMock);
   });
 
   it('provides Workbook from API', async () => {
     const workbookResponse = WorkbookResponseMocks.default();
     apiMock.getWorkbook.mockResolvedValue(workbookResponse);
-    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    (useApi as Mock).mockImplementation(() => apiMock);
     const { result } = renderHookWithTheme(() => useWorkbook(), {
       wrapper: WorkbookProvider,
     });
@@ -35,7 +36,7 @@ describe('WithWorkbook', () => {
 
   it('fails to retrieve Workbook from API', async () => {
     apiMock.getWorkbook.mockRejectedValue({});
-    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    (useApi as Mock).mockImplementation(() => apiMock);
 
     const { result } = renderHookWithTheme(() => useWorkbook(), {
       wrapper: WorkbookProvider,

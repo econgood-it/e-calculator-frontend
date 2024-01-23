@@ -1,5 +1,3 @@
-import '@testing-library/jest-dom';
-
 import { CustomersMocks } from '../../../testUtils/balanceSheets';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { useAlert } from '../../../contexts/AlertContext';
@@ -14,17 +12,17 @@ import userEvent from '@testing-library/user-event';
 import renderWithTheme from '../../../testUtils/rendering';
 import { screen } from '@testing-library/react';
 import { industriesMocks } from '../../../testUtils/industries';
-import HTMLInputElement from 'react';
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 
-jest.mock('../../../contexts/ActiveBalanceSheetProvider');
-jest.mock('../../../contexts/AlertContext');
+vi.mock('../../../contexts/ActiveBalanceSheetProvider');
+vi.mock('../../../contexts/AlertContext');
 
 describe('CustomersForm', () => {
-  const updateCompanyFacts = jest.fn();
+  const updateCompanyFacts = vi.fn();
 
   beforeEach(() => {
-    (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
-    (useActiveBalanceSheet as jest.Mock).mockReturnValue({
+    (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
+    (useActiveBalanceSheet as Mock).mockReturnValue({
       updateCompanyFacts: updateCompanyFacts,
     });
   });

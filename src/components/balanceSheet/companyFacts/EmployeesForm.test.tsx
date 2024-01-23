@@ -1,12 +1,11 @@
-import '@testing-library/jest-dom';
-import { screen, within } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import renderWithTheme from '../../../testUtils/rendering';
 
 import { EmployeesMocks } from '../../../testUtils/balanceSheets';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { useAlert } from '../../../contexts/AlertContext';
-import HTMLInputElement from 'react';
+
 import {
   expectPositiveNumberFieldToBeValidatedAndModifiedAndSaved,
   fillNumberField,
@@ -15,19 +14,23 @@ import {
 } from '../../../testUtils/form';
 import { EmployeesForm } from './EmployeesForm';
 import { regionsMocks } from '../../../testUtils/regions';
-import { boolean } from 'zod';
+import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 
-jest.mock('../../../contexts/ActiveBalanceSheetProvider');
-jest.mock('../../../contexts/AlertContext');
+vi.mock('../../../contexts/ActiveBalanceSheetProvider');
+vi.mock('../../../contexts/AlertContext');
 
 describe('EmployeesForm', () => {
-  const updateCompanyFacts = jest.fn();
+  const updateCompanyFacts = vi.fn();
 
   beforeEach(() => {
-    (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
-    (useActiveBalanceSheet as jest.Mock).mockReturnValue({
+    (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
+    (useActiveBalanceSheet as Mock).mockReturnValue({
       updateCompanyFacts: updateCompanyFacts,
     });
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   async function shouldModifyFieldSaveResults(

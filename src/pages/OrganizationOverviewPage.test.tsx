@@ -1,4 +1,4 @@
-import '@testing-library/jest-dom';
+
 import { act, screen, waitFor, within } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
 import { OrganizationOverviewPage } from './OrganizationOverviewPage';
@@ -18,40 +18,41 @@ import {
   OrganizationMockBuilder,
 } from '../testUtils/organization';
 import { useAlert } from '../contexts/AlertContext';
-import { z } from 'zod';
+import {beforeEach, describe, expect, it, Mock, vi} from "vitest";
+
 import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
-jest.mock('../contexts/OrganizationProvider');
-jest.mock('../contexts/BalanceSheetListProvider');
-jest.mock('../contexts/AlertContext');
+vi.mock('../contexts/OrganizationProvider');
+vi.mock('../contexts/BalanceSheetListProvider');
+vi.mock('../contexts/AlertContext');
 describe('OrganizationOverviewPage', () => {
   const initialPathForRouting = '/organization/3';
   const balanceSheetItems = [{ id: 1 }, { id: 2 }];
-  const setBalanceSheetItems = jest.fn();
-  const createBalanceSheetMock = jest.fn();
+  const setBalanceSheetItems = vi.fn();
+  const createBalanceSheetMock = vi.fn();
 
-  const updateActiveOrganizationMock = jest.fn();
+  const updateActiveOrganizationMock = vi.fn();
   const activeOrganization = new OrganizationMockBuilder().build();
 
-  const addSuccessAlertMock = jest.fn();
+  const addSuccessAlertMock = vi.fn();
 
   beforeEach(() => {
-    (useBalanceSheetItems as jest.Mock).mockReturnValue({
+    (useBalanceSheetItems as Mock).mockReturnValue({
       balanceSheetItems,
       setBalanceSheetItems,
       createBalanceSheet: createBalanceSheetMock,
     });
-    (useAlert as jest.Mock).mockReturnValue({
-      addErrorAlert: jest.fn(),
+    (useAlert as Mock).mockReturnValue({
+      addErrorAlert: vi.fn(),
       addSuccessAlert: addSuccessAlertMock,
     });
-    (useOrganizations as jest.Mock).mockReturnValue({
+    (useOrganizations as Mock).mockReturnValue({
       organizationItems: OrganizationItemsMocks.default(),
       activeOrganization: activeOrganization,
-      setActiveOrganizationById: jest.fn(),
+      setActiveOrganizationById: vi.fn(),
       updateActiveOrganization: updateActiveOrganizationMock,
     });
   });

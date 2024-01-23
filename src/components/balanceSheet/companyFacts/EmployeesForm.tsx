@@ -108,7 +108,7 @@ export function EmployeesForm({ formData, regions }: EmployeesFormProps) {
           onClick={() => append({ countryCode: undefined, percentage: 0 })}
         ></FieldArrayAppendButton>
       </GridItem>
-      {employeesFractions.map((ef, index) => (
+      {employeesFractions.map((_, index) => (
         <GridItem key={index} xs={12}>
           <GridContainer spacing={3}>
             <GridItem xs={12} sm={6}>

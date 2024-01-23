@@ -15,7 +15,7 @@ export function ReactHookFormSwitch<T extends FieldValues>({
 }: ReactHookFormSelectProps<T>) {
   return (
     <Controller
-      render={({ field, fieldState }) => (
+      render={({ field }) => (
         <FormControlLabel
           control={<Switch checked={field.value} {...field} />}
           label={label}

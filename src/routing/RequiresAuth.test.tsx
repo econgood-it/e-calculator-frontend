@@ -1,18 +1,25 @@
-import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import {
+  createMemoryRouter,
+  MemoryRouter,
+  Route,
+  RouterProvider,
+  Routes,
+} from 'react-router-dom';
 import { RequiresAuth } from './RequiresAuth';
 import { useAuth } from 'oidc-react';
 import { UserMocks } from '../testUtils/user';
+import { describe, expect, it, Mock, vi } from 'vitest';
+import { RedirectToActiveOrganization } from './RedirectToActiveOrganization.tsx';
 
-jest.mock('oidc-react', () => ({
-  useAuth: jest.fn(),
+vi.mock('oidc-react', () => ({
+  useAuth: vi.fn(),
 }));
 
 describe('RequiresAuth', () => {
   it('shows loading if authorization is loading', async () => {
-    (useAuth as jest.Mock).mockReturnValue({ isLoading: true });
+    (useAuth as Mock).mockReturnValue({ isLoading: true });
     renderWithTheme(
       <MemoryRouter initialEntries={['/secret']}>
         <Routes>
@@ -26,7 +33,7 @@ describe('RequiresAuth', () => {
   });
 
   it('shows loading if userData is undefined', async () => {
-    (useAuth as jest.Mock).mockReturnValue({
+    (useAuth as Mock).mockReturnValue({
       userData: undefined,
     });
     renderWithTheme(
@@ -42,7 +49,7 @@ describe('RequiresAuth', () => {
   });
 
   it('navigates to secret page if user info valid', async () => {
-    (useAuth as jest.Mock).mockReturnValue({
+    (useAuth as Mock).mockReturnValue({
       isLoading: false,
       userData: UserMocks.default(),
     });
