@@ -1,7 +1,7 @@
-import { CircularProgress } from '@mui/material';
-import GridContainer from '../components/layout/GridContainer';
-import GridItem from '../components/layout/GridItem';
-import { CenteredDiv } from '../components/layout/CenteredDiv';
+import { CircularProgress } from "@mui/material";
+import { CenteredDiv } from "../components/layout/CenteredDiv";
+import GridContainer from "../components/layout/GridContainer.tsx";
+import GridItem from "../components/layout/GridItem.tsx";
 
 export function LoadingPage() {
   return (

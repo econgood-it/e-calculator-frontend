@@ -1,18 +1,13 @@
-import { Suspense } from 'react';
-import {
-  createTheme,
-  CssBaseline,
-  ThemeOptions,
-  ThemeProvider as MuiThemeProvider,
-} from '@mui/material';
-import { AlertProvider } from './contexts/AlertContext';
-import NotificationList from './components/alerts/NotificationList';
-import { ThemeProvider } from 'styled-components';
-import { RouterProvider } from 'react-router-dom';
-import { useRouter } from './routing/useRouter';
-import { AuthProvider } from 'oidc-react';
-import { AuthProviderProps } from 'oidc-react/build/src/AuthContextInterface';
-import { FRONTEND_URL } from './configuration';
+import { Suspense } from "react";
+import { createTheme, CssBaseline, ThemeOptions, ThemeProvider as MuiThemeProvider } from "@mui/material";
+import { AlertProvider } from "./contexts/AlertContext";
+import NotificationList from "./components/alerts/NotificationList";
+import { ThemeProvider } from "styled-components";
+import { RouterProvider } from "react-router-dom";
+import { useRouter } from "./routing/useRouter";
+import { AuthProvider } from "oidc-react";
+import { AuthProviderProps } from "oidc-react/build/src/AuthContextInterface";
+import { FRONTEND_URL } from "./configuration";
 
 const primaryColor = '#94a231';
 const secondaryColor = '#00828b';
