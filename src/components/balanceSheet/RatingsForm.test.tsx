@@ -40,18 +40,17 @@ describe('RatingsForm', () => {
   it('should render aspects', async () => {
     const ratings = new RatingsMockBuilder().build();
     renderWithTheme(<RatingsForm stakeholderName={''} ratings={ratings} />);
-    for (const [, rating] of ratings.entries()) {
+    for (const [index, rating] of ratings.entries()) {
       if (rating.type === RatingType.aspect) {
         expect(
-          screen.getByLabelText(
-            `Estimations of the ratings ${rating.shortName}`
-          )
+          screen.getByLabelText(`ratings.${index}.estimations`)
         ).toBeInTheDocument();
         expect(
           screen.getByText(`${rating.shortName} ${rating.name}`)
         ).toBeInTheDocument();
       }
     }
+
   });
 
   it.skip('should show workbook tooltip', async () => {
@@ -116,7 +115,7 @@ describe('RatingsForm', () => {
     );
 
     await user.click(
-      screen.getByRole('button', {
+      screen.getByRole('combobox', {
         name: /Weight/,
       })
     );

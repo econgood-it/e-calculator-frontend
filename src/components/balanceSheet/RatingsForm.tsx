@@ -1,64 +1,121 @@
+import {
+  ArrayPath,
+  Control,
+  FieldValues,
+  useFieldArray,
+  useForm,
+  useWatch,
+} from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import GridItem from '../layout/GridItem';
 import GridContainer, { FormContainer } from '../layout/GridContainer';
 import {
   Card,
   CardContent,
   CardHeader,
-  Chip,
-  Divider,
-  FormControl,
-  FormControlLabel,
-  InputLabel,
   MenuItem,
-  Rating as MuiRating,
-  Select,
-  Switch,
   Typography,
 } from '@mui/material';
+import { SaveButton } from './forms/SaveButton';
 import { useActiveBalanceSheet } from '../../contexts/ActiveBalanceSheetProvider';
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useRef } from 'react';
 import { Rating } from '../../models/Rating';
-import { RatingType } from '@ecogood/e-calculator-schemas/dist/rating.dto';
+import {
+  RatingResponseBodySchema,
+  RatingType,
+} from '@ecogood/e-calculator-schemas/dist/rating.dto';
+import { useWorkbook } from '../../contexts/WorkbookProvider';
+import PositiveRating from './PositiveRating';
+import { NegativeRating } from './NegativeRating';
+import { IWorkbook } from '../../models/Workbook';
+import { ReactHookFormSwitch } from '../lib/ReactHookFormSwitch';
 import { WEIGHT_VALUES } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { ReactHookFormSelect } from '../lib/ReactHookFormSelect';
 import styled from 'styled-components';
 import { ShortNameAvatar } from '../matrix/MatrixView';
-import { Trans, useTranslation } from 'react-i18next';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSeedling } from '@fortawesome/free-solid-svg-icons';
+import { Trans } from 'react-i18next';
 
 type RatingsFormProps = {
   ratings: Rating[];
   stakeholderName: string;
 };
 
-export function RatingsForm({ ratings }: RatingsFormProps) {
+const RatingsFormSchema = z.object({
+  ratings: RatingResponseBodySchema.array(),
+});
+type RatingsFormInput = z.infer<typeof RatingsFormSchema>;
+
+export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
   const { updateRatings } = useActiveBalanceSheet();
+  const workbook = useWorkbook();
+
+  const stakeholderRef = useRef(stakeholderName);
+  const { control, handleSubmit, reset } = useForm<RatingsFormInput>({
+    resolver: zodResolver(RatingsFormSchema),
+    mode: 'onChange',
+    defaultValues: { ratings: ratings },
+    values: { ratings: ratings },
+  });
+
+  useEffect(() => {
+    if (stakeholderRef.current !== stakeholderName) {
+      reset({ ratings: ratings });
+      stakeholderRef.current = stakeholderName;
+    }
+  }, [reset, ratings, stakeholderRef, stakeholderName]);
+
+  const fieldArrayName = 'ratings';
+  const { fields: ratingsFields } = useFieldArray<RatingsFormInput>({
+    control: control, // control props comes from useForm (optional: if you are using FormContext)
+    name: fieldArrayName, // unique name for your Field Array
+  });
+
+  const onSaveClick = async (data: FieldValues) => {
+    const newRatings = RatingsFormSchema.parse(data);
+    await updateRatings(newRatings.ratings);
+  };
+
+  const ratingsWatcher = useWatch({
+    control,
+    name: fieldArrayName,
+  });
 
   return (
     <FormContainer spacing={3}>
-      {ratings.map((rating) => (
-        <Fragment key={rating.shortName}>
-          {rating.type === RatingType.topic ? (
+      {ratingsFields.map(({ type, shortName, name, isPositive }, index) => (
+        <Fragment key={shortName}>
+          {type === RatingType.topic ? (
             <GridItem xs={12}>
               <Topic
-                rating={rating}
-                updateRating={async (rating) => {
-                  await updateRatings([rating]);
-                }}
+                fieldArrayName={fieldArrayName}
+                shortName={shortName}
+                name={name}
+                index={index}
+                isWeightSelectedByUser={
+                  ratingsWatcher[index].isWeightSelectedByUser
+                }
+                control={control}
               />
             </GridItem>
           ) : (
-            <GridItem xs={12} lg={4}>
+            <GridItem md={12} lg={4}>
               <Aspect
-                rating={rating}
-                updateRating={async (rating) => {
-                  await updateRatings([rating]);
-                }}
+                shortName={shortName}
+                name={name}
+                isPositive={isPositive}
+                fieldArrayName={fieldArrayName}
+                index={index}
+                control={control}
+                workbook={workbook}
               />
             </GridItem>
           )}
         </Fragment>
       ))}
+      <GridItem xs={12}>
+        <SaveButton handleSubmit={handleSubmit} onSaveClick={onSaveClick} />
+      </GridItem>
     </FormContainer>
   );
 }
@@ -68,11 +125,22 @@ const StyledDiv = styled.div`
 `;
 
 type TopicProps = {
-  rating: Rating;
-  updateRating: (ratings: Rating) => Promise<void>;
+  shortName: string;
+  name: string;
+  fieldArrayName: ArrayPath<RatingsFormInput>;
+  index: number;
+  isWeightSelectedByUser: boolean;
+  control: Control<RatingsFormInput>;
 };
 
-function Topic({ rating, updateRating }: TopicProps) {
+function Topic({
+                 shortName,
+                 name,
+                 fieldArrayName,
+                 index,
+                 isWeightSelectedByUser,
+                 control,
+               }: TopicProps) {
   return (
     <Card>
       <CardContent>
@@ -84,10 +152,10 @@ function Topic({ rating, updateRating }: TopicProps) {
           <GridItem>
             <GridContainer alignItems="center" spacing={1}>
               <GridItem>
-                <ShortNameAvatar>{rating.shortName}</ShortNameAvatar>
+                <ShortNameAvatar>{shortName}</ShortNameAvatar>
               </GridItem>
               <GridItem>
-                <Typography variant={'body1'}>{rating.name}</Typography>
+                <Typography variant={'body1'}>{name}</Typography>
               </GridItem>
             </GridContainer>
           </GridItem>
@@ -98,48 +166,29 @@ function Topic({ rating, updateRating }: TopicProps) {
               justifyContent={'center'}
             >
               <GridItem>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={rating.isWeightSelectedByUser}
-                      onChange={async (event) => {
-                        await updateRating({
-                          ...rating,
-                          isWeightSelectedByUser: event.target.checked,
-                        });
-                      }}
-                    />
-                  }
+                <ReactHookFormSwitch
+                  control={control}
+                  name={`${fieldArrayName}.${index}.isWeightSelectedByUser`}
                   label={<Trans>Select weight manually</Trans>}
                 />
               </GridItem>
               <GridItem>
-                <StyledDiv>
-                  <FormControl fullWidth>
-                    <InputLabel id={'weight-label'}>
-                      <Trans>Weight</Trans>
-                    </InputLabel>
-                    <Select
-                      disabled={!rating.isWeightSelectedByUser}
-                      autoWidth
-                      labelId={'weight-label'}
+                {isWeightSelectedByUser && (
+                  <StyledDiv>
+                    <ReactHookFormSelect
+                      control={control}
+                      name={`${fieldArrayName}.${index}.weight`}
                       label={<Trans>Weight</Trans>}
-                      value={rating.weight}
-                      onChange={async (event) =>
-                        await updateRating({
-                          ...rating,
-                          weight: event.target.value as number,
-                        })
-                      }
+                      defaultValue={1}
                     >
                       {WEIGHT_VALUES.map((weight, index) => (
                         <MenuItem key={index} value={weight}>
                           {weight}
                         </MenuItem>
                       ))}
-                    </Select>
-                  </FormControl>
-                </StyledDiv>
+                    </ReactHookFormSelect>
+                  </StyledDiv>
+                )}
               </GridItem>
             </GridContainer>
           </GridItem>
@@ -150,104 +199,44 @@ function Topic({ rating, updateRating }: TopicProps) {
 }
 
 type AspectProps = {
-  rating: Rating;
-  updateRating: (ratings: Rating) => Promise<void>;
+  shortName: string;
+  name: string;
+  isPositive: boolean;
+  fieldArrayName: ArrayPath<RatingsFormInput>;
+  index: number;
+  control: Control<RatingsFormInput>;
+  workbook?: IWorkbook;
 };
 
-function Aspect({ rating, updateRating }: AspectProps) {
+function Aspect({
+                  shortName,
+                  name,
+                  isPositive,
+                  fieldArrayName,
+                  index,
+                  control,
+                  workbook,
+                }: AspectProps) {
   return (
     <Card>
       <CardHeader
         title={
-          <Typography variant="body1">{`${rating.shortName} ${rating.name}`}</Typography>
+          <Typography variant="body1">{`${shortName} ${name}`}</Typography>
         }
       />
       <CardContent>
-        {rating.isPositive && (
-          <PositiveRatingTemp
-            ariaLabel={`Estimations of the ratings ${rating.shortName}`}
-            value={rating.estimations}
-            onChange={async (value) => {
-              await updateRating({
-                ...rating,
-                estimations: value,
-              });
-            }}
+        {isPositive ? (
+          <PositiveRating
+            control={control}
+            name={`${fieldArrayName}.${index}.estimations`}
+          />
+        ) : (
+          <NegativeRating
+            control={control}
+            name={`${fieldArrayName}.${index}.estimations`}
           />
         )}
       </CardContent>
     </Card>
-  );
-}
-
-const StyledRating = styled(MuiRating)`
-  & .MuiRating-iconFilled {
-    color: ${(props) => props.theme.palette.primary.main};
-  }
-  & .MuiRating-iconHover {
-    color: ${(props) => props.theme.palette.primary.main};
-  }
-`;
-
-function PositiveRatingTemp({
-  value,
-  ariaLabel,
-}: {
-  ariaLabel: string;
-  value: number;
-  onChange: (value: number) => Promise<void>;
-}) {
-  const [hover, setHover] = useState<number>(-1);
-  const { t } = useTranslation();
-  const [localValue, setLocalValue] = useState(value);
-
-  const getLabel = (currentValue?: number): string => {
-    if (currentValue == null) {
-      return 'Basislinie';
-    } else if (currentValue === 1) {
-      return 'Erste Schritte';
-    } else if (currentValue >= 2 && currentValue <= 3) {
-      return 'Fortgeschritten';
-    } else if (currentValue >= 4 && currentValue <= 6) {
-      return 'Erfahren';
-    } else if (currentValue >= 7 && currentValue <= 10) {
-      return 'Vorbildlich';
-    } else {
-      return 'Basislinie';
-    }
-  };
-
-  return (
-    <GridContainer alignItems="center" spacing={3} justifyContent={'center'}>
-      <GridItem>
-        <StyledRating
-          aria-label={ariaLabel}
-          value={localValue}
-          onChange={async (_, newValue) => {
-            if (newValue !== null) {
-              setLocalValue(newValue);
-            }
-          }}
-          max={10}
-          icon={<FontAwesomeIcon icon={faSeedling} />}
-          emptyIcon={<FontAwesomeIcon icon={faSeedling} />}
-          onChangeActive={(_, newHover) => {
-            setHover(newHover);
-          }}
-        />
-      </GridItem>
-      <GridItem xs={12}>
-        <Divider>
-          <Chip label={getLabel(hover !== -1 ? hover : localValue)} />
-        </Divider>
-      </GridItem>
-      <GridItem>
-        {localValue !== null && (
-          <Typography variant={'h2'}>
-            {`${hover !== -1 ? hover : localValue} ${t`Points`}`}
-          </Typography>
-        )}
-      </GridItem>
-    </GridContainer>
   );
 }
