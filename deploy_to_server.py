@@ -66,7 +66,7 @@ def build_and_deploy_remotely(server_domain: str, backend_url: str, frontend_url
         "rm -rf node_modules",
         f"{yarn} install",
         "rm -rf build",
-        f"export REACT_APP_BACKEND_DOMAIN={backend_url}; export REACT_APP_FRONTEND_DOMAIN={frontend_url}; export GENERATE_SOURCEMAP=false; yarn build",
+        f"export VITE_BACKEND_DOMAIN={backend_url}; export VITE_FRONTEND_DOMAIN={frontend_url}; export GENERATE_SOURCEMAP=false; yarn build",
         f"{docker} {compose} down",
         f"{docker} {compose} up -d"
     ]

@@ -118,7 +118,7 @@ describe('IndustrySelect', () => {
         name: `${industry.industryCode} - ${industry.industryName}`,
       })
     );
-  }, 10000);
+  });
 
   it(`shows ${defaultLabel} when industry code is undefined`, async () => {
     renderWithTheme(

@@ -9,6 +9,8 @@ export default defineConfig({
     globals: true,
     setupFiles: './src/setupTests.js',
     environment: 'jsdom',
+    maxWorkers: 8,
+    minWorkers: 2,
   },
   envDir: './',
 });
