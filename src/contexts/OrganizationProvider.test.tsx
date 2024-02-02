@@ -1,4 +1,3 @@
-import '@testing-library/vi-dom';
 import { OrganizationProvider, useOrganizations } from './OrganizationProvider';
 import { renderHookWithTheme } from '../testUtils/rendering';
 import { useApi } from './ApiProvider';

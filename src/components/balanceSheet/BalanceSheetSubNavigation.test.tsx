@@ -1,4 +1,3 @@
-import '@testing-library/vi-dom';
 import renderWithTheme from '../../testUtils/rendering';
 import {
   createMemoryRouter,
