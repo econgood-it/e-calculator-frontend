@@ -1,5 +1,6 @@
 import { expect, vi } from 'vitest';
 import * as matchers from '@testing-library/jest-dom/matchers';
+import { cloneElement, isValidElement } from 'react';
 
 expect.extend(matchers);
 
@@ -26,7 +27,7 @@ Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
 });
 
-import { cloneElement, isValidElement } from 'react';
+// Mock react-i18next
 
 const hasChildren = (node) =>
   node && (node.children || (node.props && node.props.children));

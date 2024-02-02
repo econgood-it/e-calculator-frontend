@@ -27,10 +27,16 @@ const mockedUsedNavigate = vi.fn();
 vi.mock('oidc-react', () => ({
   useAuth: vi.fn(),
 }));
-vi.mock('react-router-dom', () => ({
-  ...vi.importActual('react-router-dom'),
-  useNavigate: () => mockedUsedNavigate,
-}));
+
+vi.mock('react-router-dom', async (importOriginal) => {
+  const mod = await importOriginal<typeof import('react-router-dom')>();
+  return {
+    ...mod,
+    // replace some exports
+    useNavigate: () => mockedUsedNavigate,
+  };
+});
+
 describe('useOrganizations', () => {
   const apiMock = {
     getOrganizations: vi.fn(),

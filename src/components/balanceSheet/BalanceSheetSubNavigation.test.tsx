@@ -1,14 +1,7 @@
 import renderWithTheme from '../../testUtils/rendering';
-import {
-  createMemoryRouter,
-  MemoryRouter,
-  Route,
-  RouterProvider,
-  Routes,
-} from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import BalanceSheetSubNavigation from './BalanceSheetSubNavigation';
-import userEvent from '@testing-library/user-event';
 import { useBalanceSheetItems } from '../../contexts/BalanceSheetListProvider';
 import { useOrganizations } from '../../contexts/OrganizationProvider';
 import { OrganizationMockBuilder } from '../../testUtils/organization';
@@ -39,8 +32,7 @@ describe('BalanceSheetSubNavigation', () => {
   });
 
   it('navigates to overview page overview item is clicked', async () => {
-    const user = userEvent.setup();
-    renderWithTheme(
+    const { user } = renderWithTheme(
       <MemoryRouter initialEntries={[pathToOrganization]}>
         <Routes>
           <Route
@@ -65,8 +57,7 @@ describe('BalanceSheetSubNavigation', () => {
   });
 
   it('navigates to company facts when Company Facts item is clicked', async () => {
-    const user = userEvent.setup();
-    renderWithTheme(
+    const { user } = renderWithTheme(
       <MemoryRouter initialEntries={[pathToOrganization]}>
         <Routes>
           <Route
@@ -93,7 +84,6 @@ describe('BalanceSheetSubNavigation', () => {
   });
 
   it('navigates to ratings page of clicked stakeholder', async () => {
-    const user = userEvent.setup();
     const stakeholders = [
       'Suppliers',
       'Financial service providers',
@@ -136,7 +126,7 @@ describe('BalanceSheetSubNavigation', () => {
     );
 
     for (const stakeholder of stakeholders) {
-      renderWithTheme(<ComponentWithRouting />);
+      const { user } = renderWithTheme(<ComponentWithRouting />);
       const ratingButton = await screen.findByText(stakeholder);
       await user.click(ratingButton);
       expect(screen.getByText(stakeholder)).toBeInTheDocument();
@@ -144,24 +134,23 @@ describe('BalanceSheetSubNavigation', () => {
   });
 
   it('navigates to settings page when user clicks on Settings', async () => {
-    const user = userEvent.setup();
     const initialPath = pathToOrganization;
-    const router = createMemoryRouter(
-      [
-        {
-          path: initialPath,
-          element: (
-            <BalanceSheetSubNavigation balanceSheetItem={balanceSheetItem} />
-          ),
-        },
-        {
-          path: `${initialPath}/balancesheet/2/settings`,
-          element: <div>Navigated to settings page</div>,
-        },
-      ],
-      { initialEntries: [initialPath] }
+    const { user } = renderWithTheme(
+      <MemoryRouter initialEntries={[initialPath]}>
+        <Routes>
+          <Route
+            path={initialPath}
+            element={
+              <BalanceSheetSubNavigation balanceSheetItem={balanceSheetItem} />
+            }
+          />
+          <Route
+            path={`${initialPath}/balancesheet/2/settings`}
+            element={<div>Navigated to settings page</div>}
+          />
+        </Routes>
+      </MemoryRouter>
     );
-    renderWithTheme(<RouterProvider router={router} />);
 
     const settingsButton = await screen.findByText('Settings');
 
