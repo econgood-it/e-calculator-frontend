@@ -4,6 +4,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { BalanceSheetNavigationItem } from './BalanceSheetNavigationItem';
 import { screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
 
 describe('BalanceSheetNavigationItem', () => {
   const initialPathForRouting = '/organization/3';

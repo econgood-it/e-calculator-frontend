@@ -5,6 +5,7 @@ import renderWithTheme from '../../testUtils/rendering';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { describe, expect, it } from 'vitest';
 
 describe('NegativeRating', () => {
   function TestComponent<T extends z.ZodTypeAny>({
@@ -13,8 +14,8 @@ describe('NegativeRating', () => {
     defaultValues,
   }: {
     formSchema: T;
-    name: any;
-    defaultValues: any;
+    name: any; // eslint-disable-line
+    defaultValues: any; // eslint-disable-line
   }) {
     const { control } = useForm<T>({
       resolver: zodResolver(formSchema),

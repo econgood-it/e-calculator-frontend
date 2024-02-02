@@ -31,7 +31,7 @@ export default function WorkbookProvider({ children }: WorkbookProviderProps) {
         addErrorAlert(t`Failed to load workbook`);
       }
     })();
-  }, [api]);
+  }, [api, addErrorAlert, t]);
 
   return (
     <WorkbookContext.Provider value={workbook}>

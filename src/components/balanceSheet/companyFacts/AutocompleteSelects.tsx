@@ -16,7 +16,7 @@ export const DEFAULT_CODE = 'DEFAULT_CODE';
 type AutocompleteSelectProps<T extends FieldValues> = {
   options: string[];
   control: Control<T>;
-  getOptionLabel: (option: any) => string;
+  getOptionLabel: (option: any) => string; //eslint-disable-line
   name: Path<T>;
   label: string;
   defaultValue: PathValue<T, Path<T>>;

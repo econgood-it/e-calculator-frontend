@@ -1,6 +1,5 @@
-
 import { screen } from '@testing-library/react';
-import { createMemoryRouter, MemoryRouter, Route, RouterProvider, Routes } from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import { OrganizationSidebarSection } from './OrganizationSidebarSection';
 import userEvent from '@testing-library/user-event';
@@ -11,7 +10,7 @@ import {
   OrganizationMockBuilder,
 } from '../../testUtils/organization';
 import renderWithTheme from '../../testUtils/rendering';
-import {beforeEach, describe, expect, it, Mock, vi} from "vitest";
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 
 vi.mock('../../contexts/OrganizationProvider');
 vi.mock('../../contexts/AlertContext');
@@ -36,10 +35,17 @@ describe('OrganizationSidebarSection', () => {
     renderWithTheme(
       <MemoryRouter initialEntries={[initialPathForRouting]}>
         <Routes>
-          <Route path={initialPathForRouting} element={<OrganizationSidebarSection />} />
-          <Route path={`/organization/${activeOrganization.id}`} element={<div>Organization overview</div>} />
+          <Route
+            path={initialPathForRouting}
+            element={<OrganizationSidebarSection />}
+          />
+          <Route
+            path={`/organization/${activeOrganization.id}`}
+            element={<div>Organization overview</div>}
+          />
         </Routes>
-      </MemoryRouter>);
+      </MemoryRouter>
+    );
     await user.click(await screen.findByText('Overview'));
     expect(
       await screen.findByText('Organization overview')

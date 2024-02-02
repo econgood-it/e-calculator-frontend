@@ -74,7 +74,7 @@ export default function ActiveBalanceSheetProvider({
         setBalanceSheet(await api.getBalanceSheet(Number(balanceSheetId)));
       }
     })();
-  }, [balanceSheetId]);
+  }, [balanceSheetId, api]);
 
   return (
     <ActiveBalanceSheetContext.Provider

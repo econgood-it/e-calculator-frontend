@@ -1,5 +1,6 @@
 import { Workbook } from './Workbook';
 import { WorkbookResponseMocks } from '../testUtils/workbook';
+import { describe, expect, it } from 'vitest';
 
 describe('Workbook', () => {
   it('should return found section', function () {

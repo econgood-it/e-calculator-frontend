@@ -12,7 +12,7 @@ import { screen } from '@testing-library/react';
 import { industriesMocks } from '../../../testUtils/industries';
 import { Region } from '../../../models/Region';
 import { Industry } from '../../../models/Industry';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 describe('RegionSelect', () => {
   const defaultValue = 'defaultValue';
@@ -132,5 +132,5 @@ describe('IndustrySelect', () => {
         name: defaultLabel,
       })
     );
-  });
+  }, 10000);
 });

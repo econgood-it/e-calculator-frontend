@@ -1,11 +1,13 @@
 import { z } from 'zod';
 import '@testing-library/jest-dom';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod/dist/zod';
+
 import { NumberInput } from './NumberInputs';
 import userEvent from '@testing-library/user-event';
 import renderWithTheme from '../../../testUtils/rendering';
 import { screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 describe('NumberInput', () => {
   function TestComponent<T extends z.ZodTypeAny>({
@@ -15,8 +17,8 @@ describe('NumberInput', () => {
     label,
   }: {
     formSchema: T;
-    defaultValues: any;
-    registerKey: any;
+    defaultValues: any; // eslint-disable-line
+    registerKey: any; // eslint-disable-line
     label: string;
   }) {
     const {

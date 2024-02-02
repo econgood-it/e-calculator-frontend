@@ -12,7 +12,7 @@ const Notification = ({ alertMsg }: NotificationProps) => {
     setTimeout(() => {
       removeAlert(alertMsg);
     }, 6000);
-  }, []);
+  }, [alertMsg, removeAlert]);
 
   const handleClose = (_?: SyntheticEvent | Event, reason?: string) => {
     if (reason === 'clickaway') {

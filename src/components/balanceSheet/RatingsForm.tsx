@@ -134,13 +134,13 @@ type TopicProps = {
 };
 
 function Topic({
-                 shortName,
-                 name,
-                 fieldArrayName,
-                 index,
-                 isWeightSelectedByUser,
-                 control,
-               }: TopicProps) {
+  shortName,
+  name,
+  fieldArrayName,
+  index,
+  isWeightSelectedByUser,
+  control,
+}: TopicProps) {
   return (
     <Card>
       <CardContent>
@@ -209,14 +209,13 @@ type AspectProps = {
 };
 
 function Aspect({
-                  shortName,
-                  name,
-                  isPositive,
-                  fieldArrayName,
-                  index,
-                  control,
-                  workbook,
-                }: AspectProps) {
+  shortName,
+  name,
+  isPositive,
+  fieldArrayName,
+  index,
+  control,
+}: AspectProps) {
   return (
     <Card>
       <CardHeader

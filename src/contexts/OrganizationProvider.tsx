@@ -48,7 +48,7 @@ export function OrganizationProvider({ children }: OrganizationProviderProps) {
       const response = await api.getOrganizations();
       setOrganizationItems(response);
     })();
-  }, []);
+  }, [api]);
 
   function addOrganizationItem(
     organizationId: number,
@@ -166,7 +166,7 @@ function useActiveOrganization(
 ): [
   Organization | undefined,
   Dispatch<SetStateAction<number | undefined>>,
-  (organization: OrganizationRequestBody) => Promise<void>
+  (organization: OrganizationRequestBody) => Promise<void>,
 ] {
   const api = useApi();
   const { orgaId: organizationIdFromUrl } = useParams();
@@ -200,7 +200,7 @@ function useActiveOrganization(
         setLocalStorageId(activeOrganizationId);
       })();
     }
-  }, [activeOrganizationId]);
+  }, [activeOrganizationId, api, setLocalStorageId]);
 
   return [
     activeOrganization,

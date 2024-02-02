@@ -5,7 +5,6 @@ import GridContainer, { FormContainer } from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
 import { z } from 'zod';
 import { FieldValues, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod/dist/zod';
 import { SaveButton } from './forms/SaveButton';
 import { BalanceSheetCreateRequestBody } from '../../models/BalanceSheet';
 import { BalanceSheetCreateRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
@@ -15,6 +14,7 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 type OrganizationDialogProps = {
   open: boolean;

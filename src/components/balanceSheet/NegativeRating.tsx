@@ -39,7 +39,7 @@ export function NegativeRating<T extends FieldValues>({
 
   return (
     <Controller
-      render={({ field, fieldState }) => (
+      render={({ field }) => (
         <GridContainer
           alignItems="center"
           spacing={3}

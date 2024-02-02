@@ -47,7 +47,7 @@ describe('EmployeesForm', () => {
       fieldLabel,
       fieldKey,
       updateCompanyFacts,
-      formData as any,
+      formData as any, // eslint-disable-line
       form
     );
   }

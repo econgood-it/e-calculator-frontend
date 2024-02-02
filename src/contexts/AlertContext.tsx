@@ -1,4 +1,10 @@
-import { createContext, ReactNode, useContext, useReducer } from 'react';
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useReducer,
+} from 'react';
 import { AlertColor } from '@mui/material';
 
 export type AlertMsg = {
@@ -50,7 +56,7 @@ type AlertContextProviderProps = {
 function AlertProvider({ children }: AlertContextProviderProps) {
   const [state, dispatch] = useReducer(reducer, { alerts: [] });
 
-  const addSuccessAlert = (msg: string) => {
+  const addSuccessAlert = useCallback((msg: string) => {
     dispatch({
       type: AlertType.ADD_ALERT,
       payload: {
@@ -59,9 +65,9 @@ function AlertProvider({ children }: AlertContextProviderProps) {
         id: Date.now(),
       },
     });
-  };
+  }, []);
 
-  const addErrorAlert = (msg: string) => {
+  const addErrorAlert = useCallback((msg: string) => {
     dispatch({
       type: AlertType.ADD_ALERT,
       payload: {
@@ -70,10 +76,10 @@ function AlertProvider({ children }: AlertContextProviderProps) {
         id: Date.now(),
       },
     });
-  };
-  const removeAlert = (payload: AlertMsg) => {
+  }, []);
+  const removeAlert = useCallback((payload: AlertMsg) => {
     dispatch({ type: AlertType.REMOVE_ALERT, payload: payload });
-  };
+  }, []);
 
   return (
     <AlertContext.Provider

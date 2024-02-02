@@ -4,8 +4,8 @@ import { screen } from '@testing-library/react';
 import { ReactHookFormSwitch } from './ReactHookFormSwitch';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
-import {describe, expect, it} from "vitest";
-import {zodResolver} from "@hookform/resolvers/zod";
+import { describe, expect, it } from 'vitest';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 describe('ReactHookFormSwitch', () => {
   function TestComponent<T extends z.ZodTypeAny>({
@@ -15,8 +15,8 @@ describe('ReactHookFormSwitch', () => {
     label,
   }: {
     formSchema: T;
-    defaultValues: any;
-    name: any;
+    defaultValues: any; // eslint-disable-line
+    name: any; // eslint-disable-line
     label: string;
   }) {
     const { control } = useForm<T>({

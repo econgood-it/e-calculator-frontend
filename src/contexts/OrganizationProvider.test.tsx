@@ -1,4 +1,4 @@
-import '@testing-library/jest-dom';
+import '@testing-library/vi-dom';
 import { OrganizationProvider, useOrganizations } from './OrganizationProvider';
 import { renderHookWithTheme } from '../testUtils/rendering';
 import { useApi } from './ApiProvider';
@@ -11,36 +11,45 @@ import { ReactElement } from 'react';
 import { useAlert } from './AlertContext';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { useAuth } from 'oidc-react';
+import {
+  beforeEach,
+  describe,
+  expect,
+  it,
+  Mock,
+  MockInstance,
+  vi,
+} from 'vitest';
 
-jest.mock('./ApiProvider');
-jest.mock('./AlertContext');
+vi.mock('./ApiProvider');
+vi.mock('./AlertContext');
 
-const mockedUsedNavigate = jest.fn();
-jest.mock('oidc-react', () => ({
-  useAuth: jest.fn(),
+const mockedUsedNavigate = vi.fn();
+vi.mock('oidc-react', () => ({
+  useAuth: vi.fn(),
 }));
-jest.mock('react-router-dom', () => ({
-  ...(jest.requireActual('react-router-dom') as any),
+vi.mock('react-router-dom', () => ({
+  ...vi.importActual('react-router-dom'),
   useNavigate: () => mockedUsedNavigate,
 }));
 describe('useOrganizations', () => {
   const apiMock = {
-    getOrganizations: jest.fn(),
-    getOrganization: jest.fn(),
-    createOrganization: jest.fn(),
-    updateOrganization: jest.fn(),
+    getOrganizations: vi.fn(),
+    getOrganization: vi.fn(),
+    createOrganization: vi.fn(),
+    updateOrganization: vi.fn(),
   };
 
   const userId = 'userId';
-  let spySetItem: jest.SpyInstance;
-  let spyGetItem: jest.SpyInstance;
+  let spySetItem: MockInstance;
+  let spyGetItem: MockInstance;
   beforeEach(() => {
-    spySetItem = jest.spyOn(window.localStorage, 'setItem');
-    spyGetItem = jest.spyOn(window.localStorage, 'getItem');
+    spySetItem = vi.spyOn(window.localStorage, 'setItem');
+    spyGetItem = vi.spyOn(window.localStorage, 'getItem');
 
     window.localStorage.clear();
-    (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
-    (useAuth as jest.Mock).mockReturnValue({
+    (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
+    (useAuth as Mock).mockReturnValue({
       userData: { profile: { sub: userId } },
     });
   });
@@ -59,7 +68,7 @@ describe('useOrganizations', () => {
     );
     const organization = new OrganizationMockBuilder().build();
     apiMock.getOrganization.mockResolvedValue(organization);
-    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    (useApi as Mock).mockImplementation(() => apiMock);
     const { result } = await act(() => {
       return renderHookWithTheme(() => useOrganizations(), {
         wrapper: Wrapper,
@@ -74,7 +83,7 @@ describe('useOrganizations', () => {
 
   it('should return empty list if organization items empty', async function () {
     apiMock.getOrganizations.mockResolvedValue([]);
-    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    (useApi as Mock).mockImplementation(() => apiMock);
     const { result } = await act(() => {
       return renderHookWithTheme(() => useOrganizations(), {
         wrapper: Wrapper,
@@ -93,7 +102,7 @@ describe('useOrganizations', () => {
     const initialOrgaItems = [{ id: 10, name: 'My orga' }];
     apiMock.getOrganizations.mockResolvedValue(initialOrgaItems);
     apiMock.getOrganization.mockResolvedValue(orgaBuilder.build());
-    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    (useApi as Mock).mockImplementation(() => apiMock);
     const { result } = await act(() => {
       return renderHookWithTheme(() => useOrganizations(), {
         wrapper: Wrapper,
@@ -142,7 +151,7 @@ describe('useOrganizations', () => {
     apiMock.getOrganization.mockResolvedValue(
       orgaBuilder.withId(activeOrganizationId).build()
     );
-    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    (useApi as Mock).mockImplementation(() => apiMock);
     const { result } = await act(() => {
       return renderHookWithTheme(() => useOrganizations(), {
         wrapper: Wrapper,
@@ -207,7 +216,7 @@ describe('useOrganizations', () => {
         ? new OrganizationMockBuilder().withId(orgaIdFromUrl).build()
         : new OrganizationMockBuilder().withId(orgaIdInLocalStorage).build()
     );
-    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    (useApi as Mock).mockImplementation(() => apiMock);
     const { result } = await act(async () => {
       return renderHookWithTheme(() => useOrganizations(), {
         wrapper: WrapperWithRouter,
@@ -241,7 +250,7 @@ describe('useOrganizations', () => {
         ? new OrganizationMockBuilder().withId(firstOrgaId).build()
         : undefined
     );
-    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    (useApi as Mock).mockImplementation(() => apiMock);
     const { result } = await act(async () => {
       return renderHookWithTheme(() => useOrganizations(), {
         wrapper: Wrapper,
@@ -277,7 +286,7 @@ describe('useOrganizations', () => {
         ? new OrganizationMockBuilder().withId(3).build()
         : new OrganizationMockBuilder().build()
     );
-    (useApi as jest.Mock).mockImplementation(() => apiMock);
+    (useApi as Mock).mockImplementation(() => apiMock);
     const { result } = await act(async () => {
       return renderHookWithTheme(() => useOrganizations(), {
         wrapper: Wrapper,

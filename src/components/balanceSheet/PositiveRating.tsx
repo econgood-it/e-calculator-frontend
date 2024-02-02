@@ -47,7 +47,7 @@ export default function PositiveRating<T extends FieldValues>({
 
   return (
     <Controller
-      render={({ field, fieldState }) => {
+      render={({ field }) => {
         return (
           <GridContainer
             alignItems="center"
@@ -58,13 +58,13 @@ export default function PositiveRating<T extends FieldValues>({
               <StyledRating
                 aria-label={name}
                 value={field.value}
-                onChange={(e, newValue) => {
+                onChange={(_, newValue) => {
                   field.onChange(newValue);
                 }}
                 max={10}
                 icon={<FontAwesomeIcon icon={faSeedling} />}
                 emptyIcon={<FontAwesomeIcon icon={faSeedling} />}
-                onChangeActive={(event, newHover) => {
+                onChangeActive={(_, newHover) => {
                   setHover(newHover);
                 }}
               />

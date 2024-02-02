@@ -1,11 +1,12 @@
-import Element, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 
 import { screen, waitFor, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import userEvent, { UserEvent } from '@testing-library/user-event';
 import renderWithTheme from './rendering';
-import { UserEvent } from '@testing-library/user-event/dist/types/setup/setup';
+
 import { Region } from '../models/Region';
 import { Industry } from '../models/Industry';
+import { expect } from 'vitest';
 
 async function checkNumberFieldValidations(
   isPositveNumber: boolean,
@@ -33,7 +34,7 @@ export async function expectPositiveNumberFieldToBeValidatedAndModifiedAndSaved(
   fieldLabel: string,
   fieldKey: string,
   updateCompanyFacts: () => void,
-  formData: any,
+  formData: any, // eslint-disable-line
   form: ReactElement
 ) {
   const user = userEvent.setup();

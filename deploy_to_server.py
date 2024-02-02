@@ -48,6 +48,10 @@ def install_dependencies():
     subprocess.run(cmd, check=True)
 
 
+def check_types():
+    subprocess.run([yarn, run, 'check-ts'], check=True)
+
+
 def check_linting():
     subprocess.run([yarn, run, 'lint'], check=True)
 
@@ -87,6 +91,8 @@ def main(args):
     install_dependencies()
     logging.info(f"Check linting")
     check_linting()
+    logging.info(f"Check types")
+    check_types()
     logging.info(f"Run tests")
     run_tests()
     server_domain = 'ecg@prod.econgood.org' if args.environment == 'prod' else 'ecg@dev.econgood.org'

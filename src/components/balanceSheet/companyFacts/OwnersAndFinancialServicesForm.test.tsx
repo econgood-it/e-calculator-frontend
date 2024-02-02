@@ -4,7 +4,7 @@ import { useAlert } from '../../../contexts/AlertContext';
 import { OwnersAndFinancialServicesForm } from './OwnersAndFinancialServicesForm';
 import { OwnersAndFinancialServicesMocks } from '../../../testUtils/balanceSheets';
 import { expectPositiveNumberFieldToBeValidatedAndModifiedAndSaved } from '../../../testUtils/form';
-import {beforeEach, describe, it, Mock, vi} from "vitest";
+import { beforeEach, describe, it, Mock, vi } from 'vitest';
 
 vi.mock('../../../contexts/ActiveBalanceSheetProvider');
 vi.mock('../../../contexts/AlertContext');
@@ -32,7 +32,7 @@ describe('OwnersAndFinancialServicesForm', () => {
       fieldLabel,
       fieldKey,
       updateCompanyFacts,
-      formData as any,
+      formData as any, // eslint-disable-line
       form
     );
   }

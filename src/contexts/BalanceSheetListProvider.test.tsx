@@ -1,13 +1,16 @@
-import {renderHookWithTheme} from '../testUtils/rendering';
-import {useApi} from './ApiProvider';
-import {BalanceSheetListProvider, useBalanceSheetItems,} from './BalanceSheetListProvider';
-import {act, waitFor} from '@testing-library/react';
-import {AlertProvider} from './AlertContext';
-import {ReactElement} from 'react';
-import {useOrganizations} from './OrganizationProvider';
-import {OrganizationMockBuilder} from '../testUtils/organization';
-import {BalanceSheetMockBuilder} from '../testUtils/balanceSheets';
-import {describe, expect, it, Mock, vi} from "vitest";
+import { renderHookWithTheme } from '../testUtils/rendering';
+import { useApi } from './ApiProvider';
+import {
+  BalanceSheetListProvider,
+  useBalanceSheetItems,
+} from './BalanceSheetListProvider';
+import { act, waitFor } from '@testing-library/react';
+import { AlertProvider } from './AlertContext';
+import { ReactElement } from 'react';
+import { useOrganizations } from './OrganizationProvider';
+import { OrganizationMockBuilder } from '../testUtils/organization';
+import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets';
+import { describe, expect, it, Mock, vi } from 'vitest';
 
 vi.mock('../contexts/ApiProvider');
 vi.mock('../contexts/OrganizationProvider');
@@ -15,7 +18,7 @@ vi.mock('../contexts/OrganizationProvider');
 const mockedUsedNavigate = vi.fn();
 
 vi.mock('react-router-dom', () => ({
-  ...(vi.importActual('react-router-dom') as any),
+  ...vi.importActual('react-router-dom'),
   useNavigate: () => mockedUsedNavigate,
 }));
 describe('useBalanceSheetItems', () => {

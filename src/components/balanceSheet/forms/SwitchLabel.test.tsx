@@ -4,8 +4,9 @@ import { screen } from '@testing-library/react';
 import SwitchLabel from './SwitchLabel';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod/dist/zod';
-import HTMLInputElement from 'react';
+
+import { describe, expect, it } from 'vitest';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 describe('SwitchLabel', () => {
   function TestComponent({ label }: { label: string }) {

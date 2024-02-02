@@ -1,17 +1,10 @@
 import { screen } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
-import {
-  createMemoryRouter,
-  MemoryRouter,
-  Route,
-  RouterProvider,
-  Routes,
-} from 'react-router-dom';
+import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { RequiresAuth } from './RequiresAuth';
 import { useAuth } from 'oidc-react';
 import { UserMocks } from '../testUtils/user';
 import { describe, expect, it, Mock, vi } from 'vitest';
-import { RedirectToActiveOrganization } from './RedirectToActiveOrganization.tsx';
 
 vi.mock('oidc-react', () => ({
   useAuth: vi.fn(),

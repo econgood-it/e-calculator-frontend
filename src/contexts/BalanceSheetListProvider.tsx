@@ -44,7 +44,7 @@ function BalanceSheetListProvider({ children }: BalanceSheetListProviderProps) {
         setBalanceSheetItems(await api.getBalanceSheets(activeOrganization.id));
       }
     })();
-  }, [activeOrganization]);
+  }, [activeOrganization, api]);
 
   async function createBalanceSheet(
     balanceSheet: BalanceSheetCreateRequestBody

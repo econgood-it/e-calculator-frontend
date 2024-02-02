@@ -3,6 +3,7 @@ import { MatrixMockBuilder } from '../../testUtils/matrix';
 import renderWithTheme from '../../testUtils/rendering';
 import { screen } from '@testing-library/react';
 import { MatrixRatingView, MatrixView } from './MatrixView';
+import { describe, expect, it } from 'vitest';
 
 describe('MatrixView', () => {
   it('renders matrix', () => {

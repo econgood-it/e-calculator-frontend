@@ -1,21 +1,22 @@
 import '@testing-library/jest-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod/dist/zod';
+
 import renderWithTheme from '../../testUtils/rendering';
 import PositiveRating from './PositiveRating';
 import { fireEvent, screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 describe('PositiveRating', () => {
   function TestComponent<T extends z.ZodTypeAny>({
     formSchema,
     defaultValues,
     name,
-    label,
   }: {
     formSchema: T;
-    defaultValues: any;
-    name: any;
+    defaultValues: any; //eslint-disable-line
+    name: any; //eslint-disable-line
     label: string;
   }) {
     const { control } = useForm<T>({

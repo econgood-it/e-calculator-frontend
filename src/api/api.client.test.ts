@@ -13,7 +13,15 @@ import { regionsMocks } from '../testUtils/regions';
 import { industriesMocks } from '../testUtils/industries';
 import { OrganizationMockBuilder } from '../testUtils/organization';
 import { MatrixMockBuilder } from '../testUtils/matrix';
-import {afterAll, afterEach, beforeAll, describe, expect, it, vi} from "vitest";
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
 
 vi.mock('react-router-dom');
 
@@ -38,7 +46,7 @@ function mockResource(
         try {
           const body = await response.json();
           transformers.push(ctx.json(body));
-        } catch (_) {}
+        } catch (_) {} // eslint-disable-line no-empty
         return res(...transformers);
       })
     );

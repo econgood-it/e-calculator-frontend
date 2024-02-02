@@ -1,4 +1,4 @@
-import '@testing-library/jest-dom';
+import '@testing-library/vi-dom';
 import renderWithTheme from '../../testUtils/rendering';
 import {
   createMemoryRouter,
@@ -13,25 +13,26 @@ import userEvent from '@testing-library/user-event';
 import { useBalanceSheetItems } from '../../contexts/BalanceSheetListProvider';
 import { useOrganizations } from '../../contexts/OrganizationProvider';
 import { OrganizationMockBuilder } from '../../testUtils/organization';
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 
-jest.mock('../../contexts/BalanceSheetListProvider');
-jest.mock('../../contexts/OrganizationProvider');
+vi.mock('../../contexts/BalanceSheetListProvider');
+vi.mock('../../contexts/OrganizationProvider');
 
 describe('BalanceSheetSubNavigation', () => {
   const balanceSheetItem = { id: 2 };
 
   const balanceSheetItems = [{ id: 1 }, { id: 2 }];
-  const setBalanceSheetItems = jest.fn();
+  const setBalanceSheetItems = vi.fn();
 
   const organizationIdFromUrl = 3;
   const pathToOrganization = `/organization/${3}`;
 
   beforeEach(() => {
-    (useBalanceSheetItems as jest.Mock).mockReturnValue({
+    (useBalanceSheetItems as Mock).mockReturnValue({
       balanceSheetItems,
       setBalanceSheetItems,
     });
-    (useOrganizations as jest.Mock).mockReturnValue({
+    (useOrganizations as Mock).mockReturnValue({
       activeOrganization: new OrganizationMockBuilder()
         .withId(organizationIdFromUrl)
         .build(),

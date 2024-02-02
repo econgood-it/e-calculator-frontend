@@ -40,7 +40,7 @@ describe('CustomersForm', () => {
       'Turnover',
       'turnover',
       updateCompanyFacts,
-      formData as any,
+      formData as any, // eslint-disable-line
       form
     );
   });

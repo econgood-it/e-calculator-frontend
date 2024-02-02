@@ -80,7 +80,7 @@ const SuppliersForm = ({
       watchedTotalPurchaseFromSuppliers -
       watchedSupplyFractions.reduce((sum, current) => sum + current.costs, 0);
     setValue('mainOriginOfOtherSuppliers.costs', sum);
-  }, [watchedTotalPurchaseFromSuppliers, watchedSupplyFractions]);
+  }, [watchedTotalPurchaseFromSuppliers, watchedSupplyFractions, setValue]);
 
   const onSaveClick = async (data: FieldValues) => {
     const newCompanyFacts = SuppliersFormInputSchema.parse(data);
@@ -131,7 +131,7 @@ const SuppliersForm = ({
           }
         ></FieldArrayAppendButton>
       </GridItem>
-      {supplyFractions.map((sf, index) => (
+      {supplyFractions.map((_, index) => (
         <GridItem key={index} xs={12}>
           <GridContainer spacing={3}>
             <GridItem xs={12} sm={5}>

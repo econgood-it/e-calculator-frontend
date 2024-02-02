@@ -1,9 +1,8 @@
-import { createContext, ReactElement, useContext } from 'react';
+import { createContext, ReactElement, useContext, useMemo } from 'react';
 import { API_URL } from '../configuration';
 import { useLanguage } from '../i18n';
 import { ApiClient, makeWretchInstanceWithAuth } from '../api/api.client';
 import { useAuth } from 'oidc-react';
-
 
 const ApiContext = createContext<ApiClient | undefined>(undefined);
 
@@ -15,16 +14,14 @@ function ApiProvider({ children }: ApiProviderProps) {
   const language = useLanguage();
   const { userData } = useAuth();
 
+  const apiClient = useMemo(() => {
+    return new ApiClient(
+      makeWretchInstanceWithAuth(API_URL, userData!.access_token, language)
+    );
+  }, [language, userData]);
+
   return (
-    <ApiContext.Provider
-      value={
-        new ApiClient(
-          makeWretchInstanceWithAuth(API_URL, userData!.access_token, language)
-        )
-      }
-    >
-      {children}
-    </ApiContext.Provider>
+    <ApiContext.Provider value={apiClient}>{children}</ApiContext.Provider>
   );
 }
 

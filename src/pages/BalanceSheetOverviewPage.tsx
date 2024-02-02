@@ -19,7 +19,7 @@ export function BalanceSheetOverviewPage() {
         setMatrix(await api.getBalanceSheetAsMatrix(balanceSheet.id!));
       }
     })();
-  }, [balanceSheet]);
+  }, [balanceSheet, api]);
   return (
     <GridContainer spacing={2}>
       <GridItem xs={12}>

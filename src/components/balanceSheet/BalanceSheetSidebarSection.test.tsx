@@ -7,15 +7,16 @@ import { useBalanceSheetItems } from '../../contexts/BalanceSheetListProvider';
 import { BalanceSheetSidebarSection } from './BalanceSheetSidebarSection';
 import { BalanceSheetItemsMockBuilder } from '../../testUtils/balanceSheets';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 
-jest.mock('../../contexts/AlertContext');
-jest.mock('../../contexts/BalanceSheetListProvider');
+vi.mock('../../contexts/AlertContext');
+vi.mock('../../contexts/BalanceSheetListProvider');
 describe('BalanceSheetSidebarSection', () => {
-  const createBalanceSheetMock = jest.fn();
+  const createBalanceSheetMock = vi.fn();
 
   beforeEach(() => {
-    (useAlert as jest.Mock).mockReturnValue({ addErrorAlert: jest.fn() });
-    (useBalanceSheetItems as jest.Mock).mockReturnValue({
+    (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
+    (useBalanceSheetItems as Mock).mockReturnValue({
       createBalanceSheet: createBalanceSheetMock,
       balanceSheetItems: new BalanceSheetItemsMockBuilder().build(),
     });
