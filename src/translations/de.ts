@@ -89,5 +89,6 @@ export const DE_TRANSLATIONS = {
   'Select weight manually': 'Gewicht manuell setzen',
   Weight: 'Gewicht',
   Points: 'Punkte',
+  Settings: 'Einstellungen',
   ...DE_ERROR_TRANSLATIONS,
 };

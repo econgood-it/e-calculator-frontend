@@ -79,6 +79,7 @@ const EN_WORDS = [
   'Select weight manually',
   'Weight',
   'Points',
+  'Settings',
 ];
 
 export const EN_TRANSLATIONS = {
