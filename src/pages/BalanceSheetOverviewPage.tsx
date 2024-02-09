@@ -28,7 +28,6 @@ export function BalanceSheetOverviewPage() {
         </Typography>
       </GridItem>
       <GridItem xs={12}>
-        {/* <LoadingPage /> */}
         {matrix ? <MatrixView matrix={matrix} /> : <LoadingPage />}
       </GridItem>
     </GridContainer>
