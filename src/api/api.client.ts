@@ -28,6 +28,8 @@ import {
 import { MatrixBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto';
 import { Matrix } from '../models/Matrix';
 import { User } from 'oidc-react';
+import { Invitation } from '../models/User.ts';
+import { UserInvitationResponseSchema } from '@ecogood/e-calculator-schemas/dist/user.schema';
 
 function language(language: string) {
   return function (
@@ -90,6 +92,11 @@ export class AuthApiClient {
 export class ApiClient {
   public constructor(private wretchInstance: WretchType) {}
 
+  async getInvitations(): Promise<Invitation[]> {
+    const response = await this.wretchInstance.get('/user/me/invitation');
+    return UserInvitationResponseSchema.array().parse(await response.json());
+  }
+
   async getRegions(): Promise<Region[]> {
     const response = await this.wretchInstance.get('/regions');
     return RegionResponseBodySchema.array().parse(await response.json());
@@ -134,6 +141,13 @@ export class ApiClient {
   async getOrganization(id: number): Promise<Organization> {
     const response = await this.wretchInstance.get(`/organization/${id}`);
     return OrganizationResponseSchema.parse(await response.json());
+  }
+
+  async inviteUserToOrganization(organizationId: number, email: string) {
+    return await this.wretchInstance.post(
+      { email },
+      `/organization/${organizationId}/invitation/${email}`
+    );
   }
 
   async getBalanceSheets(organizationId: number): Promise<BalanceSheetItem[]> {

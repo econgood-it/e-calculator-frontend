@@ -22,6 +22,7 @@ import {
   it,
   vi,
 } from 'vitest';
+import { v4 as uuid4 } from 'uuid';
 
 vi.mock('react-router-dom');
 
@@ -82,6 +83,20 @@ describe('ApiClient', () => {
       expect(response).toEqual(user);
       const request = await requestPromise;
       await expect(request.json()).resolves.toEqual(credentials);
+    });
+    it('should return invitations of user', async () => {
+      const invitations = [
+        { id: 1, name: 'Orga1' },
+        { id: 2, name: 'Orga2' },
+      ];
+      const requestPromise = mockResource(
+        'get',
+        `${URL}/v1/user/me/invitation`,
+        new Response(JSON.stringify(invitations))
+      );
+      const response = await apiClient.getInvitations();
+      expect(response).toEqual(invitations);
+      await requestPromise;
     });
   });
 
@@ -148,6 +163,19 @@ describe('ApiClient', () => {
       );
       const response = await apiClient.getOrganization(id);
       expect(response).toEqual(orgaBuilder.build());
+    });
+    it('invites user to organization', async () => {
+      const orgaBuilder = new OrganizationMockBuilder();
+      const id = orgaBuilder.build().id;
+      const email = `${uuid4()}/example.com`;
+      const requestPromise = mockResource(
+        'post',
+        `${URL}/v1/organization/${id}/invitation/${email}`,
+        new Response()
+      );
+      await apiClient.inviteUserToOrganization(id, email);
+      const request = await requestPromise;
+      expect(request.url.toString()).toContain(email);
     });
   });
 

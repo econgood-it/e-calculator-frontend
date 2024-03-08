@@ -15,6 +15,7 @@ export class OrganizationMockBuilder {
       houseNumber: '6',
       zip: '79910',
     },
+    invitations: [],
   };
 
   public withId(id: number) {
@@ -28,7 +29,7 @@ export class OrganizationMockBuilder {
   }
 
   public buildRequestBody(): OrganizationRequestBody {
-    return _.omit(this.organization, ['id']);
+    return _.omit(this.organization, ['id', 'invitations']);
   }
 
   public buildResponseBody() {

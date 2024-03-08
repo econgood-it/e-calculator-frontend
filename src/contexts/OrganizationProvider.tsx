@@ -190,7 +190,11 @@ function useActiveOrganization(
     organization: OrganizationRequestBody
   ) {
     await api.updateOrganization(activeOrganizationId!, organization);
-    setActiveOrganization({ id: activeOrganizationId!, ...organization });
+    setActiveOrganization({
+      id: activeOrganizationId!,
+      ...organization,
+      invitations: activeOrganization?.invitations ?? [],
+    });
   }
 
   useEffect(() => {

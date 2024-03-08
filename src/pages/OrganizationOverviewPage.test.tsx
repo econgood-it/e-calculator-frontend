@@ -1,4 +1,3 @@
-
 import { act, screen, waitFor, within } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
 import { OrganizationOverviewPage } from './OrganizationOverviewPage';
@@ -10,7 +9,6 @@ import {
   Routes,
 } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import _ from 'lodash';
 import { useBalanceSheetItems } from '../contexts/BalanceSheetListProvider';
 import { useOrganizations } from '../contexts/OrganizationProvider';
 import {
@@ -18,7 +16,7 @@ import {
   OrganizationMockBuilder,
 } from '../testUtils/organization';
 import { useAlert } from '../contexts/AlertContext';
-import {beforeEach, describe, expect, it, Mock, vi} from "vitest";
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 
 import {
   BalanceSheetType,
@@ -35,7 +33,7 @@ describe('OrganizationOverviewPage', () => {
   const createBalanceSheetMock = vi.fn();
 
   const updateActiveOrganizationMock = vi.fn();
-  const activeOrganization = new OrganizationMockBuilder().build();
+  const organizationMockBuilder = new OrganizationMockBuilder();
 
   const addSuccessAlertMock = vi.fn();
 
@@ -51,7 +49,7 @@ describe('OrganizationOverviewPage', () => {
     });
     (useOrganizations as Mock).mockReturnValue({
       organizationItems: OrganizationItemsMocks.default(),
-      activeOrganization: activeOrganization,
+      activeOrganization: organizationMockBuilder.build(),
       setActiveOrganizationById: vi.fn(),
       updateActiveOrganization: updateActiveOrganizationMock,
     });
@@ -74,7 +72,7 @@ describe('OrganizationOverviewPage', () => {
     await user.click(saveButton);
     await waitFor(() =>
       expect(updateActiveOrganizationMock).toHaveBeenCalledWith({
-        ..._.omit(activeOrganization, 'id'),
+        ...organizationMockBuilder.buildRequestBody(),
         name: newName,
       })
     );
