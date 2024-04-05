@@ -85,16 +85,16 @@ def rm_folder(folder: str):
 
 def build(backend_url: str, frontend_url: str):
     rm_folder("node_modules")
-    subprocess.run(f"{yarn} install", check=True)
+    subprocess.run([f"{yarn} install"], check=True)
     rm_folder("dist")
     build_command = f"export VITE_BACKEND_DOMAIN={backend_url}; export VITE_FRONTEND_DOMAIN={frontend_url}; export GENERATE_SOURCEMAP=false; yarn build"
-    subprocess.run(build_command, check=True)
+    subprocess.run([build_command], check=True)
 
 
 
 def deploy(server_domain: str):
     copy_command = f"scp -r dist/* {server_domain}:/var/docker/balance-sheet/volumes/www/"
-    subprocess.run(copy_command, check=True)
+    subprocess.run([copy_command], check=True)
     commands = [
         f"{docker} {compose} down",
         f"{docker} {compose} up -d"
