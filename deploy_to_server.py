@@ -79,6 +79,29 @@ def build_and_deploy_remotely(server_domain: str, backend_url: str, frontend_url
     subprocess.run(['ssh', server_domain, full_command], check=True)
 
 
+def build(backend_url: str, frontend_url: str):
+    commands = [
+        "rm -rf node_modules",
+        f"{yarn} install",
+        "rm -rf dist",
+        f"export VITE_BACKEND_DOMAIN={backend_url}; export VITE_FRONTEND_DOMAIN={frontend_url}; export GENERATE_SOURCEMAP=false; yarn build",
+    ]
+    full_command = " && ".join(commands)
+    subprocess.run(full_command, check=True)
+
+
+def deploy(server_domain: str):
+    copy_command = f"scp -r dist/* {server_domain}:/var/docker/balance-sheet/volumes/www/"
+    subprocess.run(copy_command, check=True)
+    commands = [
+        f"{docker} {compose} down",
+        f"{docker} {compose} up -d"
+    ]
+    full_command = " && ".join(commands)
+    subprocess.run(['ssh', server_domain, full_command], check=True)
+
+
+
 def rm_folder(folder: str):
     if os.path.exists(folder) and os.path.isdir(folder):
         shutil.rmtree(folder)
@@ -96,11 +119,15 @@ def main(args):
     check_types()
     logging.info(f"Run tests")
     run_tests()
-    server_domain = 'ecg@prod.econgood.org' if args.environment == 'prod' else 'ecg@dev.econgood.org'
-    backend_url = 'https://balance-sheet-api.prod.econgood.org' if args.environment == 'prod' else 'https://balance-sheet-api.dev.econgood.org'
-    frontend_url = 'https://balance-sheet.prod.econgood.org' if args.environment == 'prod' else 'https://balance-sheet.dev.econgood.org'
+    server_domain = 'root@services.econgood.org' if args.environment == 'prod' else 'ecg@prod.econgood.org'
+    backend_url = 'https://balance-sheet-api.dev.econgood.org' if args.environment == 'prod' else 'https://balance-sheet-api.dev.econgood.org'
+    frontend_url = 'https://balance-sheet.econgood.org' if args.environment == 'prod' else 'https://balance-sheet.dev.econgood.org'
     logging.info(f"Build and deploy to {server_domain} and using backend api {backend_url} and frontend url {frontend_url}")
-    build_and_deploy_remotely(server_domain=server_domain, backend_url=backend_url, frontend_url=frontend_url)
+    # build_and_deploy_remotely(server_domain=server_domain, backend_url=backend_url, frontend_url=frontend_url)
+    logging.info(f"Build using backend api {backend_url} and frontend url {frontend_url}")
+    build(backend_url=backend_url, frontend_url=frontend_url)
+    logging.info(f"Deployment to {server_domain}")
+    deploy(server_domain=server_domain)
     logging.info(f"Deployment finished")
 
 
@@ -108,7 +135,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     parser = argparse.ArgumentParser(description='Deploy e calculator ui')
     parser.add_argument('environment',
-                        choices=['test'],
-                        help='Deploy it either to the test environment')
+                        choices=['test', 'prod'],
+                        help='Deploy it either to the test or prod environment')
     args = parser.parse_args()
     main(args)
