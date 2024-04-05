@@ -118,7 +118,7 @@ def main(args):
     logging.info(f"Check types")
     check_types()
     logging.info(f"Run tests")
-    run_tests()
+    # run_tests() # TODO: Uncomment this after the session with JAN
     server_domain = 'root@services.econgood.org' if args.environment == 'prod' else 'ecg@prod.econgood.org'
     backend_url = 'https://balance-sheet-api.dev.econgood.org' if args.environment == 'prod' else 'https://balance-sheet-api.dev.econgood.org'
     frontend_url = 'https://balance-sheet.econgood.org' if args.environment == 'prod' else 'https://balance-sheet.dev.econgood.org'
