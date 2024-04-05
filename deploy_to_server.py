@@ -85,16 +85,16 @@ def rm_folder(folder: str):
 
 def build(backend_url: str, frontend_url: str):
     rm_folder("node_modules")
-    subprocess.run([f"{yarn} install"], check=True)
+    subprocess.run([yarn, "install"], check=True)
     rm_folder("dist")
     build_command = f"export VITE_BACKEND_DOMAIN={backend_url}; export VITE_FRONTEND_DOMAIN={frontend_url}; export GENERATE_SOURCEMAP=false; yarn build"
-    subprocess.run([build_command], check=True)
+    subprocess.run(build_command, shell=True, check=True)
 
 
 
 def deploy(server_domain: str):
     copy_command = f"scp -r dist/* {server_domain}:/var/docker/balance-sheet/volumes/www/"
-    subprocess.run([copy_command], check=True)
+    subprocess.run(copy_command, shell=True, check=True)
     commands = [
         f"{docker} {compose} down",
         f"{docker} {compose} up -d"
@@ -118,16 +118,16 @@ def main(args):
     logging.info(f"Check types")
     check_types()
     logging.info(f"Run tests")
-    # run_tests() # TODO: Uncomment this after the session with JAN
+    run_tests()
     server_domain = 'root@services.econgood.org' if args.environment == 'prod' else 'ecg@prod.econgood.org'
     backend_url = 'https://balance-sheet-api.dev.econgood.org' if args.environment == 'prod' else 'https://balance-sheet-api.dev.econgood.org'
     frontend_url = 'https://balance-sheet.econgood.org' if args.environment == 'prod' else 'https://balance-sheet.dev.econgood.org'
     logging.info(f"Build and deploy to {server_domain} and using backend api {backend_url} and frontend url {frontend_url}")
-    # build_and_deploy_remotely(server_domain=server_domain, backend_url=backend_url, frontend_url=frontend_url)
-    logging.info(f"Build using backend api {backend_url} and frontend url {frontend_url}")
-    build(backend_url=backend_url, frontend_url=frontend_url)
-    logging.info(f"Deployment to {server_domain}")
-    deploy(server_domain=server_domain)
+    build_and_deploy_remotely(server_domain=server_domain, backend_url=backend_url, frontend_url=frontend_url)
+    # logging.info(f"Build using backend api {backend_url} and frontend url {frontend_url}")
+    # build(backend_url=backend_url, frontend_url=frontend_url)
+    # logging.info(f"Deployment to {server_domain}")
+    # deploy(server_domain=server_domain)
     logging.info(f"Deployment finished")
 
 
