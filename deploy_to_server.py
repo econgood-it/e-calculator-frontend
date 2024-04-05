@@ -78,16 +78,18 @@ def build_and_deploy_remotely(server_domain: str, backend_url: str, frontend_url
     full_command = " && ".join(commands)
     subprocess.run(['ssh', server_domain, full_command], check=True)
 
+def rm_folder(folder: str):
+    if os.path.exists(folder) and os.path.isdir(folder):
+        shutil.rmtree(folder)
+
 
 def build(backend_url: str, frontend_url: str):
-    commands = [
-        "rm -rf node_modules",
-        f"{yarn} install",
-        "rm -rf dist",
-        f"export VITE_BACKEND_DOMAIN={backend_url}; export VITE_FRONTEND_DOMAIN={frontend_url}; export GENERATE_SOURCEMAP=false; yarn build",
-    ]
-    full_command = " && ".join(commands)
-    subprocess.run(full_command, check=True)
+    rm_folder("node_modules")
+    subprocess.run(f"{yarn} install", check=True)
+    rm_folder("dist")
+    build_command = f"export VITE_BACKEND_DOMAIN={backend_url}; export VITE_FRONTEND_DOMAIN={frontend_url}; export GENERATE_SOURCEMAP=false; yarn build"
+    subprocess.run(build_command, check=True)
+
 
 
 def deploy(server_domain: str):
@@ -102,9 +104,7 @@ def deploy(server_domain: str):
 
 
 
-def rm_folder(folder: str):
-    if os.path.exists(folder) and os.path.isdir(folder):
-        shutil.rmtree(folder)
+
 
 
 def main(args):
