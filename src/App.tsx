@@ -12,7 +12,7 @@ import { RouterProvider } from 'react-router-dom';
 import { useRouter } from './routing/useRouter';
 import { AuthProvider } from 'oidc-react';
 import { AuthProviderProps } from 'oidc-react/build/src/AuthContextInterface';
-import { FRONTEND_URL } from './configuration';
+import { AUTHORITY, CLIENT_ID, FRONTEND_URL } from './configuration';
 
 const primaryColor = '#94a231';
 const secondaryColor = '#00828b';
@@ -80,9 +80,10 @@ export const themeOptions: ThemeOptions = {
 };
 const theme = createTheme(themeOptions);
 
+// TODO: Make oidcConfig configurable via environment variables
 const oidcConfig: AuthProviderProps = {
-  authority: 'https://zitadel.dev.econgood.org',
-  clientId: '256369856352473091@econgood',
+  authority: AUTHORITY,
+  clientId: CLIENT_ID,
   responseType: 'code',
   redirectUri: FRONTEND_URL,
   scope: 'openid email profile',

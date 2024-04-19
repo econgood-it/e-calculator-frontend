@@ -62,49 +62,26 @@ def run_tests():
     subprocess.run([yarn, run, 'test'], env=my_env, check=True)
 
 
-def build_and_deploy_remotely(server_domain: str, backend_url: str, frontend_url: str):
-    commands = [
-        'source .nvm/nvm.sh',
-        'cd e-calculator-frontend',
-        'git pull',
-        "rm -rf node_modules",
-        f"{yarn} install",
-        "rm -rf dist",
-        f"export VITE_BACKEND_DOMAIN={backend_url}; export VITE_FRONTEND_DOMAIN={frontend_url}; export GENERATE_SOURCEMAP=false; yarn build",
-        f"cp -r dist/* volumes/www/",
-        f"{docker} {compose} down",
-        f"{docker} {compose} up -d"
-    ]
-    full_command = " && ".join(commands)
-    subprocess.run(['ssh', server_domain, full_command], check=True)
-
 def rm_folder(folder: str):
     if os.path.exists(folder) and os.path.isdir(folder):
         shutil.rmtree(folder)
 
 
-def build(backend_url: str, frontend_url: str):
+def build(authority_url: str, client_id: str, backend_url: str, frontend_url: str):
     rm_folder("node_modules")
     subprocess.run([yarn, "install"], check=True)
     rm_folder("dist")
-    build_command = f"export VITE_BACKEND_DOMAIN={backend_url}; export VITE_FRONTEND_DOMAIN={frontend_url}; export GENERATE_SOURCEMAP=false; yarn build"
+    build_command = (f"export VITE_BACKEND_DOMAIN={backend_url}; "
+                     f"export VITE_ZITADEL_AUTHORITY_URL={authority_url}; "
+                     f"export VITE_ZITADEL_CLIENT_ID={client_id}; "
+                     f"export VITE_FRONTEND_DOMAIN={frontend_url}; "
+                     f"export GENERATE_SOURCEMAP=false; yarn build")
     subprocess.run(build_command, shell=True, check=True)
 
 
-
-def deploy(server_domain: str):
-    copy_command = f"scp -r dist/* {server_domain}:/var/docker/balance-sheet/volumes/www/"
+def deploy(server_domain: str, path_to_app_dir: str):
+    copy_command = f"scp -r dist/* {server_domain}:{path_to_app_dir}/volumes/www/"
     subprocess.run(copy_command, shell=True, check=True)
-    commands = [
-        f"{docker} {compose} down",
-        f"{docker} {compose} up -d"
-    ]
-    full_command = " && ".join(commands)
-    subprocess.run(['ssh', server_domain, full_command], check=True)
-
-
-
-
 
 
 def main(args):
@@ -119,15 +96,17 @@ def main(args):
     check_types()
     logging.info(f"Run tests")
     run_tests()
-    server_domain = 'root@services.econgood.org' if args.environment == 'prod' else 'ecg@prod.econgood.org'
-    backend_url = 'https://balance-sheet-api.dev.econgood.org' if args.environment == 'prod' else 'https://balance-sheet-api.dev.econgood.org'
+    server_domain = 'root@services.econgood.org' if args.environment == 'prod' else 'root@dev.econgood.org'
+    path_to_app_dir = '/var/docker/balance-sheet' if args.environment == 'prod' else '/var/docker/e-calculator-frontend'
+    backend_url = 'https://balance-sheet-api.econgood.org' if args.environment == 'prod' else 'https://balance-sheet-api.dev.econgood.org'
     frontend_url = 'https://balance-sheet.econgood.org' if args.environment == 'prod' else 'https://balance-sheet.dev.econgood.org'
-    logging.info(f"Build and deploy to {server_domain} and using backend api {backend_url} and frontend url {frontend_url}")
-    build_and_deploy_remotely(server_domain=server_domain, backend_url=backend_url, frontend_url=frontend_url)
-    # logging.info(f"Build using backend api {backend_url} and frontend url {frontend_url}")
-    # build(backend_url=backend_url, frontend_url=frontend_url)
-    # logging.info(f"Deployment to {server_domain}")
-    # deploy(server_domain=server_domain)
+    client_id = '263455475041894403@econgood' if args.environment == 'prod' else '256369856352473091@econgood'
+    authority_url = 'https://zitadel.econgood.org' if args.environment == 'prod' else 'https://zitadel.dev.econgood.org'
+    logging.info(f"Build using backend api {backend_url} and frontend url {frontend_url} "
+                 f"and client id {client_id} and authority url {authority_url}")
+    build(backend_url=backend_url, frontend_url=frontend_url, client_id=client_id, authority_url=authority_url)
+    logging.info(f"Deployment to {server_domain} and path {path_to_app_dir}")
+    deploy(server_domain=server_domain, path_to_app_dir=path_to_app_dir)
     logging.info(f"Deployment finished")
 
 
