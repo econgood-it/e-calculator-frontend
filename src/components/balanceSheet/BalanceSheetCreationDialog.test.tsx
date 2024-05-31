@@ -50,7 +50,7 @@ describe('BalanceSheetCreationDialog', () => {
       })
     );
     const versionOptions = await screen.findAllByRole('option');
-    expect(versionOptions.map((o) => o.textContent)).toEqual(['5.08']);
+    expect(versionOptions.map((o) => o.textContent)).toEqual(['5.08', '5.09']);
     await user.click(versionOptions.find((o) => o.textContent === '5.08')!);
 
     const saveButton = screen.getByRole('button', { name: 'Save' });
