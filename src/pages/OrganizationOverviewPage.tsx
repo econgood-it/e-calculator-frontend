@@ -10,7 +10,10 @@ import { BalanceSheetList } from '../components/balanceSheet/BalanceSheetList.ts
 import { LoaderFunctionArgs } from 'react-router-dom';
 import { User } from 'oidc-react';
 import { useLoaderData } from 'react-router-typesafe';
-import { ApiClient, makeWretchInstanceWithAuth } from '../api/api.client.ts';
+import {
+  createApiClient,
+  makeWretchInstanceWithAuth,
+} from '../api/api.client.ts';
 import { API_URL } from '../configuration.ts';
 
 export function OrganizationOverviewPage() {
@@ -46,14 +49,17 @@ export function OrganizationOverviewPage() {
   );
 }
 
-export function loader({ params }: LoaderFunctionArgs, handlerCtx: unknown) {
+export async function loader(
+  { params }: LoaderFunctionArgs,
+  handlerCtx: unknown
+) {
   const { userData } = handlerCtx as { userData: User };
   if (!params.orgaId || !userData) {
     return null;
   }
-  const apiClient = new ApiClient(
+  const apiClient = createApiClient(
     makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
   );
 
-  return apiClient.getOrganization(Number.parseInt(params.orgaId));
+  return await apiClient.getOrganization(Number.parseInt(params.orgaId));
 }

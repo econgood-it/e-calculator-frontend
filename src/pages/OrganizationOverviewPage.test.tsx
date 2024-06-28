@@ -1,6 +1,6 @@
 import { act, screen, waitFor, within } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
-import { OrganizationOverviewPage } from './OrganizationOverviewPage';
+import { loader, OrganizationOverviewPage } from './OrganizationOverviewPage';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { useBalanceSheetItems } from '../contexts/BalanceSheetListProvider';
@@ -16,6 +16,7 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { setupApiMock } from '../testUtils/api.ts';
 
 vi.mock('../contexts/OrganizationProvider');
 vi.mock('../contexts/BalanceSheetListProvider');
@@ -132,5 +133,31 @@ describe('OrganizationOverviewPage', () => {
     await waitFor(() =>
       expect(screen.getByText('Page of Balance sheet 2')).toBeInTheDocument()
     );
+  });
+});
+
+const mockApi = setupApiMock();
+
+vi.mock('../api/api.client.ts', async () => {
+  const originalModule = await vi.importActual('../api/api.client.ts');
+  return {
+    ...originalModule,
+    createApiClient: () => mockApi,
+  };
+});
+
+describe('loader', () => {
+  it('loads organization', async () => {
+    const response = new OrganizationMockBuilder().withId(3).build();
+    mockApi.getOrganization.mockResolvedValue(response);
+    const result = await loader(
+      {
+        params: { orgaId: '3' },
+        request: new Request(new URL('', 'http://localhost')),
+      },
+      { userData: { access_token: 'token' } }
+    );
+    expect(result).toEqual(response);
+    expect(mockApi.getOrganization).toHaveBeenCalledWith(3);
   });
 });

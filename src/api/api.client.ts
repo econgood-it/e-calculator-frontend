@@ -89,6 +89,10 @@ export class AuthApiClient {
   }
 }
 
+export function createApiClient(wretchInstance: WretchType): ApiClient {
+  return new ApiClient(wretchInstance);
+}
+
 export class ApiClient {
   public constructor(private wretchInstance: WretchType) {}
 
