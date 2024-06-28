@@ -51,7 +51,13 @@ describe('OrganizationOverviewPage', () => {
 
   it('renders organization form and updates on save', async () => {
     const router = createMemoryRouter(
-      [{ path: initialPathForRouting, element: <OrganizationOverviewPage /> }],
+      [
+        {
+          path: initialPathForRouting,
+          element: <OrganizationOverviewPage />,
+          loader: () => organizationMockBuilder.build(),
+        },
+      ],
       { initialEntries: [initialPathForRouting] }
     );
     const user = userEvent.setup();
@@ -59,7 +65,7 @@ describe('OrganizationOverviewPage', () => {
       renderWithTheme(<RouterProvider router={router} />);
     });
     const newName = 'My new orga name';
-    const nameField = screen.getByLabelText(/Organization name/);
+    const nameField = await screen.findByLabelText(/Organization name/);
     await user.clear(nameField);
     await user.type(nameField, newName);
     const saveButton = screen.getByRole('button', { name: 'Save' });

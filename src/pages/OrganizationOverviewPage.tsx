@@ -16,9 +16,8 @@ import { API_URL } from '../configuration.ts';
 export function OrganizationOverviewPage() {
   const { addSuccessAlert } = useAlert();
   const organization = useLoaderData<typeof loader>();
-  console.log(organization);
   const { t } = useTranslation();
-  const { activeOrganization, updateActiveOrganization } = useOrganizations();
+  const { updateActiveOrganization } = useOrganizations();
   async function onOrganizationSave(organization: OrganizationRequestBody) {
     await updateActiveOrganization(organization);
     addSuccessAlert(t`Updated organization`);
@@ -32,10 +31,12 @@ export function OrganizationOverviewPage() {
           </Typography>
         </GridItem>
         <GridItem xs={12}>
-          <OrganizationForm
-            organization={activeOrganization}
-            onSave={onOrganizationSave}
-          />
+          {organization && (
+            <OrganizationForm
+              organization={organization}
+              onSave={onOrganizationSave}
+            />
+          )}
         </GridItem>
         <GridItem xs={12}>
           <BalanceSheetList />
