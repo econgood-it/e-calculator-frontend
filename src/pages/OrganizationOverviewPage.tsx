@@ -6,11 +6,17 @@ import GridItem from '../components/layout/GridItem';
 import { Typography } from '@mui/material';
 import { useAlert } from '../contexts/AlertContext';
 import { OrganizationRequestBody } from '../models/Organization';
-import { OrganizationInvitations } from '../components/organization/OrganizationInvitations.tsx';
 import { BalanceSheetList } from '../components/balanceSheet/BalanceSheetList.tsx';
+import { LoaderFunctionArgs } from 'react-router-dom';
+import { User } from 'oidc-react';
+import { useLoaderData } from 'react-router-typesafe';
+import { ApiClient, makeWretchInstanceWithAuth } from '../api/api.client.ts';
+import { API_URL } from '../configuration.ts';
 
 export function OrganizationOverviewPage() {
   const { addSuccessAlert } = useAlert();
+  const organization = useLoaderData<typeof loader>();
+  console.log(organization);
   const { t } = useTranslation();
   const { activeOrganization, updateActiveOrganization } = useOrganizations();
   async function onOrganizationSave(organization: OrganizationRequestBody) {
@@ -34,10 +40,19 @@ export function OrganizationOverviewPage() {
         <GridItem xs={12}>
           <BalanceSheetList />
         </GridItem>
-        <GridItem xs={12}>
-          <OrganizationInvitations />
-        </GridItem>
       </GridContainer>
     </>
   );
+}
+
+export function loader({ params }: LoaderFunctionArgs, handlerCtx: unknown) {
+  const { userData } = handlerCtx as { userData: User };
+  if (!params.orgaId || !userData) {
+    return null;
+  }
+  const apiClient = new ApiClient(
+    makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
+  );
+
+  return apiClient.getOrganization(Number.parseInt(params.orgaId));
 }

@@ -1,13 +1,7 @@
 import { act, screen, waitFor, within } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
 import { OrganizationOverviewPage } from './OrganizationOverviewPage';
-import {
-  createMemoryRouter,
-  MemoryRouter,
-  Route,
-  RouterProvider,
-  Routes,
-} from 'react-router-dom';
+import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { useBalanceSheetItems } from '../contexts/BalanceSheetListProvider';
 import { useOrganizations } from '../contexts/OrganizationProvider';
@@ -108,26 +102,26 @@ describe('OrganizationOverviewPage', () => {
   });
 
   it('renders balance sheet items and navigates on click', async () => {
-    act(() => {
-      renderWithTheme(
-        <MemoryRouter initialEntries={[initialPathForRouting]}>
-          <Routes>
-            <Route
-              path={initialPathForRouting}
-              element={<OrganizationOverviewPage />}
-            />
-            <Route
-              path={`${initialPathForRouting}/balancesheet/2/overview`}
-              element={<div>Page of Balance sheet 2</div>}
-            />
-          </Routes>
-        </MemoryRouter>
-      );
-    });
+    const router = createMemoryRouter(
+      [
+        {
+          path: initialPathForRouting,
+          element: <OrganizationOverviewPage />,
+          loader: () => organizationMockBuilder.build(),
+        },
+        {
+          path: `${initialPathForRouting}/balancesheet/2/overview`,
+          element: <div>Page of Balance sheet 2</div>,
+        },
+      ],
+      { initialEntries: [initialPathForRouting] }
+    );
 
-    const linkToBalanceSheet2 = screen.getByLabelText('Balance sheet 2');
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
 
-    await userEvent.click(linkToBalanceSheet2);
+    const linkToBalanceSheet2 = await screen.findByLabelText('Balance sheet 2');
+
+    await user.click(linkToBalanceSheet2);
 
     await waitFor(() =>
       expect(screen.getByText('Page of Balance sheet 2')).toBeInTheDocument()

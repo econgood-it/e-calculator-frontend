@@ -55,6 +55,7 @@
     "eslint-plugin-react-refresh": "^0.4.5",
     "msw": "^1.2.2",
     "prettier": "^3.2.4",
+    "react-router-typesafe": "^1.5.0",
     "typescript": "^5.2.2",
     "vite": "^5.0.8",
     "vitest": "^1.2.1"

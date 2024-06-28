@@ -90,8 +90,6 @@ const oidcConfig: AuthProviderProps = {
 };
 
 function App() {
-  const router = useRouter();
-
   return (
     <Suspense fallback={'Loading'}>
       <MuiThemeProvider theme={theme}>
@@ -100,7 +98,7 @@ function App() {
             <>
               <CssBaseline enableColorScheme />
               <AuthProvider {...oidcConfig}>
-                <RouterProvider router={router} />
+                <Routes />
               </AuthProvider>
               <NotificationList />
             </>
@@ -108,6 +106,16 @@ function App() {
         </ThemeProvider>
       </MuiThemeProvider>
     </Suspense>
+  );
+}
+
+function Routes() {
+  const router = useRouter();
+
+  return (
+    <div>
+      <RouterProvider router={router} />
+    </div>
   );
 }
 

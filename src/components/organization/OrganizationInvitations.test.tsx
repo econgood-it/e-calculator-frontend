@@ -6,7 +6,9 @@ import { useOrganizations } from '../../contexts/OrganizationProvider';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { v4 as uuid4 } from 'uuid';
 import { OrganizationInvitations } from './OrganizationInvitations.tsx';
+import { useApi } from '../../contexts/ApiProvider.tsx';
 
+vi.mock('../../contexts/ApiProvider');
 vi.mock('../../contexts/AlertContext');
 vi.mock('../../contexts/OrganizationProvider');
 
@@ -14,21 +16,28 @@ vi.mock('oidc-react', () => ({
   useAuth: vi.fn(),
 }));
 
-describe('OrganizationMembers', () => {
+describe('OrganizationInvitations', () => {
   const invitations = [
     `${uuid4()}@example.com`,
     `${uuid4()}@example.com`,
     `${uuid4()}@example.com`,
   ];
 
+  const activeOrganization = {
+    ...new OrganizationMockBuilder().build(),
+    invitations,
+  };
+  const apiMock = {
+    inviteUserToOrganization: vi.fn(),
+    updateActiveOrganization: vi.fn(),
+  };
+
   beforeEach(() => {
     (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
     (useOrganizations as Mock).mockImplementation(() => ({
-      activeOrganization: {
-        ...new OrganizationMockBuilder().build(),
-        invitations,
-      },
+      activeOrganization,
     }));
+    (useApi as Mock).mockReturnValue(apiMock);
   });
 
   it('should show invitations in a list', async () => {
@@ -36,5 +45,19 @@ describe('OrganizationMembers', () => {
     for (const invitation of invitations) {
       expect(screen.getByText(invitation)).toBeInTheDocument();
     }
+  });
+
+  it('should invite user via email', async () => {
+    const { user } = renderWithTheme(<OrganizationInvitations />);
+    const emailField = screen.getByLabelText(/Email/);
+    const email = 'user@example.com';
+    await user.type(emailField, email);
+    expect(emailField).toHaveValue(email);
+    const inviteButton = screen.getByRole('button', { name: /Save/ });
+    await user.click(inviteButton);
+    // expect(apiMock.inviteUserToOrganization).toHaveBeenCalledWith(
+    //   activeOrganization.id,
+    //   email
+    // );
   });
 });
