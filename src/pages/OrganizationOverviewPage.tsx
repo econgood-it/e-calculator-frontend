@@ -1,13 +1,15 @@
-import { Trans, useTranslation } from 'react-i18next';
+import { Trans } from 'react-i18next';
 import { OrganizationForm } from '../components/organization/OrganizationForm';
-import { useOrganizations } from '../contexts/OrganizationProvider';
 import GridContainer from '../components/layout/GridContainer';
 import GridItem from '../components/layout/GridItem';
 import { Typography } from '@mui/material';
-import { useAlert } from '../contexts/AlertContext';
 import { OrganizationRequestBody } from '../models/Organization';
 import { BalanceSheetList } from '../components/balanceSheet/BalanceSheetList.tsx';
-import { LoaderFunctionArgs } from 'react-router-dom';
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  useSubmit,
+} from 'react-router-dom';
 import { User } from 'oidc-react';
 import { useLoaderData } from 'react-router-typesafe';
 import {
@@ -17,13 +19,13 @@ import {
 import { API_URL } from '../configuration.ts';
 
 export function OrganizationOverviewPage() {
-  const { addSuccessAlert } = useAlert();
   const organization = useLoaderData<typeof loader>();
-  const { t } = useTranslation();
-  const { updateActiveOrganization } = useOrganizations();
+  const submit = useSubmit();
   async function onOrganizationSave(organization: OrganizationRequestBody) {
-    await updateActiveOrganization(organization);
-    addSuccessAlert(t`Updated organization`);
+    submit(organization, {
+      method: 'put',
+      encType: 'application/json',
+    });
   }
   return (
     <>
@@ -60,6 +62,21 @@ export async function loader(
   const apiClient = createApiClient(
     makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
   );
-
   return await apiClient.getOrganization(Number.parseInt(params.orgaId));
+}
+
+export async function action(
+  { params, request }: ActionFunctionArgs,
+  handlerCtx: unknown
+) {
+  const data = await request.json();
+  const { userData } = handlerCtx as { userData: User };
+  if (!params.orgaId || !userData) {
+    return null;
+  }
+  const apiClient = createApiClient(
+    makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
+  );
+  await apiClient.updateOrganization(Number.parseInt(params.orgaId), data);
+  return null;
 }

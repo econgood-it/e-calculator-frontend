@@ -1,7 +1,15 @@
 import { act, screen, waitFor, within } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
-import { loader, OrganizationOverviewPage } from './OrganizationOverviewPage';
-import { createMemoryRouter, RouterProvider } from 'react-router-dom';
+import {
+  action,
+  loader,
+  OrganizationOverviewPage,
+} from './OrganizationOverviewPage';
+import {
+  ActionFunctionArgs,
+  createMemoryRouter,
+  RouterProvider,
+} from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { useBalanceSheetItems } from '../contexts/BalanceSheetListProvider';
 import { useOrganizations } from '../contexts/OrganizationProvider';
@@ -51,12 +59,15 @@ describe('OrganizationOverviewPage', () => {
   });
 
   it('renders organization form and updates on save', async () => {
+    const action = vi.fn().mockResolvedValue(null);
     const router = createMemoryRouter(
       [
         {
           path: initialPathForRouting,
           element: <OrganizationOverviewPage />,
-          loader: () => organizationMockBuilder.build(),
+          loader: () => organizationMockBuilder.withId(3).build(),
+          action: async ({ request }: ActionFunctionArgs) =>
+            action(await request.json()),
         },
       ],
       { initialEntries: [initialPathForRouting] }
@@ -71,13 +82,13 @@ describe('OrganizationOverviewPage', () => {
     await user.type(nameField, newName);
     const saveButton = screen.getByRole('button', { name: 'Save' });
     await user.click(saveButton);
+
     await waitFor(() =>
-      expect(updateActiveOrganizationMock).toHaveBeenCalledWith({
-        ...organizationMockBuilder.buildRequestBody(),
+      expect(action).toHaveBeenCalledWith({
+        ...organizationMockBuilder.withId(3).buildRequestBody(),
         name: newName,
       })
     );
-    expect(addSuccessAlertMock).toHaveBeenCalledWith(['Updated organization']);
   });
 
   it('adds balance sheet if create balance sheet button is clicked', async () => {
@@ -159,5 +170,25 @@ describe('loader', () => {
     );
     expect(result).toEqual(response);
     expect(mockApi.getOrganization).toHaveBeenCalledWith(3);
+  });
+});
+
+describe('action', () => {
+  it('updates organization', async () => {
+    const organization = {
+      ...new OrganizationMockBuilder().withId(3).build(),
+      name: 'new name',
+    };
+    const request = new Request(new URL('', 'http://localhost'), {
+      method: 'put',
+      body: JSON.stringify(organization),
+    });
+    const response = new OrganizationMockBuilder().withId(3).build();
+    mockApi.updateOrganization.mockResolvedValue(response);
+    await action(
+      { params: { orgaId: '3' }, request },
+      { userData: { access_token: 'token' } }
+    );
+    expect(mockApi.updateOrganization).toHaveBeenCalledWith(3, organization);
   });
 });

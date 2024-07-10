@@ -14,7 +14,10 @@ import { RequiresAuth } from './RequiresAuth';
 import { BalanceSheetOverviewPage } from '../pages/BalanceSheetOverviewPage';
 import { BalanceSheetSettingsPage } from '../pages/BalanceSheetSettingsPage';
 import { useAuth } from 'oidc-react';
-import { loader as orgaLoader } from '../pages/OrganizationOverviewPage';
+import {
+  loader as orgaLoader,
+  action as orgaAction,
+} from '../pages/OrganizationOverviewPage';
 
 export function useRouter() {
   const { userData } = useAuth();
@@ -39,9 +42,10 @@ export function useRouter() {
                 element: <Sidebar />,
                 children: [
                   {
-                    path: '',
+                    index: true,
                     element: <OrganizationOverviewPage />,
                     loader: orgaLoader,
+                    action: orgaAction,
                   },
                   {
                     path: 'balancesheet/:balanceSheetId',
