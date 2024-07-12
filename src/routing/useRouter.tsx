@@ -18,6 +18,11 @@ import {
   loader as orgaLoader,
   action as orgaAction,
 } from '../pages/OrganizationOverviewPage';
+import {
+  loader as invitationLoader,
+  action as invitationAction,
+  InvitationOverviewPage,
+} from '../pages/InvitationOverviewPage';
 
 export function useRouter() {
   const { userData } = useAuth();
@@ -46,6 +51,12 @@ export function useRouter() {
                     element: <OrganizationOverviewPage />,
                     loader: orgaLoader,
                     action: orgaAction,
+                  },
+                  {
+                    path: 'invitation',
+                    element: <InvitationOverviewPage />,
+                    loader: invitationLoader,
+                    action: invitationAction,
                   },
                   {
                     path: 'balancesheet/:balanceSheetId',

@@ -41,23 +41,28 @@ describe('OrganizationInvitations', () => {
   });
 
   it('should show invitations in a list', async () => {
-    renderWithTheme(<OrganizationInvitations />);
+    renderWithTheme(
+      <OrganizationInvitations invitations={invitations} onInvitation={vi.fn} />
+    );
     for (const invitation of invitations) {
       expect(screen.getByText(invitation)).toBeInTheDocument();
     }
   });
 
   it('should invite user via email', async () => {
-    const { user } = renderWithTheme(<OrganizationInvitations />);
+    const onInvitation = vi.fn();
+    const { user } = renderWithTheme(
+      <OrganizationInvitations
+        invitations={invitations}
+        onInvitation={onInvitation}
+      />
+    );
     const emailField = screen.getByLabelText(/Email/);
     const email = 'user@example.com';
     await user.type(emailField, email);
     expect(emailField).toHaveValue(email);
     const inviteButton = screen.getByRole('button', { name: /Save/ });
     await user.click(inviteButton);
-    // expect(apiMock.inviteUserToOrganization).toHaveBeenCalledWith(
-    //   activeOrganization.id,
-    //   email
-    // );
+    expect(onInvitation).toHaveBeenCalledWith(email);
   });
 });

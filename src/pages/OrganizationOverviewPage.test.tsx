@@ -12,11 +12,7 @@ import {
 } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import { useBalanceSheetItems } from '../contexts/BalanceSheetListProvider';
-import { useOrganizations } from '../contexts/OrganizationProvider';
-import {
-  OrganizationItemsMocks,
-  OrganizationMockBuilder,
-} from '../testUtils/organization';
+import { OrganizationMockBuilder } from '../testUtils/organization';
 import { useAlert } from '../contexts/AlertContext';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 
@@ -26,16 +22,14 @@ import {
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { setupApiMock } from '../testUtils/api.ts';
 
-vi.mock('../contexts/OrganizationProvider');
-vi.mock('../contexts/BalanceSheetListProvider');
 vi.mock('../contexts/AlertContext');
+vi.mock('../contexts/BalanceSheetListProvider');
 describe('OrganizationOverviewPage', () => {
   const initialPathForRouting = '/organization/3';
   const balanceSheetItems = [{ id: 1 }, { id: 2 }];
   const setBalanceSheetItems = vi.fn();
   const createBalanceSheetMock = vi.fn();
 
-  const updateActiveOrganizationMock = vi.fn();
   const organizationMockBuilder = new OrganizationMockBuilder();
 
   const addSuccessAlertMock = vi.fn();
@@ -49,12 +43,6 @@ describe('OrganizationOverviewPage', () => {
     (useAlert as Mock).mockReturnValue({
       addErrorAlert: vi.fn(),
       addSuccessAlert: addSuccessAlertMock,
-    });
-    (useOrganizations as Mock).mockReturnValue({
-      organizationItems: OrganizationItemsMocks.default(),
-      activeOrganization: organizationMockBuilder.build(),
-      setActiveOrganizationById: vi.fn(),
-      updateActiveOrganization: updateActiveOrganizationMock,
     });
   });
 

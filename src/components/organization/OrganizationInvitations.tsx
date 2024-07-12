@@ -1,4 +1,3 @@
-import { useOrganizations } from '../../contexts/OrganizationProvider.tsx';
 import GridItem from '../layout/GridItem.tsx';
 import { Card, CardContent, Typography } from '@mui/material';
 import { Trans } from 'react-i18next';
@@ -14,9 +13,15 @@ const FormInputSchema = z.object({
 });
 type FormInput = z.infer<typeof FormInputSchema>;
 
-export function OrganizationInvitations() {
-  const { activeOrganization } = useOrganizations();
+type OrganizationInvitationsProps = {
+  invitations: string[];
+  onInvitation: (email: string) => void;
+};
 
+export function OrganizationInvitations({
+  invitations,
+  onInvitation,
+}: OrganizationInvitationsProps) {
   const {
     register,
     handleSubmit,
@@ -26,8 +31,9 @@ export function OrganizationInvitations() {
     mode: 'onChange',
   });
 
-  async function onInvite(data: FieldValues) {
-    console.log(data);
+  function onInvite(data: FieldValues) {
+    const email = FormInputSchema.parse(data).email;
+    onInvitation(email);
   }
 
   return (
@@ -52,7 +58,7 @@ export function OrganizationInvitations() {
           </GridItem>
         </GridContainer>
       </GridItem>
-      {activeOrganization?.invitations.map((invitation) => (
+      {invitations.map((invitation) => (
         <GridItem key={invitation} xs={12} sm={3}>
           <Card>
             <CardContent>
