@@ -1,9 +1,18 @@
-import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
+import {
+  createBrowserRouter,
+  Navigate,
+  Outlet,
+  useRouteError,
+} from 'react-router-dom';
 import RatingsPage from '../pages/RatingsPage';
 import { StakholderShortNames } from '../models/Rating';
 
 import Sidebar from '../pages/Sidebar';
-import { OrganizationOverviewPage } from '../pages/OrganizationOverviewPage';
+import {
+  action as orgaAction,
+  loader as orgaLoader,
+  OrganizationOverviewPage,
+} from '../pages/OrganizationOverviewPage';
 import WithActiveBalanceSheet from '../components/balanceSheet/WithActiveBalanceSheet';
 import CompanyFactsPage from '../pages/CompanyFactsPage';
 import { RedirectToActiveOrganization } from './RedirectToActiveOrganization';
@@ -15,14 +24,26 @@ import { BalanceSheetOverviewPage } from '../pages/BalanceSheetOverviewPage';
 import { BalanceSheetSettingsPage } from '../pages/BalanceSheetSettingsPage';
 import { useAuth } from 'oidc-react';
 import {
-  loader as orgaLoader,
-  action as orgaAction,
-} from '../pages/OrganizationOverviewPage';
-import {
-  loader as invitationLoader,
   action as invitationAction,
   InvitationOverviewPage,
+  loader as invitationLoader,
 } from '../pages/InvitationOverviewPage';
+import { Alert, AlertTitle } from '@mui/material';
+import { Trans } from 'react-i18next';
+
+function ErrorPage() {
+  const error = useRouteError();
+  const message = error instanceof Error && error.message;
+
+  return (
+    <Alert severity={'error'} sx={{ width: '100%' }}>
+      <AlertTitle>
+        <Trans>Following error occured</Trans>
+      </AlertTitle>
+      {message}
+    </Alert>
+  );
+}
 
 export function useRouter() {
   const { userData } = useAuth();
@@ -57,6 +78,7 @@ export function useRouter() {
                     element: <InvitationOverviewPage />,
                     loader: invitationLoader,
                     action: invitationAction,
+                    errorElement: <ErrorPage />,
                   },
                   {
                     path: 'balancesheet/:balanceSheetId',

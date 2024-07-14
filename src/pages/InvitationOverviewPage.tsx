@@ -13,6 +13,7 @@ import {
 } from '../api/api.client.ts';
 import { API_URL } from '../configuration.ts';
 import { OrganizationInvitations } from '../components/organization/OrganizationInvitations.tsx';
+import i18n from '../i18n.ts';
 
 export function InvitationOverviewPage() {
   const invitations = useLoaderData<typeof loader>();
@@ -71,9 +72,14 @@ export async function action(
   const apiClient = createApiClient(
     makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
   );
-  await apiClient.inviteUserToOrganization(
-    Number.parseInt(params.orgaId),
-    data.email
-  );
+  try {
+    await apiClient.inviteUserToOrganization(
+      Number.parseInt(params.orgaId),
+      data.email
+    );
+  } catch (error) {
+    throw Error(i18n.t`Invitation failed`);
+  }
+
   return null;
 }

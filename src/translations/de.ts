@@ -90,5 +90,7 @@ export const DE_TRANSLATIONS = {
   Weight: 'Gewicht',
   Points: 'Punkte',
   Settings: 'Einstellungen',
+  'Following error occured': 'Folgender Fehler ist aufgetreten',
+  'Invitation failed': 'Einladung fehlgeschlagen',
   ...DE_ERROR_TRANSLATIONS,
 };
