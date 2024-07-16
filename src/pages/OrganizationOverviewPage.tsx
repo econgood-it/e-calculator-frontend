@@ -17,15 +17,28 @@ import {
   makeWretchInstanceWithAuth,
 } from '../api/api.client.ts';
 import { API_URL } from '../configuration.ts';
+import { OrganizationInvitations } from '../components/organization/OrganizationInvitations.tsx';
 
 export function OrganizationOverviewPage() {
   const organization = useLoaderData<typeof loader>();
   const submit = useSubmit();
   async function onOrganizationSave(organization: OrganizationRequestBody) {
-    submit(organization, {
-      method: 'put',
-      encType: 'application/json',
-    });
+    submit(
+      { ...organization, intent: 'update' },
+      {
+        method: 'put',
+        encType: 'application/json',
+      }
+    );
+  }
+  async function onInvitation(email: string) {
+    submit(
+      { email, intent: 'invite' },
+      {
+        method: 'put',
+        encType: 'application/json',
+      }
+    );
   }
   return (
     <>
@@ -45,6 +58,14 @@ export function OrganizationOverviewPage() {
         </GridItem>
         <GridItem xs={12}>
           <BalanceSheetList />
+        </GridItem>
+        <GridItem xs={12}>
+          {organization?.invitations && (
+            <OrganizationInvitations
+              invitations={organization.invitations}
+              onInvitation={onInvitation}
+            />
+          )}
         </GridItem>
       </GridContainer>
     </>
@@ -69,7 +90,7 @@ export async function action(
   { params, request }: ActionFunctionArgs,
   handlerCtx: unknown
 ) {
-  const data = await request.json();
+  const { intent, ...data } = await request.json();
   const { userData } = handlerCtx as { userData: User };
   if (!params.orgaId || !userData) {
     return null;
@@ -77,6 +98,14 @@ export async function action(
   const apiClient = createApiClient(
     makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
   );
-  await apiClient.updateOrganization(Number.parseInt(params.orgaId), data);
+  if (intent === 'invite') {
+    await apiClient.inviteUserToOrganization(
+      Number.parseInt(params.orgaId),
+      data.email
+    );
+  } else if (intent === 'update') {
+    await apiClient.updateOrganization(Number.parseInt(params.orgaId), data);
+  }
+
   return null;
 }

@@ -68,13 +68,52 @@ describe('OrganizationOverviewPage', () => {
     const nameField = await screen.findByLabelText(/Organization name/);
     await user.clear(nameField);
     await user.type(nameField, newName);
-    const saveButton = screen.getByRole('button', { name: 'Save' });
+    const saveButton = screen.getAllByRole('button', { name: 'Save' })[0];
     await user.click(saveButton);
 
     await waitFor(() =>
       expect(action).toHaveBeenCalledWith({
         ...organizationMockBuilder.withId(3).buildRequestBody(),
         name: newName,
+        intent: 'update',
+      })
+    );
+  });
+
+  it('renders invitations and updates on save', async () => {
+    const action = vi.fn().mockResolvedValue(null);
+    const path = '/organization/3/invitation';
+    const invitations = ['invitation1@example.com', 'invitation2@example.com'];
+    const organization = {
+      ...organizationMockBuilder.withId(3).build(),
+      invitations,
+    };
+    const router = createMemoryRouter(
+      [
+        {
+          path: path,
+          element: <OrganizationOverviewPage />,
+          loader: () => organization,
+          action: async ({ request }: ActionFunctionArgs) =>
+            action(await request.json()),
+        },
+      ],
+      { initialEntries: [path] }
+    );
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
+    for (const invitation of invitations) {
+      expect(await screen.findByText(invitation)).toBeInTheDocument();
+    }
+    const email = 'invite@example.com';
+    const emailField = await screen.findByLabelText(/Email/);
+    await user.type(emailField, email);
+    const saveButton = screen.getAllByRole('button', { name: 'Save' })[1];
+    await user.click(saveButton);
+
+    await waitFor(() =>
+      expect(action).toHaveBeenCalledWith({
+        email,
+        intent: 'invite',
       })
     );
   });
@@ -161,7 +200,7 @@ describe('loader', () => {
   });
 });
 
-describe('action', () => {
+describe('actions', () => {
   it('updates organization', async () => {
     const organization = {
       ...new OrganizationMockBuilder().withId(3).build(),
@@ -169,7 +208,7 @@ describe('action', () => {
     };
     const request = new Request(new URL('', 'http://localhost'), {
       method: 'put',
-      body: JSON.stringify(organization),
+      body: JSON.stringify({ ...organization, intent: 'update' }),
     });
     const response = new OrganizationMockBuilder().withId(3).build();
     mockApi.updateOrganization.mockResolvedValue(response);
@@ -178,5 +217,21 @@ describe('action', () => {
       { userData: { access_token: 'token' } }
     );
     expect(mockApi.updateOrganization).toHaveBeenCalledWith(3, organization);
+  });
+  it('invites user via email', async () => {
+    const emailToInvite = 'invite@example.com';
+    const request = new Request(new URL('http://localhost'), {
+      method: 'put',
+      body: JSON.stringify({ email: emailToInvite, intent: 'invite' }),
+    });
+    mockApi.inviteUserToOrganization.mockResolvedValue({ status: 200 });
+    await action(
+      { params: { orgaId: '3' }, request },
+      { userData: { access_token: 'token' } }
+    );
+    expect(mockApi.inviteUserToOrganization).toHaveBeenCalledWith(
+      3,
+      emailToInvite
+    );
   });
 });

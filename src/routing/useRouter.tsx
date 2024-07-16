@@ -23,11 +23,6 @@ import { RequiresAuth } from './RequiresAuth';
 import { BalanceSheetOverviewPage } from '../pages/BalanceSheetOverviewPage';
 import { BalanceSheetSettingsPage } from '../pages/BalanceSheetSettingsPage';
 import { useAuth } from 'oidc-react';
-import {
-  action as invitationAction,
-  InvitationOverviewPage,
-  loader as invitationLoader,
-} from '../pages/InvitationOverviewPage';
 import { Alert, AlertTitle } from '@mui/material';
 import { Trans } from 'react-i18next';
 
@@ -72,12 +67,6 @@ export function useRouter() {
                     element: <OrganizationOverviewPage />,
                     loader: orgaLoader,
                     action: orgaAction,
-                  },
-                  {
-                    path: 'invitation',
-                    element: <InvitationOverviewPage />,
-                    loader: invitationLoader,
-                    action: invitationAction,
                     errorElement: <ErrorPage />,
                   },
                   {
