@@ -6,7 +6,7 @@ import { FieldValues, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { FormTextField } from '../balanceSheet/forms/FormTextField.tsx';
-import { SaveButton } from '../balanceSheet/forms/SaveButton.tsx';
+import { SaveButton } from '../buttons/SaveButton.tsx';
 
 const FormInputSchema = z.object({
   email: z.string().email(),
@@ -54,7 +54,11 @@ export function OrganizationInvitations({
             />
           </GridItem>
           <GridItem xs={6}>
-            <SaveButton handleSubmit={handleSubmit} onSaveClick={onInvite} />
+            <SaveButton
+              label={<Trans>Invite</Trans>}
+              handleSubmit={handleSubmit}
+              onSaveClick={onInvite}
+            />
           </GridItem>
         </GridContainer>
       </GridItem>

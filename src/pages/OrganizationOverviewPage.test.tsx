@@ -68,7 +68,7 @@ describe('OrganizationOverviewPage', () => {
     const nameField = await screen.findByLabelText(/Organization name/);
     await user.clear(nameField);
     await user.type(nameField, newName);
-    const saveButton = screen.getAllByRole('button', { name: 'Save' })[0];
+    const saveButton = screen.getByRole('button', { name: 'Save' });
     await user.click(saveButton);
 
     await waitFor(() =>
@@ -107,7 +107,7 @@ describe('OrganizationOverviewPage', () => {
     const email = 'invite@example.com';
     const emailField = await screen.findByLabelText(/Email/);
     await user.type(emailField, email);
-    const saveButton = screen.getAllByRole('button', { name: 'Save' })[1];
+    const saveButton = screen.getByRole('button', { name: 'Invite' });
     await user.click(saveButton);
 
     await waitFor(() =>

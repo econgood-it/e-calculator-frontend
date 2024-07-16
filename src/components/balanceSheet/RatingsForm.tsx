@@ -17,7 +17,7 @@ import {
   MenuItem,
   Typography,
 } from '@mui/material';
-import { SaveButton } from './forms/SaveButton';
+import { SaveButton } from '../buttons/SaveButton.tsx';
 import { useActiveBalanceSheet } from '../../contexts/ActiveBalanceSheetProvider';
 import { Fragment, useEffect, useRef } from 'react';
 import { Rating } from '../../models/Rating';

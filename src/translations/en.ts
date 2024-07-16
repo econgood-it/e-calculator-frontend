@@ -80,6 +80,9 @@ const EN_WORDS = [
   'Weight',
   'Points',
   'Settings',
+  'Following error occured',
+  'Invitation failed',
+  'Invite',
 ];
 
 export const EN_TRANSLATIONS = {

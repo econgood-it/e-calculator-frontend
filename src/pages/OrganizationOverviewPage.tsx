@@ -7,6 +7,7 @@ import { OrganizationRequestBody } from '../models/Organization';
 import { BalanceSheetList } from '../components/balanceSheet/BalanceSheetList.tsx';
 import {
   ActionFunctionArgs,
+  json,
   LoaderFunctionArgs,
   useSubmit,
 } from 'react-router-dom';
@@ -103,9 +104,11 @@ export async function action(
       Number.parseInt(params.orgaId),
       data.email
     );
+    return { ok: true };
   } else if (intent === 'update') {
     await apiClient.updateOrganization(Number.parseInt(params.orgaId), data);
+    return { ok: true };
   }
 
-  return null;
+  throw json({ message: 'Invalid intent' }, { status: 400 });
 }

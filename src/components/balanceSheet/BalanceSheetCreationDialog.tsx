@@ -5,7 +5,7 @@ import GridContainer, { FormContainer } from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
 import { z } from 'zod';
 import { FieldValues, useForm } from 'react-hook-form';
-import { SaveButton } from './forms/SaveButton';
+import { SaveButton } from '../buttons/SaveButton.tsx';
 import { BalanceSheetCreateRequestBody } from '../../models/BalanceSheet';
 import { BalanceSheetCreateRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { ReactHookFormSelect } from '../lib/ReactHookFormSelect';

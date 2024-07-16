@@ -7,7 +7,7 @@ import { FieldValues, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
-import { SaveButton } from '../forms/SaveButton';
+import { SaveButton } from '../../buttons/SaveButton.tsx';
 
 import { DEFAULT_CODE, IndustrySelect } from './AutocompleteSelects';
 import SwitchLabel from '../forms/SwitchLabel';

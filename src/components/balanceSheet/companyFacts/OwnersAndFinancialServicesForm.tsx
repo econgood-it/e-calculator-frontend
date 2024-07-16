@@ -6,7 +6,7 @@ import { FieldValues, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
-import { SaveButton } from '../forms/SaveButton';
+import { SaveButton } from '../../buttons/SaveButton.tsx';
 import { FormTitle } from './FormTitle';
 import { CompanyFactsResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
 

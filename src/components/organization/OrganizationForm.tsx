@@ -3,7 +3,7 @@ import { OrganizationRequestBody } from '../../models/Organization';
 import { FieldValues, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { SaveButton } from '../balanceSheet/forms/SaveButton';
+import { SaveButton } from '../buttons/SaveButton.tsx';
 import { FormContainer } from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
 import { FormTextField } from '../balanceSheet/forms/FormTextField';

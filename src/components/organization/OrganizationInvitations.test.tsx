@@ -61,7 +61,7 @@ describe('OrganizationInvitations', () => {
     const email = 'user@example.com';
     await user.type(emailField, email);
     expect(emailField).toHaveValue(email);
-    const inviteButton = screen.getByRole('button', { name: /Save/ });
+    const inviteButton = screen.getByRole('button', { name: /Invite/ });
     await user.click(inviteButton);
     expect(onInvitation).toHaveBeenCalledWith(email);
   });

@@ -8,14 +8,20 @@ import {
   SubmitHandler,
   UseFormHandleSubmit,
 } from 'react-hook-form';
-import { useAlert } from '../../../contexts/AlertContext';
+import { useAlert } from '../../contexts/AlertContext.tsx';
+import React from 'react';
 
 type SaveButtonProps = {
   handleSubmit: UseFormHandleSubmit<FieldValues>;
   onSaveClick: SubmitHandler<FieldValues>;
+  label?: React.ReactNode;
 };
 
-export function SaveButton({ onSaveClick, handleSubmit }: SaveButtonProps) {
+export function SaveButton({
+  onSaveClick,
+  handleSubmit,
+  label,
+}: SaveButtonProps) {
   const { addErrorAlert } = useAlert();
   const { t } = useTranslation();
   return (
@@ -28,7 +34,7 @@ export function SaveButton({ onSaveClick, handleSubmit }: SaveButtonProps) {
       variant={'contained'}
       startIcon={<FontAwesomeIcon icon={faSave} />}
     >
-      <Trans>Save</Trans>
+      {label ? label : <Trans>Save</Trans>}
     </Button>
   );
 }

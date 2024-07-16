@@ -13,7 +13,7 @@ import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvi
 import SwitchLabel from '../forms/SwitchLabel';
 
 import { DEFAULT_CODE, RegionSelect } from './AutocompleteSelects';
-import { SaveButton } from '../forms/SaveButton';
+import { SaveButton } from '../../buttons/SaveButton.tsx';
 import { FormTitle } from './FormTitle';
 import { FieldArrayAppendButton } from '../forms/FieldArrayAppendButton';
 import { FieldArrayRemoveButton } from '../forms/FieldArrayRemoveButton';
