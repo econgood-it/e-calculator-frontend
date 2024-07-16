@@ -93,5 +93,6 @@ export const DE_TRANSLATIONS = {
   'Following error occured': 'Folgender Fehler ist aufgetreten',
   'Invitation failed': 'Einladung fehlgeschlagen',
   Invite: 'Einladen',
+  Invitations: 'Einladungen',
   ...DE_ERROR_TRANSLATIONS,
 };

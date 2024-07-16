@@ -83,6 +83,7 @@ const EN_WORDS = [
   'Following error occured',
   'Invitation failed',
   'Invite',
+  'Invitations',
 ];
 
 export const EN_TRANSLATIONS = {
