@@ -19,7 +19,7 @@ import {
 } from '@mui/material';
 import { SaveButton } from '../buttons/SaveButton.tsx';
 import { useActiveBalanceSheet } from '../../contexts/ActiveBalanceSheetProvider';
-import { Fragment, useEffect, useRef } from 'react';
+import { Fragment } from 'react';
 import { Rating } from '../../models/Rating';
 import {
   RatingResponseBodySchema,
@@ -38,7 +38,6 @@ import { Trans } from 'react-i18next';
 
 type RatingsFormProps = {
   ratings: Rating[];
-  stakeholderName: string;
 };
 
 const RatingsFormSchema = z.object({
@@ -46,24 +45,16 @@ const RatingsFormSchema = z.object({
 });
 type RatingsFormInput = z.infer<typeof RatingsFormSchema>;
 
-export function RatingsForm({ ratings, stakeholderName }: RatingsFormProps) {
+export function RatingsForm({ ratings }: RatingsFormProps) {
   const { updateRatings } = useActiveBalanceSheet();
   const workbook = useWorkbook();
 
-  const stakeholderRef = useRef(stakeholderName);
-  const { control, handleSubmit, reset } = useForm<RatingsFormInput>({
+  const { control, handleSubmit } = useForm<RatingsFormInput>({
     resolver: zodResolver(RatingsFormSchema),
     mode: 'onChange',
     defaultValues: { ratings: ratings },
     values: { ratings: ratings },
   });
-
-  useEffect(() => {
-    if (stakeholderRef.current !== stakeholderName) {
-      reset({ ratings: ratings });
-      stakeholderRef.current = stakeholderName;
-    }
-  }, [reset, ratings, stakeholderRef, stakeholderName]);
 
   const fieldArrayName = 'ratings';
   const { fields: ratingsFields } = useFieldArray<RatingsFormInput>({

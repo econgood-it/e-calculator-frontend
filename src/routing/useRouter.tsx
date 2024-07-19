@@ -4,8 +4,7 @@ import {
   Outlet,
   useRouteError,
 } from 'react-router-dom';
-import RatingsPage from '../pages/RatingsPage';
-import { StakholderShortNames } from '../models/Rating';
+import RatingsPage, { loader as ratinsLoader } from '../pages/RatingsPage';
 
 import Sidebar from '../pages/Sidebar';
 import {
@@ -18,6 +17,7 @@ import {
   loader as profileLoader,
   ProfilePage,
 } from '../pages/ProfilePage';
+
 import {
   BalanceSheetOverviewPage,
   loader as matrixLoader,
@@ -110,53 +110,28 @@ export function useRouter() {
                         children: [
                           {
                             path: 'suppliers',
-                            element: (
-                              <RatingsPage
-                                stakeholderToFilterBy={
-                                  StakholderShortNames.Suppliers
-                                }
-                              />
-                            ),
+                            element: <RatingsPage />,
+                            loader: ratinsLoader,
                           },
                           {
                             path: 'finance',
-                            element: (
-                              <RatingsPage
-                                stakeholderToFilterBy={
-                                  StakholderShortNames.Finance
-                                }
-                              />
-                            ),
+                            element: <RatingsPage />,
+                            loader: ratinsLoader,
                           },
                           {
                             path: 'employees',
-                            element: (
-                              <RatingsPage
-                                stakeholderToFilterBy={
-                                  StakholderShortNames.Employees
-                                }
-                              />
-                            ),
+                            element: <RatingsPage />,
+                            loader: ratinsLoader,
                           },
                           {
                             path: 'customers',
-                            element: (
-                              <RatingsPage
-                                stakeholderToFilterBy={
-                                  StakholderShortNames.Customers
-                                }
-                              />
-                            ),
+                            element: <RatingsPage />,
+                            loader: ratinsLoader,
                           },
                           {
                             path: 'society',
-                            element: (
-                              <RatingsPage
-                                stakeholderToFilterBy={
-                                  StakholderShortNames.Society
-                                }
-                              />
-                            ),
+                            element: <RatingsPage />,
+                            loader: ratinsLoader,
                           },
                         ],
                       },

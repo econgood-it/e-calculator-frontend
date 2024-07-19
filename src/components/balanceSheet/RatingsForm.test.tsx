@@ -39,7 +39,7 @@ describe('RatingsForm', () => {
 
   it('should render aspects', async () => {
     const ratings = new RatingsMockBuilder().build();
-    renderWithTheme(<RatingsForm stakeholderName={''} ratings={ratings} />);
+    renderWithTheme(<RatingsForm ratings={ratings} />);
     for (const [index, rating] of ratings.entries()) {
       if (rating.type === RatingType.aspect) {
         expect(
@@ -50,14 +50,11 @@ describe('RatingsForm', () => {
         ).toBeInTheDocument();
       }
     }
-
   });
 
   it.skip('should show workbook tooltip', async () => {
     const ratings = new RatingsMockBuilder().build();
-    const { user } = renderWithTheme(
-      <RatingsForm stakeholderName={''} ratings={ratings} />
-    );
+    const { user } = renderWithTheme(<RatingsForm ratings={ratings} />);
     const infoIcons = screen.getAllByLabelText('info');
     const workbook = new Workbook(WorkbookResponseMocks.default());
     expect(infoIcons).toHaveLength(2);
@@ -70,7 +67,7 @@ describe('RatingsForm', () => {
   it('should modify and save estimations of some ratings', async () => {
     const user = userEvent.setup();
     const ratings = new RatingsMockBuilder().build();
-    renderWithTheme(<RatingsForm stakeholderName={''} ratings={ratings} />);
+    renderWithTheme(<RatingsForm ratings={ratings} />);
     const positiveRating = screen.getByLabelText(`ratings.${1}.estimations`);
     fireEvent.click(within(positiveRating).getByLabelText('4 Stars'));
 
@@ -90,9 +87,7 @@ describe('RatingsForm', () => {
 
   it('should modify and save isWeightSelectedByUser of some ratings', async () => {
     const ratings = new RatingsMockBuilder().build();
-    const { user } = renderWithTheme(
-      <RatingsForm stakeholderName={''} ratings={ratings} />
-    );
+    const { user } = renderWithTheme(<RatingsForm ratings={ratings} />);
     await user.click(
       screen.getByLabelText(`ratings.${0}.isWeightSelectedByUser`)
     );
@@ -107,9 +102,7 @@ describe('RatingsForm', () => {
 
   it('should modify weight of some ratings', async () => {
     const ratings = new RatingsMockBuilder().build();
-    const { user } = renderWithTheme(
-      <RatingsForm stakeholderName={''} ratings={ratings} />
-    );
+    const { user } = renderWithTheme(<RatingsForm ratings={ratings} />);
     await user.click(
       screen.getByLabelText(`ratings.${0}.isWeightSelectedByUser`)
     );
@@ -147,10 +140,7 @@ describe('RatingsForm', () => {
     return (
       <>
         <Button onClick={() => setSwitchToB(true)}>Switch B</Button>
-        <RatingsForm
-          stakeholderName={switchToB ? 'B' : 'A'}
-          ratings={switchToB ? ratingsB : ratingsA}
-        />
+        <RatingsForm ratings={switchToB ? ratingsB : ratingsA} />
       </>
     );
   }
