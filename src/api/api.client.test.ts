@@ -98,6 +98,20 @@ describe('ApiClient', () => {
       expect(response).toEqual(invitations);
       await requestPromise;
     });
+    it('should let the user join the organization', async () => {
+      const organizationId = 3;
+      const organization = new OrganizationMockBuilder()
+        .withId(organizationId)
+        .build();
+      const requestPromise = mockResource(
+        'patch',
+        `${URL}/v1/user/me/invitation/${organizationId}`,
+        new Response(JSON.stringify(organization))
+      );
+      const response = await apiClient.joinOrganization(organizationId);
+      expect(response).toEqual(response);
+      await requestPromise;
+    });
   });
 
   describe('Organization', () => {

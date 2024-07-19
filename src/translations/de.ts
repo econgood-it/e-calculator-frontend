@@ -94,5 +94,8 @@ export const DE_TRANSLATIONS = {
   'Invitation failed': 'Einladung fehlgeschlagen',
   Invite: 'Einladen',
   Invitations: 'Einladungen',
+  'You were invited to the following organizations':
+    'Sie wurden zu folgenden Organisationen eingeladen',
+  Join: 'Beitreten',
   ...DE_ERROR_TRANSLATIONS,
 };

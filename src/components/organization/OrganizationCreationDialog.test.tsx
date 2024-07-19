@@ -1,4 +1,3 @@
-
 import renderWithTheme from '../../testUtils/rendering';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -7,7 +6,7 @@ import { OrganizationCreationDialog } from './OrganizationCreationDialog';
 import { OrganizationMockBuilder } from '../../testUtils/organization';
 import { useOrganizations } from '../../contexts/OrganizationProvider';
 import { useAuth } from 'oidc-react';
-import {beforeEach, describe, expect, it, Mock, vi} from "vitest";
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 
 vi.mock('../../contexts/AlertContext');
 vi.mock('../../contexts/OrganizationProvider');
@@ -26,9 +25,7 @@ describe('OrganizationCreationDialog', () => {
   beforeEach(() => {
     (useAuth as Mock).mockReturnValue({ signOutRedirect: logoutMock });
     (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
-    (useOrganizations as Mock).mockImplementation(
-      () => useOrganizationMock
-    );
+    (useOrganizations as Mock).mockImplementation(() => useOrganizationMock);
   });
 
   it('should call create organization api endpoint on submit', async () => {
@@ -88,7 +85,7 @@ describe('OrganizationCreationDialog', () => {
     expect(screen.queryByLabelText('Close dialog')).not.toBeInTheDocument();
   });
 
-  it('should call logout when logout is clicked', async () => {
+  it('should open user navigation menu on click', async () => {
     const setOpen = vi.fn();
     const { user } = renderWithTheme(
       <OrganizationCreationDialog
@@ -97,8 +94,12 @@ describe('OrganizationCreationDialog', () => {
         fullScreen={true}
       />
     );
-    await user.click(screen.getByLabelText('logout'));
-
+    const openUserMenu = await screen.findByLabelText(
+      'Open user navigation menu'
+    );
+    await user.click(openUserMenu);
+    expect(screen.queryByText('Profile')).not.toBeInTheDocument();
+    await user.click(await screen.findByText('Logout'));
     expect(logoutMock).toHaveBeenCalledWith();
   });
 });

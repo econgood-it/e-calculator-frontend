@@ -13,6 +13,11 @@ import {
   loader as orgaLoader,
   OrganizationOverviewPage,
 } from '../pages/OrganizationOverviewPage';
+import {
+  action as profileAction,
+  loader as profileLoader,
+  ProfilePage,
+} from '../pages/ProfilePage';
 import WithActiveBalanceSheet from '../components/balanceSheet/WithActiveBalanceSheet';
 import CompanyFactsPage from '../pages/CompanyFactsPage';
 import { RedirectToActiveOrganization } from './RedirectToActiveOrganization';
@@ -57,17 +62,23 @@ export function useRouter() {
               </OrganizationProvider>
             ),
             children: [
-              { path: '/', element: <RedirectToActiveOrganization /> },
               {
-                path: '/organization/:orgaId',
+                path: '/',
                 element: <Sidebar />,
+                errorElement: <ErrorPage />,
                 children: [
+                  { index: true, element: <RedirectToActiveOrganization /> },
                   {
-                    index: true,
+                    path: '/profile',
+                    element: <ProfilePage />,
+                    loader: profileLoader,
+                    action: profileAction,
+                  },
+                  {
+                    path: '/organization/:orgaId',
                     element: <OrganizationOverviewPage />,
                     loader: orgaLoader,
                     action: orgaAction,
-                    errorElement: <ErrorPage />,
                   },
                   {
                     path: 'balancesheet/:balanceSheetId',

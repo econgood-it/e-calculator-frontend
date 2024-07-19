@@ -84,6 +84,8 @@ const EN_WORDS = [
   'Invitation failed',
   'Invite',
   'Invitations',
+  'You were invited to the following organizations',
+  'Join',
 ];
 
 export const EN_TRANSLATIONS = {

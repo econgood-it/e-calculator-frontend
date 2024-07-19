@@ -195,7 +195,29 @@ describe('Sidebar', () => {
 
     const { user } = renderWithTheme(<RouterProvider router={router} />);
 
-    await user.click(screen.getByLabelText('logout'));
+    await user.click(screen.getByLabelText('Open user navigation menu'));
+    await user.click(await screen.getByText('Logout'));
     expect(logoutMock).toHaveBeenCalledWith();
+  });
+
+  it('should redirect to profile', async () => {
+    const orgaItemToSelect = OrganizationItemsMocks.default()[1];
+    const initialPath = `/organization/${orgaItemToSelect.id}`;
+    const router = createMemoryRouter(
+      [
+        {
+          path: initialPath,
+          element: <Sidebar />,
+        },
+        { path: 'profile', element: <div>Profile</div> },
+      ],
+      { initialEntries: [initialPath] }
+    );
+
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
+
+    await user.click(screen.getByLabelText('Open user navigation menu'));
+    await user.click(await screen.getByText('Profile'));
+    expect(await screen.findByText('Profile')).toBeInTheDocument();
   });
 });

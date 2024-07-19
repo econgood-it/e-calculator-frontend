@@ -1,15 +1,16 @@
 import IconButton from '@mui/material/IconButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faArrowRightFromBracket,
-  faBars,
-} from '@fortawesome/free-solid-svg-icons';
+import { faBars, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Trans } from 'react-i18next';
-import { AppBar, Tooltip, useTheme } from '@mui/material';
+import { AppBar, Popover, useTheme } from '@mui/material';
 import styled from 'styled-components';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useAuth } from 'oidc-react';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+import { MouseEvent, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const FixedAppBar = styled(AppBar)`
   z-index: ${(props) => props.theme.zIndex.drawer + 1};
@@ -17,7 +18,7 @@ const FixedAppBar = styled(AppBar)`
 `;
 
 const StyledToolbar = styled(Toolbar)`
-  padding-left: 0px;
+  padding-left: 0;
 `;
 
 const ApplicationName = styled(Typography)`
@@ -26,11 +27,27 @@ const ApplicationName = styled(Typography)`
 
 type FixedToolbarProps = {
   onToogleSidebar?: () => void;
+  showCompleteUserMenu: boolean;
 };
 
-export function FixedToolbar({ onToogleSidebar }: FixedToolbarProps) {
+export function FixedToolbar({
+  onToogleSidebar,
+  showCompleteUserMenu,
+}: FixedToolbarProps) {
   const theme = useTheme();
   const { signOutRedirect } = useAuth();
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+  const openUserNavigationMenu = (event: MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const closeOpenUserNavigationMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
 
   async function onLogoutClicked() {
     await signOutRedirect();
@@ -55,14 +72,40 @@ export function FixedToolbar({ onToogleSidebar }: FixedToolbarProps) {
         >
           <Trans>ECG Calculator</Trans>
         </ApplicationName>
-        <Tooltip title="Logout">
-          <IconButton aria-label="logout" onClick={onLogoutClicked}>
-            <FontAwesomeIcon
-              color={theme.palette.primary.contrastText}
-              icon={faArrowRightFromBracket}
-            />
-          </IconButton>
-        </Tooltip>
+        <IconButton
+          aria-label="Open user navigation menu"
+          onClick={openUserNavigationMenu}
+        >
+          <FontAwesomeIcon
+            color={theme.palette.primary.contrastText}
+            icon={faUser}
+          />
+        </IconButton>
+        <Popover
+          id={id}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={closeOpenUserNavigationMenu}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+        >
+          <List>
+            {showCompleteUserMenu && (
+              <ListItemButton to={'/profile'} component={Link}>
+                <Trans>Profile</Trans>
+              </ListItemButton>
+            )}
+            <ListItemButton onClick={onLogoutClicked}>
+              <Trans>Logout</Trans>
+            </ListItemButton>
+          </List>
+        </Popover>
       </StyledToolbar>
     </FixedAppBar>
   );

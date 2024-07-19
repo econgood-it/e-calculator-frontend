@@ -31,7 +31,10 @@ export default function Sidebar() {
 
   return (
     <>
-      <FixedToolbar onToogleSidebar={toogleSidebar} />
+      <FixedToolbar
+        onToogleSidebar={toogleSidebar}
+        showCompleteUserMenu={true}
+      />
       <DrawerWithFixedWidth
         variant="persistent"
         anchor="left"

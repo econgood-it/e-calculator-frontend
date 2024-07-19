@@ -101,6 +101,14 @@ export class ApiClient {
     return UserInvitationResponseSchema.array().parse(await response.json());
   }
 
+  async joinOrganization(organizationId: number): Promise<Organization> {
+    const response = await this.wretchInstance.patch(
+      {},
+      `/user/me/invitation/${organizationId}`
+    );
+    return OrganizationResponseSchema.parse(await response.json());
+  }
+
   async getRegions(): Promise<Region[]> {
     const response = await this.wretchInstance.get('/regions');
     return RegionResponseBodySchema.array().parse(await response.json());

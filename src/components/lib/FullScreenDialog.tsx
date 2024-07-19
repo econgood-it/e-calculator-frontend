@@ -6,7 +6,7 @@ export function FullScreenDialog({ children, open }: DialogProps) {
   return (
     <>
       <Dialog fullScreen onClose={() => {}} open={open}>
-        <FixedToolbar />
+        <FixedToolbar showCompleteUserMenu={false} />
         <Toolbar />
         {children}
       </Dialog>
