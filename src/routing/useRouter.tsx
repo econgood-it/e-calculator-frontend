@@ -18,6 +18,10 @@ import {
   loader as profileLoader,
   ProfilePage,
 } from '../pages/ProfilePage';
+import {
+  BalanceSheetOverviewPage,
+  loader as matrixLoader,
+} from '../pages/BalanceSheetOverviewPage';
 import WithActiveBalanceSheet from '../components/balanceSheet/WithActiveBalanceSheet';
 import CompanyFactsPage from '../pages/CompanyFactsPage';
 import { RedirectToActiveOrganization } from './RedirectToActiveOrganization';
@@ -25,7 +29,6 @@ import { RequireActiveOrganization } from './RequireActiveOrganization';
 import { OrganizationProvider } from '../contexts/OrganizationProvider';
 import { BalanceSheetListProvider } from '../contexts/BalanceSheetListProvider';
 import { RequiresAuth } from './RequiresAuth';
-import { BalanceSheetOverviewPage } from '../pages/BalanceSheetOverviewPage';
 import { BalanceSheetSettingsPage } from '../pages/BalanceSheetSettingsPage';
 import { useAuth } from 'oidc-react';
 import { Alert, AlertTitle } from '@mui/material';
@@ -87,6 +90,7 @@ export function useRouter() {
                       {
                         path: 'overview',
                         element: <BalanceSheetOverviewPage />,
+                        loader: matrixLoader,
                       },
                       {
                         path: 'settings',

@@ -1,43 +1,54 @@
 import renderWithTheme from '../testUtils/rendering';
-import { useAlert } from '../contexts/AlertContext';
 import { BalanceSheetOverviewPage } from './BalanceSheetOverviewPage';
-import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
-import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets';
-import { useApi } from '../contexts/ApiProvider';
 import { MatrixMockBuilder } from '../testUtils/matrix';
-import { screen, waitFor } from '@testing-library/react';
-import {beforeEach, describe, expect, it, Mock, vi} from "vitest";
-vi.mock('../contexts/AlertContext');
-vi.mock('../contexts/ApiProvider');
-vi.mock('../contexts/ActiveBalanceSheetProvider');
+import { screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { loader } from './BalanceSheetOverviewPage.tsx';
+import { setupApiMock } from '../testUtils/api.ts';
+import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 
 describe('BalanceSheetOverviewPage', () => {
-  const mockedBalanceSheet = new BalanceSheetMockBuilder().build();
-  const apiMock = {
-    getBalanceSheetAsMatrix: vi.fn(),
-  };
-  beforeEach(() => {
-    (useAlert as Mock).mockReturnValue({
-      addErrorAlert: vi.fn(),
-      addSuccessAlert: vi.fn(),
-    });
-    (useActiveBalanceSheet as Mock).mockReturnValue({
-      balanceSheet: mockedBalanceSheet,
-    });
-    (useApi as Mock).mockImplementation(() => apiMock);
-  });
-
-  it('renders', async () => {
+  it('renders overview page', async () => {
     const mockedMatrix = new MatrixMockBuilder().build();
-    apiMock.getBalanceSheetAsMatrix.mockReturnValue(mockedMatrix);
-    renderWithTheme(<BalanceSheetOverviewPage />);
-    await waitFor(() =>
-      expect(apiMock.getBalanceSheetAsMatrix).toHaveBeenCalledWith(
-        mockedBalanceSheet.id
-      )
+    const router = createMemoryRouter(
+      [
+        {
+          path: '/balancesheet/1/overview',
+          element: <BalanceSheetOverviewPage />,
+          loader: () => mockedMatrix,
+        },
+      ],
+      { initialEntries: ['/balancesheet/1/overview'] }
     );
+    renderWithTheme(<RouterProvider router={router} />);
     for (const rating of mockedMatrix.ratings) {
       expect(await screen.findByText(rating.shortName)).toBeInTheDocument();
     }
+  });
+});
+
+const mockApi = setupApiMock();
+
+vi.mock('../api/api.client.ts', async () => {
+  const originalModule = await vi.importActual('../api/api.client.ts');
+  return {
+    ...originalModule,
+    createApiClient: () => mockApi,
+  };
+});
+
+describe('loader', () => {
+  it('loads balance sheet', async () => {
+    const response = new MatrixMockBuilder().build();
+    mockApi.getBalanceSheetAsMatrix.mockResolvedValue(response);
+    const result = await loader(
+      {
+        params: { balanceSheetId: '3' },
+        request: new Request(new URL('http://localhost')),
+      },
+      { userData: { access_token: 'token' } }
+    );
+    expect(result).toEqual(response);
+    expect(mockApi.getBalanceSheetAsMatrix).toHaveBeenCalledWith(3);
   });
 });
