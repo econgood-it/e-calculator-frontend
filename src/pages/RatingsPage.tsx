@@ -1,6 +1,10 @@
 import { RatingsForm } from '../components/balanceSheet/RatingsForm';
 import { Rating, StakholderShortNames } from '../models/Rating';
-import { LoaderFunctionArgs } from 'react-router-dom';
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  useSubmit,
+} from 'react-router-dom';
 import { User } from 'oidc-react';
 import {
   createApiClient,
@@ -11,8 +15,18 @@ import { useLoaderData } from 'react-router-typesafe';
 
 const RatingsPage = () => {
   const ratings = useLoaderData<typeof loader>();
+  const submit = useSubmit();
+  async function onRatingsChange(ratings: Rating[]) {
+    submit({ ratings }, { method: 'patch', encType: 'application/json' });
+  }
 
-  return <>{ratings && <RatingsForm ratings={ratings} />}</>;
+  return (
+    <>
+      {ratings && (
+        <RatingsForm ratings={ratings} onRatingsChange={onRatingsChange} />
+      )}
+    </>
+  );
 };
 
 export default RatingsPage;
@@ -45,4 +59,26 @@ export async function loader(
   return balanceSheet.ratings.filter((rating: Rating) =>
     rating.shortName.startsWith(pathMap[lastSegment])
   );
+}
+
+export async function action(
+  { params, request }: ActionFunctionArgs,
+  handlerCtx: unknown
+) {
+  const data = await request.json();
+  const { userData } = handlerCtx as { userData: User };
+  if (!userData) {
+    return null;
+  }
+
+  const apiClient = createApiClient(
+    makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
+  );
+  return await apiClient.updateBalanceSheet(Number(params.balanceSheetId), {
+    ratings: data.ratings.map((r: Rating) => ({
+      shortName: r.shortName,
+      estimations: r.estimations,
+      weight: r.isWeightSelectedByUser ? r.weight : undefined,
+    })),
+  });
 }

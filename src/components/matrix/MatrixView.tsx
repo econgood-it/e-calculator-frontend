@@ -23,8 +23,8 @@ type MatrixViewProps = {
 export function MatrixView({ matrix }: MatrixViewProps) {
   return (
     <GridContainer spacing={3}>
-      {matrix.ratings.map((r, index) => (
-        <GridItem key={index} xs={12} sm={3}>
+      {matrix.ratings.map((r) => (
+        <GridItem key={r.shortName} xs={12} sm={3}>
           <MatrixRatingView matrixRating={r} />
         </GridItem>
       ))}

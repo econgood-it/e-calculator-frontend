@@ -1,5 +1,4 @@
 import { useAlert } from '../../contexts/AlertContext';
-import { useActiveBalanceSheet } from '../../contexts/ActiveBalanceSheetProvider';
 import renderWithTheme from '../../testUtils/rendering';
 import { RatingsForm } from './RatingsForm';
 import { RatingsMockBuilder } from '../../testUtils/balanceSheets';
@@ -17,20 +16,15 @@ import { Workbook } from '../../models/Workbook';
 import { WEIGHT_VALUES } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 
-vi.mock('../../contexts/ActiveBalanceSheetProvider');
 vi.mock('../../contexts/AlertContext');
 vi.mock('../../contexts/WorkbookProvider');
 
 describe('RatingsForm', () => {
-  const updateRatings = vi.fn();
   beforeEach(() => {
     (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
     (useWorkbook as Mock).mockReturnValue(
       new Workbook(WorkbookResponseMocks.default())
     );
-    (useActiveBalanceSheet as Mock).mockReturnValue({
-      updateRatings: updateRatings,
-    });
   });
 
   afterEach(() => {
@@ -39,7 +33,10 @@ describe('RatingsForm', () => {
 
   it('should render aspects', async () => {
     const ratings = new RatingsMockBuilder().build();
-    renderWithTheme(<RatingsForm ratings={ratings} />);
+    const onRatingsChange = vi.fn();
+    renderWithTheme(
+      <RatingsForm ratings={ratings} onRatingsChange={onRatingsChange} />
+    );
     for (const [index, rating] of ratings.entries()) {
       if (rating.type === RatingType.aspect) {
         expect(
@@ -54,7 +51,10 @@ describe('RatingsForm', () => {
 
   it.skip('should show workbook tooltip', async () => {
     const ratings = new RatingsMockBuilder().build();
-    const { user } = renderWithTheme(<RatingsForm ratings={ratings} />);
+    const onRatingsChange = vi.fn();
+    const { user } = renderWithTheme(
+      <RatingsForm ratings={ratings} onRatingsChange={onRatingsChange} />
+    );
     const infoIcons = screen.getAllByLabelText('info');
     const workbook = new Workbook(WorkbookResponseMocks.default());
     expect(infoIcons).toHaveLength(2);
@@ -67,7 +67,10 @@ describe('RatingsForm', () => {
   it('should modify and save estimations of some ratings', async () => {
     const user = userEvent.setup();
     const ratings = new RatingsMockBuilder().build();
-    renderWithTheme(<RatingsForm ratings={ratings} />);
+    const onRatingsChange = vi.fn();
+    renderWithTheme(
+      <RatingsForm ratings={ratings} onRatingsChange={onRatingsChange} />
+    );
     const positiveRating = screen.getByLabelText(`ratings.${1}.estimations`);
     fireEvent.click(within(positiveRating).getByLabelText('4 Stars'));
 
@@ -76,7 +79,7 @@ describe('RatingsForm', () => {
 
     await saveForm(user);
 
-    expect(updateRatings).toHaveBeenCalledWith([
+    expect(onRatingsChange).toHaveBeenCalledWith([
       ratings[0],
       { ...ratings[1], estimations: 4 },
       ratings[2],
@@ -87,14 +90,17 @@ describe('RatingsForm', () => {
 
   it('should modify and save isWeightSelectedByUser of some ratings', async () => {
     const ratings = new RatingsMockBuilder().build();
-    const { user } = renderWithTheme(<RatingsForm ratings={ratings} />);
+    const onRatingsChange = vi.fn();
+    const { user } = renderWithTheme(
+      <RatingsForm ratings={ratings} onRatingsChange={onRatingsChange} />
+    );
     await user.click(
       screen.getByLabelText(`ratings.${0}.isWeightSelectedByUser`)
     );
 
     await saveForm(user);
 
-    expect(updateRatings).toHaveBeenCalledWith([
+    expect(onRatingsChange).toHaveBeenCalledWith([
       { ...ratings[0], isWeightSelectedByUser: true },
       ...ratings.slice(1),
     ]);
@@ -102,7 +108,11 @@ describe('RatingsForm', () => {
 
   it('should modify weight of some ratings', async () => {
     const ratings = new RatingsMockBuilder().build();
-    const { user } = renderWithTheme(<RatingsForm ratings={ratings} />);
+    const onRatingsChange = vi.fn();
+
+    const { user } = renderWithTheme(
+      <RatingsForm ratings={ratings} onRatingsChange={onRatingsChange} />
+    );
     await user.click(
       screen.getByLabelText(`ratings.${0}.isWeightSelectedByUser`)
     );
@@ -122,7 +132,7 @@ describe('RatingsForm', () => {
 
     await saveForm(user);
 
-    expect(updateRatings).toHaveBeenCalledWith([
+    expect(onRatingsChange).toHaveBeenCalledWith([
       { ...ratings[0], weight: 2, isWeightSelectedByUser: true },
       ...ratings.slice(1),
     ]);
@@ -136,11 +146,15 @@ describe('RatingsForm', () => {
     ratingsB: Rating[];
   }) {
     const [switchToB, setSwitchToB] = useState<boolean>(false);
+    const onRatingsChange = vi.fn();
 
     return (
       <>
         <Button onClick={() => setSwitchToB(true)}>Switch B</Button>
-        <RatingsForm ratings={switchToB ? ratingsB : ratingsA} />
+        <RatingsForm
+          ratings={switchToB ? ratingsB : ratingsA}
+          onRatingsChange={onRatingsChange}
+        />
       </>
     );
   }

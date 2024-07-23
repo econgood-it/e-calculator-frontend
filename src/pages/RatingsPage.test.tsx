@@ -1,15 +1,15 @@
-import { screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
 import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets';
 import { useAlert } from '../contexts/AlertContext';
 import { Rating, StakholderShortNames } from '../models/Rating';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 
-import { loader } from './RatingsPage.tsx';
+import RatingsPage, { action, loader } from './RatingsPage.tsx';
 import { setupApiMock } from '../testUtils/api.ts';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
-import { BalanceSheetOverviewPage } from './BalanceSheetOverviewPage.tsx';
 import { RatingType } from '@ecogood/e-calculator-schemas/dist/rating.dto';
+import { saveForm } from '../testUtils/form.tsx';
 
 vi.mock('../contexts/AlertContext');
 describe('RatingsPage', () => {
@@ -17,7 +17,8 @@ describe('RatingsPage', () => {
     (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
   });
 
-  it('renders ratings', () => {
+  it('renders ratings and updates these', async () => {
+    const action = vi.fn().mockResolvedValue(null);
     const ratings: Rating[] = [
       {
         shortName: 'A1',
@@ -46,18 +47,32 @@ describe('RatingsPage', () => {
       [
         {
           path: '/balancesheet/1/suppliers',
-          element: <BalanceSheetOverviewPage />,
+          element: <RatingsPage />,
           loader: () => ratings,
+          action: async ({ request }) => action(await request.json()),
         },
       ],
       { initialEntries: ['/balancesheet/1/suppliers'] }
     );
-    renderWithTheme(<RouterProvider router={router} />);
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
 
-    ratings.forEach(async (r: Rating) => {
-      await waitFor(async () =>
-        expect(await screen.findByText(`${r.name}`)).toBeInTheDocument()
-      );
+    await waitFor(async () =>
+      expect(
+        await screen.findByText('Menschenwürde in der Zulieferkette')
+      ).toBeInTheDocument()
+    );
+    expect(
+      screen.getByText(
+        'A1.1 Arbeitsbedingungen und gesellschaftliche Auswirkungen in der Zulieferkette'
+      )
+    ).toBeInTheDocument();
+
+    const positiveRating = screen.getByLabelText(`ratings.${1}.estimations`);
+    fireEvent.click(within(positiveRating).getByLabelText('4 Stars'));
+
+    await saveForm(user);
+    expect(action).toHaveBeenCalledWith({
+      ratings: [ratings[0], { ...ratings[1], estimations: 4 }],
     });
   });
 });
@@ -108,5 +123,53 @@ describe('loader', () => {
     );
     expect(result).toEqual(filteredRatings);
     expect(mockApi.getBalanceSheet).toHaveBeenCalledWith(3);
+  });
+});
+
+describe('action', () => {
+  it('updates ratings for balancesheet', async () => {
+    mockApi.updateBalanceSheet.mockResolvedValue(
+      new BalanceSheetMockBuilder().build()
+    );
+    const ratings = [
+      {
+        shortName: 'A1.1',
+        name: 'Arbeitsbedingungen und gesellschaftliche Auswirkungen in der Zulieferkette',
+        estimations: 9,
+        isPositive: true,
+        type: RatingType.aspect,
+        weight: 2,
+        isWeightSelectedByUser: true,
+        maxPoints: 0,
+        points: 0,
+      },
+      {
+        shortName: 'E1.1',
+        name: 'Rating E1',
+        type: RatingType.aspect,
+        isPositive: true,
+        estimations: 7,
+        weight: 1,
+        isWeightSelectedByUser: false,
+        maxPoints: 0,
+        points: 0,
+      },
+    ];
+    await action(
+      {
+        params: { balanceSheetId: '3' },
+        request: new Request(new URL(`http://localhost`), {
+          method: 'POST',
+          body: JSON.stringify({ ratings }),
+        }),
+      },
+      { userData: { access_token: 'token' } }
+    );
+    expect(mockApi.updateBalanceSheet).toHaveBeenCalledWith(3, {
+      ratings: [
+        { shortName: 'A1.1', estimations: 9, weight: 2 },
+        { shortName: 'E1.1', estimations: 7, weight: undefined },
+      ],
+    });
   });
 });

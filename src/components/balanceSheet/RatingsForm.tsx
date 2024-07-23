@@ -18,7 +18,6 @@ import {
   Typography,
 } from '@mui/material';
 import { SaveButton } from '../buttons/SaveButton.tsx';
-import { useActiveBalanceSheet } from '../../contexts/ActiveBalanceSheetProvider';
 import { Fragment } from 'react';
 import { Rating } from '../../models/Rating';
 import {
@@ -38,6 +37,7 @@ import { Trans } from 'react-i18next';
 
 type RatingsFormProps = {
   ratings: Rating[];
+  onRatingsChange: (ratings: Rating[]) => Promise<void>;
 };
 
 const RatingsFormSchema = z.object({
@@ -45,8 +45,7 @@ const RatingsFormSchema = z.object({
 });
 type RatingsFormInput = z.infer<typeof RatingsFormSchema>;
 
-export function RatingsForm({ ratings }: RatingsFormProps) {
-  const { updateRatings } = useActiveBalanceSheet();
+export function RatingsForm({ ratings, onRatingsChange }: RatingsFormProps) {
   const workbook = useWorkbook();
 
   const { control, handleSubmit } = useForm<RatingsFormInput>({
@@ -64,7 +63,7 @@ export function RatingsForm({ ratings }: RatingsFormProps) {
 
   const onSaveClick = async (data: FieldValues) => {
     const newRatings = RatingsFormSchema.parse(data);
-    await updateRatings(newRatings.ratings);
+    await onRatingsChange(newRatings.ratings);
   };
 
   const ratingsWatcher = useWatch({

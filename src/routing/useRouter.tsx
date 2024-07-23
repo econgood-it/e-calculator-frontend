@@ -4,7 +4,10 @@ import {
   Outlet,
   useRouteError,
 } from 'react-router-dom';
-import RatingsPage, { loader as ratinsLoader } from '../pages/RatingsPage';
+import RatingsPage, {
+  loader as ratingsLoader,
+  action as ratingsAction,
+} from '../pages/RatingsPage';
 
 import Sidebar from '../pages/Sidebar';
 import {
@@ -111,27 +114,32 @@ export function useRouter() {
                           {
                             path: 'suppliers',
                             element: <RatingsPage />,
-                            loader: ratinsLoader,
+                            loader: ratingsLoader,
+                            action: ratingsAction,
                           },
                           {
                             path: 'finance',
                             element: <RatingsPage />,
-                            loader: ratinsLoader,
+                            loader: ratingsLoader,
+                            action: ratingsAction,
                           },
                           {
                             path: 'employees',
                             element: <RatingsPage />,
-                            loader: ratinsLoader,
+                            loader: ratingsLoader,
+                            action: ratingsAction,
                           },
                           {
                             path: 'customers',
                             element: <RatingsPage />,
-                            loader: ratinsLoader,
+                            loader: ratingsLoader,
+                            action: ratingsAction,
                           },
                           {
                             path: 'society',
                             element: <RatingsPage />,
-                            loader: ratinsLoader,
+                            loader: ratingsLoader,
+                            action: ratingsAction,
                           },
                         ],
                       },
