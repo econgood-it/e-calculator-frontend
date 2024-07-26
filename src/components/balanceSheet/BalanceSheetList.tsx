@@ -1,4 +1,3 @@
-import GridItem from '../layout/GridItem.tsx';
 import {
   Button,
   Card,
@@ -6,15 +5,28 @@ import {
   CardContent,
   Typography,
 } from '@mui/material';
+import { useState } from 'react';
 import { Trans } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { useBalanceSheetItems } from '../../contexts/BalanceSheetListProvider.tsx';
-import { useState } from 'react';
-import { BalanceSheetCreationDialog } from './BalanceSheetCreationDialog.tsx';
+import {
+  BalanceSheetCreateRequestBody,
+  BalanceSheetItem,
+} from '../../models/BalanceSheet.ts';
 import GridContainer from '../layout/GridContainer.tsx';
+import GridItem from '../layout/GridItem.tsx';
+import { BalanceSheetCreationDialog } from './BalanceSheetCreationDialog.tsx';
 
-export function BalanceSheetList() {
-  const { balanceSheetItems } = useBalanceSheetItems();
+type BalanceSheetListProps = {
+  balanceSheetItems: BalanceSheetItem[];
+  onCreateBalanceSheet: (
+    balanceSheet: BalanceSheetCreateRequestBody
+  ) => Promise<void>;
+};
+
+export function BalanceSheetList({
+  balanceSheetItems,
+  onCreateBalanceSheet,
+}: BalanceSheetListProps) {
   const [showBalanceSheetCreationDialog, setShowBalanceSheetCreationDialog] =
     useState<boolean>(false);
 
@@ -35,7 +47,7 @@ export function BalanceSheetList() {
       </GridItem>
       {balanceSheetItems.map((b) => (
         <GridItem key={b.id} xs={12} sm={3}>
-          <CardActionArea component={Link} to={`balancesheet/${b.id}/overview`}>
+          <CardActionArea component={Link} to={`/balancesheet/${b.id}/overview`}>
             <Card aria-label={`Balance sheet ${b.id}`}>
               <CardContent>
                 <Typography variant="h5" component="div">
@@ -49,6 +61,7 @@ export function BalanceSheetList() {
       <BalanceSheetCreationDialog
         open={showBalanceSheetCreationDialog}
         onClose={() => setShowBalanceSheetCreationDialog(false)}
+        onSave={onCreateBalanceSheet}
       />
     </GridContainer>
   );

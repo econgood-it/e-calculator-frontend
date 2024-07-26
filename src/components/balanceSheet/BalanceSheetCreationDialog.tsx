@@ -9,7 +9,6 @@ import { SaveButton } from '../buttons/SaveButton.tsx';
 import { BalanceSheetCreateRequestBody } from '../../models/BalanceSheet';
 import { BalanceSheetCreateRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { ReactHookFormSelect } from '../lib/ReactHookFormSelect';
-import { useBalanceSheetItems } from '../../contexts/BalanceSheetListProvider';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
@@ -19,15 +18,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 type OrganizationDialogProps = {
   open: boolean;
   onClose: () => void;
+  onSave: (balancesheet: BalanceSheetCreateRequestBody) => Promise<void>;
 };
 
 export function BalanceSheetCreationDialog({
   open,
   onClose,
+  onSave,
 }: OrganizationDialogProps) {
-  const { createBalanceSheet } = useBalanceSheetItems();
-  async function onSave(balanceSheet: BalanceSheetCreateRequestBody) {
-    await createBalanceSheet(balanceSheet);
+  async function onSaveClicked(balanceSheet: BalanceSheetCreateRequestBody) {
+    await onSave(balanceSheet);
     onClose();
   }
 
@@ -40,7 +40,7 @@ export function BalanceSheetCreationDialog({
         <DialogContent>
           <GridContainer spacing={3}>
             <GridItem xs={12}>
-              <BalanceSheetCreationForm onSave={onSave} />
+              <BalanceSheetCreationForm onSave={onSaveClicked} />
             </GridItem>
           </GridContainer>
         </DialogContent>

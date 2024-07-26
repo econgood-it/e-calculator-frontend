@@ -1,10 +1,7 @@
 import '@testing-library/jest-dom';
 import renderWithTheme from '../../testUtils/rendering';
 import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { useAlert } from '../../contexts/AlertContext';
-
-import { useBalanceSheetItems } from '../../contexts/BalanceSheetListProvider';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
@@ -13,15 +10,9 @@ import { BalanceSheetCreationDialog } from './BalanceSheetCreationDialog';
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 
 vi.mock('../../contexts/AlertContext');
-vi.mock('../../contexts/BalanceSheetListProvider');
 describe('BalanceSheetCreationDialog', () => {
-  const createBalanceSheetMock = vi.fn();
-
   beforeEach(() => {
     (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
-    (useBalanceSheetItems as Mock).mockReturnValue({
-      createBalanceSheet: createBalanceSheetMock,
-    });
   });
 
   afterEach(() => {
@@ -29,10 +20,15 @@ describe('BalanceSheetCreationDialog', () => {
   });
 
   it('should call create balance sheet on submit', async () => {
-    const user = userEvent.setup();
+    const createBalanceSheetMock = vi.fn();
+
     const onClose = vi.fn();
-    renderWithTheme(
-      <BalanceSheetCreationDialog open={true} onClose={onClose} />
+    const { user } = renderWithTheme(
+      <BalanceSheetCreationDialog
+        open={true}
+        onClose={onClose}
+        onSave={createBalanceSheetMock}
+      />
     );
 
     await user.click(
@@ -66,10 +62,14 @@ describe('BalanceSheetCreationDialog', () => {
   });
 
   it('should close dialog when close button is clicked', async () => {
-    const user = userEvent.setup();
     const onClose = vi.fn();
-    renderWithTheme(
-      <BalanceSheetCreationDialog open={true} onClose={onClose} />
+    const createBalanceSheetMock = vi.fn();
+    const { user } = renderWithTheme(
+      <BalanceSheetCreationDialog
+        open={true}
+        onClose={onClose}
+        onSave={createBalanceSheetMock}
+      />
     );
 
     await user.click(screen.getByLabelText('Close dialog'));

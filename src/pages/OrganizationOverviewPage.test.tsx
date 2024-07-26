@@ -1,45 +1,37 @@
 import { act, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import {
+  ActionFunctionArgs,
+  createMemoryRouter,
+  RouterProvider,
+} from 'react-router-dom';
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { useAlert } from '../contexts/AlertContext';
+import { OrganizationMockBuilder } from '../testUtils/organization';
 import renderWithTheme from '../testUtils/rendering';
 import {
   action,
   loader,
   OrganizationOverviewPage,
 } from './OrganizationOverviewPage';
-import {
-  ActionFunctionArgs,
-  createMemoryRouter,
-  RouterProvider,
-} from 'react-router-dom';
-import userEvent from '@testing-library/user-event';
-import { useBalanceSheetItems } from '../contexts/BalanceSheetListProvider';
-import { OrganizationMockBuilder } from '../testUtils/organization';
-import { useAlert } from '../contexts/AlertContext';
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 
 import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { setupApiMock } from '../testUtils/api.ts';
+import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets.ts';
 
 vi.mock('../contexts/AlertContext');
-vi.mock('../contexts/BalanceSheetListProvider');
+
 describe('OrganizationOverviewPage', () => {
   const initialPathForRouting = '/organization/3';
-  const balanceSheetItems = [{ id: 1 }, { id: 2 }];
-  const setBalanceSheetItems = vi.fn();
-  const createBalanceSheetMock = vi.fn();
 
   const organizationMockBuilder = new OrganizationMockBuilder();
 
   const addSuccessAlertMock = vi.fn();
 
   beforeEach(() => {
-    (useBalanceSheetItems as Mock).mockReturnValue({
-      balanceSheetItems,
-      setBalanceSheetItems,
-      createBalanceSheet: createBalanceSheetMock,
-    });
     (useAlert as Mock).mockReturnValue({
       addErrorAlert: vi.fn(),
       addSuccessAlert: addSuccessAlertMock,
@@ -53,7 +45,10 @@ describe('OrganizationOverviewPage', () => {
         {
           path: initialPathForRouting,
           element: <OrganizationOverviewPage />,
-          loader: () => organizationMockBuilder.withId(3).build(),
+          loader: () => ({
+            organization: organizationMockBuilder.withId(3).build(),
+            balanceSheetItems: [],
+          }),
           action: async ({ request }: ActionFunctionArgs) =>
             action(await request.json()),
         },
@@ -75,7 +70,7 @@ describe('OrganizationOverviewPage', () => {
       expect(action).toHaveBeenCalledWith({
         ...organizationMockBuilder.withId(3).buildRequestBody(),
         name: newName,
-        intent: 'update',
+        intent: 'updateOrganization',
       })
     );
   });
@@ -93,7 +88,7 @@ describe('OrganizationOverviewPage', () => {
         {
           path: path,
           element: <OrganizationOverviewPage />,
-          loader: () => organization,
+          loader: () => ({ organization, balanceSheetItems: [] }),
           action: async ({ request }: ActionFunctionArgs) =>
             action(await request.json()),
         },
@@ -113,20 +108,32 @@ describe('OrganizationOverviewPage', () => {
     await waitFor(() =>
       expect(action).toHaveBeenCalledWith({
         email,
-        intent: 'invite',
+        intent: 'inviteToOrganization',
       })
     );
   });
 
   it('adds balance sheet if create balance sheet button is clicked', async () => {
+    const action = vi.fn().mockResolvedValue(null);
     const router = createMemoryRouter(
-      [{ path: initialPathForRouting, element: <OrganizationOverviewPage /> }],
+      [
+        {
+          path: initialPathForRouting,
+          element: <OrganizationOverviewPage />,
+          loader: () => ({
+            organization: organizationMockBuilder.build(),
+            balanceSheetItems: [],
+          }),
+          action: async ({ request }: ActionFunctionArgs) =>
+            action(await request.json()),
+        },
+      ],
       { initialEntries: [initialPathForRouting] }
     );
 
     const { user } = renderWithTheme(<RouterProvider router={router} />);
 
-    const createBalanceSheetButton = screen.getByRole('button', {
+    const createBalanceSheetButton = await screen.findByRole('button', {
       name: 'Create balance sheet',
     });
 
@@ -139,9 +146,10 @@ describe('OrganizationOverviewPage', () => {
     );
 
     await waitFor(() =>
-      expect(createBalanceSheetMock).toHaveBeenCalledWith({
+      expect(action).toHaveBeenCalledWith({
         type: BalanceSheetType.Full,
         version: BalanceSheetVersion.v5_0_8,
+        intent: 'createBalanceSheet',
       })
     );
   });
@@ -152,10 +160,13 @@ describe('OrganizationOverviewPage', () => {
         {
           path: initialPathForRouting,
           element: <OrganizationOverviewPage />,
-          loader: () => organizationMockBuilder.build(),
+          loader: () => ({
+            organization: organizationMockBuilder.build(),
+            balanceSheetItems: [{ id: 1 }, { id: 2 }],
+          }),
         },
         {
-          path: `${initialPathForRouting}/balancesheet/2/overview`,
+          path: `/balancesheet/2/overview`,
           element: <div>Page of Balance sheet 2</div>,
         },
       ],
@@ -185,18 +196,24 @@ vi.mock('../api/api.client.ts', async () => {
 });
 
 describe('loader', () => {
-  it('loads organization', async () => {
-    const response = new OrganizationMockBuilder().withId(3).build();
-    mockApi.getOrganization.mockResolvedValue(response);
+  it('loads organization and balance sheet items', async () => {
+    const organization = new OrganizationMockBuilder().withId(3).build();
+    mockApi.getOrganization.mockResolvedValue(organization);
+    const balanceSheets = [{ id: 4 }, { id: 9 }];
+    mockApi.getBalanceSheets.mockResolvedValue(balanceSheets);
     const result = await loader(
       {
         params: { orgaId: '3' },
-        request: new Request(new URL('', 'http://localhost')),
+        request: new Request(new URL('http://localhost')),
       },
       { userData: { access_token: 'token' } }
     );
-    expect(result).toEqual(response);
+    expect(result).toEqual({
+      organization: organization,
+      balanceSheetItems: balanceSheets,
+    });
     expect(mockApi.getOrganization).toHaveBeenCalledWith(3);
+    expect(mockApi.getBalanceSheets).toHaveBeenCalledWith(3);
   });
 });
 
@@ -208,7 +225,7 @@ describe('actions', () => {
     };
     const request = new Request(new URL('', 'http://localhost'), {
       method: 'put',
-      body: JSON.stringify({ ...organization, intent: 'update' }),
+      body: JSON.stringify({ ...organization, intent: 'updateOrganization' }),
     });
     const response = new OrganizationMockBuilder().withId(3).build();
     mockApi.updateOrganization.mockResolvedValue(response);
@@ -222,7 +239,10 @@ describe('actions', () => {
     const emailToInvite = 'invite@example.com';
     const request = new Request(new URL('http://localhost'), {
       method: 'put',
-      body: JSON.stringify({ email: emailToInvite, intent: 'invite' }),
+      body: JSON.stringify({
+        email: emailToInvite,
+        intent: 'inviteToOrganization',
+      }),
     });
     mockApi.inviteUserToOrganization.mockResolvedValue({ status: 200 });
     await action(
@@ -232,6 +252,34 @@ describe('actions', () => {
     expect(mockApi.inviteUserToOrganization).toHaveBeenCalledWith(
       3,
       emailToInvite
+    );
+  });
+  it('creates balance sheet', async () => {
+    const balanceSheetToCreate = {
+      type: BalanceSheetType.Compact,
+      version: BalanceSheetVersion.v5_0_8,
+    };
+    const request = new Request(new URL('http://localhost'), {
+      method: 'put',
+      body: JSON.stringify({
+        ...balanceSheetToCreate,
+        intent: 'createBalanceSheet',
+      }),
+    });
+    const newId = 9;
+    mockApi.createBalanceSheet.mockResolvedValue(
+      new BalanceSheetMockBuilder().withId(newId).build()
+    );
+    const result = (await action(
+      { params: { orgaId: '3' }, request },
+      { userData: { access_token: 'token' } }
+    )) as Response;
+
+    expect(result.status).toEqual(302);
+    expect(result.headers.get('Location')).toEqual(`/balancesheet/${newId}/overview`);
+    expect(mockApi.createBalanceSheet).toHaveBeenCalledWith(
+      balanceSheetToCreate,
+      3
     );
   });
 });

@@ -1,31 +1,32 @@
-import { Trans } from 'react-i18next';
-import { OrganizationForm } from '../components/organization/OrganizationForm';
-import GridContainer from '../components/layout/GridContainer';
-import GridItem from '../components/layout/GridItem';
 import { Typography } from '@mui/material';
-import { OrganizationRequestBody } from '../models/Organization';
-import { BalanceSheetList } from '../components/balanceSheet/BalanceSheetList.tsx';
+import { User } from 'oidc-react';
+import { Trans } from 'react-i18next';
 import {
   ActionFunctionArgs,
   json,
   LoaderFunctionArgs,
   useSubmit,
 } from 'react-router-dom';
-import { User } from 'oidc-react';
-import { useLoaderData } from 'react-router-typesafe';
+import { redirect, useLoaderData } from 'react-router-typesafe';
 import {
   createApiClient,
   makeWretchInstanceWithAuth,
 } from '../api/api.client.ts';
-import { API_URL } from '../configuration.ts';
+import { BalanceSheetList } from '../components/balanceSheet/BalanceSheetList.tsx';
+import GridContainer from '../components/layout/GridContainer';
+import GridItem from '../components/layout/GridItem';
+import { OrganizationForm } from '../components/organization/OrganizationForm';
 import { OrganizationInvitations } from '../components/organization/OrganizationInvitations.tsx';
+import { API_URL } from '../configuration.ts';
+import { BalanceSheetCreateRequestBody } from '../models/BalanceSheet.ts';
+import { OrganizationRequestBody } from '../models/Organization';
 
 export function OrganizationOverviewPage() {
-  const organization = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
   const submit = useSubmit();
   async function onOrganizationSave(organization: OrganizationRequestBody) {
     submit(
-      { ...organization, intent: 'update' },
+      { ...organization, intent: 'updateOrganization' },
       {
         method: 'put',
         encType: 'application/json',
@@ -34,13 +35,25 @@ export function OrganizationOverviewPage() {
   }
   async function onInvitation(email: string) {
     submit(
-      { email, intent: 'invite' },
+      { email, intent: 'inviteToOrganization' },
       {
         method: 'put',
         encType: 'application/json',
       }
     );
   }
+  async function onCreateBalanceSheet(
+    newBalanceSheet: BalanceSheetCreateRequestBody
+  ) {
+    submit(
+      { ...newBalanceSheet, intent: 'createBalanceSheet' },
+      {
+        method: 'post',
+        encType: 'application/json',
+      }
+    );
+  }
+
   return (
     <>
       <GridContainer spacing={3}>
@@ -50,20 +63,25 @@ export function OrganizationOverviewPage() {
           </Typography>
         </GridItem>
         <GridItem xs={12}>
-          {organization && (
+          {data && (
             <OrganizationForm
-              organization={organization}
+              organization={data.organization}
               onSave={onOrganizationSave}
             />
           )}
         </GridItem>
         <GridItem xs={12}>
-          <BalanceSheetList />
+          {data && (
+            <BalanceSheetList
+              balanceSheetItems={data?.balanceSheetItems}
+              onCreateBalanceSheet={onCreateBalanceSheet}
+            />
+          )}
         </GridItem>
         <GridItem xs={12}>
-          {organization?.invitations && (
+          {data?.organization?.invitations && (
             <OrganizationInvitations
-              invitations={organization.invitations}
+              invitations={data.organization.invitations}
               onInvitation={onInvitation}
             />
           )}
@@ -84,7 +102,10 @@ export async function loader(
   const apiClient = createApiClient(
     makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
   );
-  return await apiClient.getOrganization(Number.parseInt(params.orgaId));
+  const orgaId = Number.parseInt(params.orgaId);
+  const organization = await apiClient.getOrganization(orgaId);
+  const balanceSheetItems = await apiClient.getBalanceSheets(orgaId);
+  return { organization, balanceSheetItems };
 }
 
 export async function action(
@@ -99,15 +120,17 @@ export async function action(
   const apiClient = createApiClient(
     makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
   );
-  if (intent === 'invite') {
-    await apiClient.inviteUserToOrganization(
-      Number.parseInt(params.orgaId),
-      data.email
-    );
+
+  const organizationId = Number.parseInt(params.orgaId);
+  if (intent === 'inviteToOrganization') {
+    await apiClient.inviteUserToOrganization(organizationId, data.email);
     return { ok: true };
-  } else if (intent === 'update') {
-    await apiClient.updateOrganization(Number.parseInt(params.orgaId), data);
+  } else if (intent === 'updateOrganization') {
+    await apiClient.updateOrganization(organizationId, data);
     return { ok: true };
+  } else if (intent === 'createBalanceSheet') {
+    const { id } = await apiClient.createBalanceSheet(data, organizationId);
+    return redirect(`/balancesheet/${id}/overview`);
   }
 
   throw json({ message: 'Invalid intent' }, { status: 400 });

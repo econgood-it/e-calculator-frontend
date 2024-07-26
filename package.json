@@ -58,7 +58,7 @@
     "react-router-typesafe": "^1.5.0",
     "typescript": "^5.2.2",
     "vite": "^5.0.8",
-    "vitest": "^1.2.1"
+    "vitest": "^2.0.4"
   },
   "resolutions": {
     "@mui/styled-engine": "npm:@mui/styled-engine-sc@latest"
