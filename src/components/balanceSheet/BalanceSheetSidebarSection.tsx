@@ -1,19 +1,24 @@
-import List from '@mui/material/List';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ListSubheader } from '@mui/material';
-import { Trans } from 'react-i18next';
+import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import ListItemText from '@mui/material/ListItemText';
-import { BalanceSheetNavigationItem } from './BalanceSheetNavigationItem';
-import { useBalanceSheetItems } from '../../contexts/BalanceSheetListProvider';
-import { BalanceSheetCreationDialog } from './BalanceSheetCreationDialog';
 import { useState } from 'react';
+import { Trans } from 'react-i18next';
+import { BalanceSheetItem } from '../../models/BalanceSheet';
+import { BalanceSheetCreationDialog } from './BalanceSheetCreationDialog';
+import { BalanceSheetNavigationItem } from './BalanceSheetNavigationItem';
 
-export function BalanceSheetSidebarSection() {
-  const { balanceSheetItems } = useBalanceSheetItems();
+type BalanceSheetSidebarSectionProps = {
+  balanceSheetItems: BalanceSheetItem[];
+};
+
+export function BalanceSheetSidebarSection({
+  balanceSheetItems,
+}: BalanceSheetSidebarSectionProps) {
   const [showBalanceSheetCreationDialog, setShowBalanceSheetCreationDialog] =
     useState<boolean>(false);
   return (

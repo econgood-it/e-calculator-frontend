@@ -1,23 +1,23 @@
+import { faHouse, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   ListSubheader,
   MenuItem,
   Select,
   SelectChangeEvent,
 } from '@mui/material';
-import { Trans } from 'react-i18next';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHouse, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { OrganizationCreationDialog } from './OrganizationCreationDialog';
-import { useState } from 'react';
-import { useOrganizations } from '../../contexts/OrganizationProvider';
-import GridContainer from '../layout/GridContainer';
-import GridItem from '../layout/GridItem';
-import { Link, useMatch, useNavigate } from 'react-router-dom';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import { useState } from 'react';
+import { Trans } from 'react-i18next';
+import { Link, useMatch, useNavigate } from 'react-router-dom';
+import { useOrganizations } from '../../contexts/OrganizationProvider';
+import GridContainer from '../layout/GridContainer';
+import GridItem from '../layout/GridItem';
+import { OrganizationCreationDialog } from './OrganizationCreationDialog';
 
 export function OrganizationSidebarSection() {
   const { organizationItems, setActiveOrganizationById, activeOrganization } =
@@ -31,7 +31,7 @@ export function OrganizationSidebarSection() {
   function onOrganizationChange(v: SelectChangeEvent<number | string>) {
     const selectedOrgaId = Number(v.target.value);
     setActiveOrganizationById(selectedOrgaId);
-    navigate(`/organization/${selectedOrgaId}`);
+    navigate(`/organization/${selectedOrgaId}/overview`);
   }
 
   return (
@@ -49,7 +49,7 @@ export function OrganizationSidebarSection() {
               <ListItemButton
                 selected={matchOrgaView !== null}
                 component={Link}
-                to={`/organization/${activeOrganization?.id}`}
+                to={`/organization/${activeOrganization?.id}/overview`}
               >
                 <ListItemIcon>
                   <FontAwesomeIcon icon={faHouse} />

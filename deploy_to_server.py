@@ -100,7 +100,7 @@ def main(args):
     path_to_app_dir = '/var/docker/balance-sheet' if args.environment == 'prod' else '/var/docker/e-calculator-frontend'
     backend_url = 'https://balance-sheet-api.econgood.org' if args.environment == 'prod' else 'https://balance-sheet-api.dev.econgood.org'
     frontend_url = 'https://balance-sheet.econgood.org' if args.environment == 'prod' else 'https://balance-sheet.dev.econgood.org'
-    client_id = '263455475041894403@econgood' if args.environment == 'prod' else '256369856352473091@econgood'
+    client_id = '263455475041894403@econgood' if args.environment == 'prod' else '278679701701083139@econgood'
     authority_url = 'https://zitadel.econgood.org' if args.environment == 'prod' else 'https://zitadel.dev.econgood.org'
     logging.info(f"Build using backend api {backend_url} and frontend url {frontend_url} "
                  f"and client id {client_id} and authority url {authority_url}")

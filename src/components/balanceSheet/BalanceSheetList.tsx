@@ -47,7 +47,10 @@ export function BalanceSheetList({
       </GridItem>
       {balanceSheetItems.map((b) => (
         <GridItem key={b.id} xs={12} sm={3}>
-          <CardActionArea component={Link} to={`/balancesheet/${b.id}/overview`}>
+          <CardActionArea
+            component={Link}
+            to={`../balancesheet/${b.id}/overview`}
+          >
             <Card aria-label={`Balance sheet ${b.id}`}>
               <CardContent>
                 <Typography variant="h5" component="div">

@@ -10,5 +10,5 @@ export function RedirectToActiveOrganization() {
     return <LoadingPage />;
   }
 
-  return <Navigate to={`/organization/${activeOrganization.id}`} />;
+  return <Navigate to={`/organization/${activeOrganization.id}/overview`} />;
 }

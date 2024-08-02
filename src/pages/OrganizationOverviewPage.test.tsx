@@ -198,6 +198,7 @@ vi.mock('../api/api.client.ts', async () => {
 describe('loader', () => {
   it('loads organization and balance sheet items', async () => {
     const organization = new OrganizationMockBuilder().withId(3).build();
+
     mockApi.getOrganization.mockResolvedValue(organization);
     const balanceSheets = [{ id: 4 }, { id: 9 }];
     mockApi.getBalanceSheets.mockResolvedValue(balanceSheets);
@@ -209,7 +210,7 @@ describe('loader', () => {
       { userData: { access_token: 'token' } }
     );
     expect(result).toEqual({
-      organization: organization,
+      organization: organizations,
       balanceSheetItems: balanceSheets,
     });
     expect(mockApi.getOrganization).toHaveBeenCalledWith(3);
@@ -276,7 +277,9 @@ describe('actions', () => {
     )) as Response;
 
     expect(result.status).toEqual(302);
-    expect(result.headers.get('Location')).toEqual(`/balancesheet/${newId}/overview`);
+    expect(result.headers.get('Location')).toEqual(
+      `../balancesheet/${newId}/overview`
+    );
     expect(mockApi.createBalanceSheet).toHaveBeenCalledWith(
       balanceSheetToCreate,
       3

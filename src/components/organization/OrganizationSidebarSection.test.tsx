@@ -1,8 +1,8 @@
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-import { OrganizationSidebarSection } from './OrganizationSidebarSection';
 import userEvent from '@testing-library/user-event';
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { useAlert } from '../../contexts/AlertContext';
 import { useOrganizations } from '../../contexts/OrganizationProvider';
 import {
@@ -10,7 +10,7 @@ import {
   OrganizationMockBuilder,
 } from '../../testUtils/organization';
 import renderWithTheme from '../../testUtils/rendering';
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { OrganizationSidebarSection } from './OrganizationSidebarSection';
 
 vi.mock('../../contexts/OrganizationProvider');
 vi.mock('../../contexts/AlertContext');
@@ -40,7 +40,7 @@ describe('OrganizationSidebarSection', () => {
             element={<OrganizationSidebarSection />}
           />
           <Route
-            path={`/organization/${activeOrganization.id}`}
+            path={`/organization/${activeOrganization.id}/overview`}
             element={<div>Organization overview</div>}
           />
         </Routes>

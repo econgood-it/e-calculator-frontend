@@ -5,11 +5,10 @@ import {
   useRouteError,
 } from 'react-router-dom';
 import RatingsPage, {
-  loader as ratingsLoader,
   action as ratingsAction,
+  loader as ratingsLoader,
 } from '../pages/RatingsPage';
 
-import Sidebar from '../pages/Sidebar';
 import {
   action as orgaAction,
   loader as orgaLoader,
@@ -20,22 +19,23 @@ import {
   loader as profileLoader,
   ProfilePage,
 } from '../pages/ProfilePage';
+import Sidebar, { loader as sidebarLoader } from '../pages/Sidebar';
 
+import { Alert, AlertTitle } from '@mui/material';
+import { useAuth } from 'oidc-react';
+import { Trans } from 'react-i18next';
+import WithActiveBalanceSheet from '../components/balanceSheet/WithActiveBalanceSheet';
+import { BalanceSheetListProvider } from '../contexts/BalanceSheetListProvider';
+import { OrganizationProvider } from '../contexts/OrganizationProvider';
 import {
   BalanceSheetOverviewPage,
   loader as matrixLoader,
 } from '../pages/BalanceSheetOverviewPage';
-import WithActiveBalanceSheet from '../components/balanceSheet/WithActiveBalanceSheet';
+import { BalanceSheetSettingsPage } from '../pages/BalanceSheetSettingsPage';
 import CompanyFactsPage from '../pages/CompanyFactsPage';
 import { RedirectToActiveOrganization } from './RedirectToActiveOrganization';
 import { RequireActiveOrganization } from './RequireActiveOrganization';
-import { OrganizationProvider } from '../contexts/OrganizationProvider';
-import { BalanceSheetListProvider } from '../contexts/BalanceSheetListProvider';
 import { RequiresAuth } from './RequiresAuth';
-import { BalanceSheetSettingsPage } from '../pages/BalanceSheetSettingsPage';
-import { useAuth } from 'oidc-react';
-import { Alert, AlertTitle } from '@mui/material';
-import { Trans } from 'react-i18next';
 
 function ErrorPage() {
   const error = useRouteError();
@@ -68,20 +68,15 @@ export function useRouter() {
               </OrganizationProvider>
             ),
             children: [
+              { path: '/', element: <RedirectToActiveOrganization /> },
               {
-                path: '/',
+                path: '/organization/:orgaId',
                 element: <Sidebar />,
                 errorElement: <ErrorPage />,
+                loader: sidebarLoader,
                 children: [
-                  { index: true, element: <RedirectToActiveOrganization /> },
                   {
-                    path: '/profile',
-                    element: <ProfilePage />,
-                    loader: profileLoader,
-                    action: profileAction,
-                  },
-                  {
-                    path: '/organization/:orgaId',
+                    path: 'overview',
                     element: <OrganizationOverviewPage />,
                     loader: orgaLoader,
                     action: orgaAction,
@@ -144,6 +139,12 @@ export function useRouter() {
                         ],
                       },
                     ],
+                  },
+                  {
+                    path: 'profile',
+                    element: <ProfilePage />,
+                    loader: profileLoader,
+                    action: profileAction,
                   },
                 ],
               },

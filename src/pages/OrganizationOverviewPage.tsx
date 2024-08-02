@@ -130,7 +130,7 @@ export async function action(
     return { ok: true };
   } else if (intent === 'createBalanceSheet') {
     const { id } = await apiClient.createBalanceSheet(data, organizationId);
-    return redirect(`/balancesheet/${id}/overview`);
+    return redirect(`../balancesheet/${id}/overview`);
   }
 
   throw json({ message: 'Invalid intent' }, { status: 400 });

@@ -1,5 +1,4 @@
 import { screen } from '@testing-library/react';
-import renderWithTheme from '../testUtils/rendering';
 import {
   createMemoryRouter,
   MemoryRouter,
@@ -7,10 +6,11 @@ import {
   RouterProvider,
   Routes,
 } from 'react-router-dom';
+import { describe, expect, it, Mock, vi } from 'vitest';
 import { useOrganizations } from '../contexts/OrganizationProvider';
 import { OrganizationMockBuilder } from '../testUtils/organization';
+import renderWithTheme from '../testUtils/rendering';
 import { RedirectToActiveOrganization } from './RedirectToActiveOrganization';
-import { describe, expect, it, Mock, vi } from 'vitest';
 
 vi.mock('../contexts/OrganizationProvider');
 describe('RedirectToActiveOrganization', () => {
@@ -45,7 +45,7 @@ describe('RedirectToActiveOrganization', () => {
         <Routes>
           <Route path={'/initial'} element={<RedirectToActiveOrganization />} />
           <Route
-            path={`/organization/${activeOrganizationId}`}
+            path={`/organization/${activeOrganizationId}/overview`}
             element={<div>Active organization</div>}
           />
         </Routes>

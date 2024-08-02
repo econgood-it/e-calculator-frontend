@@ -1,16 +1,16 @@
-import IconButton from '@mui/material/IconButton';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBars, faUser } from '@fortawesome/free-solid-svg-icons';
-import { Trans } from 'react-i18next';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AppBar, Popover, useTheme } from '@mui/material';
-import styled from 'styled-components';
+import IconButton from '@mui/material/IconButton';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useAuth } from 'oidc-react';
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
 import { MouseEvent, useState } from 'react';
+import { Trans } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 
 const FixedAppBar = styled(AppBar)`
   z-index: ${(props) => props.theme.zIndex.drawer + 1};
@@ -97,7 +97,7 @@ export function FixedToolbar({
         >
           <List>
             {showCompleteUserMenu && (
-              <ListItemButton to={'/profile'} component={Link}>
+              <ListItemButton to={'profile'} component={Link}>
                 <Trans>Profile</Trans>
               </ListItemButton>
             )}

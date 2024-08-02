@@ -1,12 +1,11 @@
-import renderWithTheme from '../testUtils/rendering';
-import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { screen, waitFor, within } from '@testing-library/react';
+import { createMemoryRouter, RouterProvider } from 'react-router-dom';
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
 import { useBalanceSheetItems } from '../contexts/BalanceSheetListProvider';
 import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets';
+import renderWithTheme from '../testUtils/rendering';
 import { BalanceSheetSettingsPage } from './BalanceSheetSettingsPage';
-import {beforeEach, describe, expect, it, Mock, vi} from "vitest";
-
 
 vi.mock('../contexts/BalanceSheetListProvider');
 vi.mock('../contexts/ActiveBalanceSheetProvider');
@@ -21,7 +20,7 @@ describe('BalanceSheetSettingsPage', () => {
       balanceSheet: mockedBalanceSheet,
     });
   });
-  const pathToOrganization = `/organization/${3}`;
+  const pathToOrganization = `/organization/${3}/overview`;
   it('deletes balance sheet and navigates to organization page', async () => {
     const initialPath = `${pathToOrganization}/balancesheet/2/settings`;
     const router = createMemoryRouter(

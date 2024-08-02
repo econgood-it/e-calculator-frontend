@@ -7,13 +7,13 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { useApi } from './ApiProvider';
+import { useNavigate } from 'react-router-dom';
 import {
   BalanceSheetCreateRequestBody,
   BalanceSheetItem,
 } from '../models/BalanceSheet';
+import { useApi } from './ApiProvider';
 import { useOrganizations } from './OrganizationProvider';
-import { useNavigate } from 'react-router-dom';
 
 interface IBalanceSheetListContext {
   balanceSheetItems: BalanceSheetItem[];
@@ -63,7 +63,7 @@ function BalanceSheetListProvider({ children }: BalanceSheetListProviderProps) {
   async function deleteBalanceSheet(id: number) {
     await api.deleteBalanceSheet(id);
     setBalanceSheetItems((prevState) => prevState.filter((b) => b.id !== id));
-    navigate(`/organization/${activeOrganization?.id}`);
+    navigate(`/organization/${activeOrganization?.id}/overview`);
   }
 
   return (

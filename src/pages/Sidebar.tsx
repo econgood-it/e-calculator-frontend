@@ -1,14 +1,24 @@
+import { Box, Divider } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
-import { Box, Divider } from '@mui/material';
+import { User } from 'oidc-react';
+import { useState } from 'react';
+import {
+  ActionFunctionArgs,
+  json,
+  LoaderFunctionArgs,
+  Outlet,
+  redirect,
+} from 'react-router-dom';
+import { useLoaderData } from 'react-router-typesafe';
 import styled from 'styled-components';
-import { Outlet } from 'react-router-dom';
-import { OrganizationSidebarSection } from '../components/organization/OrganizationSidebarSection';
+import { createApiClient, makeWretchInstanceWithAuth } from '../api/api.client';
+import { BalanceSheetSidebarSection } from '../components/balanceSheet/BalanceSheetSidebarSection';
 import GridContainer from '../components/layout/GridContainer';
 import GridItem from '../components/layout/GridItem';
-import { BalanceSheetSidebarSection } from '../components/balanceSheet/BalanceSheetSidebarSection';
-import { useState } from 'react';
 import { FixedToolbar } from '../components/lib/FixedToolbar';
+import { OrganizationSidebarSection } from '../components/organization/OrganizationSidebarSection';
+import { API_URL } from '../configuration';
 
 const DrawerWithFixedWidth = styled(Drawer)<{ $drawerWidth: number }>`
   & .MuiDrawer-paper {
@@ -22,6 +32,7 @@ const Content = styled.div<{ $open: boolean; $drawerWidth: number }>`
 `;
 
 export default function Sidebar() {
+  const data = useLoaderData<typeof loader>();
   const drawerWidth = 260;
   const [open, setOpen] = useState<boolean>(true);
 
@@ -51,7 +62,11 @@ export default function Sidebar() {
             <Divider variant="middle" />
           </GridItem>
           <GridItem xs={12}>
-            <BalanceSheetSidebarSection />
+            {data && (
+              <BalanceSheetSidebarSection
+                balanceSheetItems={data.balanceSheetItems}
+              />
+            )}
           </GridItem>
         </GridContainer>
       </DrawerWithFixedWidth>
@@ -63,4 +78,42 @@ export default function Sidebar() {
       </Box>
     </>
   );
+}
+
+export async function loader(
+  { params }: LoaderFunctionArgs,
+  handlerCtx: unknown
+) {
+  const { userData } = handlerCtx as { userData: User };
+  if (!params.orgaId || !userData) {
+    return null;
+  }
+  const apiClient = createApiClient(
+    makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
+  );
+  const orgaId = Number.parseInt(params.orgaId);
+  const organizationItems = await apiClient.getOrganizations();
+  const balanceSheetItems = await apiClient.getBalanceSheets(orgaId);
+  return { activeOrganizationId: orgaId, organizationItems, balanceSheetItems };
+}
+
+export async function action(
+  { params, request }: ActionFunctionArgs,
+  handlerCtx: unknown
+) {
+  const { intent, ...data } = await request.json();
+  const { userData } = handlerCtx as { userData: User };
+  if (!userData) {
+    return null;
+  }
+  const apiClient = createApiClient(
+    makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
+  );
+
+  if (intent === 'createOrganization') {
+    const organization = await apiClient.createOrganization(data.organization);
+    return redirect(`/organization/${organization.id}/overview`);
+  }
+
+  throw json({ message: 'Invalid intent' }, { status: 400 });
 }

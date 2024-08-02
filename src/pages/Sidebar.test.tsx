@@ -1,6 +1,5 @@
-import { act, screen, waitFor } from '@testing-library/react';
-import renderWithTheme from '../testUtils/rendering';
-import Sidebar from './Sidebar';
+import { screen, waitFor } from '@testing-library/react';
+import { useAuth } from 'oidc-react';
 import {
   createMemoryRouter,
   MemoryRouter,
@@ -8,19 +7,18 @@ import {
   RouterProvider,
   Routes,
 } from 'react-router-dom';
-import userEvent from '@testing-library/user-event';
-import { useBalanceSheetItems } from '../contexts/BalanceSheetListProvider';
-import { BalanceSheetItemsMockBuilder } from '../testUtils/balanceSheets';
+import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { useAlert } from '../contexts/AlertContext';
 import { useOrganizations } from '../contexts/OrganizationProvider';
+import { setupApiMock } from '../testUtils/api';
+import { BalanceSheetItemsMockBuilder } from '../testUtils/balanceSheets';
 import {
   OrganizationItemsMocks,
   OrganizationMockBuilder,
 } from '../testUtils/organization';
-import { useAlert } from '../contexts/AlertContext';
-import { useAuth } from 'oidc-react';
-import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import renderWithTheme from '../testUtils/rendering';
+import Sidebar, { action, loader } from './Sidebar';
 
-vi.mock('../contexts/BalanceSheetListProvider');
 vi.mock('../contexts/OrganizationProvider');
 vi.mock('../contexts/AlertContext');
 
@@ -32,18 +30,10 @@ describe('Sidebar', () => {
   const initialPathForRouting = '/organization/3';
   const balanceSheetItems = new BalanceSheetItemsMockBuilder().build();
 
-  const balanceSheetListMock = {
-    balanceSheetItems,
-    setBalanceSheetItems: vi.fn(),
-    createBalanceSheet: vi.fn(),
-  };
   const setActiveOrganizationByIdMock = vi.fn();
   const logoutMock = vi.fn();
 
   beforeEach(() => {
-    (useBalanceSheetItems as Mock).mockImplementation(
-      () => balanceSheetListMock
-    );
     (useAuth as Mock).mockReturnValue({
       signOutRedirect: logoutMock,
     });
@@ -51,10 +41,6 @@ describe('Sidebar', () => {
       addErrorAlert: vi.fn(),
     });
     (useOrganizations as Mock).mockReturnValue({
-      organizationItems: OrganizationItemsMocks.default(),
-      activeOrganization: new OrganizationMockBuilder()
-        .withId(OrganizationItemsMocks.default()[0].id)
-        .build(),
       setActiveOrganizationById: setActiveOrganizationByIdMock,
     });
   });
@@ -63,48 +49,57 @@ describe('Sidebar', () => {
     vi.resetAllMocks();
   });
 
-  it('renders Balance sheets subheader and Create balance sheet navigation item', async () => {
-    act(() => {
-      renderWithTheme(
-        <MemoryRouter initialEntries={[initialPathForRouting]}>
-          <Routes>
-            <Route path={initialPathForRouting} element={<Sidebar />} />
-          </Routes>
-        </MemoryRouter>
-      );
-    });
-    expect(await screen.findByText('Balance sheets')).toBeInTheDocument();
-    expect(await screen.findByText('Create balance sheet')).toBeInTheDocument();
-  });
-
   it('renders each balance sheet as a navigation item', async () => {
-    renderWithTheme(
-      <MemoryRouter initialEntries={[initialPathForRouting]}>
-        <Routes>
-          <Route path={initialPathForRouting} element={<Sidebar />} />
-        </Routes>
-      </MemoryRouter>
+    const path = '/organization/3';
+    const router = createMemoryRouter(
+      [
+        {
+          path,
+          element: <Sidebar />,
+          loader: () => ({
+            activeOrganizationId: 3,
+            organizationItems: [{ id: 3 }],
+            balanceSheetItems: [{ id: 1 }, { id: 2 }],
+          }),
+        },
+      ],
+      { initialEntries: [path] }
     );
+
+    renderWithTheme(<RouterProvider router={router} />);
     expect(await screen.findAllByText(/Balance sheet \d/)).toHaveLength(2);
-    balanceSheetItems.forEach((b) => {
-      expect(screen.getByText(`Balance sheet ${b.id}`)).toBeInTheDocument();
+    balanceSheetItems.forEach(async (b) => {
+      await waitFor(async () =>
+        expect(
+          await screen.findByText(`Balance sheet ${b.id}`)
+        ).toBeInTheDocument()
+      );
     });
   });
 
   it('navigates to balance sheet if user click on balance sheet navigation item', async () => {
-    const user = userEvent.setup();
-
-    renderWithTheme(
-      <MemoryRouter initialEntries={[initialPathForRouting]}>
-        <Routes>
-          <Route path={initialPathForRouting} element={<Sidebar />} />
-          <Route
-            path={`/${initialPathForRouting}/balancesheet/3/overview`}
-            element={<div>Navigated to Balance sheet 3</div>}
-          />
-        </Routes>
-      </MemoryRouter>
+    const path = '/organization/3';
+    const router = createMemoryRouter(
+      [
+        {
+          path,
+          element: <Sidebar />,
+          loader: () => ({
+            activeOrganizationId: 3,
+            organizationItems: [{ id: 3 }],
+            balanceSheetItems: [{ id: 1 }, { id: 3 }],
+          }),
+          children: [
+            {
+              path: 'balancesheet/3/overview',
+              element: <div>Navigated to Balance sheet 3</div>,
+            },
+          ],
+        },
+      ],
+      { initialEntries: [path] }
     );
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
 
     const balanceSheetsNavButton = await screen.findByRole('link', {
       name: /Balance sheet 3/i,
@@ -118,17 +113,21 @@ describe('Sidebar', () => {
   });
 
   it('creates organization and navigates to it clicked', async () => {
-    const user = userEvent.setup();
-
-    act(() => {
-      renderWithTheme(
-        <MemoryRouter initialEntries={[initialPathForRouting]}>
-          <Routes>
-            <Route path={initialPathForRouting} element={<Sidebar />} />
-          </Routes>
-        </MemoryRouter>
-      );
-    });
+    const router = createMemoryRouter(
+      [
+        {
+          path,
+          element: <Sidebar />,
+          loader: () => ({
+            activeOrganizationId: 3,
+            organizationItems: [{ id: 3 }],
+            balanceSheetItems: [{ id: 1 }, { id: 3 }],
+          }),
+        },
+      ],
+      { initialEntries: [path] }
+    );
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
 
     await user.click(
       screen.getByRole('button', { name: 'Create organization' })
@@ -208,8 +207,8 @@ describe('Sidebar', () => {
         {
           path: initialPath,
           element: <Sidebar />,
+          children: [{ path: 'profile', element: <div>Profile Page</div> }],
         },
-        { path: 'profile', element: <div>Profile</div> },
       ],
       { initialEntries: [initialPath] }
     );
@@ -218,6 +217,70 @@ describe('Sidebar', () => {
 
     await user.click(screen.getByLabelText('Open user navigation menu'));
     await user.click(await screen.getByText('Profile'));
-    expect(await screen.findByText('Profile')).toBeInTheDocument();
+    expect(await screen.findByText('Profile Page')).toBeInTheDocument();
+  });
+});
+
+const mockApi = setupApiMock();
+
+vi.mock('../api/api.client.ts', async () => {
+  const originalModule = await vi.importActual('../api/api.client.ts');
+  return {
+    ...originalModule,
+    createApiClient: () => mockApi,
+  };
+});
+
+describe('loader', () => {
+  it('loads organization and balance sheet items', async () => {
+    const organizations = [
+      { id: 2, name: 'My new orga name' },
+      { id: 9, name: 'Other orga' },
+    ];
+    mockApi.getOrganizations.mockResolvedValue(organizations);
+    const balanceSheets = [{ id: 4 }, { id: 9 }];
+    mockApi.getBalanceSheets.mockResolvedValue(balanceSheets);
+    const result = await loader(
+      {
+        params: { orgaId: '3' },
+        request: new Request(new URL('http://localhost')),
+      },
+      { userData: { access_token: 'token' } }
+    );
+    expect(result).toEqual({
+      organizationItems: organizations,
+      balanceSheetItems: balanceSheets,
+      activeOrganizationId: 3,
+    });
+    expect(mockApi.getOrganizations).toHaveBeenCalledWith();
+    expect(mockApi.getBalanceSheets).toHaveBeenCalledWith(3);
+  });
+});
+
+describe('actions', () => {
+  it('create organization', async () => {
+    const organization = new OrganizationMockBuilder().withId(3);
+    mockApi.createOrganization.mockResolvedValue(organization.build());
+
+    const request = new Request(new URL('http://localhost'), {
+      method: 'post',
+      body: JSON.stringify({
+        organization: { ...organization.buildRequestBody() },
+        intent: 'createOrganization',
+      }),
+    });
+
+    const result = await action(
+      { params: { orgaId: '1' }, request },
+      { userData: { access_token: 'token' } }
+    );
+    expect(result!.status).toEqual(302);
+
+    expect(result!.headers.get('Location')).toEqual(
+      `/organization/${organization.build().id}/overview`
+    );
+    expect(mockApi.createOrganization).toHaveBeenCalledWith(
+      organization.buildRequestBody()
+    );
   });
 });
