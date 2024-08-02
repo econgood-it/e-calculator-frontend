@@ -98,7 +98,7 @@ export async function loader(
 }
 
 export async function action(
-  { params, request }: ActionFunctionArgs,
+  { request }: ActionFunctionArgs,
   handlerCtx: unknown
 ) {
   const { intent, ...data } = await request.json();

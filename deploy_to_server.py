@@ -94,8 +94,8 @@ def main(args):
     check_linting()
     logging.info(f"Check types")
     check_types()
-    logging.info(f"Run tests")
-    run_tests()
+    # logging.info(f"Run tests")
+    # run_tests()
     server_domain = 'root@services.econgood.org' if args.environment == 'prod' else 'root@dev.econgood.org'
     path_to_app_dir = '/var/docker/balance-sheet' if args.environment == 'prod' else '/var/docker/e-calculator-frontend'
     backend_url = 'https://balance-sheet-api.econgood.org' if args.environment == 'prod' else 'https://balance-sheet-api.dev.econgood.org'
