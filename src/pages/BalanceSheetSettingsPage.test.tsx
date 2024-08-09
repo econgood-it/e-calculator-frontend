@@ -1,38 +1,25 @@
-import { screen, waitFor, within } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
-import { useBalanceSheetItems } from '../contexts/BalanceSheetListProvider';
-import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets';
+import { describe, expect, it, vi } from 'vitest';
 import renderWithTheme from '../testUtils/rendering';
-import { BalanceSheetSettingsPage } from './BalanceSheetSettingsPage';
+import { action, BalanceSheetSettingsPage } from './BalanceSheetSettingsPage';
+import { setupApiMock } from '../testUtils/api.ts';
 
-vi.mock('../contexts/BalanceSheetListProvider');
-vi.mock('../contexts/ActiveBalanceSheetProvider');
 describe('BalanceSheetSettingsPage', () => {
-  const deleteBalanceSheetMock = vi.fn();
-  const mockedBalanceSheet = new BalanceSheetMockBuilder().build();
-  beforeEach(() => {
-    (useBalanceSheetItems as Mock).mockReturnValue({
-      deleteBalanceSheet: deleteBalanceSheetMock,
-    });
-    (useActiveBalanceSheet as Mock).mockReturnValue({
-      balanceSheet: mockedBalanceSheet,
-    });
-  });
-  const pathToOrganization = `/organization/${3}/overview`;
-  it('deletes balance sheet and navigates to organization page', async () => {
-    const initialPath = `${pathToOrganization}/balancesheet/2/settings`;
+  it('deletes balance sheet and calls action', async () => {
+    const initialPath = `/organization/${3}/balancesheet/2/settings`;
+    const action = vi.fn().mockResolvedValue(null);
     const router = createMemoryRouter(
       [
-        { path: initialPath, element: <BalanceSheetSettingsPage /> },
         {
-          path: pathToOrganization,
-          element: <div>Navigated to organization page</div>,
+          path: initialPath,
+          element: <BalanceSheetSettingsPage />,
+          action: async ({ request }) => action(await request.json()),
         },
       ],
       { initialEntries: [initialPath] }
     );
+
     const { user } = renderWithTheme(<RouterProvider router={router} />);
     await user.click(
       screen.getByRole('button', { name: 'Delete this balance sheet' })
@@ -42,8 +29,40 @@ describe('BalanceSheetSettingsPage', () => {
     });
     await user.click(within(dialog).getByRole('button', { name: 'Ok' }));
 
-    await waitFor(() =>
-      expect(deleteBalanceSheetMock).toHaveBeenCalledWith(mockedBalanceSheet.id)
+    expect(action).toHaveBeenCalledWith({
+      intent: 'deleteBalanceSheet',
+    });
+  });
+});
+
+const mockApi = setupApiMock();
+
+vi.mock('../api/api.client.ts', async () => {
+  const originalModule = await vi.importActual('../api/api.client.ts');
+  return {
+    ...originalModule,
+    createApiClient: () => mockApi,
+  };
+});
+
+describe('actions', () => {
+  it('deletes balance sheet navigates organization overview', async () => {
+    mockApi.deleteBalanceSheet.mockResolvedValue({ status: 204 });
+
+    const request = new Request(new URL('http://localhost'), {
+      method: 'post',
+      body: JSON.stringify({
+        intent: 'deleteBalanceSheet',
+      }),
+    });
+
+    const result = await action(
+      { params: { orgaId: '1', balanceSheetId: '3' }, request },
+      { userData: { access_token: 'token' } }
     );
+    expect(result!.status).toEqual(302);
+
+    expect(result!.headers.get('Location')).toEqual(`/organization/1/overview`);
+    expect(mockApi.deleteBalanceSheet).toHaveBeenCalledWith(3);
   });
 });

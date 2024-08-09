@@ -1,5 +1,4 @@
 import { CustomersMocks } from '../../../testUtils/balanceSheets';
-import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { useAlert } from '../../../contexts/AlertContext';
 import {
   expectPositiveNumberFieldToBeValidatedAndModifiedAndSaved,
@@ -14,7 +13,6 @@ import { screen } from '@testing-library/react';
 import { industriesMocks } from '../../../testUtils/industries';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 
-vi.mock('../../../contexts/ActiveBalanceSheetProvider');
 vi.mock('../../../contexts/AlertContext');
 
 describe('CustomersForm', () => {
@@ -22,9 +20,6 @@ describe('CustomersForm', () => {
 
   beforeEach(() => {
     (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
-    (useActiveBalanceSheet as Mock).mockReturnValue({
-      updateCompanyFacts: updateCompanyFacts,
-    });
   });
 
   it('should modify turnover field and save changes', async () => {
@@ -33,6 +28,7 @@ describe('CustomersForm', () => {
       <CustomersForm
         formData={formData}
         industries={industriesMocks.industries1()}
+        updateCompanyFacts={updateCompanyFacts}
       />
     );
     await expectPositiveNumberFieldToBeValidatedAndModifiedAndSaved(
@@ -52,6 +48,7 @@ describe('CustomersForm', () => {
       <CustomersForm
         formData={formData}
         industries={industriesMocks.industries1()}
+        updateCompanyFacts={updateCompanyFacts}
       />
     );
     const switchField = screen.getByRole('checkbox', {
@@ -73,6 +70,7 @@ describe('CustomersForm', () => {
       <CustomersForm
         formData={formData}
         industries={industriesMocks.industries1()}
+        updateCompanyFacts={updateCompanyFacts}
       />
     );
     const addIndustrySectorButton = screen.getByRole('button', {

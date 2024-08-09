@@ -9,6 +9,7 @@ import {
   LoaderFunctionArgs,
   Outlet,
   redirect,
+  useSubmit,
 } from 'react-router-dom';
 import { useLoaderData } from 'react-router-typesafe';
 import styled from 'styled-components';
@@ -19,6 +20,8 @@ import GridItem from '../components/layout/GridItem';
 import { FixedToolbar } from '../components/lib/FixedToolbar';
 import { OrganizationSidebarSection } from '../components/organization/OrganizationSidebarSection';
 import { API_URL } from '../configuration';
+import { OrganizationRequestBody } from '../models/Organization';
+import { BalanceSheetCreateRequestBody } from '../models/BalanceSheet.ts';
 
 const DrawerWithFixedWidth = styled(Drawer)<{ $drawerWidth: number }>`
   & .MuiDrawer-paper {
@@ -35,6 +38,23 @@ export default function Sidebar() {
   const data = useLoaderData<typeof loader>();
   const drawerWidth = 260;
   const [open, setOpen] = useState<boolean>(true);
+  const submit = useSubmit();
+
+  async function createOrganization(organization: OrganizationRequestBody) {
+    submit(
+      { organization, intent: 'createOrganization' },
+      { method: 'post', encType: 'application/json' }
+    );
+  }
+
+  async function createBalanceSheet(
+    balanceSheet: BalanceSheetCreateRequestBody
+  ) {
+    submit(
+      { balanceSheet, intent: 'createBalanceSheet' },
+      { method: 'post', encType: 'application/json' }
+    );
+  }
 
   const toogleSidebar = () => {
     setOpen(!open);
@@ -56,7 +76,13 @@ export default function Sidebar() {
         <Toolbar />
         <GridContainer spacing={2}>
           <GridItem mt={2} xs={12}>
-            <OrganizationSidebarSection />
+            {data && (
+              <OrganizationSidebarSection
+                onCreateClicked={createOrganization}
+                organizationItems={data.organizationItems}
+                activeOrganizationId={data.activeOrganizationId}
+              />
+            )}
           </GridItem>
           <GridItem xs={12}>
             <Divider variant="middle" />
@@ -65,6 +91,7 @@ export default function Sidebar() {
             {data && (
               <BalanceSheetSidebarSection
                 balanceSheetItems={data.balanceSheetItems}
+                onCreateBalanceSheet={createBalanceSheet}
               />
             )}
           </GridItem>
@@ -98,12 +125,12 @@ export async function loader(
 }
 
 export async function action(
-  { request }: ActionFunctionArgs,
+  { params, request }: ActionFunctionArgs,
   handlerCtx: unknown
 ) {
   const { intent, ...data } = await request.json();
   const { userData } = handlerCtx as { userData: User };
-  if (!userData) {
+  if (!userData || !params.orgaId) {
     return null;
   }
   const apiClient = createApiClient(
@@ -113,6 +140,13 @@ export async function action(
   if (intent === 'createOrganization') {
     const organization = await apiClient.createOrganization(data.organization);
     return redirect(`/organization/${organization.id}/overview`);
+  }
+  if (intent === 'createBalanceSheet') {
+    const { id } = await apiClient.createBalanceSheet(
+      data.balanceSheet,
+      Number.parseInt(params.orgaId)
+    );
+    return redirect(`../balancesheet/${id}/overview`);
   }
 
   throw json({ message: 'Invalid intent' }, { status: 400 });

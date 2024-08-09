@@ -6,7 +6,6 @@ import {
   CompanyFactsMockBuilder,
   SuppliersMocks,
 } from '../../../testUtils/balanceSheets';
-import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { regionsMocks } from '../../../testUtils/regions';
 import { industriesMocks } from '../../../testUtils/industries';
 import { useAlert } from '../../../contexts/AlertContext';
@@ -17,7 +16,6 @@ import {
 } from '../../../testUtils/form';
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 
-vi.mock('../../../contexts/ActiveBalanceSheetProvider');
 vi.mock('../../../contexts/AlertContext');
 
 describe('SuppliersForm', () => {
@@ -25,9 +23,6 @@ describe('SuppliersForm', () => {
 
   beforeEach(() => {
     (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
-    (useActiveBalanceSheet as Mock).mockReturnValue({
-      updateCompanyFacts: updateCompanyFacts,
-    });
   });
 
   afterEach(() => {
@@ -42,6 +37,7 @@ describe('SuppliersForm', () => {
         formData={companyFactsMockBuilder.build()}
         regions={regionsMocks.regions1()}
         industries={industriesMocks.industries1()}
+        updateCompanyFacts={updateCompanyFacts}
       />
     );
     const input = screen.getByLabelText('Total purchases from suppliers');
@@ -74,6 +70,7 @@ describe('SuppliersForm', () => {
         formData={formData}
         regions={regionsMocks.regions1()}
         industries={industriesMocks.industries1()}
+        updateCompanyFacts={updateCompanyFacts}
       />
     );
     const input = screen.getByLabelText('Total purchases from suppliers');
@@ -97,6 +94,7 @@ describe('SuppliersForm', () => {
         formData={formData}
         regions={regionsMocks.regions1()}
         industries={industriesMocks.industries1()}
+        updateCompanyFacts={updateCompanyFacts}
       />
     );
 
@@ -121,6 +119,7 @@ describe('SuppliersForm', () => {
         formData={formData}
         regions={regionsMocks.regions1()}
         industries={industriesMocks.industries1()}
+        updateCompanyFacts={updateCompanyFacts}
       />
     );
     const newCosts = 20;
@@ -150,6 +149,7 @@ describe('SuppliersForm', () => {
         }}
         regions={regionsMocks.regions1()}
         industries={industriesMocks.industries1()}
+        updateCompanyFacts={updateCompanyFacts}
       />
     );
     const addSupplierButton = screen.getByRole('button', {
@@ -169,6 +169,7 @@ describe('SuppliersForm', () => {
         formData={formData}
         regions={regionsMocks.regions1()}
         industries={industriesMocks.industries1()}
+        updateCompanyFacts={updateCompanyFacts}
       />
     );
     const selectedRegion = regionsMocks.regions1()[3];
@@ -193,6 +194,7 @@ describe('SuppliersForm', () => {
         formData={formData}
         regions={regionsMocks.regions1()}
         industries={industriesMocks.industries1()}
+        updateCompanyFacts={updateCompanyFacts}
       />
     );
     const removeSupplierButton = screen.getByRole('button', {
@@ -216,6 +218,7 @@ describe('SuppliersForm', () => {
         formData={formData}
         regions={regionsMocks.regions1()}
         industries={industriesMocks.industries1()}
+        updateCompanyFacts={updateCompanyFacts}
       />
     );
     const mainOriginOfOtherSuppliersFieldBeforeUpdate = screen.getByLabelText(
@@ -235,6 +238,7 @@ describe('SuppliersForm', () => {
         formData={formData}
         regions={regionsMocks.regions1()}
         industries={industriesMocks.industries1()}
+        updateCompanyFacts={updateCompanyFacts}
       />
     );
     const mainOriginOfOtherSuppliersFieldBeforeUpdate = screen.getByLabelText(

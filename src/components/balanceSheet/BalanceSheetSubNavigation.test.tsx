@@ -2,34 +2,12 @@ import renderWithTheme from '../../testUtils/rendering';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import BalanceSheetSubNavigation from './BalanceSheetSubNavigation';
-import { useBalanceSheetItems } from '../../contexts/BalanceSheetListProvider';
-import { useOrganizations } from '../../contexts/OrganizationProvider';
-import { OrganizationMockBuilder } from '../../testUtils/organization';
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-
-vi.mock('../../contexts/BalanceSheetListProvider');
-vi.mock('../../contexts/OrganizationProvider');
+import { describe, expect, it } from 'vitest';
 
 describe('BalanceSheetSubNavigation', () => {
   const balanceSheetItem = { id: 2 };
 
-  const balanceSheetItems = [{ id: 1 }, { id: 2 }];
-  const setBalanceSheetItems = vi.fn();
-
-  const organizationIdFromUrl = 3;
   const pathToOrganization = `/organization/${3}`;
-
-  beforeEach(() => {
-    (useBalanceSheetItems as Mock).mockReturnValue({
-      balanceSheetItems,
-      setBalanceSheetItems,
-    });
-    (useOrganizations as Mock).mockReturnValue({
-      activeOrganization: new OrganizationMockBuilder()
-        .withId(organizationIdFromUrl)
-        .build(),
-    });
-  });
 
   it('navigates to overview page overview item is clicked', async () => {
     const { user } = renderWithTheme(

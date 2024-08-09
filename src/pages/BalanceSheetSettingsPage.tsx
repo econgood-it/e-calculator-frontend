@@ -1,5 +1,3 @@
-import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
-import { useBalanceSheetItems } from '../contexts/BalanceSheetListProvider';
 import {
   Alert,
   AlertTitle,
@@ -15,10 +13,28 @@ import { Trans } from 'react-i18next';
 import GridContainer from '../components/layout/GridContainer';
 import GridItem from '../components/layout/GridItem';
 import { useState } from 'react';
+import {
+  ActionFunctionArgs,
+  json,
+  redirect,
+  useSubmit,
+} from 'react-router-dom';
+import { User } from 'oidc-react';
+import {
+  createApiClient,
+  makeWretchInstanceWithAuth,
+} from '../api/api.client.ts';
+import { API_URL } from '../configuration.ts';
 
 export function BalanceSheetSettingsPage() {
-  const { balanceSheet } = useActiveBalanceSheet();
-  const { deleteBalanceSheet } = useBalanceSheetItems();
+  const submit = useSubmit();
+
+  async function deleteBalanceSheet() {
+    submit(
+      { intent: 'deleteBalanceSheet' },
+      { method: 'post', encType: 'application/json' }
+    );
+  }
 
   const [open, setOpen] = useState<boolean>(false);
 
@@ -85,14 +101,32 @@ export function BalanceSheetSettingsPage() {
           <Button onClick={handleClose}>
             <Trans>Cancel</Trans>
           </Button>
-          <Button
-            onClick={() => deleteBalanceSheet(balanceSheet!.id!)}
-            autoFocus
-          >
+          <Button onClick={deleteBalanceSheet} autoFocus>
             <Trans>Ok</Trans>
           </Button>
         </DialogActions>
       </Dialog>
     </>
   );
+}
+
+export async function action(
+  { params, request }: ActionFunctionArgs,
+  handlerCtx: unknown
+) {
+  const { intent } = await request.json();
+  const { userData } = handlerCtx as { userData: User };
+  if (!userData || !params.orgaId || !params.balanceSheetId) {
+    return null;
+  }
+  const apiClient = createApiClient(
+    makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
+  );
+
+  if (intent === 'deleteBalanceSheet') {
+    await apiClient.deleteBalanceSheet(Number.parseInt(params.balanceSheetId));
+    return redirect(`/organization/${params.orgaId}/overview`);
+  }
+
+  throw json({ message: 'Invalid intent' }, { status: 400 });
 }

@@ -6,7 +6,6 @@ import GridContainer, { FormContainer } from '../../layout/GridContainer';
 import { FieldValues, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { SaveButton } from '../../buttons/SaveButton.tsx';
 
 import { DEFAULT_CODE, IndustrySelect } from './AutocompleteSelects';
@@ -16,6 +15,7 @@ import { FieldArrayAppendButton } from '../forms/FieldArrayAppendButton';
 import { FieldArrayRemoveButton } from '../forms/FieldArrayRemoveButton';
 import { CompanyFactsResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
 import { Industry } from '../../../models/Industry';
+import { CompanyFactsPatchRequestBody } from '../../../models/CompanyFacts.ts';
 
 const CustomersFormSchema = CompanyFactsResponseBodySchema.pick({
   turnover: true,
@@ -27,11 +27,17 @@ type CustomersFormInput = z.infer<typeof CustomersFormSchema>;
 type CustomersFormProps = {
   formData: CustomersFormInput;
   industries: Industry[];
+  updateCompanyFacts: (
+    companyFacts: CompanyFactsPatchRequestBody
+  ) => Promise<void>;
 };
 
-export function CustomersForm({ formData, industries }: CustomersFormProps) {
+export function CustomersForm({
+  formData,
+  industries,
+  updateCompanyFacts,
+}: CustomersFormProps) {
   const { t } = useTranslation();
-  const { updateCompanyFacts } = useActiveBalanceSheet();
 
   const {
     handleSubmit,

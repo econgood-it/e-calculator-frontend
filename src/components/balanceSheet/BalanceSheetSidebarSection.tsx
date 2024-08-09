@@ -8,16 +8,23 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { useState } from 'react';
 import { Trans } from 'react-i18next';
-import { BalanceSheetItem } from '../../models/BalanceSheet';
+import {
+  BalanceSheetCreateRequestBody,
+  BalanceSheetItem,
+} from '../../models/BalanceSheet';
 import { BalanceSheetCreationDialog } from './BalanceSheetCreationDialog';
 import { BalanceSheetNavigationItem } from './BalanceSheetNavigationItem';
 
 type BalanceSheetSidebarSectionProps = {
   balanceSheetItems: BalanceSheetItem[];
+  onCreateBalanceSheet: (
+    balanceSheet: BalanceSheetCreateRequestBody
+  ) => Promise<void>;
 };
 
 export function BalanceSheetSidebarSection({
   balanceSheetItems,
+  onCreateBalanceSheet,
 }: BalanceSheetSidebarSectionProps) {
   const [showBalanceSheetCreationDialog, setShowBalanceSheetCreationDialog] =
     useState<boolean>(false);
@@ -47,6 +54,7 @@ export function BalanceSheetSidebarSection({
         ))}
       </List>
       <BalanceSheetCreationDialog
+        onSave={onCreateBalanceSheet}
         open={showBalanceSheetCreationDialog}
         onClose={() => setShowBalanceSheetCreationDialog(false)}
       />

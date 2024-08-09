@@ -1,38 +1,32 @@
-import renderWithTheme from '../../testUtils/rendering';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { useAlert } from '../../contexts/AlertContext';
-import { OrganizationCreationDialog } from './OrganizationCreationDialog';
-import { OrganizationMockBuilder } from '../../testUtils/organization';
-import { useOrganizations } from '../../contexts/OrganizationProvider';
 import { useAuth } from 'oidc-react';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { useAlert } from '../../contexts/AlertContext';
+import { OrganizationMockBuilder } from '../../testUtils/organization';
+import renderWithTheme from '../../testUtils/rendering';
+import { OrganizationCreationDialog } from './OrganizationCreationDialog';
 
 vi.mock('../../contexts/AlertContext');
-vi.mock('../../contexts/OrganizationProvider');
 
 vi.mock('oidc-react', () => ({
   useAuth: vi.fn(),
 }));
 
 describe('OrganizationCreationDialog', () => {
-  const useOrganizationMock = {
-    createOrganization: vi.fn(),
-  };
-
   const logoutMock = vi.fn();
 
   beforeEach(() => {
     (useAuth as Mock).mockReturnValue({ signOutRedirect: logoutMock });
     (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
-    (useOrganizations as Mock).mockImplementation(() => useOrganizationMock);
   });
 
   it('should call create organization api endpoint on submit', async () => {
-    const user = userEvent.setup();
     const onClose = vi.fn();
-    renderWithTheme(
+    const onCreateClicked = vi.fn();
+    const { user } = renderWithTheme(
       <OrganizationCreationDialog
+        onCreateClicked={onCreateClicked}
         open={true}
         onClose={onClose}
         fullScreen={false}
@@ -49,21 +43,20 @@ describe('OrganizationCreationDialog', () => {
     );
     const saveButton = screen.getByRole('button', { name: 'Save' });
     await user.click(saveButton);
-    await waitFor(() =>
-      expect(useOrganizationMock.createOrganization).toHaveBeenCalledWith(
-        newOrga
-      )
-    );
+    await waitFor(() => expect(onCreateClicked).toHaveBeenCalledWith(newOrga));
     expect(onClose).toHaveBeenCalledWith();
   });
 
   it('should close dialog when close button is clicked', async () => {
     const user = userEvent.setup();
     const onClose = vi.fn();
+    const onCreateClicked = vi.fn();
+
     renderWithTheme(
       <OrganizationCreationDialog
         open={true}
         onClose={onClose}
+        onCreateClicked={onCreateClicked}
         fullScreen={false}
       />
     );
@@ -74,10 +67,13 @@ describe('OrganizationCreationDialog', () => {
 
   it('should not have close icon if closable is false', async () => {
     const setOpen = vi.fn();
+    const onCreateClicked = vi.fn();
+
     renderWithTheme(
       <OrganizationCreationDialog
         open={true}
         onClose={setOpen}
+        onCreateClicked={onCreateClicked}
         fullScreen={true}
       />
     );
@@ -87,11 +83,14 @@ describe('OrganizationCreationDialog', () => {
 
   it('should open user navigation menu on click', async () => {
     const setOpen = vi.fn();
+    const onCreateClicked = vi.fn();
+
     const { user } = renderWithTheme(
       <OrganizationCreationDialog
         open={true}
         onClose={setOpen}
         fullScreen={true}
+        onCreateClicked={onCreateClicked}
       />
     );
     const openUserMenu = await screen.findByLabelText(

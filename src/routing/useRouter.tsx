@@ -19,23 +19,32 @@ import {
   loader as profileLoader,
   ProfilePage,
 } from '../pages/ProfilePage';
-import Sidebar, { loader as sidebarLoader } from '../pages/Sidebar';
+import Sidebar, {
+  action as sidebarAction,
+  loader as sidebarLoader,
+} from '../pages/Sidebar';
 
 import { Alert, AlertTitle } from '@mui/material';
 import { useAuth } from 'oidc-react';
 import { Trans } from 'react-i18next';
-import WithActiveBalanceSheet from '../components/balanceSheet/WithActiveBalanceSheet';
-import { BalanceSheetListProvider } from '../contexts/BalanceSheetListProvider';
-import { OrganizationProvider } from '../contexts/OrganizationProvider';
 import {
   BalanceSheetOverviewPage,
   loader as matrixLoader,
 } from '../pages/BalanceSheetOverviewPage';
-import { BalanceSheetSettingsPage } from '../pages/BalanceSheetSettingsPage';
-import CompanyFactsPage from '../pages/CompanyFactsPage';
-import { RedirectToActiveOrganization } from './RedirectToActiveOrganization';
-import { RequireActiveOrganization } from './RequireActiveOrganization';
+import { loader as loaderForRedirect } from './RedirectToActiveOrganization.tsx';
+import {
+  action as deleteBalanceSheetAction,
+  BalanceSheetSettingsPage,
+} from '../pages/BalanceSheetSettingsPage';
+import CompanyFactsPage, {
+  action as companyFactsAction,
+  loader as loaderCompanyFacts,
+} from '../pages/CompanyFactsPage';
 import { RequiresAuth } from './RequiresAuth';
+import {
+  action as orgaCreationAction,
+  OrganizationCreationPage,
+} from '../pages/OrganizationCreationPage.tsx';
 
 function ErrorPage() {
   const error = useRouteError();
@@ -59,94 +68,91 @@ export function useRouter() {
       {
         element: <RequiresAuth />,
         children: [
+          { path: '/', loader: loaderForRedirect },
           {
-            element: (
-              <OrganizationProvider>
-                <BalanceSheetListProvider>
-                  <RequireActiveOrganization />
-                </BalanceSheetListProvider>
-              </OrganizationProvider>
-            ),
+            path: '/organization',
+            element: <OrganizationCreationPage />,
+            action: orgaCreationAction,
+          },
+          {
+            path: '/organization/:orgaId',
+            element: <Sidebar />,
+            errorElement: <ErrorPage />,
+            loader: sidebarLoader,
+            action: sidebarAction,
             children: [
-              { path: '/', element: <RedirectToActiveOrganization /> },
               {
-                path: '/organization/:orgaId',
-                element: <Sidebar />,
-                errorElement: <ErrorPage />,
-                loader: sidebarLoader,
+                path: 'overview',
+                element: <OrganizationOverviewPage />,
+                loader: orgaLoader,
+                action: orgaAction,
+              },
+              {
+                path: 'balancesheet/:balanceSheetId',
                 children: [
                   {
                     path: 'overview',
-                    element: <OrganizationOverviewPage />,
-                    loader: orgaLoader,
-                    action: orgaAction,
+                    element: <BalanceSheetOverviewPage />,
+                    loader: matrixLoader,
                   },
                   {
-                    path: 'balancesheet/:balanceSheetId',
-                    element: <WithActiveBalanceSheet />,
+                    path: 'settings',
+                    element: <BalanceSheetSettingsPage />,
+                    action: deleteBalanceSheetAction,
+                  },
+                  {
+                    path: 'companyfacts',
+                    element: <CompanyFactsPage />,
+                    loader: loaderCompanyFacts,
+                    action: companyFactsAction,
+                  },
+                  {
+                    path: 'ratings',
+                    element: (
+                      <>
+                        <Outlet />
+                      </>
+                    ),
                     children: [
                       {
-                        path: 'overview',
-                        element: <BalanceSheetOverviewPage />,
-                        loader: matrixLoader,
+                        path: 'suppliers',
+                        element: <RatingsPage />,
+                        loader: ratingsLoader,
+                        action: ratingsAction,
                       },
                       {
-                        path: 'settings',
-                        element: <BalanceSheetSettingsPage />,
+                        path: 'finance',
+                        element: <RatingsPage />,
+                        loader: ratingsLoader,
+                        action: ratingsAction,
                       },
                       {
-                        path: 'companyfacts',
-                        element: <CompanyFactsPage />,
+                        path: 'employees',
+                        element: <RatingsPage />,
+                        loader: ratingsLoader,
+                        action: ratingsAction,
                       },
                       {
-                        path: 'ratings',
-                        element: (
-                          <>
-                            <Outlet />
-                          </>
-                        ),
-                        children: [
-                          {
-                            path: 'suppliers',
-                            element: <RatingsPage />,
-                            loader: ratingsLoader,
-                            action: ratingsAction,
-                          },
-                          {
-                            path: 'finance',
-                            element: <RatingsPage />,
-                            loader: ratingsLoader,
-                            action: ratingsAction,
-                          },
-                          {
-                            path: 'employees',
-                            element: <RatingsPage />,
-                            loader: ratingsLoader,
-                            action: ratingsAction,
-                          },
-                          {
-                            path: 'customers',
-                            element: <RatingsPage />,
-                            loader: ratingsLoader,
-                            action: ratingsAction,
-                          },
-                          {
-                            path: 'society',
-                            element: <RatingsPage />,
-                            loader: ratingsLoader,
-                            action: ratingsAction,
-                          },
-                        ],
+                        path: 'customers',
+                        element: <RatingsPage />,
+                        loader: ratingsLoader,
+                        action: ratingsAction,
+                      },
+                      {
+                        path: 'society',
+                        element: <RatingsPage />,
+                        loader: ratingsLoader,
+                        action: ratingsAction,
                       },
                     ],
                   },
-                  {
-                    path: 'profile',
-                    element: <ProfilePage />,
-                    loader: profileLoader,
-                    action: profileAction,
-                  },
                 ],
+              },
+              {
+                path: 'profile',
+                element: <ProfilePage />,
+                loader: profileLoader,
+                action: profileAction,
               },
             ],
           },

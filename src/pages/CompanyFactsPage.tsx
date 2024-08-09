@@ -1,78 +1,84 @@
-import { useActiveBalanceSheet } from '../contexts/ActiveBalanceSheetProvider';
 import SuppliersForm from '../components/balanceSheet/companyFacts/SuppliersForm';
-import { useApi } from '../contexts/ApiProvider';
 import { OwnersAndFinancialServicesForm } from '../components/balanceSheet/companyFacts/OwnersAndFinancialServicesForm';
-import { useEffect, useState } from 'react';
 
 import { EmployeesForm } from '../components/balanceSheet/companyFacts/EmployeesForm';
 import { CustomersForm } from '../components/balanceSheet/companyFacts/CustomersForm';
-import { Region } from '../models/Region';
-import { Industry } from '../models/Industry';
+import {
+  ActionFunctionArgs,
+  json,
+  LoaderFunctionArgs,
+  useSubmit,
+} from 'react-router-dom';
+import { User } from 'oidc-react';
+import {
+  createApiClient,
+  makeWretchInstanceWithAuth,
+} from '../api/api.client.ts';
+import { API_URL } from '../configuration.ts';
+import { useLoaderData } from 'react-router-typesafe';
+import { CompanyFactsPatchRequestBody } from '../models/CompanyFacts.ts';
 
 const CompanyFactsPage = () => {
-  const { balanceSheet } = useActiveBalanceSheet();
-  const api = useApi();
-  const [regions, setRegions] = useState<Region[]>([]);
-  const [industries, setIndustries] = useState<Industry[]>([]);
-
-  useEffect(() => {
-    (async () => {
-      setRegions(await api.getRegions());
-    })();
-  }, [api]);
-
-  useEffect(() => {
-    (async () => {
-      setIndustries(await api.getIndustries());
-    })();
-  }, [api]);
+  const data = useLoaderData<typeof loader>();
+  const submit = useSubmit();
+  async function updateCompanyFacts(
+    companyFacts: CompanyFactsPatchRequestBody
+  ) {
+    submit(
+      { companyFacts, intent: 'updateCompanyFacts' },
+      { method: 'patch', encType: 'application/json' }
+    );
+  }
 
   return (
     <>
-      {balanceSheet && (
+      {data && (
         <>
           <SuppliersForm
             formData={{
               totalPurchaseFromSuppliers:
-                balanceSheet.companyFacts.totalPurchaseFromSuppliers,
-              supplyFractions: balanceSheet.companyFacts.supplyFractions,
+                data.companyFacts.totalPurchaseFromSuppliers,
+              supplyFractions: data.companyFacts.supplyFractions,
               mainOriginOfOtherSuppliers:
-                balanceSheet.companyFacts.mainOriginOfOtherSuppliers,
+                data.companyFacts.mainOriginOfOtherSuppliers,
             }}
-            regions={regions}
-            industries={industries}
+            regions={data.regions}
+            industries={data.industries}
+            updateCompanyFacts={updateCompanyFacts}
           />
           <OwnersAndFinancialServicesForm
             formData={{
-              financialCosts: balanceSheet.companyFacts.financialCosts,
-              profit: balanceSheet.companyFacts.profit,
+              financialCosts: data.companyFacts.financialCosts,
+              profit: data.companyFacts.profit,
               incomeFromFinancialInvestments:
-                balanceSheet.companyFacts.incomeFromFinancialInvestments,
-              totalAssets: balanceSheet.companyFacts.totalAssets,
-              additionsToFixedAssets:
-                balanceSheet.companyFacts.additionsToFixedAssets,
+                data.companyFacts.incomeFromFinancialInvestments,
+              totalAssets: data.companyFacts.totalAssets,
+              additionsToFixedAssets: data.companyFacts.additionsToFixedAssets,
               financialAssetsAndCashBalance:
-                balanceSheet.companyFacts.financialAssetsAndCashBalance,
+                data.companyFacts.financialAssetsAndCashBalance,
             }}
+            updateCompanyFacts={updateCompanyFacts}
           />
           <EmployeesForm
             formData={{
-              numberOfEmployees: balanceSheet.companyFacts.numberOfEmployees,
-              totalStaffCosts: balanceSheet.companyFacts.totalStaffCosts,
+              numberOfEmployees: data.companyFacts.numberOfEmployees,
+              totalStaffCosts: data.companyFacts.totalStaffCosts,
               averageJourneyToWorkForStaffInKm:
-                balanceSheet.companyFacts.averageJourneyToWorkForStaffInKm,
-              hasCanteen: balanceSheet.companyFacts.hasCanteen,
-              employeesFractions: balanceSheet.companyFacts.employeesFractions,
+                data.companyFacts.averageJourneyToWorkForStaffInKm,
+              hasCanteen: data.companyFacts.hasCanteen,
+              employeesFractions: data.companyFacts.employeesFractions,
             }}
-            regions={regions}
+            regions={data.regions}
+            updateCompanyFacts={updateCompanyFacts}
           />
           <CustomersForm
             formData={{
-              turnover: balanceSheet.companyFacts.turnover,
-              industrySectors: balanceSheet.companyFacts.industrySectors,
-              isB2B: balanceSheet.companyFacts.isB2B,
+              turnover: data.companyFacts.turnover,
+              industrySectors: data.companyFacts.industrySectors,
+              isB2B: data.companyFacts.isB2B,
             }}
-            industries={industries}
+            industries={data.industries}
+            updateCompanyFacts={updateCompanyFacts}
           />
         </>
       )}
@@ -81,3 +87,45 @@ const CompanyFactsPage = () => {
 };
 
 export default CompanyFactsPage;
+
+export async function loader(
+  { params }: LoaderFunctionArgs,
+  handlerCtx: unknown
+) {
+  const { userData } = handlerCtx as { userData: User };
+  if (!userData || !params.balanceSheetId) {
+    return null;
+  }
+  const apiClient = createApiClient(
+    makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
+  );
+
+  const balanceSheet = await apiClient.getBalanceSheet(
+    Number.parseInt(params.balanceSheetId)
+  );
+  const regions = await apiClient.getRegions();
+  const industries = await apiClient.getIndustries();
+  return { companyFacts: balanceSheet.companyFacts, regions, industries };
+}
+
+export async function action(
+  { params, request }: ActionFunctionArgs,
+  handlerCtx: unknown
+) {
+  const { intent, ...data } = await request.json();
+  const { userData } = handlerCtx as { userData: User };
+  if (!userData || !params.balanceSheetId) {
+    return null;
+  }
+  const apiClient = createApiClient(
+    makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
+  );
+
+  if (intent === 'updateCompanyFacts') {
+    return await apiClient.updateBalanceSheet(parseInt(params.balanceSheetId), {
+      companyFacts: data.companyFacts,
+    });
+  }
+
+  throw json({ message: 'Invalid intent' }, { status: 400 });
+}

@@ -5,10 +5,10 @@ import GridContainer, { FormContainer } from '../../layout/GridContainer';
 import { FieldValues, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { SaveButton } from '../../buttons/SaveButton.tsx';
 import { FormTitle } from './FormTitle';
 import { CompanyFactsResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
+import { CompanyFactsPatchRequestBody } from '../../../models/CompanyFacts.ts';
 
 const OwnersAndFinancialServicesFormSchema =
   CompanyFactsResponseBodySchema.pick({
@@ -25,13 +25,16 @@ type OwnersAndFinancialServicesFormInput = z.infer<
 
 type OwnersAndFinancialServicesFormProps = {
   formData: OwnersAndFinancialServicesFormInput;
+  updateCompanyFacts: (
+    companyFacts: CompanyFactsPatchRequestBody
+  ) => Promise<void>;
 };
 
 export function OwnersAndFinancialServicesForm({
   formData,
+  updateCompanyFacts,
 }: OwnersAndFinancialServicesFormProps) {
   const { t } = useTranslation();
-  const { updateCompanyFacts } = useActiveBalanceSheet();
   const {
     formState: { errors },
     register,

@@ -1,25 +1,21 @@
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { useAuth } from 'oidc-react';
-import {
-  createMemoryRouter,
-  MemoryRouter,
-  Route,
-  RouterProvider,
-  Routes,
-} from 'react-router-dom';
+import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { useAlert } from '../contexts/AlertContext';
-import { useOrganizations } from '../contexts/OrganizationProvider';
 import { setupApiMock } from '../testUtils/api';
-import { BalanceSheetItemsMockBuilder } from '../testUtils/balanceSheets';
 import {
   OrganizationItemsMocks,
   OrganizationMockBuilder,
 } from '../testUtils/organization';
 import renderWithTheme from '../testUtils/rendering';
 import Sidebar, { action, loader } from './Sidebar';
+import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets.ts';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
-vi.mock('../contexts/OrganizationProvider');
 vi.mock('../contexts/AlertContext');
 
 vi.mock('oidc-react', () => ({
@@ -27,10 +23,6 @@ vi.mock('oidc-react', () => ({
 }));
 
 describe('Sidebar', () => {
-  const initialPathForRouting = '/organization/3';
-  const balanceSheetItems = new BalanceSheetItemsMockBuilder().build();
-
-  const setActiveOrganizationByIdMock = vi.fn();
   const logoutMock = vi.fn();
 
   beforeEach(() => {
@@ -40,9 +32,6 @@ describe('Sidebar', () => {
     (useAlert as Mock).mockReturnValue({
       addErrorAlert: vi.fn(),
     });
-    (useOrganizations as Mock).mockReturnValue({
-      setActiveOrganizationById: setActiveOrganizationByIdMock,
-    });
   });
 
   afterEach(() => {
@@ -50,7 +39,8 @@ describe('Sidebar', () => {
   });
 
   it('renders each balance sheet as a navigation item', async () => {
-    const path = '/organization/3';
+    const path = '/organization/3/overview';
+    const balanceSheetItems = [{ id: 1 }, { id: 2 }];
     const router = createMemoryRouter(
       [
         {
@@ -59,7 +49,7 @@ describe('Sidebar', () => {
           loader: () => ({
             activeOrganizationId: 3,
             organizationItems: [{ id: 3 }],
-            balanceSheetItems: [{ id: 1 }, { id: 2 }],
+            balanceSheetItems,
           }),
         },
       ],
@@ -68,13 +58,11 @@ describe('Sidebar', () => {
 
     renderWithTheme(<RouterProvider router={router} />);
     expect(await screen.findAllByText(/Balance sheet \d/)).toHaveLength(2);
-    balanceSheetItems.forEach(async (b) => {
-      await waitFor(async () =>
-        expect(
-          await screen.findByText(`Balance sheet ${b.id}`)
-        ).toBeInTheDocument()
-      );
-    });
+    for (const b of balanceSheetItems) {
+      expect(
+        await screen.getByText(`Balance sheet ${b.id}`)
+      ).toBeInTheDocument();
+    }
   });
 
   it('navigates to balance sheet if user click on balance sheet navigation item', async () => {
@@ -112,7 +100,9 @@ describe('Sidebar', () => {
     ).toBeInTheDocument();
   });
 
-  it('creates organization and navigates to it clicked', async () => {
+  it('creates balance sheet and calls action', async () => {
+    const path = '/organization/3';
+    const action = vi.fn().mockResolvedValue(null);
     const router = createMemoryRouter(
       [
         {
@@ -123,6 +113,7 @@ describe('Sidebar', () => {
             organizationItems: [{ id: 3 }],
             balanceSheetItems: [{ id: 1 }, { id: 3 }],
           }),
+          action: async ({ request }) => action(await request.json()),
         },
       ],
       { initialEntries: [path] }
@@ -130,29 +121,88 @@ describe('Sidebar', () => {
     const { user } = renderWithTheme(<RouterProvider router={router} />);
 
     await user.click(
-      screen.getByRole('button', { name: 'Create organization' })
+      await screen.findByRole('button', {
+        name: 'Create balance sheet',
+      })
     );
-    expect(
-      await screen.findByRole('dialog', { name: 'Create organization' })
-    ).toBeInTheDocument();
+    await user.click(await screen.findByRole('button', { name: 'Save' }));
+    expect(action).toHaveBeenCalledWith({
+      balanceSheet: {
+        type: BalanceSheetType.Full,
+        version: BalanceSheetVersion.v5_0_8,
+      },
+      intent: 'createBalanceSheet',
+    });
+  });
+
+  it('creates organization and calls action', async () => {
+    const path = `/organization/3/overview`;
+    const action = vi.fn().mockResolvedValue(null);
+    const router = createMemoryRouter(
+      [
+        {
+          path,
+          element: <Sidebar />,
+          loader: () => ({
+            activeOrganizationId: 3,
+            organizationItems: [{ id: 3 }],
+            balanceSheetItems: [{ id: 1 }, { id: 3 }],
+          }),
+          action: async ({ request }) => action(await request.json()),
+        },
+      ],
+      { initialEntries: [path] }
+    );
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
+
+    await user.click(
+      await screen.findByRole('button', { name: 'Create organization' })
+    );
+    const newOrga = new OrganizationMockBuilder().buildRequestBody();
+
+    await user.type(screen.getByLabelText(/Organization name/), newOrga.name);
+    await user.type(screen.getByLabelText(/City/), newOrga.address.city);
+    await user.type(screen.getByLabelText(/Zip/), newOrga.address.zip);
+    await user.type(screen.getByLabelText(/Street/), newOrga.address.street);
+    await user.type(
+      screen.getByLabelText(/House number/),
+      newOrga.address.houseNumber
+    );
+    await user.click(screen.getByText('Save'));
+    expect(action).toHaveBeenCalledWith({
+      organization: newOrga,
+      intent: 'createOrganization',
+    });
   });
 
   it('active organization changed if user selects organization from dropdown', async () => {
     const orgaItemToSelect = OrganizationItemsMocks.default()[1];
-
-    const { user } = renderWithTheme(
-      <MemoryRouter initialEntries={[initialPathForRouting]}>
-        <Routes>
-          <Route path={initialPathForRouting} element={<Sidebar />} />
-          <Route
-            path={`organization/${orgaItemToSelect.id}`}
-            element={
-              <div>{`Navigated to Organization with id ${orgaItemToSelect.id}`}</div>
-            }
-          />
-        </Routes>
-      </MemoryRouter>
+    const activeOrganizationId = OrganizationItemsMocks.default()[0].id;
+    const path = `/organization/${activeOrganizationId}/overview`;
+    const action = vi.fn().mockResolvedValue(null);
+    const router = createMemoryRouter(
+      [
+        {
+          path,
+          element: <Sidebar />,
+          loader: () => ({
+            activeOrganizationId,
+            organizationItems: OrganizationItemsMocks.default(),
+            balanceSheetItems: [{ id: 1 }, { id: 3 }],
+          }),
+          action: async ({ request }) => action(await request.json()),
+        },
+        {
+          path: `/organization/${orgaItemToSelect.id}/overview`,
+          element: (
+            <div>{`Navigated to Organization with id ${orgaItemToSelect.id}`}</div>
+          ),
+        },
+      ],
+      { initialEntries: [path] }
     );
+
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
 
     await user.click(
       await screen.findByText(OrganizationItemsMocks.default()[0].name)
@@ -166,11 +216,6 @@ describe('Sidebar', () => {
 
     await user.click(
       options.find((o) => o.textContent === orgaItemToSelect.name)!
-    );
-    await waitFor(() =>
-      expect(setActiveOrganizationByIdMock).toHaveBeenCalledWith(
-        orgaItemToSelect.id
-      )
     );
     expect(
       await screen.findByText(
@@ -258,7 +303,7 @@ describe('loader', () => {
 });
 
 describe('actions', () => {
-  it('create organization', async () => {
+  it('create organization and navigates to it', async () => {
     const organization = new OrganizationMockBuilder().withId(3);
     mockApi.createOrganization.mockResolvedValue(organization.build());
 
@@ -281,6 +326,35 @@ describe('actions', () => {
     );
     expect(mockApi.createOrganization).toHaveBeenCalledWith(
       organization.buildRequestBody()
+    );
+  });
+
+  it('create balance sheet and navigates to it', async () => {
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder().withId(3);
+    mockApi.createBalanceSheet.mockResolvedValue(
+      balanceSheetMockBuilder.build()
+    );
+
+    const request = new Request(new URL('http://localhost/'), {
+      method: 'post',
+      body: JSON.stringify({
+        balanceSheet: { ...balanceSheetMockBuilder.buildRequestBody() },
+        intent: 'createBalanceSheet',
+      }),
+    });
+
+    const result = await action(
+      { params: { orgaId: '1' }, request },
+      { userData: { access_token: 'token' } }
+    );
+    expect(result!.status).toEqual(302);
+
+    expect(result!.headers.get('Location')).toEqual(
+      `../balancesheet/${balanceSheetMockBuilder.build().id}/overview`
+    );
+    expect(mockApi.createBalanceSheet).toHaveBeenCalledWith(
+      balanceSheetMockBuilder.buildRequestBody(),
+      1
     );
   });
 });

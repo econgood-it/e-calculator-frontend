@@ -1,56 +1,48 @@
-import { screen } from '@testing-library/react';
-import {
-  createMemoryRouter,
-  MemoryRouter,
-  Route,
-  RouterProvider,
-  Routes,
-} from 'react-router-dom';
-import { describe, expect, it, Mock, vi } from 'vitest';
-import { useOrganizations } from '../contexts/OrganizationProvider';
-import { OrganizationMockBuilder } from '../testUtils/organization';
-import renderWithTheme from '../testUtils/rendering';
-import { RedirectToActiveOrganization } from './RedirectToActiveOrganization';
+import { describe, expect, it, vi } from 'vitest';
 
-vi.mock('../contexts/OrganizationProvider');
-describe('RedirectToActiveOrganization', () => {
-  it('shows loading page if active organization is undefined', () => {
-    (useOrganizations as Mock).mockReturnValue({
-      activeOrganization: undefined,
-    });
-    const router = createMemoryRouter(
-      [
-        {
-          path: `/initial`,
-          element: <RedirectToActiveOrganization />,
-        },
-      ],
-      { initialEntries: ['/initial'] }
+import { setupApiMock } from '../testUtils/api.ts';
+import { loader } from './RedirectToActiveOrganization.tsx';
+
+const mockApi = setupApiMock();
+
+vi.mock('../api/api.client.ts', async () => {
+  const originalModule = await vi.importActual('../api/api.client.ts');
+  return {
+    ...originalModule,
+    createApiClient: () => mockApi,
+  };
+});
+
+describe('loaders', () => {
+  it('redirects to first organization', async () => {
+    mockApi.getOrganizations.mockResolvedValue([
+      { id: 7, name: 'organization 1' },
+      { id: 2, name: 'organization 2' },
+      { id: 3, name: 'organization 3' },
+    ]);
+
+    const request = new Request(new URL('http://localhost/'));
+
+    const result = await loader(
+      { params: {}, request },
+      { userData: { access_token: 'token' } }
     );
+    expect(result!.status).toEqual(302);
 
-    renderWithTheme(<RouterProvider router={router} />);
-    expect(screen.getByLabelText('loading')).toBeInTheDocument();
+    expect(result!.headers.get('Location')).toEqual(`organization/7/overview`);
+    expect(mockApi.getOrganizations).toHaveBeenCalledWith();
   });
 
-  it('redirects to active organization', async () => {
-    const activeOrganizationId = 3;
-    (useOrganizations as Mock).mockReturnValue({
-      activeOrganization: new OrganizationMockBuilder()
-        .withId(activeOrganizationId)
-        .build(),
-    });
+  it('redirects to organization creation page if organizations is empty', async () => {
+    mockApi.getOrganizations.mockResolvedValue([]);
+    const request = new Request(new URL('http://localhost/'));
 
-    renderWithTheme(
-      <MemoryRouter initialEntries={['/initial']}>
-        <Routes>
-          <Route path={'/initial'} element={<RedirectToActiveOrganization />} />
-          <Route
-            path={`/organization/${activeOrganizationId}/overview`}
-            element={<div>Active organization</div>}
-          />
-        </Routes>
-      </MemoryRouter>
+    const result = await loader(
+      { params: {}, request },
+      { userData: { access_token: 'token' } }
     );
-    expect(screen.getByText('Active organization')).toBeInTheDocument();
+    expect(result!.status).toEqual(302);
+    expect(result!.headers.get('Location')).toEqual(`organization`);
+    expect(mockApi.getOrganizations).toHaveBeenCalledWith();
   });
 });

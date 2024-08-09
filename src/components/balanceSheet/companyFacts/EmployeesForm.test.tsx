@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event';
 import renderWithTheme from '../../../testUtils/rendering';
 
 import { EmployeesMocks } from '../../../testUtils/balanceSheets';
-import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import { useAlert } from '../../../contexts/AlertContext';
 
 import {
@@ -16,7 +15,6 @@ import { EmployeesForm } from './EmployeesForm';
 import { regionsMocks } from '../../../testUtils/regions';
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 
-vi.mock('../../../contexts/ActiveBalanceSheetProvider');
 vi.mock('../../../contexts/AlertContext');
 
 describe('EmployeesForm', () => {
@@ -24,9 +22,6 @@ describe('EmployeesForm', () => {
 
   beforeEach(() => {
     (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
-    (useActiveBalanceSheet as Mock).mockReturnValue({
-      updateCompanyFacts: updateCompanyFacts,
-    });
   });
 
   afterEach(() => {
@@ -40,7 +35,11 @@ describe('EmployeesForm', () => {
   ) {
     const formData = EmployeesMocks.employees1();
     const form = (
-      <EmployeesForm formData={formData} regions={regionsMocks.regions1()} />
+      <EmployeesForm
+        formData={formData}
+        regions={regionsMocks.regions1()}
+        updateCompanyFacts={updateCompanyFacts}
+      />
     );
     await expectPositiveNumberFieldToBeValidatedAndModifiedAndSaved(
       isPositiveNumber,
@@ -77,7 +76,11 @@ describe('EmployeesForm', () => {
     const user = userEvent.setup();
     const formData = EmployeesMocks.employees1();
     renderWithTheme(
-      <EmployeesForm formData={formData} regions={regionsMocks.regions1()} />
+      <EmployeesForm
+        formData={formData}
+        regions={regionsMocks.regions1()}
+        updateCompanyFacts={updateCompanyFacts}
+      />
     );
     const switchField = screen.getByRole('checkbox', {
       name: 'Is there a canteen for the majority of staff?',
@@ -100,6 +103,7 @@ describe('EmployeesForm', () => {
           ...EmployeesMocks.employees1(),
         }}
         regions={regionsMocks.regions1()}
+        updateCompanyFacts={updateCompanyFacts}
       />
     );
     const addEmployeesOriginButton = screen.getByRole('button', {
@@ -115,7 +119,11 @@ describe('EmployeesForm', () => {
     const user = userEvent.setup();
     const formData = EmployeesMocks.employees1();
     renderWithTheme(
-      <EmployeesForm formData={formData} regions={regionsMocks.regions1()} />
+      <EmployeesForm
+        formData={formData}
+        regions={regionsMocks.regions1()}
+        updateCompanyFacts={updateCompanyFacts}
+      />
     );
     const addEmployeesOriginButton = screen.getByRole('button', {
       name: 'Add employees origin',
@@ -150,7 +158,11 @@ describe('EmployeesForm', () => {
     const user = userEvent.setup();
     const formData = EmployeesMocks.employees1();
     renderWithTheme(
-      <EmployeesForm formData={formData} regions={regionsMocks.regions1()} />
+      <EmployeesForm
+        formData={formData}
+        regions={regionsMocks.regions1()}
+        updateCompanyFacts={updateCompanyFacts}
+      />
     );
     const removeEmployeesFractionButton = screen.getByRole('button', {
       name: `Remove employeesFractions with 0`,

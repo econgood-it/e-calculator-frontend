@@ -1,28 +1,28 @@
 import { DialogContent, DialogTitle } from '@mui/material';
-import { OrganizationForm } from './OrganizationForm';
-import { OrganizationRequestBody } from '../../models/Organization';
-import { useOrganizations } from '../../contexts/OrganizationProvider';
+import { ReactElement } from 'react';
 import { Trans } from 'react-i18next';
-import { ClosableDialog } from '../lib/ClosableDialog';
+import { OrganizationRequestBody } from '../../models/Organization';
 import GridContainer from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
-import { ReactElement } from 'react';
+import { ClosableDialog } from '../lib/ClosableDialog';
 import { FullScreenDialog } from '../lib/FullScreenDialog';
+import { OrganizationForm } from './OrganizationForm';
 
 type OrganizationDialogProps = {
   open: boolean;
   onClose: () => void;
   fullScreen: boolean;
+  onCreateClicked: (organization: OrganizationRequestBody) => Promise<void>;
 };
 
 export function OrganizationCreationDialog({
   open,
   onClose,
+  onCreateClicked,
   fullScreen,
 }: OrganizationDialogProps) {
-  const { createOrganization } = useOrganizations();
   async function onSave(organization: OrganizationRequestBody) {
-    await createOrganization(organization);
+    await onCreateClicked(organization);
     onClose();
   }
 
@@ -50,12 +50,19 @@ export function OrganizationCreationDialog({
   );
 }
 
+type DialogComponentProps = {
+  open: boolean;
+  onClose: () => void;
+  fullScreen: boolean;
+  children: ReactElement;
+};
+
 function DialogComponent({
   open,
   onClose,
   fullScreen,
   children,
-}: OrganizationDialogProps & { children: ReactElement }) {
+}: DialogComponentProps) {
   if (!fullScreen) {
     return (
       <ClosableDialog

@@ -9,7 +9,6 @@ import GridContainer, { FormContainer } from '../../layout/GridContainer';
 import { FieldValues, useFieldArray, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 import SwitchLabel from '../forms/SwitchLabel';
 
 import { DEFAULT_CODE, RegionSelect } from './AutocompleteSelects';
@@ -19,6 +18,7 @@ import { FieldArrayAppendButton } from '../forms/FieldArrayAppendButton';
 import { FieldArrayRemoveButton } from '../forms/FieldArrayRemoveButton';
 import { CompanyFactsResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
 import { Region } from '../../../models/Region';
+import { CompanyFactsPatchRequestBody } from '../../../models/CompanyFacts.ts';
 
 const EmployeesFormSchema = CompanyFactsResponseBodySchema.pick({
   numberOfEmployees: true,
@@ -32,11 +32,17 @@ type EmployeesFormInput = z.infer<typeof EmployeesFormSchema>;
 type EmployeesFormProps = {
   formData: EmployeesFormInput;
   regions: Region[];
+  updateCompanyFacts: (
+    companyFacts: CompanyFactsPatchRequestBody
+  ) => Promise<void>;
 };
 
-export function EmployeesForm({ formData, regions }: EmployeesFormProps) {
+export function EmployeesForm({
+  formData,
+  regions,
+  updateCompanyFacts,
+}: EmployeesFormProps) {
   const { t } = useTranslation();
-  const { updateCompanyFacts } = useActiveBalanceSheet();
   const {
     control,
     register,

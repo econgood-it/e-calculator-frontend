@@ -210,7 +210,7 @@ describe('loader', () => {
       { userData: { access_token: 'token' } }
     );
     expect(result).toEqual({
-      organization: organizations,
+      organization,
       balanceSheetItems: balanceSheets,
     });
     expect(mockApi.getOrganization).toHaveBeenCalledWith(3);

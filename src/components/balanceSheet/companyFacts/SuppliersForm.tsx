@@ -6,7 +6,6 @@ import GridContainer, { FormContainer } from '../../layout/GridContainer';
 import GridItem from '../../layout/GridItem';
 import { Typography } from '@mui/material';
 import { z } from 'zod';
-import { useActiveBalanceSheet } from '../../../contexts/ActiveBalanceSheetProvider';
 
 import {
   DEFAULT_CODE,
@@ -22,6 +21,7 @@ import { FieldArrayRemoveButton } from '../forms/FieldArrayRemoveButton';
 import { Region } from '../../../models/Region';
 import { Industry } from '../../../models/Industry';
 import { CompanyFactsResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
+import { CompanyFactsPatchRequestBody } from '../../../models/CompanyFacts.ts';
 
 const SuppliersFormInputSchema = CompanyFactsResponseBodySchema.pick({
   totalPurchaseFromSuppliers: true,
@@ -34,14 +34,17 @@ type SuppliersFormProps = {
   formData: SuppliersFormInput;
   regions: Region[];
   industries: Industry[];
+  updateCompanyFacts: (
+    companyFacts: CompanyFactsPatchRequestBody
+  ) => Promise<void>;
 };
 
 const SuppliersForm = ({
   formData,
   regions,
   industries,
+  updateCompanyFacts,
 }: SuppliersFormProps) => {
-  const { updateCompanyFacts } = useActiveBalanceSheet();
   const { t } = useTranslation();
 
   const {
