@@ -1,4 +1,3 @@
-import { useAlert } from '../../contexts/AlertContext';
 import renderWithTheme from '../../testUtils/rendering';
 import { RatingsForm } from './RatingsForm';
 import { RatingsMockBuilder } from '../../testUtils/balanceSheets';
@@ -16,12 +15,10 @@ import { Workbook } from '../../models/Workbook';
 import { WEIGHT_VALUES } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 
-vi.mock('../../contexts/AlertContext');
 vi.mock('../../contexts/WorkbookProvider');
 
 describe('RatingsForm', () => {
   beforeEach(() => {
-    (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
     (useWorkbook as Mock).mockReturnValue(
       new Workbook(WorkbookResponseMocks.default())
     );

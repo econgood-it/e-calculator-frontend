@@ -1,18 +1,11 @@
 import '@testing-library/jest-dom';
-import { useAlert } from '../../../contexts/AlertContext';
 import { OwnersAndFinancialServicesForm } from './OwnersAndFinancialServicesForm';
 import { OwnersAndFinancialServicesMocks } from '../../../testUtils/balanceSheets';
 import { expectPositiveNumberFieldToBeValidatedAndModifiedAndSaved } from '../../../testUtils/form';
-import { beforeEach, describe, it, Mock, vi } from 'vitest';
-
-vi.mock('../../../contexts/AlertContext');
+import { describe, it, vi } from 'vitest';
 
 describe('OwnersAndFinancialServicesForm', () => {
   const updateCompanyFacts = vi.fn();
-
-  beforeEach(() => {
-    (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
-  });
 
   async function shouldModifyFieldSaveResults(
     fieldLabel: string,

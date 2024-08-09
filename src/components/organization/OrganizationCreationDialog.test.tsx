@@ -2,12 +2,9 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useAuth } from 'oidc-react';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { useAlert } from '../../contexts/AlertContext';
 import { OrganizationMockBuilder } from '../../testUtils/organization';
 import renderWithTheme from '../../testUtils/rendering';
 import { OrganizationCreationDialog } from './OrganizationCreationDialog';
-
-vi.mock('../../contexts/AlertContext');
 
 vi.mock('oidc-react', () => ({
   useAuth: vi.fn(),
@@ -18,7 +15,6 @@ describe('OrganizationCreationDialog', () => {
 
   beforeEach(() => {
     (useAuth as Mock).mockReturnValue({ signOutRedirect: logoutMock });
-    (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
   });
 
   it('should call create organization api endpoint on submit', async () => {

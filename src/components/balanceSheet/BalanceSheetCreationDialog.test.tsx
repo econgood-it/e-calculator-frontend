@@ -1,20 +1,14 @@
 import '@testing-library/jest-dom';
 import renderWithTheme from '../../testUtils/rendering';
 import { screen, waitFor } from '@testing-library/react';
-import { useAlert } from '../../contexts/AlertContext';
 import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { BalanceSheetCreationDialog } from './BalanceSheetCreationDialog';
-import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('../../contexts/AlertContext');
 describe('BalanceSheetCreationDialog', () => {
-  beforeEach(() => {
-    (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
-  });
-
   afterEach(() => {
     vi.resetAllMocks();
   });

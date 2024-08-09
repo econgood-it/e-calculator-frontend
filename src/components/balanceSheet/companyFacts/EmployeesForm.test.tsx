@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event';
 import renderWithTheme from '../../../testUtils/rendering';
 
 import { EmployeesMocks } from '../../../testUtils/balanceSheets';
-import { useAlert } from '../../../contexts/AlertContext';
 
 import {
   expectPositiveNumberFieldToBeValidatedAndModifiedAndSaved,
@@ -13,16 +12,10 @@ import {
 } from '../../../testUtils/form';
 import { EmployeesForm } from './EmployeesForm';
 import { regionsMocks } from '../../../testUtils/regions';
-import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-
-vi.mock('../../../contexts/AlertContext');
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 describe('EmployeesForm', () => {
   const updateCompanyFacts = vi.fn();
-
-  beforeEach(() => {
-    (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
-  });
 
   afterEach(() => {
     vi.resetAllMocks();

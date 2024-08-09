@@ -1,5 +1,4 @@
 import { CustomersMocks } from '../../../testUtils/balanceSheets';
-import { useAlert } from '../../../contexts/AlertContext';
 import {
   expectPositiveNumberFieldToBeValidatedAndModifiedAndSaved,
   fillNumberField,
@@ -11,16 +10,10 @@ import userEvent from '@testing-library/user-event';
 import renderWithTheme from '../../../testUtils/rendering';
 import { screen } from '@testing-library/react';
 import { industriesMocks } from '../../../testUtils/industries';
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-
-vi.mock('../../../contexts/AlertContext');
+import { describe, expect, it, vi } from 'vitest';
 
 describe('CustomersForm', () => {
   const updateCompanyFacts = vi.fn();
-
-  beforeEach(() => {
-    (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
-  });
 
   it('should modify turnover field and save changes', async () => {
     const formData = CustomersMocks.customers1();

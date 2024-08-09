@@ -4,8 +4,7 @@ import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets';
 import { regionsMocks } from '../testUtils/regions';
 import CompanyFactsPage, { action, loader } from './CompanyFactsPage';
 import { industriesMocks } from '../testUtils/industries';
-import { useAlert } from '../contexts/AlertContext';
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { setupApiMock } from '../testUtils/api.ts';
 import { CompanyFactsPatchRequestBody } from '../models/CompanyFacts.ts';
 import {
@@ -14,13 +13,7 @@ import {
   RouterProvider,
 } from 'react-router-dom';
 
-vi.mock('../contexts/AlertContext');
-
 describe('CompanyFactsPage', () => {
-  beforeEach(() => {
-    (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
-  });
-
   it('renders forms', async () => {
     const balanceSheet = new BalanceSheetMockBuilder().build();
 

@@ -8,22 +8,15 @@ import {
 } from '../../../testUtils/balanceSheets';
 import { regionsMocks } from '../../../testUtils/regions';
 import { industriesMocks } from '../../../testUtils/industries';
-import { useAlert } from '../../../contexts/AlertContext';
 import {
   fillNumberField,
   saveForm,
   selectRegion,
 } from '../../../testUtils/form';
-import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-
-vi.mock('../../../contexts/AlertContext');
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 describe('SuppliersForm', () => {
   const updateCompanyFacts = vi.fn();
-
-  beforeEach(() => {
-    (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
-  });
 
   afterEach(() => {
     vi.resetAllMocks();

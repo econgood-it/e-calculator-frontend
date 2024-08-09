@@ -1,6 +1,5 @@
-import { loader, ProfilePage, action } from './ProfilePage.tsx';
-import { useAlert } from '../contexts/AlertContext';
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { action, loader, ProfilePage } from './ProfilePage.tsx';
+import { describe, expect, it, vi } from 'vitest';
 import { setupApiMock } from '../testUtils/api.ts';
 import {
   ActionFunctionArgs,
@@ -11,15 +10,7 @@ import renderWithTheme from '../testUtils/rendering.tsx';
 import { screen } from '@testing-library/react';
 import { OrganizationMockBuilder } from '../testUtils/organization.ts';
 
-vi.mock('../contexts/AlertContext');
-
 describe('ProfilePage', () => {
-  beforeEach(() => {
-    (useAlert as Mock).mockReturnValue({
-      addErrorAlert: vi.fn(),
-    });
-  });
-
   it('renders invitations of user and joins user on click', async () => {
     const action = vi.fn().mockResolvedValue(null);
     const invitations = [

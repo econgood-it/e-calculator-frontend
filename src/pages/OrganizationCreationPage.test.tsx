@@ -2,13 +2,10 @@ import { screen } from '@testing-library/react';
 import { useAuth } from 'oidc-react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { useAlert } from '../contexts/AlertContext';
 import { setupApiMock } from '../testUtils/api';
 import { OrganizationMockBuilder } from '../testUtils/organization';
 import renderWithTheme from '../testUtils/rendering';
 import { action, OrganizationCreationPage } from './OrganizationCreationPage';
-
-vi.mock('../contexts/AlertContext');
 
 vi.mock('oidc-react', () => ({
   useAuth: vi.fn(),
@@ -20,9 +17,6 @@ describe('OrganizationCreationPage', () => {
   beforeEach(() => {
     (useAuth as Mock).mockReturnValue({
       signOutRedirect: logoutMock,
-    });
-    (useAlert as Mock).mockReturnValue({
-      addErrorAlert: vi.fn(),
     });
   });
 

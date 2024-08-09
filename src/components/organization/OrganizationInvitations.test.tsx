@@ -1,11 +1,8 @@
 import renderWithTheme from '../../testUtils/rendering';
 import { screen } from '@testing-library/react';
-import { useAlert } from '../../contexts/AlertContext';
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { v4 as uuid4 } from 'uuid';
 import { OrganizationInvitations } from './OrganizationInvitations.tsx';
-
-vi.mock('../../contexts/AlertContext');
 
 vi.mock('oidc-react', () => ({
   useAuth: vi.fn(),
@@ -17,10 +14,6 @@ describe('OrganizationInvitations', () => {
     `${uuid4()}@example.com`,
     `${uuid4()}@example.com`,
   ];
-
-  beforeEach(() => {
-    (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
-  });
 
   it('should show invitations in a list', async () => {
     const onInvitation = vi.fn();

@@ -1,18 +1,12 @@
 import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
-import { useAlert } from '../../contexts/AlertContext';
 import renderWithTheme from '../../testUtils/rendering';
 
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { BalanceSheetSidebarSection } from './BalanceSheetSidebarSection';
 
-vi.mock('../../contexts/AlertContext');
 describe('BalanceSheetSidebarSection', () => {
-  beforeEach(() => {
-    (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
-  });
-
   it('should open and close balance sheet creation dialog', async () => {
     const initialPath = '/sidebar-section';
     const onCreateBalanceSheet = vi.fn();

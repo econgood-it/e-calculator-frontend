@@ -1,20 +1,11 @@
-
 import renderWithTheme from '../../testUtils/rendering';
 import { screen, waitFor } from '@testing-library/react';
 import { OrganizationForm } from './OrganizationForm';
 import { OrganizationMockBuilder } from '../../testUtils/organization';
 import userEvent from '@testing-library/user-event';
-import { useAlert } from '../../contexts/AlertContext';
-import {beforeEach, describe, expect, it, Mock, vi} from "vitest";
-
-vi.mock('../../contexts/AlertContext');
+import { describe, expect, it, vi } from 'vitest';
 
 describe('OrganizationForm', () => {
-  const addErrorAlert = vi.fn();
-  beforeEach(() => {
-    (useAlert as Mock).mockReturnValue({ addErrorAlert: addErrorAlert });
-  });
-
   it('should render given organization info', async () => {
     const organization = new OrganizationMockBuilder().buildRequestBody();
     const onSave = vi.fn();
@@ -94,8 +85,5 @@ describe('OrganizationForm', () => {
     const saveButton = screen.getByRole('button', { name: 'Save' });
     await user.click(saveButton);
     await waitFor(() => expect(onSave).not.toHaveBeenCalled());
-    await waitFor(() =>
-      expect(addErrorAlert).toHaveBeenCalledWith(['Form data is invalid'])
-    );
   });
 });

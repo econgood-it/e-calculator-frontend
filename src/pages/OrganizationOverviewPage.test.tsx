@@ -5,8 +5,7 @@ import {
   createMemoryRouter,
   RouterProvider,
 } from 'react-router-dom';
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { useAlert } from '../contexts/AlertContext';
+import { describe, expect, it, vi } from 'vitest';
 import { OrganizationMockBuilder } from '../testUtils/organization';
 import renderWithTheme from '../testUtils/rendering';
 import {
@@ -22,21 +21,10 @@ import {
 import { setupApiMock } from '../testUtils/api.ts';
 import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets.ts';
 
-vi.mock('../contexts/AlertContext');
-
 describe('OrganizationOverviewPage', () => {
   const initialPathForRouting = '/organization/3';
 
   const organizationMockBuilder = new OrganizationMockBuilder();
-
-  const addSuccessAlertMock = vi.fn();
-
-  beforeEach(() => {
-    (useAlert as Mock).mockReturnValue({
-      addErrorAlert: vi.fn(),
-      addSuccessAlert: addSuccessAlertMock,
-    });
-  });
 
   it('renders organization form and updates on save', async () => {
     const action = vi.fn().mockResolvedValue(null);

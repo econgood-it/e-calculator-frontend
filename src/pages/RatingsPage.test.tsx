@@ -1,9 +1,8 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
 import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets';
-import { useAlert } from '../contexts/AlertContext';
 import { Rating, StakholderShortNames } from '../models/Rating';
-import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import RatingsPage, { action, loader } from './RatingsPage.tsx';
 import { setupApiMock } from '../testUtils/api.ts';
@@ -11,12 +10,7 @@ import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { RatingType } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import { saveForm } from '../testUtils/form.tsx';
 
-vi.mock('../contexts/AlertContext');
 describe('RatingsPage', () => {
-  beforeEach(() => {
-    (useAlert as Mock).mockReturnValue({ addErrorAlert: vi.fn() });
-  });
-
   it('renders ratings and updates these', async () => {
     const action = vi.fn().mockResolvedValue(null);
     const ratings: Rating[] = [

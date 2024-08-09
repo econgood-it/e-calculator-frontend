@@ -5,8 +5,6 @@ import {
   ThemeOptions,
   ThemeProvider as MuiThemeProvider,
 } from '@mui/material';
-import { AlertProvider } from './contexts/AlertContext';
-import NotificationList from './components/alerts/NotificationList';
 import { ThemeProvider } from 'styled-components';
 import { RouterProvider } from 'react-router-dom';
 import { useRouter } from './routing/useRouter';
@@ -94,15 +92,10 @@ function App() {
     <Suspense fallback={'Loading'}>
       <MuiThemeProvider theme={theme}>
         <ThemeProvider theme={theme}>
-          <AlertProvider>
-            <>
-              <CssBaseline enableColorScheme />
-              <AuthProvider {...oidcConfig}>
-                <Routes />
-              </AuthProvider>
-              <NotificationList />
-            </>
-          </AlertProvider>
+          <CssBaseline enableColorScheme />
+          <AuthProvider {...oidcConfig}>
+            <Routes />
+          </AuthProvider>
         </ThemeProvider>
       </MuiThemeProvider>
     </Suspense>
