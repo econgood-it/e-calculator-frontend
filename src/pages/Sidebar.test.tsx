@@ -344,7 +344,7 @@ describe('actions', () => {
     expect(result!.status).toEqual(302);
 
     expect(result!.headers.get('Location')).toEqual(
-      `../balancesheet/${balanceSheetMockBuilder.build().id}/overview`
+      `/organization/1/balancesheet/${balanceSheetMockBuilder.build().id}/overview`
     );
     expect(mockApi.createBalanceSheet).toHaveBeenCalledWith(
       balanceSheetMockBuilder.buildRequestBody(),

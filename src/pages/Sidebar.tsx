@@ -146,7 +146,9 @@ export async function action(
       data.balanceSheet,
       Number.parseInt(params.orgaId)
     );
-    return redirect(`../balancesheet/${id}/overview`);
+    return redirect(
+      `/organization/${params.orgaId}/balancesheet/${id}/overview`
+    );
   }
 
   throw json({ message: 'Invalid intent' }, { status: 400 });
