@@ -24,10 +24,8 @@ import {
   RatingResponseBodySchema,
   RatingType,
 } from '@ecogood/e-calculator-schemas/dist/rating.dto';
-import { useWorkbook } from '../../contexts/WorkbookProvider';
 import PositiveRating from './PositiveRating';
 import { NegativeRating } from './NegativeRating';
-import { IWorkbook } from '../../models/Workbook';
 import { ReactHookFormSwitch } from '../lib/ReactHookFormSwitch';
 import { WEIGHT_VALUES } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { ReactHookFormSelect } from '../lib/ReactHookFormSelect';
@@ -46,8 +44,6 @@ const RatingsFormSchema = z.object({
 type RatingsFormInput = z.infer<typeof RatingsFormSchema>;
 
 export function RatingsForm({ ratings, onRatingsChange }: RatingsFormProps) {
-  const workbook = useWorkbook();
-
   const { control, handleSubmit } = useForm<RatingsFormInput>({
     resolver: zodResolver(RatingsFormSchema),
     mode: 'onChange',
@@ -97,7 +93,6 @@ export function RatingsForm({ ratings, onRatingsChange }: RatingsFormProps) {
                 fieldArrayName={fieldArrayName}
                 index={index}
                 control={control}
-                workbook={workbook}
               />
             </GridItem>
           )}
@@ -195,7 +190,6 @@ type AspectProps = {
   fieldArrayName: ArrayPath<RatingsFormInput>;
   index: number;
   control: Control<RatingsFormInput>;
-  workbook?: IWorkbook;
 };
 
 function Aspect({

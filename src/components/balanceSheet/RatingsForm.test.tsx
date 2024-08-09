@@ -9,21 +9,10 @@ import { Button } from '@mui/material';
 import { useState } from 'react';
 import { RatingType } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import { Rating } from '../../models/Rating';
-import { useWorkbook } from '../../contexts/WorkbookProvider';
-import { WorkbookResponseMocks } from '../../testUtils/workbook';
-import { Workbook } from '../../models/Workbook';
 import { WEIGHT_VALUES } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-
-vi.mock('../../contexts/WorkbookProvider');
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 describe('RatingsForm', () => {
-  beforeEach(() => {
-    (useWorkbook as Mock).mockReturnValue(
-      new Workbook(WorkbookResponseMocks.default())
-    );
-  });
-
   afterEach(() => {
     vi.resetAllMocks();
   });
@@ -44,21 +33,6 @@ describe('RatingsForm', () => {
         ).toBeInTheDocument();
       }
     }
-  });
-
-  it.skip('should show workbook tooltip', async () => {
-    const ratings = new RatingsMockBuilder().build();
-    const onRatingsChange = vi.fn();
-    const { user } = renderWithTheme(
-      <RatingsForm ratings={ratings} onRatingsChange={onRatingsChange} />
-    );
-    const infoIcons = screen.getAllByLabelText('info');
-    const workbook = new Workbook(WorkbookResponseMocks.default());
-    expect(infoIcons).toHaveLength(2);
-    await user.hover(infoIcons[0]);
-    expect(
-      await screen.findByText(`Title: ${workbook.getSections()[0]!.title}`)
-    );
   });
 
   it('should modify and save estimations of some ratings', async () => {
