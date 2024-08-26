@@ -129,13 +129,9 @@ function Topic({
   return (
     <Card>
       <CardContent>
-        <GridContainer
-          alignItems={'center'}
-          justifyContent="space-between"
-          spacing={2}
-        >
+        <GridContainer alignItems={'center'} justifyContent="space-between">
           <GridItem>
-            <GridContainer alignItems="center" spacing={1}>
+            <GridContainer alignItems="center">
               <GridItem>
                 <ShortNameAvatar>{shortName}</ShortNameAvatar>
               </GridItem>

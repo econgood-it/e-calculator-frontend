@@ -123,7 +123,7 @@ describe('Sidebar', () => {
     expect(action).toHaveBeenCalledWith({
       balanceSheet: {
         type: BalanceSheetType.Full,
-        version: BalanceSheetVersion.v5_0_8,
+        version: BalanceSheetVersion.v5_1_0,
       },
       intent: 'createBalanceSheet',
     });

@@ -662,6 +662,11 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@mr42/version-comparator@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@mr42/version-comparator/-/version-comparator-1.2.2.tgz#f19e22298d65e116821ee83eaf6f2581db82e42a"
+  integrity sha512-ijLcv2baTTRhIyFvG2YHlv9NB2HhQBASPc5QSPJhoncCD97UXhjVPvVqZFtsOIpdzUKMFuVC+Kb20JZogkk/FA==
+
 "@mswjs/cookies@^0.2.2":
   version "0.2.2"
   resolved "https://registry.npmjs.org/@mswjs/cookies/-/cookies-0.2.2.tgz"

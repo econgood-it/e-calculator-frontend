@@ -10,11 +10,22 @@ import {
   createApiClient,
   makeWretchInstanceWithAuth,
 } from '../api/api.client.ts';
+import { eq } from '@mr42/version-comparator/dist/version.comparator';
+
 import { API_URL } from '../configuration.ts';
 import { useLoaderData } from 'react-router-typesafe';
+import { ComponentType } from 'react';
+import { RatingsConfiguratorProps } from '../components/balanceSheet/FinanceConfigurators.tsx';
+import GridContainer from '../components/layout/GridContainer.tsx';
+import GridItem from '../components/layout/GridItem.tsx';
+import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
-const RatingsPage = () => {
-  const ratings = useLoaderData<typeof loader>();
+type RatingsPageProps = {
+  Configurator?: ComponentType<RatingsConfiguratorProps>;
+};
+
+export default function RatingsPage({ Configurator }: RatingsPageProps) {
+  const data = useLoaderData<typeof loader>();
   const submit = useSubmit();
   async function onRatingsChange(ratings: Rating[]) {
     submit({ ratings }, { method: 'patch', encType: 'application/json' });
@@ -22,14 +33,28 @@ const RatingsPage = () => {
 
   return (
     <>
-      {ratings && (
-        <RatingsForm ratings={ratings} onRatingsChange={onRatingsChange} />
+      {data && (
+        <GridContainer spacing={3}>
+          <GridItem xs={12}>
+            {Configurator &&
+              eq(data.balanceSheetVersion, BalanceSheetVersion.v5_1_0) && (
+                <Configurator
+                  initialRatings={data.ratings}
+                  onRatingsChange={onRatingsChange}
+                />
+              )}
+          </GridItem>
+          <GridItem xs={12}>
+            <RatingsForm
+              ratings={data.ratings}
+              onRatingsChange={onRatingsChange}
+            />
+          </GridItem>
+        </GridContainer>
       )}
     </>
   );
-};
-
-export default RatingsPage;
+}
 
 export async function loader(
   { params, request }: LoaderFunctionArgs,
@@ -56,9 +81,12 @@ export async function loader(
   };
   const urlSplit = request.url.split('/');
   const lastSegment = urlSplit[urlSplit.length - 1];
-  return balanceSheet.ratings.filter((rating: Rating) =>
-    rating.shortName.startsWith(pathMap[lastSegment])
-  );
+  return {
+    ratings: balanceSheet.ratings.filter((rating: Rating) =>
+      rating.shortName.startsWith(pathMap[lastSegment])
+    ),
+    balanceSheetVersion: balanceSheet.version,
+  };
 }
 
 export async function action(

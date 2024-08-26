@@ -9,6 +9,8 @@ import { setupApiMock } from '../testUtils/api.ts';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { RatingType } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import { saveForm } from '../testUtils/form.tsx';
+import { FinanceConfigurator } from '../components/balanceSheet/FinanceConfigurators.tsx';
+import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 describe('RatingsPage', () => {
   it('renders ratings and updates these', async () => {
@@ -42,7 +44,10 @@ describe('RatingsPage', () => {
         {
           path: '/balancesheet/1/suppliers',
           element: <RatingsPage />,
-          loader: () => ratings,
+          loader: () => ({
+            ratings,
+            balanceSheetVersion: BalanceSheetVersion.v5_1_0,
+          }),
           action: async ({ request }) => action(await request.json()),
         },
       ],
@@ -67,6 +72,58 @@ describe('RatingsPage', () => {
     await saveForm(user);
     expect(action).toHaveBeenCalledWith({
       ratings: [ratings[0], { ...ratings[1], estimations: 4 }],
+    });
+  });
+
+  it('enables to configure rating appearance', async () => {
+    const action = vi.fn().mockResolvedValue(null);
+    const ratings: Rating[] = [
+      {
+        shortName: 'B1.1',
+        name: 'Rating B1',
+        type: RatingType.aspect,
+        isPositive: true,
+        estimations: 7,
+        weight: 0,
+        isWeightSelectedByUser: false,
+        maxPoints: 0,
+        points: 0,
+      },
+      {
+        shortName: 'B1.2',
+        name: 'Rating B2',
+        estimations: 0,
+        isPositive: true,
+        type: RatingType.aspect,
+        weight: 1,
+        isWeightSelectedByUser: false,
+        maxPoints: 0,
+        points: 0,
+      },
+    ];
+    const router = createMemoryRouter(
+      [
+        {
+          path: '/balancesheet/1/finance',
+          element: <RatingsPage Configurator={FinanceConfigurator} />,
+          loader: () => ({
+            ratings,
+            balanceSheetVersion: BalanceSheetVersion.v5_1_0,
+          }),
+          action: async ({ request }) => action(await request.json()),
+        },
+      ],
+      { initialEntries: ['/balancesheet/1/finance'] }
+    );
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
+    await user.click(await screen.findByText('Settings'));
+    await user.click(await screen.findByRole('radio', { name: 'B1.1' }));
+    await user.click(screen.getAllByText('Save')[0]);
+    expect(action).toHaveBeenCalledWith({
+      ratings: [
+        { ...ratings[0], weight: 1, isWeightSelectedByUser: false },
+        { ...ratings[1], weight: 0, isWeightSelectedByUser: true },
+      ],
     });
   });
 });
@@ -115,7 +172,8 @@ describe('loader', () => {
     const filteredRatings = response.ratings.filter((r) =>
       r.shortName.startsWith(stakeholderShortName)
     );
-    expect(result).toEqual(filteredRatings);
+    expect(result!.balanceSheetVersion).toEqual(response.version);
+    expect(result!.ratings).toEqual(filteredRatings);
     expect(mockApi.getBalanceSheet).toHaveBeenCalledWith(3);
   });
 });

@@ -73,7 +73,7 @@ describe('BalanceSheetSidebarSection', () => {
     );
     expect(onCreateBalanceSheet).toHaveBeenCalledWith({
       type: 'Full',
-      version: '5.08',
+      version: '5.10',
     });
   });
 });
