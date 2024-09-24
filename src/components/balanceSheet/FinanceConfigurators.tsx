@@ -63,7 +63,7 @@ export function FinanceConfigurator({
   return (
     <GridContainer>
       <GridItem xs={12}>
-        <Accordion expanded={expanded} onClick={() => setExpanded(true)}>
+        <Accordion expanded={expanded} onClick={() => setExpanded(!expanded)}>
           <AccordionSummary
             expandIcon={<FontAwesomeIcon icon={faChevronDown} />}
           >
