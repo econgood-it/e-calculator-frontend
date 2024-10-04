@@ -10,13 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import GridItem from '../layout/GridItem';
 import GridContainer, { FormContainer } from '../layout/GridContainer';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  MenuItem,
-  Typography,
-} from '@mui/material';
+import { Card, CardContent, MenuItem, Typography } from '@mui/material';
 import { SaveButton } from '../buttons/SaveButton.tsx';
 import { Fragment } from 'react';
 import { Rating } from '../../models/Rating';
@@ -24,7 +18,7 @@ import {
   RatingResponseBodySchema,
   RatingType,
 } from '@ecogood/e-calculator-schemas/dist/rating.dto';
-import PositiveRating from './PositiveRating';
+import PositiveRating from './PositiveRating.tsx';
 import { NegativeRating } from './NegativeRating';
 import { ReactHookFormSwitch } from '../lib/ReactHookFormSwitch';
 import { WEIGHT_VALUES } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
@@ -85,7 +79,7 @@ export function RatingsForm({ ratings, onRatingsChange }: RatingsFormProps) {
               />
             </GridItem>
           ) : (
-            <GridItem md={12} lg={4}>
+            <GridItem md={12}>
               <Aspect
                 shortName={shortName}
                 name={name}
@@ -129,9 +123,13 @@ function Topic({
   return (
     <Card>
       <CardContent>
-        <GridContainer alignItems={'center'} justifyContent="space-between">
+        <GridContainer
+          alignItems={'center'}
+          justifyContent="space-between"
+          spacing={2}
+        >
           <GridItem>
-            <GridContainer alignItems="center">
+            <GridContainer alignItems="center" spacing={2}>
               <GridItem>
                 <ShortNameAvatar>{shortName}</ShortNameAvatar>
               </GridItem>
@@ -198,23 +196,29 @@ function Aspect({
 }: AspectProps) {
   return (
     <Card>
-      <CardHeader
-        title={
-          <Typography variant="body1">{`${shortName} ${name}`}</Typography>
-        }
-      />
       <CardContent>
-        {isPositive ? (
-          <PositiveRating
-            control={control}
-            name={`${fieldArrayName}.${index}.estimations`}
-          />
-        ) : (
-          <NegativeRating
-            control={control}
-            name={`${fieldArrayName}.${index}.estimations`}
-          />
-        )}
+        <GridContainer
+          alignItems={'center'}
+          justifyContent="space-between"
+          spacing={2}
+        >
+          <GridItem>
+            <Typography variant="body1">{`${shortName} ${name}`}</Typography>
+          </GridItem>
+          <GridItem>
+            {isPositive ? (
+              <PositiveRating
+                control={control}
+                name={`${fieldArrayName}.${index}.estimations`}
+              />
+            ) : (
+              <NegativeRating
+                control={control}
+                name={`${fieldArrayName}.${index}.estimations`}
+              />
+            )}
+          </GridItem>
+        </GridContainer>
       </CardContent>
     </Card>
   );

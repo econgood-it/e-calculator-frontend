@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 
 import renderWithTheme from '../../testUtils/rendering';
-import PositiveRating from './PositiveRating';
+import PositiveRating from './PositiveRating.tsx';
 import { fireEvent, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { zodResolver } from '@hookform/resolvers/zod';

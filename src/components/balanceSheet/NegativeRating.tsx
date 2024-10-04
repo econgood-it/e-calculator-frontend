@@ -1,4 +1,4 @@
-import { Divider, Slider, Typography } from '@mui/material';
+import { Slider, Typography } from '@mui/material';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 import GridItem from '../layout/GridItem';
 import GridContainer from '../layout/GridContainer';
@@ -40,15 +40,9 @@ export function NegativeRating<T extends FieldValues>({
   return (
     <Controller
       render={({ field }) => (
-        <GridContainer
-          alignItems="center"
-          spacing={3}
-          justifyContent={'center'}
-        >
-          <GridItem xs={10}>
+        <GridContainer alignItems="center" spacing={1}>
+          <GridItem minWidth={380}>
             <Slider
-              getAriaValueText={() => field.value.toFixed()}
-              valueLabelDisplay="auto"
               {...field}
               track="inverted"
               aria-label={name}
@@ -58,13 +52,14 @@ export function NegativeRating<T extends FieldValues>({
               marks={marks}
             />
           </GridItem>
-          <GridItem xs={12}>
-            <Divider />
-          </GridItem>
-          <GridItem>
-            <Typography variant={'h2'} color={'error'}>{`${
-              field.value
-            } ${t`Points`}`}</Typography>
+          <GridItem minWidth={200}>
+            <GridContainer justifyContent="flex-end">
+              <GridItem xs={12} md={'auto'}>
+                <Typography variant={'h2'} color={'error'}>{`${
+                  field.value
+                } ${t`Points`}`}</Typography>
+              </GridItem>
+            </GridContainer>
           </GridItem>
         </GridContainer>
       )}

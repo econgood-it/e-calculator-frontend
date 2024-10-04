@@ -4,7 +4,7 @@ import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSeedling } from '@fortawesome/free-solid-svg-icons';
-import { Chip, Divider, Typography } from '@mui/material';
+import { Chip, Typography } from '@mui/material';
 import GridContainer from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
 import { useTranslation } from 'react-i18next';
@@ -49,12 +49,8 @@ export default function PositiveRating<T extends FieldValues>({
     <Controller
       render={({ field }) => {
         return (
-          <GridContainer
-            alignItems="center"
-            spacing={3}
-            justifyContent={'center'}
-          >
-            <GridItem>
+          <GridContainer alignItems="center" spacing={1}>
+            <GridItem xs={12} md={'auto'}>
               <StyledRating
                 aria-label={name}
                 value={field.value}
@@ -69,17 +65,19 @@ export default function PositiveRating<T extends FieldValues>({
                 }}
               />
             </GridItem>
-            <GridItem xs={12}>
-              <Divider>
-                <Chip label={getLabel(hover !== -1 ? hover : field.value)} />
-              </Divider>
+            <GridItem minWidth={140}>
+              <Chip label={getLabel(hover !== -1 ? hover : field.value)} />
             </GridItem>
-            <GridItem>
-              {field.value !== null && (
-                <Typography variant={'h2'}>
-                  {`${hover !== -1 ? hover : field.value} ${t`Points`}`}
-                </Typography>
-              )}
+            <GridItem minWidth={200}>
+              <GridContainer justifyContent="flex-end">
+                <GridItem xs={12} md={'auto'}>
+                  {field.value !== null && (
+                    <Typography variant={'h2'}>
+                      {`${hover !== -1 ? hover : field.value} ${t`Points`}`}
+                    </Typography>
+                  )}
+                </GridItem>
+              </GridContainer>
             </GridItem>
           </GridContainer>
         );
