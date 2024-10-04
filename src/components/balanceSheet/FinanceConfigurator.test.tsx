@@ -52,7 +52,7 @@ describe('RatingsConfigurator', () => {
         onRatingsChange={onRatingsChange}
       />
     );
-    await user.click(screen.getByText('Settings'));
+    await user.click(screen.getByText('Selection of topics and aspects'));
     const radioButtons = await screen.findAllByRole('radio');
     expect(radioButtons.map((rb) => rb.getAttribute('value'))).toEqual([
       'B1.1',

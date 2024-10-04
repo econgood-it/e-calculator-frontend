@@ -109,6 +109,29 @@ describe('RatingsForm', () => {
     ]);
   });
 
+  it('should show ratings with weight zero as not considered', async () => {
+    const ratings = [
+      {
+        shortName: 'A1.1',
+        name: 'Arbeitsbedingungen und gesellschaftliche Auswirkungen in der Zulieferkette',
+        estimations: 0,
+        isPositive: true,
+        type: RatingType.aspect,
+        weight: 0,
+        isWeightSelectedByUser: false,
+        maxPoints: 0,
+        points: 0,
+      },
+    ];
+    const onRatingsChange = vi.fn();
+
+    renderWithTheme(
+      <RatingsForm ratings={ratings} onRatingsChange={onRatingsChange} />
+    );
+
+    expect(await screen.findByText('Not considered')).toBeInTheDocument();
+  });
+
   function TestSwitchRatingsComponent({
     ratingsA,
     ratingsB,
@@ -131,8 +154,6 @@ describe('RatingsForm', () => {
   }
 
   it('should update ratings form entries if provided ratings are changed', async () => {
-    const user = userEvent.setup();
-
     const ratingsA = [
       {
         shortName: 'A1',
@@ -182,7 +203,7 @@ describe('RatingsForm', () => {
       },
     ];
 
-    renderWithTheme(
+    const { user } = renderWithTheme(
       <TestSwitchRatingsComponent ratingsA={ratingsA} ratingsB={ratingsB} />
     );
 

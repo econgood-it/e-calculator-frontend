@@ -63,35 +63,38 @@ export function RatingsForm({ ratings, onRatingsChange }: RatingsFormProps) {
 
   return (
     <FormContainer spacing={3}>
-      {ratingsFields.map(({ type, shortName, name, isPositive }, index) => (
-        <Fragment key={shortName}>
-          {type === RatingType.topic ? (
-            <GridItem xs={12}>
-              <Topic
-                fieldArrayName={fieldArrayName}
-                shortName={shortName}
-                name={name}
-                index={index}
-                isWeightSelectedByUser={
-                  ratingsWatcher[index].isWeightSelectedByUser
-                }
-                control={control}
-              />
-            </GridItem>
-          ) : (
-            <GridItem md={12}>
-              <Aspect
-                shortName={shortName}
-                name={name}
-                isPositive={isPositive}
-                fieldArrayName={fieldArrayName}
-                index={index}
-                control={control}
-              />
-            </GridItem>
-          )}
-        </Fragment>
-      ))}
+      {ratingsFields.map(
+        ({ type, shortName, name, isPositive, weight }, index) => (
+          <Fragment key={shortName}>
+            {type === RatingType.topic ? (
+              <GridItem xs={12}>
+                <Topic
+                  fieldArrayName={fieldArrayName}
+                  shortName={shortName}
+                  name={name}
+                  index={index}
+                  isWeightSelectedByUser={
+                    ratingsWatcher[index].isWeightSelectedByUser
+                  }
+                  control={control}
+                />
+              </GridItem>
+            ) : (
+              <GridItem md={12}>
+                <Aspect
+                  shortName={shortName}
+                  name={name}
+                  weight={weight}
+                  isPositive={isPositive}
+                  fieldArrayName={fieldArrayName}
+                  index={index}
+                  control={control}
+                />
+              </GridItem>
+            )}
+          </Fragment>
+        )
+      )}
       <GridItem xs={12}>
         <SaveButton handleSubmit={handleSubmit} onSaveClick={onSaveClick} />
       </GridItem>
@@ -180,6 +183,7 @@ function Topic({
 type AspectProps = {
   shortName: string;
   name: string;
+  weight: number;
   isPositive: boolean;
   fieldArrayName: ArrayPath<RatingsFormInput>;
   index: number;
@@ -189,6 +193,7 @@ type AspectProps = {
 function Aspect({
   shortName,
   name,
+  weight,
   isPositive,
   fieldArrayName,
   index,
@@ -205,8 +210,13 @@ function Aspect({
           <GridItem>
             <Typography variant="body1">{`${shortName} ${name}`}</Typography>
           </GridItem>
+
           <GridItem>
-            {isPositive ? (
+            {weight === 0 ? (
+              <Typography variant="h2" color="secondary">
+                <Trans>Not considered</Trans>
+              </Typography>
+            ) : isPositive ? (
               <PositiveRating
                 control={control}
                 name={`${fieldArrayName}.${index}.estimations`}

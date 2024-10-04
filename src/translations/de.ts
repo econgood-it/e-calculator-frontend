@@ -97,5 +97,7 @@ export const DE_TRANSLATIONS = {
   'You were invited to the following organizations':
     'Sie wurden zu folgenden Organisationen eingeladen',
   Join: 'Beitreten',
+  'Selection of topics and aspects': 'Auswahl von Themen und Aspekten',
+  'Not considered': 'Nicht berücksichtigt',
   ...DE_ERROR_TRANSLATIONS,
 };

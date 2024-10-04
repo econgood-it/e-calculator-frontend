@@ -86,6 +86,8 @@ const EN_WORDS = [
   'Invitations',
   'You were invited to the following organizations',
   'Join',
+  'Selection of topics and aspects',
+  'Not considered',
 ];
 
 export const EN_TRANSLATIONS = {

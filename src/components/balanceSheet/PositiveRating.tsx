@@ -4,10 +4,10 @@ import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSeedling } from '@fortawesome/free-solid-svg-icons';
-import { Chip, Typography } from '@mui/material';
+import { Chip } from '@mui/material';
 import GridContainer from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
-import { useTranslation } from 'react-i18next';
+import { PointLabel } from './PointLabel.tsx';
 
 const StyledRating = styled(Rating)`
   & .MuiRating-iconFilled {
@@ -28,7 +28,7 @@ export default function PositiveRating<T extends FieldValues>({
   name,
 }: PositiveRatingProps<T>) {
   const [hover, setHover] = useState<number>(-1);
-  const { t } = useTranslation();
+
   const getLabel = (currentValue?: number): string => {
     if (currentValue == null) {
       return 'Basislinie';
@@ -70,13 +70,7 @@ export default function PositiveRating<T extends FieldValues>({
             </GridItem>
             <GridItem minWidth={200}>
               <GridContainer justifyContent="flex-end">
-                <GridItem xs={12} md={'auto'}>
-                  {field.value !== null && (
-                    <Typography variant={'h2'}>
-                      {`${hover !== -1 ? hover : field.value} ${t`Points`}`}
-                    </Typography>
-                  )}
-                </GridItem>
+                <PointLabel value={hover !== -1 ? hover : field.value} />
               </GridContainer>
             </GridItem>
           </GridContainer>

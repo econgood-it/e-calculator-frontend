@@ -22,7 +22,7 @@ describe('RatingsPage', () => {
         estimations: 0,
         isPositive: true,
         type: RatingType.topic,
-        weight: 0,
+        weight: 1,
         isWeightSelectedByUser: false,
         maxPoints: 0,
         points: 0,
@@ -33,7 +33,7 @@ describe('RatingsPage', () => {
         estimations: 0,
         isPositive: true,
         type: RatingType.aspect,
-        weight: 0,
+        weight: 1,
         isWeightSelectedByUser: false,
         maxPoints: 0,
         points: 0,
@@ -116,7 +116,9 @@ describe('RatingsPage', () => {
       { initialEntries: ['/balancesheet/1/finance'] }
     );
     const { user } = renderWithTheme(<RouterProvider router={router} />);
-    await user.click(await screen.findByText('Settings'));
+    await user.click(
+      await screen.findByText('Selection of topics and aspects')
+    );
     await user.click(await screen.findByRole('radio', { name: 'B1.1' }));
     await user.click(screen.getAllByText('Save')[0]);
     expect(action).toHaveBeenCalledWith({

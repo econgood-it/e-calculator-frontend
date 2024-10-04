@@ -1,8 +1,8 @@
-import { Slider, Typography } from '@mui/material';
+import { Slider } from '@mui/material';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 import GridItem from '../layout/GridItem';
 import GridContainer from '../layout/GridContainer';
-import { useTranslation } from 'react-i18next';
+import { PointLabel } from './PointLabel.tsx';
 
 type NegativeRatingProps<T extends FieldValues> = {
   control: Control<T>;
@@ -13,7 +13,6 @@ export function NegativeRating<T extends FieldValues>({
   control,
   name,
 }: NegativeRatingProps<T>) {
-  const { t } = useTranslation();
   const marks = [
     {
       value: -200,
@@ -53,13 +52,7 @@ export function NegativeRating<T extends FieldValues>({
             />
           </GridItem>
           <GridItem minWidth={200}>
-            <GridContainer justifyContent="flex-end">
-              <GridItem xs={12} md={'auto'}>
-                <Typography variant={'h2'} color={'error'}>{`${
-                  field.value
-                } ${t`Points`}`}</Typography>
-              </GridItem>
-            </GridContainer>
+            <PointLabel value={field.value} color={'error'} />
           </GridItem>
         </GridContainer>
       )}

@@ -67,7 +67,7 @@ export function FinanceConfigurator({
           <AccordionSummary
             expandIcon={<FontAwesomeIcon icon={faChevronDown} />}
           >
-            Settings
+            <Trans>Selection of topics and aspects</Trans>
           </AccordionSummary>
           <AccordionDetails>
             <RadioGroup onChange={(_, value) => onConfigurationChange(value)}>
