@@ -5,7 +5,6 @@ import {
   LoaderFunctionArgs,
   useSubmit,
 } from 'react-router-dom';
-import { User } from 'oidc-react';
 import {
   createApiClient,
   makeWretchInstanceWithAuth,
@@ -19,6 +18,7 @@ import { RatingsConfiguratorProps } from '../components/balanceSheet/FinanceConf
 import GridContainer from '../components/layout/GridContainer.tsx';
 import GridItem from '../components/layout/GridItem.tsx';
 import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { HandlerContext } from './handlerContext.ts';
 
 type RatingsPageProps = {
   Configurator?: ComponentType<RatingsConfiguratorProps>;
@@ -60,13 +60,13 @@ export async function loader(
   { params, request }: LoaderFunctionArgs,
   handlerCtx: unknown
 ) {
-  const { userData } = handlerCtx as { userData: User };
+  const { userData, lng } = handlerCtx as HandlerContext;
   if (!userData) {
     return null;
   }
 
   const apiClient = createApiClient(
-    makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
+    makeWretchInstanceWithAuth(API_URL, userData!.access_token, lng)
   );
   const balanceSheet = await apiClient.getBalanceSheet(
     Number(params.balanceSheetId)
@@ -94,13 +94,13 @@ export async function action(
   handlerCtx: unknown
 ) {
   const data = await request.json();
-  const { userData } = handlerCtx as { userData: User };
+  const { userData, lng } = handlerCtx as HandlerContext;
   if (!userData) {
     return null;
   }
 
   const apiClient = createApiClient(
-    makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
+    makeWretchInstanceWithAuth(API_URL, userData!.access_token, lng)
   );
   return await apiClient.updateBalanceSheet(Number(params.balanceSheetId), {
     ratings: data.ratings.map((r: Rating) => ({

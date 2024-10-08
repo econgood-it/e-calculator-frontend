@@ -9,7 +9,6 @@ import {
   LoaderFunctionArgs,
   useSubmit,
 } from 'react-router-dom';
-import { User } from 'oidc-react';
 import {
   createApiClient,
   makeWretchInstanceWithAuth,
@@ -17,6 +16,7 @@ import {
 import { API_URL } from '../configuration.ts';
 import { useLoaderData } from 'react-router-typesafe';
 import { CompanyFactsPatchRequestBody } from '../models/CompanyFacts.ts';
+import { HandlerContext } from './handlerContext.ts';
 
 const CompanyFactsPage = () => {
   const data = useLoaderData<typeof loader>();
@@ -92,12 +92,13 @@ export async function loader(
   { params }: LoaderFunctionArgs,
   handlerCtx: unknown
 ) {
-  const { userData } = handlerCtx as { userData: User };
+  const { userData, lng } = handlerCtx as HandlerContext;
+
   if (!userData || !params.balanceSheetId) {
     return null;
   }
   const apiClient = createApiClient(
-    makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
+    makeWretchInstanceWithAuth(API_URL, userData!.access_token, lng)
   );
 
   const balanceSheet = await apiClient.getBalanceSheet(
@@ -113,12 +114,13 @@ export async function action(
   handlerCtx: unknown
 ) {
   const { intent, ...data } = await request.json();
-  const { userData } = handlerCtx as { userData: User };
+  const { userData, lng } = handlerCtx as HandlerContext;
+
   if (!userData || !params.balanceSheetId) {
     return null;
   }
   const apiClient = createApiClient(
-    makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
+    makeWretchInstanceWithAuth(API_URL, userData!.access_token, lng)
   );
 
   if (intent === 'updateCompanyFacts') {

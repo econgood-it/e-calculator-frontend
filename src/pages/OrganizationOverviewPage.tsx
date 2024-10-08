@@ -1,5 +1,4 @@
 import { Typography } from '@mui/material';
-import { User } from 'oidc-react';
 import { Trans } from 'react-i18next';
 import {
   ActionFunctionArgs,
@@ -20,6 +19,7 @@ import { OrganizationInvitations } from '../components/organization/Organization
 import { API_URL } from '../configuration.ts';
 import { BalanceSheetCreateRequestBody } from '../models/BalanceSheet.ts';
 import { OrganizationRequestBody } from '../models/Organization';
+import { HandlerContext } from './handlerContext.ts';
 
 export function OrganizationOverviewPage() {
   const data = useLoaderData<typeof loader>();
@@ -95,12 +95,12 @@ export async function loader(
   { params }: LoaderFunctionArgs,
   handlerCtx: unknown
 ) {
-  const { userData } = handlerCtx as { userData: User };
+  const { userData, lng } = handlerCtx as HandlerContext;
   if (!params.orgaId || !userData) {
     return null;
   }
   const apiClient = createApiClient(
-    makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
+    makeWretchInstanceWithAuth(API_URL, userData!.access_token, lng)
   );
   const orgaId = Number.parseInt(params.orgaId);
   const organization = await apiClient.getOrganization(orgaId);
@@ -113,12 +113,12 @@ export async function action(
   handlerCtx: unknown
 ) {
   const { intent, ...data } = await request.json();
-  const { userData } = handlerCtx as { userData: User };
+  const { userData, lng } = handlerCtx as HandlerContext;
   if (!params.orgaId || !userData) {
     return null;
   }
   const apiClient = createApiClient(
-    makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
+    makeWretchInstanceWithAuth(API_URL, userData!.access_token, lng)
   );
 
   const organizationId = Number.parseInt(params.orgaId);

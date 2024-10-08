@@ -8,7 +8,6 @@ import {
   makeWretchInstanceWithAuth,
 } from '../api/api.client.ts';
 import { API_URL } from '../configuration.ts';
-import { User } from 'oidc-react';
 import { useLoaderData } from 'react-router-typesafe';
 import { Trans } from 'react-i18next';
 import GridContainer from '../components/layout/GridContainer.tsx';
@@ -20,6 +19,7 @@ import {
   Typography,
 } from '@mui/material';
 import GridItem from '../components/layout/GridItem.tsx';
+import { HandlerContext } from './handlerContext.ts';
 
 export function ProfilePage() {
   const invitations = useLoaderData<typeof loader>();
@@ -56,9 +56,10 @@ export function ProfilePage() {
 }
 
 export async function loader(_: LoaderFunctionArgs, handlerCtx: unknown) {
-  const { userData } = handlerCtx as { userData: User };
+  const { userData, lng } = handlerCtx as HandlerContext;
+
   const apiClient = createApiClient(
-    makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
+    makeWretchInstanceWithAuth(API_URL, userData!.access_token, lng)
   );
   return await apiClient.getInvitations();
 }
@@ -67,9 +68,10 @@ export async function action(
   { request }: ActionFunctionArgs,
   handlerCtx: unknown
 ) {
-  const { userData } = handlerCtx as { userData: User };
+  const { userData, lng } = handlerCtx as HandlerContext;
+
   const apiClient = createApiClient(
-    makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
+    makeWretchInstanceWithAuth(API_URL, userData!.access_token, lng)
   );
   const { id } = await request.json();
   return await apiClient.joinOrganization(id);

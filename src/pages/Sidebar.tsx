@@ -1,7 +1,6 @@
 import { Box, Divider } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
-import { User } from 'oidc-react';
 import { useState } from 'react';
 import {
   ActionFunctionArgs,
@@ -22,6 +21,7 @@ import { OrganizationSidebarSection } from '../components/organization/Organizat
 import { API_URL } from '../configuration';
 import { OrganizationRequestBody } from '../models/Organization';
 import { BalanceSheetCreateRequestBody } from '../models/BalanceSheet.ts';
+import { HandlerContext } from './handlerContext.ts';
 
 const DrawerWithFixedWidth = styled(Drawer)<{ $drawerWidth: number }>`
   & .MuiDrawer-paper {
@@ -111,12 +111,13 @@ export async function loader(
   { params }: LoaderFunctionArgs,
   handlerCtx: unknown
 ) {
-  const { userData } = handlerCtx as { userData: User };
+  const { userData, lng } = handlerCtx as HandlerContext;
+
   if (!params.orgaId || !userData) {
     return null;
   }
   const apiClient = createApiClient(
-    makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
+    makeWretchInstanceWithAuth(API_URL, userData!.access_token, lng)
   );
   const orgaId = Number.parseInt(params.orgaId);
   const organizationItems = await apiClient.getOrganizations();
@@ -129,12 +130,12 @@ export async function action(
   handlerCtx: unknown
 ) {
   const { intent, ...data } = await request.json();
-  const { userData } = handlerCtx as { userData: User };
+  const { userData, lng } = handlerCtx as HandlerContext;
   if (!userData || !params.orgaId) {
     return null;
   }
   const apiClient = createApiClient(
-    makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
+    makeWretchInstanceWithAuth(API_URL, userData!.access_token, lng)
   );
 
   if (intent === 'createOrganization') {

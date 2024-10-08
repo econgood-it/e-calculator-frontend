@@ -4,13 +4,13 @@ import GridItem from '../components/layout/GridItem';
 import { Typography } from '@mui/material';
 import { Trans } from 'react-i18next';
 import { LoaderFunctionArgs } from 'react-router-dom';
-import { User } from 'oidc-react';
 import {
   createApiClient,
   makeWretchInstanceWithAuth,
 } from '../api/api.client.ts';
 import { API_URL } from '../configuration.ts';
 import { useLoaderData } from 'react-router-typesafe';
+import { HandlerContext } from './handlerContext.ts';
 
 export function BalanceSheetOverviewPage() {
   const matrix = useLoaderData<typeof loader>();
@@ -31,12 +31,12 @@ export async function loader(
   { params }: LoaderFunctionArgs,
   handlerCtx: unknown
 ) {
-  const { userData } = handlerCtx as { userData: User };
+  const { userData, lng } = handlerCtx as HandlerContext;
   if (!userData) {
     return null;
   }
   const apiClient = createApiClient(
-    makeWretchInstanceWithAuth(API_URL, userData!.access_token, 'en')
+    makeWretchInstanceWithAuth(API_URL, userData!.access_token, lng)
   );
   return await apiClient.getBalanceSheetAsMatrix(Number(params.balanceSheetId));
 }

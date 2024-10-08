@@ -46,6 +46,7 @@ import {
   OrganizationCreationPage,
 } from '../pages/OrganizationCreationPage.tsx';
 import { FinanceConfigurator } from '../components/balanceSheet/FinanceConfigurators.tsx';
+import { useLanguage } from '../i18n.ts';
 
 function ErrorPage() {
   const error = useRouteError();
@@ -63,6 +64,7 @@ function ErrorPage() {
 
 export function useRouter() {
   const { userData } = useAuth();
+  const lng = useLanguage();
 
   return createBrowserRouter(
     [
@@ -171,7 +173,7 @@ export function useRouter() {
         return Promise.all(
           matches.map((match) =>
             match.resolve(async (handler) => {
-              const result = await handler({ userData });
+              const result = await handler({ userData, lng });
               return { type: 'data', result };
             })
           )
