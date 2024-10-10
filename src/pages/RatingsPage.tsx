@@ -9,22 +9,15 @@ import {
   createApiClient,
   makeWretchInstanceWithAuth,
 } from '../api/api.client.ts';
-import { eq } from '@mr42/version-comparator/dist/version.comparator';
 
 import { API_URL } from '../configuration.ts';
 import { useLoaderData } from 'react-router-typesafe';
-import { ComponentType } from 'react';
-import { RatingsConfiguratorProps } from '../components/balanceSheet/FinanceConfigurators.tsx';
+import { WeightConfigurator } from '../components/balanceSheet/WeightConfigurators.tsx';
 import GridContainer from '../components/layout/GridContainer.tsx';
 import GridItem from '../components/layout/GridItem.tsx';
-import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { HandlerContext } from './handlerContext.ts';
 
-type RatingsPageProps = {
-  Configurator?: ComponentType<RatingsConfiguratorProps>;
-};
-
-export default function RatingsPage({ Configurator }: RatingsPageProps) {
+export default function RatingsPage() {
   const data = useLoaderData<typeof loader>();
   const submit = useSubmit();
   async function onRatingsChange(ratings: Rating[]) {
@@ -36,13 +29,11 @@ export default function RatingsPage({ Configurator }: RatingsPageProps) {
       {data && (
         <GridContainer spacing={3}>
           <GridItem xs={12}>
-            {Configurator &&
-              eq(data.balanceSheetVersion, BalanceSheetVersion.v5_1_0) && (
-                <Configurator
-                  initialRatings={data.ratings}
-                  onRatingsChange={onRatingsChange}
-                />
-              )}
+            <WeightConfigurator
+              ratings={data.ratings}
+              onRatingsChange={onRatingsChange}
+              version={data.balanceSheetVersion}
+            />
           </GridItem>
           <GridItem xs={12}>
             <RatingsForm

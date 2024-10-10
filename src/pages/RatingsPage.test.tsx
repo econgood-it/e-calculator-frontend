@@ -9,7 +9,6 @@ import { setupApiMock } from '../testUtils/api.ts';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { RatingType } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import { saveForm } from '../testUtils/form.tsx';
-import { FinanceConfigurator } from '../components/balanceSheet/FinanceConfigurators.tsx';
 import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 describe('RatingsPage', () => {
@@ -75,7 +74,7 @@ describe('RatingsPage', () => {
     });
   });
 
-  it('enables to configure rating appearance', async () => {
+  it('save weighting adaption', async () => {
     const action = vi.fn().mockResolvedValue(null);
     const ratings: Rating[] = [
       {
@@ -105,7 +104,7 @@ describe('RatingsPage', () => {
       [
         {
           path: '/balancesheet/1/finance',
-          element: <RatingsPage Configurator={FinanceConfigurator} />,
+          element: <RatingsPage />,
           loader: () => ({
             ratings,
             balanceSheetVersion: BalanceSheetVersion.v5_1_0,
@@ -116,14 +115,25 @@ describe('RatingsPage', () => {
       { initialEntries: ['/balancesheet/1/finance'] }
     );
     const { user } = renderWithTheme(<RouterProvider router={router} />);
+    await user.click(await screen.findByText('Adapt selection and weighting'));
     await user.click(
-      await screen.findByText('Selection of topics and aspects')
+      within(screen.getByLabelText('Select B1.1')).getByRole('checkbox')
     );
-    await user.click(await screen.findByRole('radio', { name: 'B1.1' }));
-    await user.click(screen.getAllByText('Save')[0]);
+    await user.click(
+      screen.getByLabelText(`ratings.${0}.isWeightSelectedByUser`)
+    );
+    await user.click(
+      screen.getByRole('combobox', {
+        name: /Weight/,
+      })
+    );
+
+    const weightOptions = await screen.findAllByRole('option');
+    await user.click(weightOptions.find((o) => o.textContent === '2')!);
+    await user.click(screen.getAllByText('Save')[1]);
     expect(action).toHaveBeenCalledWith({
       ratings: [
-        { ...ratings[0], weight: 1, isWeightSelectedByUser: false },
+        { ...ratings[0], weight: 2, isWeightSelectedByUser: true },
         { ...ratings[1], weight: 0, isWeightSelectedByUser: true },
       ],
     });

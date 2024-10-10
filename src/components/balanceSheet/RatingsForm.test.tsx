@@ -9,7 +9,6 @@ import { Button } from '@mui/material';
 import { useState } from 'react';
 import { RatingType } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import { Rating } from '../../models/Rating';
-import { WEIGHT_VALUES } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 describe('RatingsForm', () => {
@@ -56,56 +55,6 @@ describe('RatingsForm', () => {
       ratings[2],
       { ...ratings[3], estimations: -15 },
       ...ratings.slice(4),
-    ]);
-  });
-
-  it('should modify and save isWeightSelectedByUser of some ratings', async () => {
-    const ratings = new RatingsMockBuilder().build();
-    const onRatingsChange = vi.fn();
-    const { user } = renderWithTheme(
-      <RatingsForm ratings={ratings} onRatingsChange={onRatingsChange} />
-    );
-    await user.click(
-      screen.getByLabelText(`ratings.${0}.isWeightSelectedByUser`)
-    );
-
-    await saveForm(user);
-
-    expect(onRatingsChange).toHaveBeenCalledWith([
-      { ...ratings[0], isWeightSelectedByUser: true },
-      ...ratings.slice(1),
-    ]);
-  });
-
-  it('should modify weight of some ratings', async () => {
-    const ratings = new RatingsMockBuilder().build();
-    const onRatingsChange = vi.fn();
-
-    const { user } = renderWithTheme(
-      <RatingsForm ratings={ratings} onRatingsChange={onRatingsChange} />
-    );
-    await user.click(
-      screen.getByLabelText(`ratings.${0}.isWeightSelectedByUser`)
-    );
-
-    await user.click(
-      screen.getByRole('combobox', {
-        name: /Weight/,
-      })
-    );
-
-    const weightOptions = await screen.findAllByRole('option');
-    expect(weightOptions.map((o) => o.textContent)).toEqual(
-      WEIGHT_VALUES.map((w) => w.toString())
-    );
-
-    await user.click(weightOptions.find((o) => o.textContent === '2')!);
-
-    await saveForm(user);
-
-    expect(onRatingsChange).toHaveBeenCalledWith([
-      { ...ratings[0], weight: 2, isWeightSelectedByUser: true },
-      ...ratings.slice(1),
     ]);
   });
 

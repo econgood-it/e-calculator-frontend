@@ -77,6 +77,7 @@ export function BalanceSheetCreationForm({
         <ReactHookFormSelect
           fullWidth
           control={control}
+          size={'medium'}
           defaultValue={BalanceSheetType.Full}
           label={t`Select type`}
           name={'type'}
@@ -93,6 +94,7 @@ export function BalanceSheetCreationForm({
         <ReactHookFormSelect
           fullWidth
           control={control}
+          size={'medium'}
           defaultValue={BalanceSheetVersion.v5_1_0}
           label={t`Select version`}
           name={'version'}

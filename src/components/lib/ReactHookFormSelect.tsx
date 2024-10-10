@@ -14,6 +14,7 @@ type ReactHookFormSelectProps<T extends FieldValues> = {
   name: Path<T>;
   label: ReactNode;
   defaultValue: PathValue<T, Path<T>>;
+  size?: 'small' | 'medium';
 };
 
 export function ReactHookFormSelect<T extends FieldValues>({
@@ -22,6 +23,7 @@ export function ReactHookFormSelect<T extends FieldValues>({
   control,
   defaultValue,
   children,
+  size,
 }: ReactHookFormSelectProps<T> & SelectProps) {
   const labelId = `${name}-label`;
   return (
@@ -29,7 +31,13 @@ export function ReactHookFormSelect<T extends FieldValues>({
       <InputLabel id={labelId}>{label}</InputLabel>
       <Controller
         render={({ field }) => (
-          <Select autoWidth {...field} labelId={labelId} label={label}>
+          <Select
+            autoWidth
+            size={size}
+            {...field}
+            labelId={labelId}
+            label={label}
+          >
             {children}
           </Select>
         )}

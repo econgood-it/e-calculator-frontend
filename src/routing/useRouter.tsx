@@ -45,7 +45,6 @@ import {
   action as orgaCreationAction,
   OrganizationCreationPage,
 } from '../pages/OrganizationCreationPage.tsx';
-import { FinanceConfigurator } from '../components/balanceSheet/FinanceConfigurators.tsx';
 import { useLanguage } from '../i18n.ts';
 
 function ErrorPage() {
@@ -125,9 +124,7 @@ export function useRouter() {
                       },
                       {
                         path: 'finance',
-                        element: (
-                          <RatingsPage Configurator={FinanceConfigurator} />
-                        ),
+                        element: <RatingsPage />,
                         loader: ratingsLoader,
                         action: ratingsAction,
                       },

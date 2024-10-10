@@ -4,13 +4,12 @@ import {
   FieldValues,
   useFieldArray,
   useForm,
-  useWatch,
 } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import GridItem from '../layout/GridItem';
 import GridContainer, { FormContainer } from '../layout/GridContainer';
-import { Card, CardContent, MenuItem, Typography } from '@mui/material';
+import { Card, CardContent, Typography } from '@mui/material';
 import { SaveButton } from '../buttons/SaveButton.tsx';
 import { Fragment } from 'react';
 import { Rating } from '../../models/Rating';
@@ -20,10 +19,6 @@ import {
 } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import PositiveRating from './PositiveRating.tsx';
 import { NegativeRating } from './NegativeRating';
-import { ReactHookFormSwitch } from '../lib/ReactHookFormSwitch';
-import { WEIGHT_VALUES } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import { ReactHookFormSelect } from '../lib/ReactHookFormSelect';
-import styled from 'styled-components';
 import { ShortNameAvatar } from '../matrix/MatrixView';
 import { Trans } from 'react-i18next';
 
@@ -56,11 +51,6 @@ export function RatingsForm({ ratings, onRatingsChange }: RatingsFormProps) {
     await onRatingsChange(newRatings.ratings);
   };
 
-  const ratingsWatcher = useWatch({
-    control,
-    name: fieldArrayName,
-  });
-
   return (
     <FormContainer spacing={3}>
       {ratingsFields.map(
@@ -68,16 +58,7 @@ export function RatingsForm({ ratings, onRatingsChange }: RatingsFormProps) {
           <Fragment key={shortName}>
             {type === RatingType.topic ? (
               <GridItem xs={12}>
-                <Topic
-                  fieldArrayName={fieldArrayName}
-                  shortName={shortName}
-                  name={name}
-                  index={index}
-                  isWeightSelectedByUser={
-                    ratingsWatcher[index].isWeightSelectedByUser
-                  }
-                  control={control}
-                />
+                <Topic shortName={shortName} name={name} weight={weight} />
               </GridItem>
             ) : (
               <GridItem md={12}>
@@ -102,27 +83,13 @@ export function RatingsForm({ ratings, onRatingsChange }: RatingsFormProps) {
   );
 }
 
-const StyledDiv = styled.div`
-  min-width: 120px;
-`;
-
 type TopicProps = {
   shortName: string;
   name: string;
-  fieldArrayName: ArrayPath<RatingsFormInput>;
-  index: number;
-  isWeightSelectedByUser: boolean;
-  control: Control<RatingsFormInput>;
+  weight: number;
 };
 
-function Topic({
-  shortName,
-  name,
-  fieldArrayName,
-  index,
-  isWeightSelectedByUser,
-  control,
-}: TopicProps) {
+function Topic({ shortName, name, weight }: TopicProps) {
   return (
     <Card>
       <CardContent>
@@ -142,37 +109,11 @@ function Topic({
             </GridContainer>
           </GridItem>
           <GridItem>
-            <GridContainer
-              alignItems="center"
-              spacing={2}
-              justifyContent={'center'}
-            >
-              <GridItem>
-                <ReactHookFormSwitch
-                  control={control}
-                  name={`${fieldArrayName}.${index}.isWeightSelectedByUser`}
-                  label={<Trans>Select weight manually</Trans>}
-                />
-              </GridItem>
-              <GridItem>
-                {isWeightSelectedByUser && (
-                  <StyledDiv>
-                    <ReactHookFormSelect
-                      control={control}
-                      name={`${fieldArrayName}.${index}.weight`}
-                      label={<Trans>Weight</Trans>}
-                      defaultValue={1}
-                    >
-                      {WEIGHT_VALUES.map((weight, index) => (
-                        <MenuItem key={index} value={weight}>
-                          {weight}
-                        </MenuItem>
-                      ))}
-                    </ReactHookFormSelect>
-                  </StyledDiv>
-                )}
-              </GridItem>
-            </GridContainer>
+            {weight === 0 && (
+              <Typography variant="h2" color="secondary">
+                <Trans>Not considered</Trans>
+              </Typography>
+            )}
           </GridItem>
         </GridContainer>
       </CardContent>

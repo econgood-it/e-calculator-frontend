@@ -36,7 +36,7 @@ const Content = styled.div<{ $open: boolean; $drawerWidth: number }>`
 
 export default function Sidebar() {
   const data = useLoaderData<typeof loader>();
-  const drawerWidth = 260;
+  const drawerWidth = 300;
   const [open, setOpen] = useState<boolean>(true);
   const submit = useSubmit();
 
