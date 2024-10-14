@@ -36,7 +36,12 @@ export default function RatingsPage() {
   const data = useLoaderData<typeof loader>();
   const [tabValue, setTabValue] = useState(0);
 
-  const { control, handleSubmit, setValue } = useForm<RatingsFormInput>({
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { isDirty },
+  } = useForm<RatingsFormInput>({
     resolver: zodResolver(RatingsFormSchema),
     mode: 'onChange',
     defaultValues: { ratings: data?.ratings || [] },
@@ -82,7 +87,11 @@ export default function RatingsPage() {
             </Tabs>
           </GridItem>
           <GridItem>
-            <SaveButton handleSubmit={handleSubmit} onSaveClick={onSave} />
+            <SaveButton
+              handleSubmit={handleSubmit}
+              onSaveClick={onSave}
+              disabled={!isDirty}
+            />
           </GridItem>
         </GridContainer>
       </GridItem>

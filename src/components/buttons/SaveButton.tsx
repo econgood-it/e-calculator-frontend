@@ -14,15 +14,18 @@ type SaveButtonProps = {
   handleSubmit: UseFormHandleSubmit<FieldValues>;
   onSaveClick: SubmitHandler<FieldValues>;
   label?: React.ReactNode;
+  disabled?: boolean;
 };
 
 export function SaveButton({
   onSaveClick,
   handleSubmit,
   label,
+  disabled,
 }: SaveButtonProps) {
   return (
     <Button
+      disabled={disabled}
       fullWidth={true}
       size={'large'}
       onClick={handleSubmit(onSaveClick)}

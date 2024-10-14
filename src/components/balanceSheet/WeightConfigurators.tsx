@@ -43,6 +43,14 @@ export function WeightConfigurator({
     control,
     name: fieldArrayName,
   });
+  const interactLikeUser = useMemo(
+    () => ({
+      shouldDirty: true, // This ensures the isDirty flag is updated
+      shouldTouch: true, // Optional: sets field as touched
+      shouldValidate: true, // Optional: triggers validation
+    }),
+    []
+  );
 
   const exclusiveOptions = useMemo(() => ['B1.1', 'B1.2'], []);
 
@@ -62,11 +70,15 @@ export function WeightConfigurator({
         .filter((option) => option !== selectedOption)
         .forEach((option) => {
           const index = watchedRatings.findIndex((r) => r.shortName === option);
-          setValue(`${fieldArrayName}.${index}.weight`, 0);
-          setValue(`${fieldArrayName}.${index}.isWeightSelectedByUser`, true);
+          setValue(`${fieldArrayName}.${index}.weight`, 0, interactLikeUser);
+          setValue(
+            `${fieldArrayName}.${index}.isWeightSelectedByUser`,
+            true,
+            interactLikeUser
+          );
         });
     },
-    [exclusiveOptions, watchedRatings, setValue]
+    [exclusiveOptions, watchedRatings, setValue, interactLikeUser]
   );
 
   const onCheckboxChanged = (
@@ -75,14 +87,22 @@ export function WeightConfigurator({
     index: number
   ) => {
     if (!event.target.checked) {
-      setValue(`${fieldArrayName}.${index}.weight`, 0);
-      setValue(`${fieldArrayName}.${index}.isWeightSelectedByUser`, true);
+      setValue(`${fieldArrayName}.${index}.weight`, 0, interactLikeUser);
+      setValue(
+        `${fieldArrayName}.${index}.isWeightSelectedByUser`,
+        true,
+        interactLikeUser
+      );
     } else {
       if (shouldEnableExclusiveOptions(shortName)) {
         resetUnselectedOptions(shortName);
       }
-      setValue(`${fieldArrayName}.${index}.weight`, 1);
-      setValue(`${fieldArrayName}.${index}.isWeightSelectedByUser`, false);
+      setValue(`${fieldArrayName}.${index}.weight`, 1, interactLikeUser);
+      setValue(
+        `${fieldArrayName}.${index}.isWeightSelectedByUser`,
+        false,
+        interactLikeUser
+      );
     }
   };
 
