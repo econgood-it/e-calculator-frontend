@@ -106,6 +106,56 @@ describe('WeightConfigurator', () => {
     vi.resetAllMocks();
   });
 
+  const supplierRatings = [
+    {
+      shortName: 'A1',
+      name: 'A1 Name',
+      estimations: 0,
+      isPositive: true,
+      type: RatingType.topic,
+      weight: 1,
+      isWeightSelectedByUser: false,
+      maxPoints: 0,
+      points: 0,
+    },
+    {
+      shortName: 'A1.1',
+      name: 'A1.1 Name',
+      estimations: 0,
+      isPositive: true,
+      type: RatingType.aspect,
+      weight: 1,
+      isWeightSelectedByUser: false,
+      maxPoints: 0,
+      points: 0,
+    },
+    {
+      shortName: 'A1.2',
+      name: 'A1.2 Name',
+      estimations: 0,
+      isPositive: false,
+      type: RatingType.aspect,
+      weight: 1,
+      isWeightSelectedByUser: false,
+      maxPoints: 0,
+      points: 0,
+    },
+  ];
+
+  it('only shows topics and positive aspects for weight adaption', async () => {
+    const action = vi.fn().mockResolvedValue(null);
+    const router = createRouter(
+      supplierRatings,
+      action,
+      BalanceSheetVersion.v5_1_0
+    );
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
+    await user.click(await screen.findByText('Adapt selection and weighting'));
+    expect(screen.getByText('A1')).toBeInTheDocument();
+    expect(screen.getByText('A1.1')).toBeInTheDocument();
+    expect(screen.queryByText('A1.2')).not.toBeInTheDocument();
+  });
+
   it('save weighting adaption', async () => {
     const action = vi.fn().mockResolvedValue(null);
     const ratings: Rating[] = [
@@ -161,51 +211,21 @@ describe('WeightConfigurator', () => {
 
   it('should change weight of A1.1', async () => {
     const action = vi.fn().mockResolvedValue(null);
-    const ratings = [
-      {
-        shortName: 'A1',
-        name: 'A1 Name',
-        estimations: 0,
-        isPositive: true,
-        type: RatingType.topic,
-        weight: 1,
-        isWeightSelectedByUser: false,
-        maxPoints: 0,
-        points: 0,
-      },
-      {
-        shortName: 'A1.1',
-        name: 'A1.1 Name',
-        estimations: 0,
-        isPositive: false,
-        type: RatingType.aspect,
-        weight: 1,
-        isWeightSelectedByUser: false,
-        maxPoints: 0,
-        points: 0,
-      },
-      {
-        shortName: 'A1.2',
-        name: 'A1.2 Name',
-        estimations: 0,
-        isPositive: false,
-        type: RatingType.aspect,
-        weight: 1,
-        isWeightSelectedByUser: false,
-        maxPoints: 0,
-        points: 0,
-      },
-    ];
-    const router = createRouter(ratings, action, BalanceSheetVersion.v5_1_0);
+
+    const router = createRouter(
+      supplierRatings,
+      action,
+      BalanceSheetVersion.v5_1_0
+    );
     const { user } = renderWithTheme(<RouterProvider router={router} />);
     await user.click(await screen.findByText('Adapt selection and weighting'));
     let weightSwitches = screen.getAllByText('Select weight manually');
-    expect(weightSwitches).toHaveLength(3);
+    expect(weightSwitches).toHaveLength(2);
     await user.click(
       screen.getByLabelText(`ratings.${1}.isWeightSelectedByUser`)
     );
     weightSwitches = screen.getAllByText('Select weight manually');
-    expect(weightSwitches).toHaveLength(2);
+    expect(weightSwitches).toHaveLength(1);
 
     await user.click(
       screen.getByRole('combobox', {
@@ -227,9 +247,9 @@ describe('WeightConfigurator', () => {
 
     expect(action).toHaveBeenCalledWith({
       ratings: [
-        ratings[0],
-        { ...ratings[1], weight: 2, isWeightSelectedByUser: true },
-        ratings[2],
+        supplierRatings[0],
+        { ...supplierRatings[1], weight: 2, isWeightSelectedByUser: true },
+        supplierRatings[2],
       ],
     });
   });
@@ -241,7 +261,7 @@ describe('WeightConfigurator', () => {
         shortName: 'A1.1',
         name: 'A1.1 Name',
         estimations: 0,
-        isPositive: false,
+        isPositive: true,
         type: RatingType.aspect,
         weight: 1,
         isWeightSelectedByUser: false,
@@ -252,7 +272,7 @@ describe('WeightConfigurator', () => {
         shortName: 'B1.1',
         name: 'B1.1 Name',
         estimations: 0,
-        isPositive: false,
+        isPositive: true,
         type: RatingType.aspect,
         weight: 1,
         isWeightSelectedByUser: false,
@@ -263,7 +283,7 @@ describe('WeightConfigurator', () => {
         shortName: 'B1.2',
         name: 'B1.2 Name',
         estimations: 0,
-        isPositive: false,
+        isPositive: true,
         type: RatingType.aspect,
         weight: 0,
         isWeightSelectedByUser: false,
@@ -308,7 +328,7 @@ describe('WeightConfigurator', () => {
         shortName: 'A1.1',
         name: 'A1.1 Name',
         estimations: 0,
-        isPositive: false,
+        isPositive: true,
         type: RatingType.aspect,
         weight: 1,
         isWeightSelectedByUser: false,
@@ -319,7 +339,7 @@ describe('WeightConfigurator', () => {
         shortName: 'B1.1',
         name: 'B1.1 Name',
         estimations: 0,
-        isPositive: false,
+        isPositive: true,
         type: RatingType.aspect,
         weight: 1,
         isWeightSelectedByUser: false,
@@ -330,7 +350,7 @@ describe('WeightConfigurator', () => {
         shortName: 'B1.2',
         name: 'B1.2 Name',
         estimations: 0,
-        isPositive: false,
+        isPositive: true,
         type: RatingType.aspect,
         weight: 0,
         isWeightSelectedByUser: false,

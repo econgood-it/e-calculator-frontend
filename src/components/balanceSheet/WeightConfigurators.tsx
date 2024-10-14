@@ -89,74 +89,75 @@ export function WeightConfigurator({
   return (
     <GridContainer spacing={1}>
       {watchedRatings.map(
-        ({ shortName, weight, isWeightSelectedByUser }, index) => (
-          <GridItem xs={12} lg={4} key={shortName}>
-            <Card>
-              <CardContent>
-                <GridContainer alignItems={'center'} spacing={2}>
-                  <GridItem xs={2}>
-                    <Checkbox
-                      aria-label={`Select ${shortName}`}
-                      checkedIcon={
-                        shouldEnableExclusiveOptions(shortName) ? (
-                          <FontAwesomeIcon size="lg" icon={faCircleCheck} />
-                        ) : (
-                          <FontAwesomeIcon size="lg" icon={faSquareCheck} />
-                        )
-                      }
-                      icon={
-                        shouldEnableExclusiveOptions(shortName) ? (
-                          <FontAwesomeIcon size="lg" icon={faCircle} />
-                        ) : (
-                          <FontAwesomeIcon size="lg" icon={faSquare} />
-                        )
-                      }
-                      aria-checked={weight !== 0}
-                      checked={weight !== 0}
-                      onChange={(e) => onCheckboxChanged(e, shortName, index)}
-                      inputProps={{ 'aria-label': 'controlled' }}
-                    />
-                  </GridItem>
-                  <GridItem xs={2}>
-                    <Typography>{shortName}</Typography>
-                  </GridItem>
-                  {weight !== 0 && (
-                    <>
-                      <GridItem>
-                        <ReactHookFormSwitch
-                          control={control}
-                          name={`${fieldArrayName}.${index}.isWeightSelectedByUser`}
-                          label={
-                            !isWeightSelectedByUser && (
-                              <Trans>Select weight manually</Trans>
-                            )
-                          }
-                        />
-                      </GridItem>
-                      <GridItem minWidth={100}>
-                        {isWeightSelectedByUser && (
-                          <ReactHookFormSelect
+        ({ shortName, weight, isWeightSelectedByUser, isPositive }, index) =>
+          isPositive && (
+            <GridItem xs={12} lg={4} key={shortName}>
+              <Card>
+                <CardContent>
+                  <GridContainer alignItems={'center'} spacing={2}>
+                    <GridItem xs={2}>
+                      <Checkbox
+                        aria-label={`Select ${shortName}`}
+                        checkedIcon={
+                          shouldEnableExclusiveOptions(shortName) ? (
+                            <FontAwesomeIcon size="lg" icon={faCircleCheck} />
+                          ) : (
+                            <FontAwesomeIcon size="lg" icon={faSquareCheck} />
+                          )
+                        }
+                        icon={
+                          shouldEnableExclusiveOptions(shortName) ? (
+                            <FontAwesomeIcon size="lg" icon={faCircle} />
+                          ) : (
+                            <FontAwesomeIcon size="lg" icon={faSquare} />
+                          )
+                        }
+                        aria-checked={weight !== 0}
+                        checked={weight !== 0}
+                        onChange={(e) => onCheckboxChanged(e, shortName, index)}
+                        inputProps={{ 'aria-label': 'controlled' }}
+                      />
+                    </GridItem>
+                    <GridItem xs={2}>
+                      <Typography>{shortName}</Typography>
+                    </GridItem>
+                    {weight !== 0 && (
+                      <>
+                        <GridItem>
+                          <ReactHookFormSwitch
                             control={control}
-                            size={'small'}
-                            name={`${fieldArrayName}.${index}.weight`}
-                            label={<Trans>Weight</Trans>}
-                            defaultValue={1}
-                          >
-                            {WEIGHT_VALUES.slice(1).map((weight, index) => (
-                              <MenuItem key={index} value={weight}>
-                                {weight}
-                              </MenuItem>
-                            ))}
-                          </ReactHookFormSelect>
-                        )}
-                      </GridItem>
-                    </>
-                  )}
-                </GridContainer>
-              </CardContent>
-            </Card>
-          </GridItem>
-        )
+                            name={`${fieldArrayName}.${index}.isWeightSelectedByUser`}
+                            label={
+                              !isWeightSelectedByUser && (
+                                <Trans>Select weight manually</Trans>
+                              )
+                            }
+                          />
+                        </GridItem>
+                        <GridItem minWidth={100}>
+                          {isWeightSelectedByUser && (
+                            <ReactHookFormSelect
+                              control={control}
+                              size={'small'}
+                              name={`${fieldArrayName}.${index}.weight`}
+                              label={<Trans>Weight</Trans>}
+                              defaultValue={1}
+                            >
+                              {WEIGHT_VALUES.slice(1).map((weight, index) => (
+                                <MenuItem key={index} value={weight}>
+                                  {weight}
+                                </MenuItem>
+                              ))}
+                            </ReactHookFormSelect>
+                          )}
+                        </GridItem>
+                      </>
+                    )}
+                  </GridContainer>
+                </CardContent>
+              </Card>
+            </GridItem>
+          )
       )}
     </GridContainer>
   );
