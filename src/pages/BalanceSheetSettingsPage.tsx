@@ -10,7 +10,9 @@ import {
   Typography,
 } from '@mui/material';
 import { Trans } from 'react-i18next';
-import GridContainer from '../components/layout/GridContainer';
+import GridContainer, {
+  FormContainer,
+} from '../components/layout/GridContainer';
 import GridItem from '../components/layout/GridItem';
 import { useState } from 'react';
 import {
@@ -47,7 +49,7 @@ export function BalanceSheetSettingsPage() {
   };
 
   return (
-    <>
+    <FormContainer>
       <GridContainer spacing={2}>
         <GridItem xs={12}>
           <Typography variant="h5">
@@ -106,7 +108,7 @@ export function BalanceSheetSettingsPage() {
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </FormContainer>
   );
 }
 

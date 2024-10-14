@@ -99,5 +99,6 @@ export const DE_TRANSLATIONS = {
   Join: 'Beitreten',
   'Selection of topics and aspects': 'Auswahl von Themen und Aspekten',
   'Not considered': 'Nicht berücksichtigt',
+  'Adapt selection and weighting': 'Auswahl und Gewichtung',
   ...DE_ERROR_TRANSLATIONS,
 };

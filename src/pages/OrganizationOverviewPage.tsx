@@ -12,7 +12,7 @@ import {
   makeWretchInstanceWithAuth,
 } from '../api/api.client.ts';
 import { BalanceSheetList } from '../components/balanceSheet/BalanceSheetList.tsx';
-import GridContainer from '../components/layout/GridContainer';
+import { FormContainer } from '../components/layout/GridContainer';
 import GridItem from '../components/layout/GridItem';
 import { OrganizationForm } from '../components/organization/OrganizationForm';
 import { OrganizationInvitations } from '../components/organization/OrganizationInvitations.tsx';
@@ -55,39 +55,37 @@ export function OrganizationOverviewPage() {
   }
 
   return (
-    <>
-      <GridContainer spacing={3}>
-        <GridItem xs={12}>
-          <Typography variant={'h1'}>
-            <Trans>Your Organization</Trans>
-          </Typography>
-        </GridItem>
-        <GridItem xs={12}>
-          {data && (
-            <OrganizationForm
-              organization={data.organization}
-              onSave={onOrganizationSave}
-            />
-          )}
-        </GridItem>
-        <GridItem xs={12}>
-          {data && (
-            <BalanceSheetList
-              balanceSheetItems={data?.balanceSheetItems}
-              onCreateBalanceSheet={onCreateBalanceSheet}
-            />
-          )}
-        </GridItem>
-        <GridItem xs={12}>
-          {data?.organization?.invitations && (
-            <OrganizationInvitations
-              invitations={data.organization.invitations}
-              onInvitation={onInvitation}
-            />
-          )}
-        </GridItem>
-      </GridContainer>
-    </>
+    <FormContainer spacing={3}>
+      <GridItem xs={12}>
+        <Typography variant={'h1'}>
+          <Trans>Your Organization</Trans>
+        </Typography>
+      </GridItem>
+      <GridItem xs={12}>
+        {data && (
+          <OrganizationForm
+            organization={data.organization}
+            onSave={onOrganizationSave}
+          />
+        )}
+      </GridItem>
+      <GridItem xs={12}>
+        {data && (
+          <BalanceSheetList
+            balanceSheetItems={data?.balanceSheetItems}
+            onCreateBalanceSheet={onCreateBalanceSheet}
+          />
+        )}
+      </GridItem>
+      <GridItem xs={12}>
+        {data?.organization?.invitations && (
+          <OrganizationInvitations
+            invitations={data.organization.invitations}
+            onInvitation={onInvitation}
+          />
+        )}
+      </GridItem>
+    </FormContainer>
   );
 }
 

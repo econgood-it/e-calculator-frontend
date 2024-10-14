@@ -2,7 +2,7 @@ import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import renderWithTheme from '../testUtils/rendering';
 import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets';
 import { Rating, StakholderShortNames } from '../models/Rating';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, Mock, vi } from 'vitest';
 
 import RatingsPage, { action, loader } from './RatingsPage.tsx';
 import { setupApiMock } from '../testUtils/api.ts';
@@ -10,6 +10,27 @@ import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { RatingType } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import { saveForm } from '../testUtils/form.tsx';
 import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+
+function createRouter(
+  ratings: Rating[],
+  actionMock: Mock,
+  version: BalanceSheetVersion
+) {
+  return createMemoryRouter(
+    [
+      {
+        path: '/balancesheet/1/suppliers',
+        element: <RatingsPage />,
+        loader: () => ({
+          ratings,
+          balanceSheetVersion: version,
+        }),
+        action: async ({ request }) => actionMock(await request.json()),
+      },
+    ],
+    { initialEntries: ['/balancesheet/1/suppliers'] }
+  );
+}
 
 describe('RatingsPage', () => {
   it('renders ratings and updates these', async () => {
@@ -37,21 +58,19 @@ describe('RatingsPage', () => {
         maxPoints: 0,
         points: 0,
       },
+      {
+        shortName: 'A1.2',
+        name: 'A1.2 name',
+        estimations: 0,
+        isPositive: false,
+        type: RatingType.aspect,
+        weight: 1,
+        isWeightSelectedByUser: false,
+        maxPoints: 0,
+        points: 0,
+      },
     ];
-    const router = createMemoryRouter(
-      [
-        {
-          path: '/balancesheet/1/suppliers',
-          element: <RatingsPage />,
-          loader: () => ({
-            ratings,
-            balanceSheetVersion: BalanceSheetVersion.v5_1_0,
-          }),
-          action: async ({ request }) => action(await request.json()),
-        },
-      ],
-      { initialEntries: ['/balancesheet/1/suppliers'] }
-    );
+    const router = createRouter(ratings, action, BalanceSheetVersion.v5_1_0);
     const { user } = renderWithTheme(<RouterProvider router={router} />);
 
     await waitFor(async () =>
@@ -68,10 +87,23 @@ describe('RatingsPage', () => {
     const positiveRating = screen.getByLabelText(`ratings.${1}.estimations`);
     fireEvent.click(within(positiveRating).getByLabelText('4 Stars'));
 
+    const negativeRating = screen.getByLabelText(`ratings.${2}.estimations`);
+    fireEvent.change(negativeRating, { target: { value: -15 } });
+
     await saveForm(user);
     expect(action).toHaveBeenCalledWith({
-      ratings: [ratings[0], { ...ratings[1], estimations: 4 }],
+      ratings: [
+        ratings[0],
+        { ...ratings[1], estimations: 4 },
+        { ...ratings[2], estimations: -15 },
+      ],
     });
+  });
+});
+
+describe('WeightConfigurator', () => {
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it('save weighting adaption', async () => {
@@ -100,20 +132,8 @@ describe('RatingsPage', () => {
         points: 0,
       },
     ];
-    const router = createMemoryRouter(
-      [
-        {
-          path: '/balancesheet/1/finance',
-          element: <RatingsPage />,
-          loader: () => ({
-            ratings,
-            balanceSheetVersion: BalanceSheetVersion.v5_1_0,
-          }),
-          action: async ({ request }) => action(await request.json()),
-        },
-      ],
-      { initialEntries: ['/balancesheet/1/finance'] }
-    );
+    const router = createRouter(ratings, action, BalanceSheetVersion.v5_1_0);
+
     const { user } = renderWithTheme(<RouterProvider router={router} />);
     await user.click(await screen.findByText('Adapt selection and weighting'));
     await user.click(
@@ -130,11 +150,220 @@ describe('RatingsPage', () => {
 
     const weightOptions = await screen.findAllByRole('option');
     await user.click(weightOptions.find((o) => o.textContent === '2')!);
-    await user.click(screen.getAllByText('Save')[1]);
+    await saveForm(user);
     expect(action).toHaveBeenCalledWith({
       ratings: [
         { ...ratings[0], weight: 2, isWeightSelectedByUser: true },
         { ...ratings[1], weight: 0, isWeightSelectedByUser: true },
+      ],
+    });
+  });
+
+  it('should change weight of A1.1', async () => {
+    const action = vi.fn().mockResolvedValue(null);
+    const ratings = [
+      {
+        shortName: 'A1',
+        name: 'A1 Name',
+        estimations: 0,
+        isPositive: true,
+        type: RatingType.topic,
+        weight: 1,
+        isWeightSelectedByUser: false,
+        maxPoints: 0,
+        points: 0,
+      },
+      {
+        shortName: 'A1.1',
+        name: 'A1.1 Name',
+        estimations: 0,
+        isPositive: false,
+        type: RatingType.aspect,
+        weight: 1,
+        isWeightSelectedByUser: false,
+        maxPoints: 0,
+        points: 0,
+      },
+      {
+        shortName: 'A1.2',
+        name: 'A1.2 Name',
+        estimations: 0,
+        isPositive: false,
+        type: RatingType.aspect,
+        weight: 1,
+        isWeightSelectedByUser: false,
+        maxPoints: 0,
+        points: 0,
+      },
+    ];
+    const router = createRouter(ratings, action, BalanceSheetVersion.v5_1_0);
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
+    await user.click(await screen.findByText('Adapt selection and weighting'));
+    let weightSwitches = screen.getAllByText('Select weight manually');
+    expect(weightSwitches).toHaveLength(3);
+    await user.click(
+      screen.getByLabelText(`ratings.${1}.isWeightSelectedByUser`)
+    );
+    weightSwitches = screen.getAllByText('Select weight manually');
+    expect(weightSwitches).toHaveLength(2);
+
+    await user.click(
+      screen.getByRole('combobox', {
+        name: /Weight/,
+      })
+    );
+
+    const weightOptions = await screen.findAllByRole('option');
+    expect(weightOptions.map((o) => o.textContent)).toEqual([
+      '0.5',
+      '1',
+      '1.5',
+      '2',
+    ]);
+
+    await user.click(weightOptions.find((o) => o.textContent === '2')!);
+
+    await saveForm(user);
+
+    expect(action).toHaveBeenCalledWith({
+      ratings: [
+        ratings[0],
+        { ...ratings[1], weight: 2, isWeightSelectedByUser: true },
+        ratings[2],
+      ],
+    });
+  });
+
+  it('should unselect B1.1 if B1.2 is selected', async () => {
+    const action = vi.fn().mockResolvedValue(null);
+    const ratings = [
+      {
+        shortName: 'A1.1',
+        name: 'A1.1 Name',
+        estimations: 0,
+        isPositive: false,
+        type: RatingType.aspect,
+        weight: 1,
+        isWeightSelectedByUser: false,
+        maxPoints: 0,
+        points: 0,
+      },
+      {
+        shortName: 'B1.1',
+        name: 'B1.1 Name',
+        estimations: 0,
+        isPositive: false,
+        type: RatingType.aspect,
+        weight: 1,
+        isWeightSelectedByUser: false,
+        maxPoints: 0,
+        points: 0,
+      },
+      {
+        shortName: 'B1.2',
+        name: 'B1.2 Name',
+        estimations: 0,
+        isPositive: false,
+        type: RatingType.aspect,
+        weight: 0,
+        isWeightSelectedByUser: false,
+        maxPoints: 0,
+        points: 0,
+      },
+    ];
+    const router = createRouter(ratings, action, BalanceSheetVersion.v5_1_0);
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
+    await user.click(await screen.findByText('Adapt selection and weighting'));
+    const b11Checkbox = within(screen.getByLabelText('Select B1.1')).getByRole(
+      'checkbox'
+    );
+    const b12Checkbox = within(screen.getByLabelText('Select B1.2')).getByRole(
+      'checkbox'
+    );
+    let weightSwitches = screen.getAllByText('Select weight manually');
+    expect(b11Checkbox).toBeChecked();
+    expect(b12Checkbox).not.toBeChecked();
+    expect(weightSwitches).toHaveLength(2);
+    await user.click(b12Checkbox);
+    expect(b11Checkbox).not.toBeChecked();
+    expect(b12Checkbox).toBeChecked();
+    weightSwitches = screen.getAllByText('Select weight manually');
+    expect(weightSwitches).toHaveLength(2);
+
+    await saveForm(user);
+
+    expect(action).toHaveBeenCalledWith({
+      ratings: [
+        ratings[0],
+        { ...ratings[1], weight: 0, isWeightSelectedByUser: true },
+        { ...ratings[2], weight: 1, isWeightSelectedByUser: false },
+      ],
+    });
+  });
+
+  it('should not unselect B1.1 if B1.2 is selected if version is smaller 5.10', async () => {
+    const action = vi.fn().mockResolvedValue(null);
+    const ratings = [
+      {
+        shortName: 'A1.1',
+        name: 'A1.1 Name',
+        estimations: 0,
+        isPositive: false,
+        type: RatingType.aspect,
+        weight: 1,
+        isWeightSelectedByUser: false,
+        maxPoints: 0,
+        points: 0,
+      },
+      {
+        shortName: 'B1.1',
+        name: 'B1.1 Name',
+        estimations: 0,
+        isPositive: false,
+        type: RatingType.aspect,
+        weight: 1,
+        isWeightSelectedByUser: false,
+        maxPoints: 0,
+        points: 0,
+      },
+      {
+        shortName: 'B1.2',
+        name: 'B1.2 Name',
+        estimations: 0,
+        isPositive: false,
+        type: RatingType.aspect,
+        weight: 0,
+        isWeightSelectedByUser: false,
+        maxPoints: 0,
+        points: 0,
+      },
+    ];
+    const router = createRouter(ratings, action, BalanceSheetVersion.v5_0_9);
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
+    await user.click(await screen.findByText('Adapt selection and weighting'));
+    const b11Checkbox = within(screen.getByLabelText('Select B1.1')).getByRole(
+      'checkbox'
+    );
+    const b12Checkbox = within(screen.getByLabelText('Select B1.2')).getByRole(
+      'checkbox'
+    );
+    let weightSwitches = screen.getAllByText('Select weight manually');
+    expect(b11Checkbox).toBeChecked();
+    expect(b12Checkbox).not.toBeChecked();
+    expect(weightSwitches).toHaveLength(2);
+    await user.click(b12Checkbox);
+    expect(b11Checkbox).toBeChecked();
+    expect(b12Checkbox).toBeChecked();
+    weightSwitches = screen.getAllByText('Select weight manually');
+    expect(weightSwitches).toHaveLength(3);
+
+    await saveForm(user);
+
+    expect(action).toHaveBeenCalledWith({
+      ratings: [
+        ratings[0],
+        { ...ratings[1], weight: 1, isWeightSelectedByUser: false },
+        { ...ratings[2], weight: 1, isWeightSelectedByUser: false },
       ],
     });
   });

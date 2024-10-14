@@ -1,18 +1,9 @@
-import {
-  ArrayPath,
-  Control,
-  FieldValues,
-  useFieldArray,
-  useForm,
-} from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { ArrayPath, Control, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import GridItem from '../layout/GridItem';
-import GridContainer, { FormContainer } from '../layout/GridContainer';
+import GridContainer from '../layout/GridContainer';
 import { Card, CardContent, Typography } from '@mui/material';
-import { SaveButton } from '../buttons/SaveButton.tsx';
 import { Fragment } from 'react';
-import { Rating } from '../../models/Rating';
 import {
   RatingResponseBodySchema,
   RatingType,
@@ -22,37 +13,24 @@ import { NegativeRating } from './NegativeRating';
 import { ShortNameAvatar } from '../matrix/MatrixView';
 import { Trans } from 'react-i18next';
 
-type RatingsFormProps = {
-  ratings: Rating[];
-  onRatingsChange: (ratings: Rating[]) => Promise<void>;
-};
-
-const RatingsFormSchema = z.object({
+export const RatingsFormSchema = z.object({
   ratings: RatingResponseBodySchema.array(),
 });
-type RatingsFormInput = z.infer<typeof RatingsFormSchema>;
+export type RatingsFormInput = z.infer<typeof RatingsFormSchema>;
 
-export function RatingsForm({ ratings, onRatingsChange }: RatingsFormProps) {
-  const { control, handleSubmit } = useForm<RatingsFormInput>({
-    resolver: zodResolver(RatingsFormSchema),
-    mode: 'onChange',
-    defaultValues: { ratings: ratings },
-    values: { ratings: ratings },
-  });
+type RatingsFormProps = {
+  control: Control<RatingsFormInput>;
+};
 
+export function RatingsForm({ control }: RatingsFormProps) {
   const fieldArrayName = 'ratings';
   const { fields: ratingsFields } = useFieldArray<RatingsFormInput>({
     control: control, // control props comes from useForm (optional: if you are using FormContext)
     name: fieldArrayName, // unique name for your Field Array
   });
 
-  const onSaveClick = async (data: FieldValues) => {
-    const newRatings = RatingsFormSchema.parse(data);
-    await onRatingsChange(newRatings.ratings);
-  };
-
   return (
-    <FormContainer spacing={3}>
+    <GridContainer spacing={3}>
       {ratingsFields.map(
         ({ type, shortName, name, isPositive, weight }, index) => (
           <Fragment key={shortName}>
@@ -76,10 +54,7 @@ export function RatingsForm({ ratings, onRatingsChange }: RatingsFormProps) {
           </Fragment>
         )
       )}
-      <GridItem xs={12}>
-        <SaveButton handleSubmit={handleSubmit} onSaveClick={onSaveClick} />
-      </GridItem>
-    </FormContainer>
+    </GridContainer>
   );
 }
 

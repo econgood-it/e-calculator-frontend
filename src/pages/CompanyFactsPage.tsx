@@ -17,6 +17,7 @@ import { API_URL } from '../configuration.ts';
 import { useLoaderData } from 'react-router-typesafe';
 import { CompanyFactsPatchRequestBody } from '../models/CompanyFacts.ts';
 import { HandlerContext } from './handlerContext.ts';
+import { FormContainer } from '../components/layout/GridContainer.tsx';
 
 const CompanyFactsPage = () => {
   const data = useLoaderData<typeof loader>();
@@ -31,7 +32,7 @@ const CompanyFactsPage = () => {
   }
 
   return (
-    <>
+    <FormContainer>
       {data && (
         <>
           <SuppliersForm
@@ -82,7 +83,7 @@ const CompanyFactsPage = () => {
           />
         </>
       )}
-    </>
+    </FormContainer>
   );
 };
 

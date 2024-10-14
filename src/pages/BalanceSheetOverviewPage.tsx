@@ -1,5 +1,5 @@
 import { MatrixView } from '../components/matrix/MatrixView';
-import GridContainer from '../components/layout/GridContainer';
+import { FormContainer } from '../components/layout/GridContainer';
 import GridItem from '../components/layout/GridItem';
 import { Typography } from '@mui/material';
 import { Trans } from 'react-i18next';
@@ -16,14 +16,14 @@ export function BalanceSheetOverviewPage() {
   const matrix = useLoaderData<typeof loader>();
 
   return (
-    <GridContainer spacing={2}>
+    <FormContainer spacing={2}>
       <GridItem xs={12}>
         <Typography variant="h1">
           <Trans>Matrix representation</Trans>
         </Typography>
       </GridItem>
       <GridItem xs={12}>{matrix && <MatrixView matrix={matrix} />}</GridItem>
-    </GridContainer>
+    </FormContainer>
   );
 }
 

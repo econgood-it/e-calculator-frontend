@@ -88,6 +88,7 @@ const EN_WORDS = [
   'Join',
   'Selection of topics and aspects',
   'Not considered',
+  'Adapt selection and weighting',
 ];
 
 export const EN_TRANSLATIONS = {

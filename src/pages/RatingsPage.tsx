@@ -1,4 +1,8 @@
-import { RatingsForm } from '../components/balanceSheet/RatingsForm';
+import {
+  RatingsForm,
+  RatingsFormInput,
+  RatingsFormSchema,
+} from '../components/balanceSheet/RatingsForm';
 import { Rating, StakholderShortNames } from '../models/Rating';
 import {
   ActionFunctionArgs,
@@ -13,37 +17,93 @@ import {
 import { API_URL } from '../configuration.ts';
 import { useLoaderData } from 'react-router-typesafe';
 import { WeightConfigurator } from '../components/balanceSheet/WeightConfigurators.tsx';
-import GridContainer from '../components/layout/GridContainer.tsx';
+import GridContainer, {
+  FormContainer,
+} from '../components/layout/GridContainer.tsx';
 import GridItem from '../components/layout/GridItem.tsx';
 import { HandlerContext } from './handlerContext.ts';
+import { FieldValues, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { SaveButton } from '../components/buttons/SaveButton.tsx';
+import { Tab, Tabs } from '@mui/material';
+import { Trans } from 'react-i18next';
+import { faSliders } from '@fortawesome/free-solid-svg-icons/faSliders';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { SyntheticEvent, useState } from 'react';
+import { faSeedling } from '@fortawesome/free-solid-svg-icons';
 
 export default function RatingsPage() {
   const data = useLoaderData<typeof loader>();
+  const [tabValue, setTabValue] = useState(0);
+
+  const { control, handleSubmit, setValue } = useForm<RatingsFormInput>({
+    resolver: zodResolver(RatingsFormSchema),
+    mode: 'onChange',
+    defaultValues: { ratings: data?.ratings || [] },
+    values: { ratings: data?.ratings || [] },
+  });
+
+  const handleTabChange = (_: SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
+
   const submit = useSubmit();
-  async function onRatingsChange(ratings: Rating[]) {
+
+  const onSave = async (dataFieldValues: FieldValues) => {
+    const { ratings } = RatingsFormSchema.parse(dataFieldValues);
     submit({ ratings }, { method: 'patch', encType: 'application/json' });
-  }
+  };
 
   return (
-    <>
-      {data && (
-        <GridContainer spacing={3}>
-          <GridItem xs={12}>
-            <WeightConfigurator
-              ratings={data.ratings}
-              onRatingsChange={onRatingsChange}
-              version={data.balanceSheetVersion}
-            />
+    <GridContainer>
+      <GridItem
+        position={'fixed'}
+        zIndex={3}
+        bgcolor={'white'}
+        sx={{ width: '100%' }}
+      >
+        <GridContainer alignItems={'center'} padding={2} spacing={2}>
+          <GridItem>
+            <Tabs
+              value={tabValue}
+              onChange={handleTabChange}
+              aria-label="Select between ratings and weighting adaption"
+            >
+              <Tab
+                icon={<FontAwesomeIcon icon={faSeedling} />}
+                label={<Trans>Ratings</Trans>}
+                iconPosition={'start'}
+              />
+              <Tab
+                icon={<FontAwesomeIcon icon={faSliders} />}
+                label={<Trans>Adapt selection and weighting</Trans>}
+                iconPosition="start"
+              />
+            </Tabs>
           </GridItem>
-          <GridItem xs={12}>
-            <RatingsForm
-              ratings={data.ratings}
-              onRatingsChange={onRatingsChange}
-            />
+          <GridItem>
+            <SaveButton handleSubmit={handleSubmit} onSaveClick={onSave} />
           </GridItem>
         </GridContainer>
-      )}
-    </>
+      </GridItem>
+      <GridItem marginTop={4}>
+        {data && (
+          <FormContainer spacing={3} marginTop={6}>
+            <GridItem xs={12}>
+              {tabValue === 0 ? (
+                <RatingsForm control={control} />
+              ) : (
+                <WeightConfigurator
+                  control={control}
+                  setValue={setValue}
+                  version={data.balanceSheetVersion}
+                />
+              )}
+            </GridItem>
+          </FormContainer>
+        )}
+      </GridItem>
+    </GridContainer>
   );
 }
 

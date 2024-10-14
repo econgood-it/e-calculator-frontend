@@ -30,8 +30,7 @@ const DrawerWithFixedWidth = styled(Drawer)<{ $drawerWidth: number }>`
 `;
 
 const Content = styled.div<{ $open: boolean; $drawerWidth: number }>`
-  margin: 16px 16px 16px
-    ${(props) => (props.$open ? props.$drawerWidth + 16 : 16)}px;
+  margin-left: ${(props) => (props.$open ? props.$drawerWidth : 0)}px;
 `;
 
 export default function Sidebar() {
