@@ -1,69 +1,27 @@
 import GridItem from '../../layout/GridItem';
 import { useTranslation } from 'react-i18next';
 import { CurrencyInput } from '../forms/NumberInputs';
-import GridContainer, { FormContainer } from '../../layout/GridContainer';
-import { FieldValues, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { SaveButton } from '../../buttons/SaveButton.tsx';
-import { FormTitle } from './FormTitle';
-import { CompanyFactsResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
-import { CompanyFactsPatchRequestBody } from '../../../models/CompanyFacts.ts';
-
-const OwnersAndFinancialServicesFormSchema =
-  CompanyFactsResponseBodySchema.pick({
-    profit: true,
-    financialCosts: true,
-    incomeFromFinancialInvestments: true,
-    totalAssets: true,
-    additionsToFixedAssets: true,
-    financialAssetsAndCashBalance: true,
-  });
-type OwnersAndFinancialServicesFormInput = z.infer<
-  typeof OwnersAndFinancialServicesFormSchema
->;
+import GridContainer from '../../layout/GridContainer';
+import { FormState, UseFormRegister } from 'react-hook-form';
+import { CompanyFacts } from '../../../models/CompanyFacts.ts';
 
 type OwnersAndFinancialServicesFormProps = {
-  formData: OwnersAndFinancialServicesFormInput;
-  updateCompanyFacts: (
-    companyFacts: CompanyFactsPatchRequestBody
-  ) => Promise<void>;
+  register: UseFormRegister<CompanyFacts>;
+  formState: FormState<CompanyFacts>;
 };
 
 export function OwnersAndFinancialServicesForm({
-  formData,
-  updateCompanyFacts,
+  register,
+  formState: { errors },
 }: OwnersAndFinancialServicesFormProps) {
   const { t } = useTranslation();
-  const {
-    formState: { errors },
-    register,
-    handleSubmit,
-  } = useForm<OwnersAndFinancialServicesFormInput>({
-    resolver: zodResolver(OwnersAndFinancialServicesFormSchema),
-    mode: 'onChange',
-    defaultValues: formData,
-  });
-
-  const onSaveClick = async (data: FieldValues) => {
-    const newCompanyFacts = OwnersAndFinancialServicesFormSchema.parse(data);
-    await updateCompanyFacts({
-      ...newCompanyFacts,
-    });
-  };
 
   return (
-    <FormContainer spacing={3}>
-      <GridItem>
-        <FormTitle
-          precedingCharacter={'B'}
-          title={t`Owners, equity- and financial service providers`}
-        />
-      </GridItem>
+    <GridContainer spacing={3}>
       <GridItem xs={12}>
         <GridContainer spacing={3}>
           <GridItem xs={12} sm={4}>
-            <CurrencyInput<OwnersAndFinancialServicesFormInput>
+            <CurrencyInput<CompanyFacts>
               register={register}
               errors={errors}
               registerKey={'profit'}
@@ -71,7 +29,7 @@ export function OwnersAndFinancialServicesForm({
             />
           </GridItem>
           <GridItem xs={12} sm={4}>
-            <CurrencyInput<OwnersAndFinancialServicesFormInput>
+            <CurrencyInput<CompanyFacts>
               register={register}
               errors={errors}
               registerKey={'financialCosts'}
@@ -79,7 +37,7 @@ export function OwnersAndFinancialServicesForm({
             />
           </GridItem>
           <GridItem xs={12} sm={4}>
-            <CurrencyInput<OwnersAndFinancialServicesFormInput>
+            <CurrencyInput<CompanyFacts>
               register={register}
               errors={errors}
               registerKey={'incomeFromFinancialInvestments'}
@@ -87,7 +45,7 @@ export function OwnersAndFinancialServicesForm({
             />
           </GridItem>
           <GridItem xs={12} sm={4}>
-            <CurrencyInput<OwnersAndFinancialServicesFormInput>
+            <CurrencyInput<CompanyFacts>
               register={register}
               errors={errors}
               registerKey={'totalAssets'}
@@ -95,7 +53,7 @@ export function OwnersAndFinancialServicesForm({
             />
           </GridItem>
           <GridItem xs={12} sm={4}>
-            <CurrencyInput<OwnersAndFinancialServicesFormInput>
+            <CurrencyInput<CompanyFacts>
               register={register}
               errors={errors}
               registerKey={'additionsToFixedAssets'}
@@ -103,7 +61,7 @@ export function OwnersAndFinancialServicesForm({
             />
           </GridItem>
           <GridItem xs={12} sm={4}>
-            <CurrencyInput<OwnersAndFinancialServicesFormInput>
+            <CurrencyInput<CompanyFacts>
               register={register}
               errors={errors}
               registerKey={'financialAssetsAndCashBalance'}
@@ -112,9 +70,6 @@ export function OwnersAndFinancialServicesForm({
           </GridItem>
         </GridContainer>
       </GridItem>
-      <GridItem xs={12}>
-        <SaveButton handleSubmit={handleSubmit} onSaveClick={onSaveClick} />
-      </GridItem>
-    </FormContainer>
+    </GridContainer>
   );
 }

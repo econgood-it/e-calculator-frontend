@@ -8,7 +8,7 @@ import { Region } from '../models/Region';
 import { Industry } from '../models/Industry';
 import { expect } from 'vitest';
 
-async function checkNumberFieldValidations(
+export async function checkNumberFieldValidations(
   isPositveNumber: boolean,
   input: Element,
   user: UserEvent
@@ -66,9 +66,9 @@ export async function fillNumberField(
   labelOfField: string,
   value: number
 ) {
-  const percentageField = within(screen.getByLabelText(labelOfField)).getByRole(
-    'textbox'
-  );
+  const percentageField = within(
+    await screen.findByLabelText(labelOfField)
+  ).getByRole('textbox');
   await user.clear(percentageField);
   await user.type(percentageField, value.toString());
 }
@@ -78,7 +78,7 @@ export async function selectRegion(
   labelOfSearchField: string,
   regionToSelect: Region
 ) {
-  const searchField = screen.getByLabelText(labelOfSearchField);
+  const searchField = await screen.findByLabelText(labelOfSearchField);
   await user.type(searchField, regionToSelect.countryCode);
 
   const foundRegion = screen.getByRole('option', {

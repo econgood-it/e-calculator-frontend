@@ -1,11 +1,16 @@
-import { Trans, useTranslation } from 'react-i18next';
-import { FieldValues, useFieldArray, useForm, useWatch } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Trans } from 'react-i18next';
+import {
+  Control,
+  FormState,
+  useFieldArray,
+  UseFormRegister,
+  UseFormSetValue,
+  useWatch,
+} from 'react-hook-form';
 import { CurrencyInput } from '../forms/NumberInputs';
-import GridContainer, { FormContainer } from '../../layout/GridContainer';
+import GridContainer from '../../layout/GridContainer';
 import GridItem from '../../layout/GridItem';
 import { Typography } from '@mui/material';
-import { z } from 'zod';
 
 import {
   DEFAULT_CODE,
@@ -14,51 +19,29 @@ import {
 } from './AutocompleteSelects';
 
 import { useEffect } from 'react';
-import { SaveButton } from '../../buttons/SaveButton.tsx';
-import { FormTitle } from './FormTitle';
 import { FieldArrayAppendButton } from '../forms/FieldArrayAppendButton';
 import { FieldArrayRemoveButton } from '../forms/FieldArrayRemoveButton';
 import { Region } from '../../../models/Region';
 import { Industry } from '../../../models/Industry';
-import { CompanyFactsResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
-import { CompanyFactsPatchRequestBody } from '../../../models/CompanyFacts.ts';
-
-const SuppliersFormInputSchema = CompanyFactsResponseBodySchema.pick({
-  totalPurchaseFromSuppliers: true,
-  supplyFractions: true,
-  mainOriginOfOtherSuppliers: true,
-});
-type SuppliersFormInput = z.infer<typeof SuppliersFormInputSchema>;
+import { CompanyFacts } from '../../../models/CompanyFacts.ts';
 
 type SuppliersFormProps = {
-  formData: SuppliersFormInput;
+  control: Control<CompanyFacts>;
+  setValue: UseFormSetValue<CompanyFacts>;
+  register: UseFormRegister<CompanyFacts>;
+  formState: FormState<CompanyFacts>;
   regions: Region[];
   industries: Industry[];
-  updateCompanyFacts: (
-    companyFacts: CompanyFactsPatchRequestBody
-  ) => Promise<void>;
 };
 
 const SuppliersForm = ({
-  formData,
+  control,
+  register,
+  setValue,
+  formState: { errors },
   regions,
   industries,
-  updateCompanyFacts,
 }: SuppliersFormProps) => {
-  const { t } = useTranslation();
-
-  const {
-    formState: { errors },
-    register,
-    handleSubmit,
-    setValue,
-    control,
-  } = useForm<SuppliersFormInput>({
-    resolver: zodResolver(SuppliersFormInputSchema),
-    mode: 'onChange',
-    defaultValues: formData,
-  });
-
   const fieldArrayName = 'supplyFractions';
   const {
     fields: supplyFractions,
@@ -85,29 +68,10 @@ const SuppliersForm = ({
     setValue('mainOriginOfOtherSuppliers.costs', sum);
   }, [watchedTotalPurchaseFromSuppliers, watchedSupplyFractions, setValue]);
 
-  const onSaveClick = async (data: FieldValues) => {
-    const newCompanyFacts = SuppliersFormInputSchema.parse(data);
-    await updateCompanyFacts({
-      ...newCompanyFacts,
-      supplyFractions: newCompanyFacts.supplyFractions.map((sf) => {
-        const countryCode =
-          sf.countryCode === DEFAULT_CODE ? undefined : sf.countryCode;
-        const industryCode =
-          sf.industryCode === DEFAULT_CODE ? undefined : sf.industryCode;
-        return { ...sf, countryCode: countryCode, industryCode: industryCode };
-      }),
-      mainOriginOfOtherSuppliers:
-        newCompanyFacts.mainOriginOfOtherSuppliers.countryCode,
-    });
-  };
-
   return (
-    <FormContainer spacing={3}>
-      <GridItem>
-        <FormTitle precedingCharacter={'A'} title={t`Suppliers`} />
-      </GridItem>
+    <GridContainer spacing={3}>
       <GridItem xs={12}>
-        <CurrencyInput<SuppliersFormInput>
+        <CurrencyInput<CompanyFacts>
           register={register}
           errors={errors}
           label={<Trans>Total purchases from suppliers</Trans>}
@@ -154,7 +118,7 @@ const SuppliersForm = ({
               />
             </GridItem>
             <GridItem xs={12} sm={1}>
-              <CurrencyInput<SuppliersFormInput>
+              <CurrencyInput<CompanyFacts>
                 register={register}
                 errors={errors}
                 label={<Trans>Costs</Trans>}
@@ -197,10 +161,7 @@ const SuppliersForm = ({
           </GridItem>
         </GridContainer>
       </GridItem>
-      <GridItem xs={12}>
-        <SaveButton handleSubmit={handleSubmit} onSaveClick={onSaveClick} />
-      </GridItem>
-    </FormContainer>
+    </GridContainer>
   );
 };
 

@@ -31,6 +31,7 @@ import { faSliders } from '@fortawesome/free-solid-svg-icons/faSliders';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SyntheticEvent, useState } from 'react';
 import { faSeedling } from '@fortawesome/free-solid-svg-icons';
+import { FixedBarItemWithContainer } from '../components/layout/FixedBarItemWithContainer.tsx';
 
 export default function RatingsPage() {
   const data = useLoaderData<typeof loader>();
@@ -61,40 +62,33 @@ export default function RatingsPage() {
 
   return (
     <GridContainer>
-      <GridItem
-        position={'fixed'}
-        zIndex={3}
-        bgcolor={'white'}
-        sx={{ width: '100%' }}
-      >
-        <GridContainer alignItems={'center'} padding={2} spacing={2}>
-          <GridItem>
-            <Tabs
-              value={tabValue}
-              onChange={handleTabChange}
-              aria-label="Select between ratings and weighting adaption"
-            >
-              <Tab
-                icon={<FontAwesomeIcon icon={faSeedling} />}
-                label={<Trans>Ratings</Trans>}
-                iconPosition={'start'}
-              />
-              <Tab
-                icon={<FontAwesomeIcon icon={faSliders} />}
-                label={<Trans>Adapt selection and weighting</Trans>}
-                iconPosition="start"
-              />
-            </Tabs>
-          </GridItem>
-          <GridItem>
-            <SaveButton
-              handleSubmit={handleSubmit}
-              onSaveClick={onSave}
-              disabled={!isDirty}
+      <FixedBarItemWithContainer>
+        <GridItem>
+          <Tabs
+            value={tabValue}
+            onChange={handleTabChange}
+            aria-label="Select between ratings and weighting adaption"
+          >
+            <Tab
+              icon={<FontAwesomeIcon icon={faSeedling} />}
+              label={<Trans>Ratings</Trans>}
+              iconPosition={'start'}
             />
-          </GridItem>
-        </GridContainer>
-      </GridItem>
+            <Tab
+              icon={<FontAwesomeIcon icon={faSliders} />}
+              label={<Trans>Adapt selection and weighting</Trans>}
+              iconPosition="start"
+            />
+          </Tabs>
+        </GridItem>
+        <GridItem>
+          <SaveButton
+            handleSubmit={handleSubmit}
+            onSaveClick={onSave}
+            disabled={!isDirty}
+          />
+        </GridItem>
+      </FixedBarItemWithContainer>
       <GridItem marginTop={4}>
         {data && (
           <FormContainer spacing={3} marginTop={6}>

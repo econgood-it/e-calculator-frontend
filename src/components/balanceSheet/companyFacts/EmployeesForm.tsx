@@ -5,55 +5,35 @@ import {
   NumberInput,
   PercentageInput,
 } from '../forms/NumberInputs';
-import GridContainer, { FormContainer } from '../../layout/GridContainer';
-import { FieldValues, useFieldArray, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import GridContainer from '../../layout/GridContainer';
+import {
+  Control,
+  FormState,
+  useFieldArray,
+  UseFormRegister,
+} from 'react-hook-form';
 import SwitchLabel from '../forms/SwitchLabel';
 
 import { DEFAULT_CODE, RegionSelect } from './AutocompleteSelects';
-import { SaveButton } from '../../buttons/SaveButton.tsx';
-import { FormTitle } from './FormTitle';
 import { FieldArrayAppendButton } from '../forms/FieldArrayAppendButton';
 import { FieldArrayRemoveButton } from '../forms/FieldArrayRemoveButton';
-import { CompanyFactsResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
 import { Region } from '../../../models/Region';
-import { CompanyFactsPatchRequestBody } from '../../../models/CompanyFacts.ts';
-
-const EmployeesFormSchema = CompanyFactsResponseBodySchema.pick({
-  numberOfEmployees: true,
-  totalStaffCosts: true,
-  averageJourneyToWorkForStaffInKm: true,
-  hasCanteen: true,
-  employeesFractions: true,
-});
-type EmployeesFormInput = z.infer<typeof EmployeesFormSchema>;
+import { CompanyFacts } from '../../../models/CompanyFacts.ts';
 
 type EmployeesFormProps = {
-  formData: EmployeesFormInput;
+  control: Control<CompanyFacts>;
+  register: UseFormRegister<CompanyFacts>;
+  formState: FormState<CompanyFacts>;
   regions: Region[];
-  updateCompanyFacts: (
-    companyFacts: CompanyFactsPatchRequestBody
-  ) => Promise<void>;
 };
 
 export function EmployeesForm({
-  formData,
+  control,
+  register,
+  formState: { errors },
   regions,
-  updateCompanyFacts,
 }: EmployeesFormProps) {
   const { t } = useTranslation();
-  const {
-    control,
-    register,
-    formState: { errors },
-    handleSubmit,
-  } = useForm<EmployeesFormInput>({
-    resolver: zodResolver(EmployeesFormSchema),
-    mode: 'onChange',
-    defaultValues: formData,
-  });
-
   const fieldArrayName = 'employeesFractions';
   const {
     fields: employeesFractions,
@@ -64,19 +44,12 @@ export function EmployeesForm({
     name: fieldArrayName, // unique name for your Field Array
   });
 
-  const onSaveClick = async (data: FieldValues) => {
-    await updateCompanyFacts(EmployeesFormSchema.parse(data));
-  };
-
   return (
-    <FormContainer spacing={3}>
-      <GridItem>
-        <FormTitle precedingCharacter={'C'} title={t`Employees`} />
-      </GridItem>
+    <GridContainer spacing={3}>
       <GridItem xs={12}>
         <GridContainer spacing={3} alignItems="center">
           <GridItem xs={12} sm={3}>
-            <NumberInput<EmployeesFormInput>
+            <NumberInput<CompanyFacts>
               register={register}
               errors={errors}
               registerKey={'numberOfEmployees'}
@@ -84,7 +57,7 @@ export function EmployeesForm({
             />
           </GridItem>
           <GridItem xs={12} sm={3}>
-            <CurrencyInput<EmployeesFormInput>
+            <CurrencyInput<CompanyFacts>
               register={register}
               errors={errors}
               registerKey={'totalStaffCosts'}
@@ -92,7 +65,7 @@ export function EmployeesForm({
             />
           </GridItem>
           <GridItem xs={12} sm={3}>
-            <NumberInput<EmployeesFormInput>
+            <NumberInput<CompanyFacts>
               register={register}
               errors={errors}
               registerKey={'averageJourneyToWorkForStaffInKm'}
@@ -100,7 +73,7 @@ export function EmployeesForm({
             />
           </GridItem>
           <GridItem key={'hasCanteen'} xs={12} sm={3}>
-            <SwitchLabel<EmployeesFormInput>
+            <SwitchLabel<CompanyFacts>
               control={control}
               registerKey={'hasCanteen'}
               label={t`Is there a canteen for the majority of staff?`}
@@ -126,7 +99,7 @@ export function EmployeesForm({
               />
             </GridItem>
             <GridItem xs={12} sm={5}>
-              <PercentageInput<EmployeesFormInput>
+              <PercentageInput<CompanyFacts>
                 register={register}
                 errors={errors}
                 label={<Trans>Amount in %</Trans>}
@@ -142,9 +115,6 @@ export function EmployeesForm({
           </GridContainer>
         </GridItem>
       ))}
-      <GridItem xs={12}>
-        <SaveButton handleSubmit={handleSubmit} onSaveClick={onSaveClick} />
-      </GridItem>
-    </FormContainer>
+    </GridContainer>
   );
 }

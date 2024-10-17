@@ -1,8 +1,4 @@
 import SuppliersForm from '../components/balanceSheet/companyFacts/SuppliersForm';
-import { OwnersAndFinancialServicesForm } from '../components/balanceSheet/companyFacts/OwnersAndFinancialServicesForm';
-
-import { EmployeesForm } from '../components/balanceSheet/companyFacts/EmployeesForm';
-import { CustomersForm } from '../components/balanceSheet/companyFacts/CustomersForm';
 import {
   ActionFunctionArgs,
   json,
@@ -15,75 +11,172 @@ import {
 } from '../api/api.client.ts';
 import { API_URL } from '../configuration.ts';
 import { useLoaderData } from 'react-router-typesafe';
-import { CompanyFactsPatchRequestBody } from '../models/CompanyFacts.ts';
+import { CompanyFacts } from '../models/CompanyFacts.ts';
 import { HandlerContext } from './handlerContext.ts';
-import { FormContainer } from '../components/layout/GridContainer.tsx';
+import GridContainer, {
+  FormContainer,
+} from '../components/layout/GridContainer.tsx';
+import GridItem from '../components/layout/GridItem.tsx';
+import { FixedBarItemWithContainer } from '../components/layout/FixedBarItemWithContainer.tsx';
+import { Button, MobileStepper, Typography } from '@mui/material';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Trans } from 'react-i18next';
+import { useMemo, useState } from 'react';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight';
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons/faChevronLeft';
+import { SaveButton } from '../components/buttons/SaveButton.tsx';
+import { FieldValues, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  CompanyFactsPatchRequestBodySchema,
+  CompanyFactsResponseBodySchema,
+} from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
+import { DEFAULT_CODE } from '../components/balanceSheet/companyFacts/AutocompleteSelects.tsx';
+import { OwnersAndFinancialServicesForm } from '../components/balanceSheet/companyFacts/OwnersAndFinancialServicesForm.tsx';
+import { EmployeesForm } from '../components/balanceSheet/companyFacts/EmployeesForm.tsx';
+import { CustomersForm } from '../components/balanceSheet/companyFacts/CustomersForm.tsx';
 
 const CompanyFactsPage = () => {
   const data = useLoaderData<typeof loader>();
+  const [activeStep, setActiveStep] = useState<number>(0);
+
+  const { formState, register, handleSubmit, setValue, control } =
+    useForm<CompanyFacts>({
+      resolver: zodResolver(CompanyFactsResponseBodySchema),
+      mode: 'onChange',
+      defaultValues: data?.companyFacts,
+      values: data?.companyFacts,
+    });
+
+  const Steps = useMemo(() => {
+    const dataIsLoaded = data && formState.defaultValues;
+    return [
+      {
+        label: <Trans>A: Suppliers</Trans>,
+        element: dataIsLoaded && (
+          <SuppliersForm
+            control={control}
+            register={register}
+            setValue={setValue}
+            formState={formState}
+            regions={data.regions}
+            industries={data.industries}
+          />
+        ),
+      },
+      {
+        label: (
+          <Trans>B: Owners, equity- and financial service providers</Trans>
+        ),
+        element: dataIsLoaded && (
+          <OwnersAndFinancialServicesForm
+            formState={formState}
+            register={register}
+          />
+        ),
+      },
+      {
+        label: <Trans>C: Employees</Trans>,
+        element: dataIsLoaded && (
+          <EmployeesForm
+            control={control}
+            register={register}
+            formState={formState}
+            regions={data?.regions}
+          />
+        ),
+      },
+      {
+        label: 'D: Customers and other companies',
+        element: dataIsLoaded && (
+          <CustomersForm
+            control={control}
+            register={register}
+            formState={formState}
+            industries={data?.industries}
+          />
+        ),
+      },
+    ];
+  }, [data, control, register, formState, setValue]);
+
+  const maxSteps = Steps.length;
+
   const submit = useSubmit();
-  async function updateCompanyFacts(
-    companyFacts: CompanyFactsPatchRequestBody
-  ) {
+
+  const onSaveClick = async (data: FieldValues) => {
+    const newCompanyFacts = CompanyFactsResponseBodySchema.parse(data);
+    const companyFacts = CompanyFactsPatchRequestBodySchema.parse({
+      ...newCompanyFacts,
+      supplyFractions: newCompanyFacts.supplyFractions.map((sf) => {
+        const countryCode =
+          sf.countryCode === DEFAULT_CODE ? undefined : sf.countryCode;
+        const industryCode =
+          sf.industryCode === DEFAULT_CODE ? undefined : sf.industryCode;
+        return { ...sf, countryCode: countryCode, industryCode: industryCode };
+      }),
+      mainOriginOfOtherSuppliers:
+        newCompanyFacts.mainOriginOfOtherSuppliers.countryCode,
+    });
     submit(
       { companyFacts, intent: 'updateCompanyFacts' },
       { method: 'patch', encType: 'application/json' }
     );
-  }
+  };
+
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
 
   return (
-    <FormContainer>
-      {data && (
-        <>
-          <SuppliersForm
-            formData={{
-              totalPurchaseFromSuppliers:
-                data.companyFacts.totalPurchaseFromSuppliers,
-              supplyFractions: data.companyFacts.supplyFractions,
-              mainOriginOfOtherSuppliers:
-                data.companyFacts.mainOriginOfOtherSuppliers,
-            }}
-            regions={data.regions}
-            industries={data.industries}
-            updateCompanyFacts={updateCompanyFacts}
+    <GridContainer>
+      <FixedBarItemWithContainer>
+        <GridItem sm={12} md="auto">
+          <MobileStepper
+            variant="text"
+            steps={maxSteps}
+            position="static"
+            activeStep={activeStep}
+            sx={{ maxWidth: 400, flexGrow: 1 }}
+            nextButton={
+              <Button
+                onClick={handleNext}
+                endIcon={<FontAwesomeIcon icon={faChevronRight} />}
+                disabled={activeStep === maxSteps - 1}
+              >
+                <Trans>Next</Trans>
+              </Button>
+            }
+            backButton={
+              <Button
+                onClick={handleBack}
+                startIcon={<FontAwesomeIcon icon={faChevronLeft} size="sm" />}
+                disabled={activeStep === 0}
+              >
+                <Trans>Back</Trans>
+              </Button>
+            }
           />
-          <OwnersAndFinancialServicesForm
-            formData={{
-              financialCosts: data.companyFacts.financialCosts,
-              profit: data.companyFacts.profit,
-              incomeFromFinancialInvestments:
-                data.companyFacts.incomeFromFinancialInvestments,
-              totalAssets: data.companyFacts.totalAssets,
-              additionsToFixedAssets: data.companyFacts.additionsToFixedAssets,
-              financialAssetsAndCashBalance:
-                data.companyFacts.financialAssetsAndCashBalance,
-            }}
-            updateCompanyFacts={updateCompanyFacts}
+        </GridItem>
+        <GridItem>
+          <Typography variant="h2">{Steps[activeStep].label}</Typography>
+        </GridItem>
+        <GridItem>
+          <SaveButton
+            handleSubmit={handleSubmit}
+            onSaveClick={onSaveClick}
+            disabled={!formState.isDirty}
           />
-          <EmployeesForm
-            formData={{
-              numberOfEmployees: data.companyFacts.numberOfEmployees,
-              totalStaffCosts: data.companyFacts.totalStaffCosts,
-              averageJourneyToWorkForStaffInKm:
-                data.companyFacts.averageJourneyToWorkForStaffInKm,
-              hasCanteen: data.companyFacts.hasCanteen,
-              employeesFractions: data.companyFacts.employeesFractions,
-            }}
-            regions={data.regions}
-            updateCompanyFacts={updateCompanyFacts}
-          />
-          <CustomersForm
-            formData={{
-              turnover: data.companyFacts.turnover,
-              industrySectors: data.companyFacts.industrySectors,
-              isB2B: data.companyFacts.isB2B,
-            }}
-            industries={data.industries}
-            updateCompanyFacts={updateCompanyFacts}
-          />
-        </>
-      )}
-    </FormContainer>
+        </GridItem>
+      </FixedBarItemWithContainer>
+      <GridItem marginTop={10}>
+        <FormContainer>{Steps[activeStep].element}</FormContainer>
+      </GridItem>
+    </GridContainer>
   );
 };
 

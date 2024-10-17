@@ -2,53 +2,35 @@ import GridItem from '../../layout/GridItem';
 import { Typography } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
 import { CurrencyInput, PercentageInput } from '../forms/NumberInputs';
-import GridContainer, { FormContainer } from '../../layout/GridContainer';
-import { FieldValues, useFieldArray, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { SaveButton } from '../../buttons/SaveButton.tsx';
+import GridContainer from '../../layout/GridContainer';
+import {
+  Control,
+  FormState,
+  useFieldArray,
+  UseFormRegister,
+} from 'react-hook-form';
 
 import { DEFAULT_CODE, IndustrySelect } from './AutocompleteSelects';
 import SwitchLabel from '../forms/SwitchLabel';
-import { FormTitle } from './FormTitle';
 import { FieldArrayAppendButton } from '../forms/FieldArrayAppendButton';
 import { FieldArrayRemoveButton } from '../forms/FieldArrayRemoveButton';
-import { CompanyFactsResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
 import { Industry } from '../../../models/Industry';
-import { CompanyFactsPatchRequestBody } from '../../../models/CompanyFacts.ts';
-
-const CustomersFormSchema = CompanyFactsResponseBodySchema.pick({
-  turnover: true,
-  industrySectors: true,
-  isB2B: true,
-});
-type CustomersFormInput = z.infer<typeof CustomersFormSchema>;
+import { CompanyFacts } from '../../../models/CompanyFacts.ts';
 
 type CustomersFormProps = {
-  formData: CustomersFormInput;
+  control: Control<CompanyFacts>;
+  register: UseFormRegister<CompanyFacts>;
+  formState: FormState<CompanyFacts>;
   industries: Industry[];
-  updateCompanyFacts: (
-    companyFacts: CompanyFactsPatchRequestBody
-  ) => Promise<void>;
 };
 
 export function CustomersForm({
-  formData,
+  control,
   industries,
-  updateCompanyFacts,
+  register,
+  formState: { errors },
 }: CustomersFormProps) {
   const { t } = useTranslation();
-
-  const {
-    handleSubmit,
-    control,
-    register,
-    formState: { errors },
-  } = useForm<CustomersFormInput>({
-    resolver: zodResolver(CustomersFormSchema),
-    mode: 'onChange',
-    defaultValues: formData,
-  });
 
   const fieldArrayName = 'industrySectors';
   const {
@@ -60,19 +42,12 @@ export function CustomersForm({
     name: fieldArrayName, // unique name for your Field Array
   });
 
-  const onSaveClick = async (data: FieldValues) => {
-    await updateCompanyFacts(CustomersFormSchema.parse(data));
-  };
-
   return (
-    <FormContainer spacing={3}>
-      <GridItem>
-        <FormTitle precedingCharacter={'D'} title={t`Customers`} />
-      </GridItem>
+    <GridContainer spacing={3}>
       <GridItem xs={12}>
         <GridContainer spacing={3} alignItems="center">
           <GridItem xs={12} sm={6}>
-            <CurrencyInput<CustomersFormInput>
+            <CurrencyInput<CompanyFacts>
               register={register}
               errors={errors}
               registerKey={'turnover'}
@@ -80,7 +55,7 @@ export function CustomersForm({
             />
           </GridItem>
           <GridItem xs={12} sm={6}>
-            <SwitchLabel<CustomersFormInput>
+            <SwitchLabel<CompanyFacts>
               control={control}
               registerKey={'isB2B'}
               label={t`Are your customers mainly other companies?`}
@@ -118,7 +93,7 @@ export function CustomersForm({
                   />
                 </GridItem>
                 <GridItem xs={12} sm={5}>
-                  <PercentageInput<CustomersFormInput>
+                  <PercentageInput<CompanyFacts>
                     register={register}
                     errors={errors}
                     label={<Trans>Amount in %</Trans>}
@@ -136,9 +111,6 @@ export function CustomersForm({
           ))}
         </GridContainer>
       </GridItem>
-      <GridItem xs={12}>
-        <SaveButton handleSubmit={handleSubmit} onSaveClick={onSaveClick} />
-      </GridItem>
-    </FormContainer>
+    </GridContainer>
   );
 }
