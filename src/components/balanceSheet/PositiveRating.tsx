@@ -55,7 +55,7 @@ export default function PositiveRating<T extends FieldValues>({
                 aria-label={name}
                 value={field.value}
                 onChange={(_, newValue) => {
-                  field.onChange(newValue);
+                  field.onChange(newValue ?? 0);
                 }}
                 max={10}
                 icon={<FontAwesomeIcon icon={faSeedling} />}
