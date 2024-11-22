@@ -23,6 +23,11 @@ import {
   vi,
 } from 'vitest';
 import { v4 as uuid4 } from 'uuid';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { makeWorkbook } from '../models/Workbook.ts';
 
 vi.mock('react-router-dom');
 
@@ -196,13 +201,20 @@ describe('ApiClient', () => {
   describe('Workbook', () => {
     it('returns workbook', async () => {
       const workbook = WorkbookResponseMocks.default();
-      mockResource(
+      const requestPromise = mockResource(
         'get',
         `${URL}/v1/workbook`,
         new Response(JSON.stringify(workbook))
       );
-      const response = await apiClient.getWorkbook();
-      expect(response).toEqual(workbook);
+      const response = await apiClient.getWorkbook(
+        BalanceSheetVersion.v5_1_0,
+        BalanceSheetType.Full
+      );
+      const request = await requestPromise;
+      expect(request.url.toString()).toContain(
+        '?lng=de&version=5.10&type=Full'
+      );
+      expect(response).toEqual(makeWorkbook(workbook));
     });
   });
 

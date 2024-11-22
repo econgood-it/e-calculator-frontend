@@ -4,11 +4,6 @@ export const DE_TRANSLATIONS = {
   'Balance sheet {{id}}': 'Bilanz {{id}}',
   'Company Facts': 'Fakten zum Unternehmen',
   Ratings: 'Selbsteinschätzung',
-  Suppliers: 'Lieferanten',
-  'Financial service providers': 'Finanzdienstleister',
-  Employees: 'Mitarbeiter*innen',
-  'Customers and other companies': 'Kunden und andere Firmen',
-  'Social environment': 'Gesellschaft',
   Delete: 'Löschen',
   'Total purchases from suppliers': 'Gesamt-Ausgaben an Lieferanten',
   'Enter the 5 most important industry sectors whose products or services you use':

@@ -8,8 +8,8 @@ import {
 import { ThemeProvider } from 'styled-components';
 import { RouterProvider } from 'react-router-dom';
 import { useRouter } from './routing/useRouter';
-import { AuthProvider } from 'oidc-react';
-import { AuthProviderProps } from 'oidc-react/build/src/AuthContextInterface';
+import { AuthProvider, AuthProviderProps } from 'oidc-react';
+
 import { AUTHORITY, CLIENT_ID, FRONTEND_URL } from './configuration';
 
 const primaryColor = '#94a231';

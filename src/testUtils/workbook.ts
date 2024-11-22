@@ -1,11 +1,22 @@
 import { WorkbookResponse } from '../models/Workbook';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 export const WorkbookResponseMocks = {
   default: (): WorkbookResponse => ({
-    sections: [
-      { shortName: 'A1.1', title: 'A1.1 title' },
-      { shortName: 'D1.1', title: 'D1.1 title' },
-      { shortName: 'B1.1', title: 'B1.1 title' },
+    version: BalanceSheetVersion.v5_1_0,
+    type: BalanceSheetType.Full,
+    groups: [
+      { shortName: 'A', name: 'Lieferant*innen' },
+      {
+        shortName: 'B',
+        name: 'Eigentümer*innen und Finanzpartner*innen',
+      },
+      { shortName: 'C', name: 'Mitarbeitende' },
+      { shortName: 'D', name: 'Kund*innen und Mitunternehmen' },
+      { shortName: 'E', name: 'Gesellschaftliches Umfeld' },
     ],
   }),
 };

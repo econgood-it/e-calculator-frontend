@@ -4,7 +4,6 @@ import {
   OrganizationItemsResponseSchema,
   OrganizationResponseSchema,
 } from '@ecogood/e-calculator-schemas/dist/organization.dto';
-import { z } from 'zod';
 import {
   BalanceSheet,
   BalanceSheetCreateRequestBody,
@@ -30,6 +29,12 @@ import { Matrix } from '../models/Matrix';
 import { User } from 'oidc-react';
 import { Invitation } from '../models/User.ts';
 import { UserInvitationResponseSchema } from '@ecogood/e-calculator-schemas/dist/user.schema';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import QueryStringAddon from 'wretch/addons/queryString';
+import { makeWorkbook, Workbook } from '../models/Workbook.ts';
 
 function language(language: string) {
   return function (
@@ -81,7 +86,7 @@ export class AuthApiClient {
   ) {}
 
   async login(email: string, password: string): Promise<User> {
-    const response = await this.wretchInstance.post(
+    const response = this.wretchInstance.post(
       { email, password },
       '/users/token'
     );
@@ -119,9 +124,17 @@ export class ApiClient {
     return IndustryResponseBodySchema.array().parse(await response.json());
   }
 
-  async getWorkbook(): Promise<z.infer<typeof WorkbookResponseBodySchema>> {
-    const response = await this.wretchInstance.get('/workbook');
-    return WorkbookResponseBodySchema.parse(await response.json());
+  async getWorkbook(
+    version: BalanceSheetVersion,
+    type: BalanceSheetType
+  ): Promise<Workbook> {
+    const response = await this.wretchInstance
+      .addon(QueryStringAddon)
+      .query({ version, type })
+      .get('/workbook');
+    return makeWorkbook(
+      WorkbookResponseBodySchema.parse(await response.json())
+    );
   }
 
   async createOrganization(

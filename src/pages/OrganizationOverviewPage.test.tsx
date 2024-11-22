@@ -1,4 +1,4 @@
-import { act, screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {
   ActionFunctionArgs,
@@ -20,6 +20,7 @@ import {
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { setupApiMock } from '../testUtils/api.ts';
 import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets.ts';
+import { act } from 'react';
 
 describe('OrganizationOverviewPage', () => {
   const initialPathForRouting = '/organization/3';

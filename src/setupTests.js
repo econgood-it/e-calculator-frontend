@@ -1,8 +1,10 @@
 import { expect, vi } from 'vitest';
 import * as matchers from '@testing-library/jest-dom/matchers';
 import { cloneElement, isValidElement } from 'react';
+import { areFunctionsEqual } from './function.equality.ts';
 
 expect.extend(matchers);
+expect.addEqualityTesters([areFunctionsEqual]);
 
 const localStorageMock = (function () {
   let store = {};

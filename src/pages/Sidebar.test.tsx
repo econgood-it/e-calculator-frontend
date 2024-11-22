@@ -14,6 +14,7 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { UserMocks } from '../testUtils/user.ts';
 
 vi.mock('oidc-react', () => ({
   useAuth: vi.fn(),
@@ -25,6 +26,8 @@ describe('Sidebar', () => {
   beforeEach(() => {
     (useAuth as Mock).mockReturnValue({
       signOutRedirect: logoutMock,
+      isLoading: false,
+      userData: UserMocks.default(),
     });
   });
 

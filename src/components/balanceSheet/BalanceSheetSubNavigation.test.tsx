@@ -1,15 +1,46 @@
 import renderWithTheme from '../../testUtils/rendering';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import BalanceSheetSubNavigation from './BalanceSheetSubNavigation';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { setupApiMock } from '../../testUtils/api.ts';
+import { WorkbookResponseMocks } from '../../testUtils/workbook.ts';
+import { useAuth } from 'oidc-react';
+import { UserMocks } from '../../testUtils/user.ts';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { makeWorkbook } from '../../models/Workbook.ts';
+
+vi.mock('oidc-react', () => ({
+  useAuth: vi.fn(),
+}));
+
+const mockApi = setupApiMock();
+vi.mock('../../api/api.client.ts', async () => {
+  const originalModule = await vi.importActual('../../api/api.client.ts');
+  return {
+    ...originalModule,
+    createApiClient: () => mockApi,
+  };
+});
 
 describe('BalanceSheetSubNavigation', () => {
   const balanceSheetItem = { id: 2 };
 
+  beforeEach(() => {
+    (useAuth as Mock).mockReturnValue({
+      isLoading: false,
+      userData: UserMocks.default(),
+    });
+  });
   const pathToOrganization = `/organization/${3}`;
 
   it('navigates to overview page overview item is clicked', async () => {
+    mockApi.getWorkbook.mockResolvedValue(
+      makeWorkbook(WorkbookResponseMocks.default())
+    );
     const { user } = renderWithTheme(
       <MemoryRouter initialEntries={[pathToOrganization]}>
         <Routes>
@@ -34,7 +65,48 @@ describe('BalanceSheetSubNavigation', () => {
     expect(screen.getByText('Navigated to overview page')).toBeInTheDocument();
   });
 
+  it('renders a navigation link to each stakeholder ratings page', async () => {
+    mockApi.getWorkbook.mockResolvedValue(
+      makeWorkbook(WorkbookResponseMocks.default())
+    );
+    renderWithTheme(
+      <MemoryRouter initialEntries={[pathToOrganization]}>
+        <Routes>
+          <Route
+            path={pathToOrganization}
+            element={
+              <BalanceSheetSubNavigation balanceSheetItem={balanceSheetItem} />
+            }
+          />
+          <Route
+            path={`${pathToOrganization}/balancesheet/${balanceSheetItem.id}/overview`}
+            element={<div>Navigated to overview page</div>}
+          />
+        </Routes>
+      </MemoryRouter>
+    );
+    await waitFor(() =>
+      expect(mockApi.getWorkbook).toHaveBeenCalledWith(
+        BalanceSheetVersion.v5_1_0,
+        BalanceSheetType.Full
+      )
+    );
+
+    expect(await screen.findByText('Lieferant*innen')).toBeInTheDocument();
+    expect(
+      screen.getByText('Eigentümer*innen und Finanzpartner*innen')
+    ).toBeInTheDocument();
+    expect(screen.getByText('Mitarbeitende')).toBeInTheDocument();
+    expect(
+      screen.getByText('Kund*innen und Mitunternehmen')
+    ).toBeInTheDocument();
+    expect(screen.getByText('Gesellschaftliches Umfeld')).toBeInTheDocument();
+  });
+
   it('navigates to company facts when Company Facts item is clicked', async () => {
+    mockApi.getWorkbook.mockResolvedValue(
+      makeWorkbook(WorkbookResponseMocks.default())
+    );
     const { user } = renderWithTheme(
       <MemoryRouter initialEntries={[pathToOrganization]}>
         <Routes>
@@ -69,7 +141,19 @@ describe('BalanceSheetSubNavigation', () => {
       'Customers and other companies',
       'Social environment',
     ];
-
+    mockApi.getWorkbook.mockResolvedValue(
+      makeWorkbook({
+        version: BalanceSheetVersion.v5_0_8,
+        type: BalanceSheetType.Full,
+        groups: [
+          { shortName: 'A', name: stakeholders[0] },
+          { shortName: 'B', name: stakeholders[1] },
+          { shortName: 'C', name: stakeholders[2] },
+          { shortName: 'D', name: stakeholders[3] },
+          { shortName: 'E', name: stakeholders[4] },
+        ],
+      })
+    );
     const ComponentWithRouting = () => (
       <MemoryRouter initialEntries={[pathToOrganization]}>
         <Routes>
@@ -112,6 +196,9 @@ describe('BalanceSheetSubNavigation', () => {
   });
 
   it('navigates to settings page when user clicks on Settings', async () => {
+    mockApi.getWorkbook.mockResolvedValue(
+      makeWorkbook(WorkbookResponseMocks.default())
+    );
     const initialPath = pathToOrganization;
     const { user } = renderWithTheme(
       <MemoryRouter initialEntries={[initialPath]}>
