@@ -94,7 +94,10 @@ export default function RatingsPage() {
           <FormContainer spacing={3} marginTop={6}>
             <GridItem xs={12}>
               {tabValue === 0 ? (
-                <RatingsForm control={control} />
+                <RatingsForm
+                  evaluationLevels={data.evaluationLevels}
+                  control={control}
+                />
               ) : (
                 <WeightConfigurator
                   control={control}
@@ -126,6 +129,11 @@ export async function loader(
     Number(params.balanceSheetId)
   );
 
+  const workbook = await apiClient.getWorkbook(
+    balanceSheet.version,
+    balanceSheet.type
+  );
+
   const pathMap: Record<string, StakholderShortNames> = {
     suppliers: StakholderShortNames.Suppliers,
     finance: StakholderShortNames.Finance,
@@ -140,6 +148,7 @@ export async function loader(
       rating.shortName.startsWith(pathMap[lastSegment])
     ),
     balanceSheetVersion: balanceSheet.version,
+    evaluationLevels: workbook.evaluationLevels,
   };
 }
 

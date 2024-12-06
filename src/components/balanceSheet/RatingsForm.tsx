@@ -12,6 +12,7 @@ import PositiveRating from './PositiveRating.tsx';
 import { NegativeRating } from './NegativeRating';
 import { ShortNameAvatar } from '../matrix/MatrixView';
 import { Trans } from 'react-i18next';
+import { EvaluationLevel } from '../../models/Workbook.ts';
 
 export const RatingsFormSchema = z.object({
   ratings: RatingResponseBodySchema.array(),
@@ -20,9 +21,10 @@ export type RatingsFormInput = z.infer<typeof RatingsFormSchema>;
 
 type RatingsFormProps = {
   control: Control<RatingsFormInput>;
+  evaluationLevels: readonly EvaluationLevel[];
 };
 
-export function RatingsForm({ control }: RatingsFormProps) {
+export function RatingsForm({ control, evaluationLevels }: RatingsFormProps) {
   const fieldArrayName = 'ratings';
   const { fields: ratingsFields } = useFieldArray<RatingsFormInput>({
     control: control, // control props comes from useForm (optional: if you are using FormContext)
@@ -48,6 +50,7 @@ export function RatingsForm({ control }: RatingsFormProps) {
                   fieldArrayName={fieldArrayName}
                   index={index}
                   control={control}
+                  evaluationLevels={evaluationLevels}
                 />
               </GridItem>
             )}
@@ -104,6 +107,7 @@ type AspectProps = {
   fieldArrayName: ArrayPath<RatingsFormInput>;
   index: number;
   control: Control<RatingsFormInput>;
+  evaluationLevels: readonly EvaluationLevel[];
 };
 
 function Aspect({
@@ -114,6 +118,7 @@ function Aspect({
   fieldArrayName,
   index,
   control,
+  evaluationLevels,
 }: AspectProps) {
   return (
     <Card>
@@ -136,6 +141,7 @@ function Aspect({
               <PositiveRating
                 control={control}
                 name={`${fieldArrayName}.${index}.estimations`}
+                evaluationLevels={evaluationLevels}
               />
             ) : (
               <NegativeRating

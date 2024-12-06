@@ -9,7 +9,11 @@ import { setupApiMock } from '../testUtils/api.ts';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { RatingType } from '@ecogood/e-calculator-schemas/dist/rating.dto';
 import { saveForm } from '../testUtils/form.tsx';
-import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
+import { WorkbookResponseMocks } from '../testUtils/workbook.ts';
 
 function createRouter(
   ratings: Rating[],
@@ -24,6 +28,7 @@ function createRouter(
         loader: () => ({
           ratings,
           balanceSheetVersion: version,
+          evaluationLevels: WorkbookResponseMocks.default().evaluationLevels,
         }),
         action: async ({ request }) => actionMock(await request.json()),
       },
@@ -423,19 +428,27 @@ describe('loader', () => {
       ],
     };
     mockApi.getBalanceSheet.mockResolvedValue(response);
+    mockApi.getWorkbook.mockResolvedValue(WorkbookResponseMocks.default());
     const result = await loader(
       {
         params: { balanceSheetId: '3' },
         request: new Request(new URL(`http://localhost/${path}`)),
       },
-      { userData: { access_token: 'token' } }
+      { userData: { access_token: 'token', lng: 'de' } }
     );
     const filteredRatings = response.ratings.filter((r) =>
       r.shortName.startsWith(stakeholderShortName)
     );
     expect(result!.balanceSheetVersion).toEqual(response.version);
     expect(result!.ratings).toEqual(filteredRatings);
+    expect(result!.evaluationLevels).toEqual(
+      WorkbookResponseMocks.default().evaluationLevels
+    );
     expect(mockApi.getBalanceSheet).toHaveBeenCalledWith(3);
+    expect(mockApi.getWorkbook).toHaveBeenCalledWith(
+      BalanceSheetVersion.v5_0_8,
+      BalanceSheetType.Full
+    );
   });
 });
 
@@ -444,6 +457,7 @@ describe('action', () => {
     mockApi.updateBalanceSheet.mockResolvedValue(
       new BalanceSheetMockBuilder().build()
     );
+
     const ratings = [
       {
         shortName: 'A1.1',

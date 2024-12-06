@@ -8,6 +8,7 @@ import { Chip } from '@mui/material';
 import GridContainer from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
 import { PointLabel } from './PointLabel.tsx';
+import { EvaluationLevel } from '../../models/Workbook.ts';
 
 const StyledRating = styled(Rating)`
   & .MuiRating-iconFilled {
@@ -21,28 +22,25 @@ const StyledRating = styled(Rating)`
 type PositiveRatingProps<T extends FieldValues> = {
   control: Control<T>;
   name: Path<T>;
+  evaluationLevels: readonly EvaluationLevel[];
 };
 
 export default function PositiveRating<T extends FieldValues>({
   control,
   name,
+  evaluationLevels,
 }: PositiveRatingProps<T>) {
   const [hover, setHover] = useState<number>(-1);
 
   const getLabel = (currentValue?: number): string => {
-    if (currentValue == null) {
-      return 'Basislinie';
-    } else if (currentValue === 1) {
-      return 'Erste Schritte';
-    } else if (currentValue >= 2 && currentValue <= 3) {
-      return 'Fortgeschritten';
-    } else if (currentValue >= 4 && currentValue <= 6) {
-      return 'Erfahren';
-    } else if (currentValue >= 7 && currentValue <= 10) {
-      return 'Vorbildlich';
-    } else {
-      return 'Basislinie';
+    const defaultValue = evaluationLevels.find((e) => e.level == 4)?.name ?? '';
+    if (currentValue) {
+      const foundLevel = evaluationLevels.find(
+        (e) => currentValue >= e.pointsFrom && currentValue <= e.pointsTo
+      );
+      return foundLevel?.name ?? defaultValue;
     }
+    return defaultValue;
   };
 
   return (

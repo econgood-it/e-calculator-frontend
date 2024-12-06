@@ -152,6 +152,7 @@ describe('BalanceSheetSubNavigation', () => {
           { shortName: 'D', name: stakeholders[3] },
           { shortName: 'E', name: stakeholders[4] },
         ],
+        evaluationLevels: [],
       })
     );
     const ComponentWithRouting = () => (
