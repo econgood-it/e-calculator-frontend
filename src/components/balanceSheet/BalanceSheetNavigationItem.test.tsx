@@ -5,6 +5,10 @@ import userEvent from '@testing-library/user-event';
 import { BalanceSheetNavigationItem } from './BalanceSheetNavigationItem';
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import {
+  BalanceSheetType,
+  BalanceSheetVersion,
+} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 describe('BalanceSheetNavigationItem', () => {
   const initialPathForRouting = '/organization/3';
@@ -17,7 +21,13 @@ describe('BalanceSheetNavigationItem', () => {
           <Route
             path={initialPathForRouting}
             element={
-              <BalanceSheetNavigationItem balanceSheetItem={{ id: 2 }} />
+              <BalanceSheetNavigationItem
+                balanceSheetItem={{
+                  id: 2,
+                  version: BalanceSheetVersion.v5_1_0,
+                  type: BalanceSheetType.Full,
+                }}
+              />
             }
           />
           <Route

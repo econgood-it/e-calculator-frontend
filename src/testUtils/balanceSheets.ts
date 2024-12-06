@@ -208,6 +208,8 @@ export class BalanceSheetMockBuilder {
 export class BalanceSheetItemMockBuilder {
   private balanceSheetItem = {
     id: 3,
+    version: BalanceSheetVersion.v5_1_0,
+    type: BalanceSheetType.Full,
   };
 
   public withId(id: number) {

@@ -246,7 +246,18 @@ describe('ApiClient', () => {
 
   describe('BalanceSheet', () => {
     it('returns balancesheets of organization', async () => {
-      const balanceSheets = [{ id: 8 }, { id: 9 }];
+      const balanceSheets = [
+        {
+          id: 8,
+          version: BalanceSheetVersion.v5_1_0,
+          type: BalanceSheetType.Full,
+        },
+        {
+          id: 9,
+          version: BalanceSheetVersion.v5_0_8,
+          type: BalanceSheetType.Compact,
+        },
+      ];
       const organizationId = 2;
       mockResource(
         'get',

@@ -27,7 +27,11 @@ vi.mock('../../api/api.client.ts', async () => {
 });
 
 describe('BalanceSheetSubNavigation', () => {
-  const balanceSheetItem = { id: 2 };
+  const balanceSheetItem = {
+    id: 2,
+    version: BalanceSheetVersion.v5_0_8,
+    type: BalanceSheetType.Compact,
+  };
 
   beforeEach(() => {
     (useAuth as Mock).mockReturnValue({
@@ -87,8 +91,8 @@ describe('BalanceSheetSubNavigation', () => {
     );
     await waitFor(() =>
       expect(mockApi.getWorkbook).toHaveBeenCalledWith(
-        BalanceSheetVersion.v5_1_0,
-        BalanceSheetType.Full
+        BalanceSheetVersion.v5_0_8,
+        BalanceSheetType.Compact
       )
     );
 

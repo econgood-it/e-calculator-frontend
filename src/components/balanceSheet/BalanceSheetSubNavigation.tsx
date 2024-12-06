@@ -20,10 +20,6 @@ import { API_URL } from '../../configuration.ts';
 import { useLanguage } from '../../i18n.ts';
 import { useAuth } from 'oidc-react';
 import { Workbook } from '../../models/Workbook.ts';
-import {
-  BalanceSheetType,
-  BalanceSheetVersion,
-} from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { StakholderShortNames } from '../../models/Rating.ts';
 
 type BalanceSheetSubNavigationProps = {
@@ -75,7 +71,7 @@ const BalanceSheetSubNavigation = ({
       setWorkbook(
         await createApiClient(
           makeWretchInstanceWithAuth(API_URL, userData!.access_token, lng)
-        ).getWorkbook(BalanceSheetVersion.v5_1_0, BalanceSheetType.Full)
+        ).getWorkbook(balanceSheetItem.version, balanceSheetItem.type)
       );
     })();
   }, [balanceSheetItem, userData, lng]);
