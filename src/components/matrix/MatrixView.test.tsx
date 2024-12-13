@@ -33,7 +33,9 @@ describe('MatrixView', () => {
     const matrixRating = new MatrixMockBuilder().build().ratings[0];
     renderWithTheme(<MatrixRatingView matrixRating={matrixRating} />);
     expect(screen.getByText('Percentage reached')).toBeInTheDocument();
-    expect(screen.getByText('No reasonable specification')).toBeInTheDocument();
+    expect(
+      screen.getByText('No meaningful presentation possible')
+    ).toBeInTheDocument();
   });
 
   it('renders matrix rating with weight zero', () => {
