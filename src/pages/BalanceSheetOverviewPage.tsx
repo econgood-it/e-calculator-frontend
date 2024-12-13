@@ -47,7 +47,7 @@ export function BalanceSheetOverviewPage() {
                   <GridItem>
                     <BigNumber
                       $color={theme.palette.primary.main}
-                    >{`${matrix.totalPoints} / 1000`}</BigNumber>
+                    >{`${matrix.totalPoints.toFixed(0)} / 1000`}</BigNumber>
                   </GridItem>
                 </GridContainer>
               </CardContent>
