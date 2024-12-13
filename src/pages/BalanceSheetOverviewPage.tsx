@@ -1,7 +1,9 @@
 import { MatrixView } from '../components/matrix/MatrixView';
-import { FormContainer } from '../components/layout/GridContainer';
+import GridContainer, {
+  FormContainer,
+} from '../components/layout/GridContainer';
 import GridItem from '../components/layout/GridItem';
-import { Typography } from '@mui/material';
+import { Avatar, Card, CardContent, Typography, useTheme } from '@mui/material';
 import { Trans } from 'react-i18next';
 import { LoaderFunctionArgs } from 'react-router-dom';
 import {
@@ -11,8 +13,10 @@ import {
 import { API_URL } from '../configuration.ts';
 import { useLoaderData } from 'react-router-typesafe';
 import { HandlerContext } from './handlerContext.ts';
+import { BigNumber } from '../components/lib/BigNumber.tsx';
 
 export function BalanceSheetOverviewPage() {
+  const theme = useTheme();
   const matrix = useLoaderData<typeof loader>();
 
   return (
@@ -22,7 +26,38 @@ export function BalanceSheetOverviewPage() {
           <Trans>Matrix representation</Trans>
         </Typography>
       </GridItem>
-      <GridItem xs={12}>{matrix && <MatrixView matrix={matrix} />}</GridItem>
+      {matrix && (
+        <>
+          <GridItem>
+            <Card>
+              <CardContent>
+                <GridContainer
+                  alignItems={'center'}
+                  justifyContent="space-between"
+                  spacing={2}
+                >
+                  <GridItem>
+                    <Avatar src="/icon_ECG_seeds.png" />
+                  </GridItem>
+                  <GridItem>
+                    <Typography variant={'h1'}>
+                      <Trans>Total points:</Trans>
+                    </Typography>
+                  </GridItem>
+                  <GridItem>
+                    <BigNumber
+                      $color={theme.palette.primary.main}
+                    >{`${matrix.totalPoints} / 1000`}</BigNumber>
+                  </GridItem>
+                </GridContainer>
+              </CardContent>
+            </Card>
+          </GridItem>
+          <GridItem xs={12}>
+            <MatrixView matrix={matrix} />
+          </GridItem>
+        </>
+      )}
     </FormContainer>
   );
 }

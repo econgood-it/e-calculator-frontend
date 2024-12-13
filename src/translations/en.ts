@@ -59,7 +59,7 @@ const EN_WORDS = [
   'Score reached',
   'Percentage reached',
   'Not considered in weighting',
-  'No reasonable specification',
+  'No meaningful presentation possible',
   'Matrix representation',
   'Human dignity',
   'Solidarity and social justice',
@@ -84,6 +84,7 @@ const EN_WORDS = [
   'Selection of topics and aspects',
   'Not considered',
   'Adapt selection and weighting',
+  'Total points:',
 ];
 
 export const EN_TRANSLATIONS = {

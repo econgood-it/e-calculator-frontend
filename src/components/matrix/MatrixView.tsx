@@ -15,6 +15,7 @@ import GridItem from '../layout/GridItem';
 import styled from 'styled-components';
 import { Trans, useTranslation } from 'react-i18next';
 import { StakeholderIcon } from '../lib/StakeholderIcon';
+import { BigNumber } from '../lib/BigNumber.tsx';
 
 type MatrixViewProps = {
   matrix: Matrix;
@@ -31,11 +32,6 @@ export function MatrixView({ matrix }: MatrixViewProps) {
     </GridContainer>
   );
 }
-
-const BigNumber = styled(Typography)<{ $color: string }>`
-  font-size: 60px;
-  color: ${(props) => props.$color};
-`;
 
 export const ShortNameAvatar = styled(Avatar)`
   background-color: ${(props) => props.theme.palette.secondary.main};
@@ -78,7 +74,7 @@ export function MatrixRatingView({ matrixRating }: MatrixRatingViewProps) {
         subheader={numberToValueMapping[matrixRating.shortName.at(1)!]}
       />
       <CardContent>
-        <GridContainer justifyContent="space-around">
+        <GridContainer justifyContent="space-around" spacing={1}>
           <GridItem xs={12}>
             <Divider>
               <Chip label={<Trans>Score reached</Trans>} />
@@ -108,14 +104,13 @@ export function MatrixRatingView({ matrixRating }: MatrixRatingViewProps) {
                   >{`${matrixRating.percentageReached} %`}</BigNumber>
                 ) : (
                   <Typography
-                    mt={3}
                     color={theme.palette.primary.main}
                     variant="body1"
                   >
                     {matrixRating.notApplicable ? (
                       <Trans>Not considered in weighting</Trans>
                     ) : (
-                      <Trans>No reasonable specification</Trans>
+                      <Trans>No meaningful presentation possible</Trans>
                     )}
                   </Typography>
                 )}

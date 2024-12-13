@@ -68,7 +68,7 @@ export const DE_TRANSLATIONS = {
   'Score reached': 'Erreichte Punktzahl',
   'Percentage reached': 'Erreichte Prozentzahl',
   'Not considered in weighting': 'In Gewichtung nicht berücksichtigt',
-  'No reasonable specification': 'Keine sinnvolle Angabe möglich',
+  'No meaningful presentation possible': 'Keine sinnvolle Darstellung möglich',
   'Matrix representation': 'Matrix Darstellung',
   'Human dignity': 'Menschenwürde',
   'Solidarity and social justice': 'Solidarität und Gerechtigkeit',
@@ -95,5 +95,6 @@ export const DE_TRANSLATIONS = {
   'Selection of topics and aspects': 'Auswahl von Themen und Aspekten',
   'Not considered': 'Nicht berücksichtigt',
   'Adapt selection and weighting': 'Auswahl und Gewichtung',
+  'Total points:': 'Gesamtpunktzahl:',
   ...DE_ERROR_TRANSLATIONS,
 };

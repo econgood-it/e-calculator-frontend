@@ -24,6 +24,10 @@ describe('BalanceSheetOverviewPage', () => {
     for (const rating of mockedMatrix.ratings) {
       expect(await screen.findByText(rating.shortName)).toBeInTheDocument();
     }
+    // Check that total points are shown on the page
+    expect(
+      screen.getByText(`${mockedMatrix.totalPoints} / 1000`)
+    ).toBeInTheDocument();
   });
 });
 
