@@ -26,7 +26,7 @@ describe('BalanceSheetOverviewPage', () => {
     }
     // Check that total points are shown on the page
     expect(
-      screen.getByText(`${mockedMatrix.totalPoints} / 1000`)
+      screen.getByText(`${mockedMatrix.totalPoints.toFixed(0)} / 1000`)
     ).toBeInTheDocument();
   });
 });
