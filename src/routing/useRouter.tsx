@@ -63,7 +63,7 @@ function ErrorPage() {
 
 export function useRouter() {
   const { userData } = useAuth();
-  const lng = useLanguage();
+  const { lng } = useLanguage();
 
   return createBrowserRouter(
     [

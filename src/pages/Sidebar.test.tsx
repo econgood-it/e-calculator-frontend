@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import { useAuth } from 'oidc-react';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
@@ -15,13 +15,19 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { UserMocks } from '../testUtils/user.ts';
+import { useLanguage } from '../i18n.ts';
 
 vi.mock('oidc-react', () => ({
   useAuth: vi.fn(),
 }));
 
+vi.mock('../i18n', () => ({
+  useLanguage: vi.fn(), // Stub the hook
+}));
+
 describe('Sidebar', () => {
   const logoutMock = vi.fn();
+  const changeLanguageMock = vi.fn();
 
   beforeEach(() => {
     (useAuth as Mock).mockReturnValue({
@@ -29,10 +35,48 @@ describe('Sidebar', () => {
       isLoading: false,
       userData: UserMocks.default(),
     });
+
+    (useLanguage as Mock).mockReturnValue({
+      changeLanguage: changeLanguageMock,
+      lng: 'en',
+    });
   });
 
   afterEach(() => {
     vi.resetAllMocks();
+  });
+
+  it('changes language on select', async () => {
+    const path = '/organization/3/overview';
+    const balanceSheetItems = [{ id: 1 }, { id: 2 }];
+    const router = createMemoryRouter(
+      [
+        {
+          path,
+          element: <Sidebar />,
+          loader: () => ({
+            activeOrganizationId: 3,
+            organizationItems: [{ id: 3 }],
+            balanceSheetItems,
+          }),
+        },
+      ],
+      { initialEntries: [path] }
+    );
+
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
+
+    const selectInput = await screen.findByText('🇬🇧');
+
+    // Use userEvent to simulate a mouse down (open the dropdown)
+    await user.click(selectInput);
+
+    // Select an option (e.g., 'Option 2')
+    const option = await screen.findByText('🇩🇪');
+
+    fireEvent.click(option);
+
+    expect(changeLanguageMock).toHaveBeenCalledWith('de');
   });
 
   it('renders each balance sheet as a navigation item', async () => {

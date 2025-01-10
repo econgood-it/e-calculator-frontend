@@ -1,6 +1,6 @@
 import { faBars, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { AppBar, Popover, useTheme } from '@mui/material';
+import { AppBar, MenuItem, Popover, Select, useTheme } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -11,6 +11,7 @@ import { MouseEvent, useState } from 'react';
 import { Trans } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { useLanguage } from '../../i18n.ts';
 
 const FixedAppBar = styled(AppBar)`
   z-index: ${(props) => props.theme.zIndex.drawer + 1};
@@ -25,6 +26,12 @@ const ApplicationName = styled(Typography)`
   flex-grow: 1;
 `;
 
+const LanguageSelect = styled(Select)(({ theme }) => ({
+  '& .MuiSvgIcon-root': {
+    color: theme.palette.primary.contrastText,
+  },
+}));
+
 type FixedToolbarProps = {
   onToogleSidebar?: () => void;
   showCompleteUserMenu: boolean;
@@ -37,6 +44,7 @@ export function FixedToolbar({
   const theme = useTheme();
   const { signOutRedirect } = useAuth();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const { lng, changeLanguage } = useLanguage();
 
   const openUserNavigationMenu = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -51,6 +59,10 @@ export function FixedToolbar({
 
   async function onLogoutClicked() {
     await signOutRedirect();
+  }
+
+  async function onLanguageChange(language: string) {
+    await changeLanguage(language);
   }
 
   return (
@@ -72,6 +84,17 @@ export function FixedToolbar({
         >
           <Trans>ECG Calculator</Trans>
         </ApplicationName>
+        <LanguageSelect
+          variant={'standard'}
+          disableUnderline={true}
+          aria-label={'Language selection'}
+          value={lng}
+          label="Language selection"
+          onChange={(e) => onLanguageChange(e.target.value as string)}
+        >
+          <MenuItem value={'en'}>🇬🇧</MenuItem>
+          <MenuItem value={'de'}>🇩🇪</MenuItem>
+        </LanguageSelect>
         <IconButton
           aria-label="Open user navigation menu"
           onClick={openUserNavigationMenu}

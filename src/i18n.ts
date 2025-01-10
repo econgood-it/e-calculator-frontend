@@ -21,9 +21,9 @@ i18n
 
 export default i18n;
 
-export const useLanguage = (): string => {
+export const useLanguage = () => {
   const { i18n } = useTranslation();
-  return identifyLanguage(i18n);
+  return { changeLanguage: i18n.changeLanguage, lng: identifyLanguage(i18n) };
 };
 
 const identifyLanguage = (i18nInstance: typeof i18n): string => {

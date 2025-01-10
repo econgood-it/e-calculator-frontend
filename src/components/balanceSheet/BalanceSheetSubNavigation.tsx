@@ -62,7 +62,7 @@ const BalanceSheetSubNavigation = ({
   const matchRoute = useMatch(
     `organization/:id/balancesheet/${balanceSheetItem.id}/:navItem`
   );
-  const lng = useLanguage();
+  const { lng } = useLanguage();
   const { userData } = useAuth();
   const [workbook, setWorkbook] = useState<Workbook | undefined>();
 
