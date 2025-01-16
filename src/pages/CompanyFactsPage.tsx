@@ -24,7 +24,7 @@ import { FixedBarItemWithContainer } from '../components/layout/FixedBarItemWith
 import { Button, MobileStepper, Typography } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Trans, useTranslation } from 'react-i18next';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons/faChevronLeft';
 import { SaveButton } from '../components/buttons/SaveButton.tsx';
@@ -36,13 +36,14 @@ import { OwnersAndFinancialServicesForm } from '../components/balanceSheet/compa
 import { EmployeesForm } from '../components/balanceSheet/companyFacts/EmployeesForm.tsx';
 import { CustomersForm } from '../components/balanceSheet/companyFacts/CustomersForm.tsx';
 import { useSnackbar } from 'notistack';
+import { useErrorHandling } from '../errors/error.handling.ts';
 
 const CompanyFactsPage = () => {
   const data = useLoaderData<typeof loader>();
   const [activeStep, setActiveStep] = useState<number>(0);
   const { t } = useTranslation();
 
-  const { formState, register, handleSubmit, setValue, control } =
+  const { formState, register, trigger, handleSubmit, setValue, control } =
     useForm<CompanyFacts>({
       resolver: zodResolver(CompanyFactsFormSchema),
       mode: 'onChange',
@@ -106,6 +107,7 @@ const CompanyFactsPage = () => {
 
   const submit = useSubmit();
   const { enqueueSnackbar } = useSnackbar();
+  const handleErrors = useErrorHandling();
 
   const onSaveClick = async (data: FieldValues) => {
     const newCompanyFacts = CompanyFactsFormSchema.parse(data);
@@ -132,12 +134,28 @@ const CompanyFactsPage = () => {
     enqueueSnackbar(t`Form successfully submitted`, { variant: 'success' });
   };
 
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  const callIfValid = useCallback(
+    async (callback: () => void) => {
+      const isValid = await trigger();
+      if (isValid) {
+        callback();
+      } else {
+        handleErrors(formState.errors);
+      }
+    },
+    [formState, trigger, handleErrors]
+  );
+
+  const handleNext = async () => {
+    await callIfValid(() =>
+      setActiveStep((prevActiveStep) => prevActiveStep + 1)
+    );
   };
 
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  const handleBack = async () => {
+    await callIfValid(() =>
+      setActiveStep((prevActiveStep) => prevActiveStep - 1)
+    );
   };
 
   return (

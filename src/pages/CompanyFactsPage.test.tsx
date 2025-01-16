@@ -491,6 +491,53 @@ describe('EmployeesForm', () => {
     expect(action).not.toHaveBeenCalled();
   });
 
+  it.todo(
+    'adding employees fraction where sum of percentages > 1 leads to an error',
+    async () => {}
+  );
+
+  it('does not switch to the next form page if the current form has validation errors', async () => {
+    const companyFactsMockBuilder = new CompanyFactsMockBuilder();
+    const action = vi.fn().mockResolvedValue(null);
+    const companyFacts = {
+      ...companyFactsMockBuilder.build(),
+    };
+    const router = createRouter(companyFacts, action);
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
+
+    const addSupplierButton = await screen.findByRole('button', {
+      name: 'Add supplier',
+    });
+    await user.click(addSupplierButton);
+    await user.click(await screen.findByText('Next'));
+    expect(
+      await screen.findByText('Number should be positive and greater than zero')
+    ).toBeInTheDocument();
+    expect(screen.getByText('A: Suppliers')).toBeInTheDocument();
+  });
+
+  it('does not switch to the previous form page if the current form has validation errors', async () => {
+    const companyFactsMockBuilder = new CompanyFactsMockBuilder();
+    const action = vi.fn().mockResolvedValue(null);
+    const companyFacts = {
+      ...companyFactsMockBuilder.build(),
+    };
+    const router = createRouter(companyFacts, action);
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
+    await user.click(await screen.findByText('Next'));
+    const input = await screen.findByLabelText('Financial costs');
+    await user.clear(input);
+    await user.type(input, '-2');
+    await user.click(await screen.findByText('Back'));
+    expect(input).toHaveValue('-2');
+    await waitFor(() =>
+      expect(screen.getByText('Number should be positive')).toBeInTheDocument()
+    );
+    expect(
+      screen.getByText('B: Owners, equity- and financial service providers')
+    ).toBeInTheDocument();
+  });
+
   it('adds employees fraction and modify and save its fields', async () => {
     const companyFactsMockBuilder = new CompanyFactsMockBuilder();
     const action = vi.fn().mockResolvedValue(null);

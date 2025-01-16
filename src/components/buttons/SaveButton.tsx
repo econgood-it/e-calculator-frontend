@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave } from '@fortawesome/free-solid-svg-icons';
-import { Trans, useTranslation } from 'react-i18next';
+import { Trans } from 'react-i18next';
 import { Button } from '@mui/material';
 
 import {
@@ -9,7 +9,7 @@ import {
   UseFormHandleSubmit,
 } from 'react-hook-form';
 import React from 'react';
-import { useSnackbar } from 'notistack';
+import { useErrorHandling } from '../../errors/error.handling.ts';
 
 type SaveButtonProps = {
   handleSubmit: UseFormHandleSubmit<FieldValues>;
@@ -24,29 +24,14 @@ export function SaveButton({
   label,
   disabled,
 }: SaveButtonProps) {
-  const { enqueueSnackbar } = useSnackbar();
-  const { t } = useTranslation();
+  const handleErrors = useErrorHandling();
   return (
     <Button
       disabled={disabled}
       fullWidth={true}
       size={'large'}
       onClick={handleSubmit(onSaveClick, (errors) => {
-        let issueReported = false;
-        Object.values(errors).forEach((error) => {
-          const message = error?.root ? error.root.message : error?.message;
-          if (message) {
-            enqueueSnackbar(t(message.toString()), {
-              variant: 'error',
-            });
-            issueReported = true;
-          }
-        });
-        if (!issueReported) {
-          enqueueSnackbar(t`Form contains errors`, {
-            variant: 'error',
-          });
-        }
+        handleErrors(errors);
       })}
       variant={'contained'}
       startIcon={<FontAwesomeIcon icon={faSave} />}
