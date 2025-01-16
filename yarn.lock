@@ -189,10 +189,10 @@
     "@babel/helper-string-parser" "^7.25.9"
     "@babel/helper-validator-identifier" "^7.25.9"
 
-"@ecogood/e-calculator-schemas@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@ecogood/e-calculator-schemas/-/e-calculator-schemas-2.1.0.tgz#a0109b29789c3963df449fea7cfa58544cfff8df"
-  integrity sha512-ztmM8laFKD9NfwYZg3W0K8sMBr0ejXQIlBgKNN4cXRJ3ztb35SoQAAU7zf72LOasdk6iC4cfqhv3O9zSPU450g==
+"@ecogood/e-calculator-schemas@^2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@ecogood/e-calculator-schemas/-/e-calculator-schemas-2.2.0.tgz#ca81f4882ecd9a4a468ee3cf9acfbcef8930c21d"
+  integrity sha512-lLAShclNDsne8xOL3Tn4fVMDOD9j5S7iSBkiZykJddcp5giiSIqg0mtwyT67D3iVjwtqwGH2eh0HVMekjf4WWg==
   dependencies:
     zod "^3.23.8"
 
@@ -501,18 +501,7 @@
     "@mui/utils" "^5.16.6"
     prop-types "^15.8.1"
 
-"@mui/styled-engine-sc@^6.0.0-alpha.12":
-  version "6.1.8"
-  resolved "https://registry.yarnpkg.com/@mui/styled-engine-sc/-/styled-engine-sc-6.1.8.tgz#cdd7af86397e412f5991870913eba51997290c20"
-  integrity sha512-3IXRRWoaGUfFVsFRj9rpxFsIb9zIMewfGsehbc2d+1UwW5WtuKJFBavdOH6Lp8BH6ZJj0e5sxDKXocul428AcA==
-  dependencies:
-    "@babel/runtime" "^7.26.0"
-    "@types/hoist-non-react-statics" "^3.3.5"
-    csstype "^3.1.3"
-    hoist-non-react-statics "^3.3.2"
-    prop-types "^15.8.1"
-
-"@mui/styled-engine@^5.16.6", "@mui/styled-engine@npm:@mui/styled-engine-sc@latest":
+"@mui/styled-engine-sc@^6.0.0-alpha.12", "@mui/styled-engine@^5.16.6", "@mui/styled-engine@npm:@mui/styled-engine-sc@latest":
   version "6.1.8"
   resolved "https://registry.yarnpkg.com/@mui/styled-engine-sc/-/styled-engine-sc-6.1.8.tgz#cdd7af86397e412f5991870913eba51997290c20"
   integrity sha512-3IXRRWoaGUfFVsFRj9rpxFsIb9zIMewfGsehbc2d+1UwW5WtuKJFBavdOH6Lp8BH6ZJj0e5sxDKXocul428AcA==
