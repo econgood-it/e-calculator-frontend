@@ -9,6 +9,7 @@ import {
   isNumberWithDefaultZero,
   isPercentage,
   isPositiveNumber,
+  isPositiveNumberNotZero,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 export type CompanyFacts = z.infer<typeof CompanyFactsResponseBodySchema>;
@@ -18,7 +19,7 @@ export type CompanyFactsPatchRequestBody = z.infer<
 const SupplyFractionFormSchema = z.object({
   countryCode: isCountryCode.optional(),
   industryCode: isIndustryCode.optional(),
-  costs: isPositiveNumber,
+  costs: isPositiveNumberNotZero,
 });
 const EmployeesFractionFormSchema = z.object({
   countryCode: isCountryCode.optional(),
