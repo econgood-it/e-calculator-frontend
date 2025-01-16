@@ -5,16 +5,18 @@ import {
   ThemeOptions,
   ThemeProvider as MuiThemeProvider,
 } from '@mui/material';
-import { ThemeProvider } from 'styled-components';
+import styled, { ThemeProvider } from 'styled-components';
 import { RouterProvider } from 'react-router-dom';
 import { useRouter } from './routing/useRouter';
 import { AuthProvider, AuthProviderProps } from 'oidc-react';
+import { MaterialDesignContent, SnackbarProvider } from 'notistack';
 
 import { AUTHORITY, CLIENT_ID, FRONTEND_URL } from './configuration';
 
 const primaryColor = '#94a231';
 const secondaryColor = '#00828b';
 const contrastColor = 'rgba(255,255,255,0.8)';
+const errorColor = '#C2887C';
 
 export const themeOptions: ThemeOptions = {
   typography: {
@@ -51,7 +53,7 @@ export const themeOptions: ThemeOptions = {
       main: secondaryColor,
       contrastText: contrastColor,
     },
-    error: { main: '#C2887C' },
+    error: { main: errorColor },
   },
   shape: {
     borderRadius: 0,
@@ -87,6 +89,15 @@ const oidcConfig: AuthProviderProps = {
   scope: 'openid email profile',
 };
 
+const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
+  '&.notistack-MuiContent-success': {
+    backgroundColor: primaryColor,
+  },
+  '&.notistack-MuiContent-error': {
+    backgroundColor: errorColor,
+  },
+}));
+
 function App() {
   return (
     <Suspense fallback={'Loading'}>
@@ -107,7 +118,18 @@ function Routes() {
 
   return (
     <div>
-      <RouterProvider router={router} />
+      <SnackbarProvider
+        anchorOrigin={{
+          vertical: 'top', // Position vertically: "top" or "bottom"
+          horizontal: 'right', // Position horizontally: "left", "center", or "right"
+        }}
+        Components={{
+          success: StyledMaterialDesignContent,
+          error: StyledMaterialDesignContent,
+        }}
+      >
+        <RouterProvider router={router} />
+      </SnackbarProvider>
     </div>
   );
 }

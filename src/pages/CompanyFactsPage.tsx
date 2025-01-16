@@ -11,7 +11,10 @@ import {
 } from '../api/api.client.ts';
 import { API_URL } from '../configuration.ts';
 import { useLoaderData } from 'react-router-typesafe';
-import { CompanyFacts } from '../models/CompanyFacts.ts';
+import {
+  CompanyFacts,
+  CompanyFactsFormSchema,
+} from '../models/CompanyFacts.ts';
 import { HandlerContext } from './handlerContext.ts';
 import GridContainer, {
   FormContainer,
@@ -20,29 +23,28 @@ import GridItem from '../components/layout/GridItem.tsx';
 import { FixedBarItemWithContainer } from '../components/layout/FixedBarItemWithContainer.tsx';
 import { Button, MobileStepper, Typography } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Trans } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { useMemo, useState } from 'react';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons/faChevronRight';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons/faChevronLeft';
 import { SaveButton } from '../components/buttons/SaveButton.tsx';
 import { FieldValues, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  CompanyFactsPatchRequestBodySchema,
-  CompanyFactsResponseBodySchema,
-} from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
+import { CompanyFactsPatchRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
 import { DEFAULT_CODE } from '../components/balanceSheet/companyFacts/AutocompleteSelects.tsx';
 import { OwnersAndFinancialServicesForm } from '../components/balanceSheet/companyFacts/OwnersAndFinancialServicesForm.tsx';
 import { EmployeesForm } from '../components/balanceSheet/companyFacts/EmployeesForm.tsx';
 import { CustomersForm } from '../components/balanceSheet/companyFacts/CustomersForm.tsx';
+import { useSnackbar } from 'notistack';
 
 const CompanyFactsPage = () => {
   const data = useLoaderData<typeof loader>();
   const [activeStep, setActiveStep] = useState<number>(0);
+  const { t } = useTranslation();
 
   const { formState, register, handleSubmit, setValue, control } =
     useForm<CompanyFacts>({
-      resolver: zodResolver(CompanyFactsResponseBodySchema),
+      resolver: zodResolver(CompanyFactsFormSchema),
       mode: 'onChange',
       defaultValues: data?.companyFacts,
       values: data?.companyFacts,
@@ -103,9 +105,10 @@ const CompanyFactsPage = () => {
   const maxSteps = Steps.length;
 
   const submit = useSubmit();
+  const { enqueueSnackbar } = useSnackbar();
 
   const onSaveClick = async (data: FieldValues) => {
-    const newCompanyFacts = CompanyFactsResponseBodySchema.parse(data);
+    const newCompanyFacts = CompanyFactsFormSchema.parse(data);
     const companyFacts = CompanyFactsPatchRequestBodySchema.parse({
       ...newCompanyFacts,
       supplyFractions: newCompanyFacts.supplyFractions.map((sf) => {
@@ -113,7 +116,11 @@ const CompanyFactsPage = () => {
           sf.countryCode === DEFAULT_CODE ? undefined : sf.countryCode;
         const industryCode =
           sf.industryCode === DEFAULT_CODE ? undefined : sf.industryCode;
-        return { ...sf, countryCode: countryCode, industryCode: industryCode };
+        return {
+          ...sf,
+          countryCode: countryCode,
+          industryCode: industryCode,
+        };
       }),
       mainOriginOfOtherSuppliers:
         newCompanyFacts.mainOriginOfOtherSuppliers.countryCode,
@@ -122,6 +129,7 @@ const CompanyFactsPage = () => {
       { companyFacts, intent: 'updateCompanyFacts' },
       { method: 'patch', encType: 'application/json' }
     );
+    enqueueSnackbar(t`Form successfully submitted`, { variant: 'success' });
   };
 
   const handleNext = () => {
