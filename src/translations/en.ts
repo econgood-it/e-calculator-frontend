@@ -85,6 +85,9 @@ const EN_WORDS = [
   'Not considered',
   'Adapt selection and weighting',
   'Total points:',
+  'The sum of all percentage values should not be greater than 100.',
+  'Form contains errors',
+  `Form successfully submitted`,
 ];
 
 export const EN_TRANSLATIONS = {

@@ -96,5 +96,9 @@ export const DE_TRANSLATIONS = {
   'Not considered': 'Nicht berücksichtigt',
   'Adapt selection and weighting': 'Auswahl und Gewichtung',
   'Total points:': 'Gesamtpunktzahl:',
+  'The sum of all percentage values should not be greater than 100.':
+    'Die Summer aller Prozentwerte darf nicht größer 100 sein.',
+  'Form contains errors': 'Formular enthält fehlerhafte Daten',
+  'Form successfully submitted': 'Formular wurde erfolgreich gesendet',
   ...DE_ERROR_TRANSLATIONS,
 };
