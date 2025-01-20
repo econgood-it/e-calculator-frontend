@@ -100,5 +100,9 @@ export const DE_TRANSLATIONS = {
     'Die Summer aller Prozentwerte darf nicht größer 100 sein.',
   'Form contains errors': 'Formular enthält fehlerhafte Daten',
   'Form successfully submitted': 'Formular wurde erfolgreich gesendet',
+  'If you can not report on this aspect, you must deselect the topic to assure points are not counted.': //gerrit edit
+    'Wenn Sie nicht über diesen Aspekt berichten können, müssen Sie das Thema abwählen, um sicherzustellen, dass Punkte nicht gezählt werden.',
+  'You must explain in the common good report why this topic has been disabled.':
+    'Sie müssen im Gemeinwohlbericht erklären, warum dieses Thema deaktiviert wurde.',
   ...DE_ERROR_TRANSLATIONS,
 };
