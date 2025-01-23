@@ -64,8 +64,6 @@ export function WeightConfigurator({
     [version, exclusiveOptions]
   );
 
-  console.log(watchedRatings)
-
   const resetUnselectedOptions = useCallback(
     (selectedOption: string) => {
       exclusiveOptions
