@@ -89,6 +89,7 @@ const SuppliersForm = ({
       <GridItem xs={12}>
         <FieldArrayAppendButton
           label={<Trans>Add supplier</Trans>}
+          disabled={ supplyFractions.length >= 5 } //gerrit edit
           onClick={() =>
             append({
               countryCode: undefined,
