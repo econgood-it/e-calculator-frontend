@@ -16,6 +16,7 @@ import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { NumericFormat } from 'react-number-format';
+import { useLanguage } from '../../../i18n.ts';
 
 type PositiveNumberInputProps<T extends FieldValues> = {
   label: ReactElement | string;
@@ -39,6 +40,8 @@ export function NumberInput<T extends FieldValues>({
 
   const { t } = useTranslation();
   const id = `outlined-adornment-amount_${registerKey}`;
+  const { lng } = useLanguage();
+
   return (
     <FormControl fullWidth={true}>
       <InputLabel htmlFor={id}>{label}</InputLabel>
@@ -49,7 +52,8 @@ export function NumberInput<T extends FieldValues>({
             customInput={OutlinedInput}
             value={field.value}
             onValueChange={(e) => field.onChange(e.floatValue ?? null)}
-            thousandSeparator
+            thousandSeparator={lng === 'de' ? '.' : ','}
+            decimalSeparator={lng === 'de' ? ',' : '.'}
             readOnly={readOnly}
             startAdornment={startAdornment}
             aria-label={registerKey}
