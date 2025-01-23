@@ -57,7 +57,7 @@ export async function expectPositiveNumberFieldToBeValidatedAndModifiedAndSaved(
 }
 
 export async function saveForm(user: UserEvent) {
-  const saveButton = screen.getByRole('button', { name: 'Save' });
+  const saveButton = await screen.findByRole('button', { name: 'Save' });
   await user.click(saveButton);
 }
 

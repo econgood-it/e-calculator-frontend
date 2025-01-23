@@ -9,13 +9,16 @@ import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material';
 import { themeOptions } from '../App';
 import { FC, ReactElement, ReactNode } from 'react';
 import userEvent from '@testing-library/user-event';
+import { SnackbarProvider } from 'notistack';
 
 const theme = createTheme({ ...themeOptions });
 
 export const AllTheProviders: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <MuiThemeProvider theme={theme}>
-      <ThemeProvider theme={theme}>{children}</ThemeProvider>
+      <ThemeProvider theme={theme}>
+        <SnackbarProvider>{children}</SnackbarProvider>
+      </ThemeProvider>
     </MuiThemeProvider>
   );
 };

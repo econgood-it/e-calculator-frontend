@@ -88,6 +88,8 @@ const EN_WORDS = [
   'The sum of all percentage values should not be greater than 100.',
   'Form contains errors',
   `Form successfully submitted`,
+  'Next',
+  'Back',
 ];
 
 export const EN_TRANSLATIONS = {

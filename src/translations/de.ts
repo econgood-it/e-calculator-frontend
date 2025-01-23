@@ -100,5 +100,7 @@ export const DE_TRANSLATIONS = {
     'Die Summer aller Prozentwerte darf nicht größer 100 sein.',
   'Form contains errors': 'Formular enthält fehlerhafte Daten',
   'Form successfully submitted': 'Formular wurde erfolgreich gesendet',
+  Next: 'Weiter',
+  Back: 'Zurück',
   ...DE_ERROR_TRANSLATIONS,
 };

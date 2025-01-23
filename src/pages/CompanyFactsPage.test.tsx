@@ -73,6 +73,49 @@ describe('CompanyFactsPage', () => {
       await screen.findByText('D: Customers and other companies')
     ).toBeInTheDocument();
   });
+
+  it('does not switch to the next form page if the current form has validation errors', async () => {
+    const companyFactsMockBuilder = new CompanyFactsMockBuilder();
+    const action = vi.fn().mockResolvedValue(null);
+    const companyFacts = {
+      ...companyFactsMockBuilder.build(),
+    };
+    const router = createRouter(companyFacts, action);
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
+
+    const addSupplierButton = await screen.findByRole('button', {
+      name: 'Add supplier',
+    });
+    await user.click(addSupplierButton);
+    await user.click(await screen.findByText('Next'));
+    expect(
+      await screen.findByText('Number should be positive and greater than zero')
+    ).toBeInTheDocument();
+    expect(screen.getByText('A: Suppliers')).toBeInTheDocument();
+  });
+
+  it('does not switch to the previous form page if the current form has validation errors', async () => {
+    const companyFactsMockBuilder = new CompanyFactsMockBuilder();
+    const action = vi.fn().mockResolvedValue(null);
+    const companyFacts = {
+      ...companyFactsMockBuilder.build(),
+    };
+    const router = createRouter(companyFacts, action);
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
+    await user.click(await screen.findByText('Next'));
+    const input = await screen.findByLabelText('Financial costs');
+    await user.clear(input);
+    await user.type(input, '-2');
+    await user.click(await screen.findByText('Back'));
+    expect(input).toHaveValue('-2');
+    expect(
+      await screen.findAllByText('Number should be positive')
+    ).toHaveLength(2);
+
+    expect(
+      screen.getByText('B: Owners, equity- and financial service providers')
+    ).toBeInTheDocument();
+  });
 });
 
 describe('SuppliersForm', () => {
@@ -491,50 +534,26 @@ describe('EmployeesForm', () => {
     expect(action).not.toHaveBeenCalled();
   });
 
-  it.todo(
-    'adding employees fraction where sum of percentages > 1 leads to an error',
-    async () => {}
-  );
-
-  it('does not switch to the next form page if the current form has validation errors', async () => {
+  it('adding employees fractions where the sum of percentage > 100 leads to form error', async () => {
     const companyFactsMockBuilder = new CompanyFactsMockBuilder();
     const action = vi.fn().mockResolvedValue(null);
     const companyFacts = {
       ...companyFactsMockBuilder.build(),
+      employeesFractions: [
+        { countryCode: 'AFG', percentage: 80 },
+        { countryCode: 'BEL', percentage: 20 },
+      ],
     };
     const router = createRouter(companyFacts, action);
     const { user } = renderWithTheme(<RouterProvider router={router} />);
-
-    const addSupplierButton = await screen.findByRole('button', {
-      name: 'Add supplier',
-    });
-    await user.click(addSupplierButton);
-    await user.click(await screen.findByText('Next'));
+    await user.dblClick(await screen.findByText('Next'));
+    await fillNumberField(user, `employeesFractions.${1}.percentage`, 30);
+    await saveForm(user);
+    expect(action).not.toHaveBeenCalled();
     expect(
-      await screen.findByText('Number should be positive and greater than zero')
-    ).toBeInTheDocument();
-    expect(screen.getByText('A: Suppliers')).toBeInTheDocument();
-  });
-
-  it('does not switch to the previous form page if the current form has validation errors', async () => {
-    const companyFactsMockBuilder = new CompanyFactsMockBuilder();
-    const action = vi.fn().mockResolvedValue(null);
-    const companyFacts = {
-      ...companyFactsMockBuilder.build(),
-    };
-    const router = createRouter(companyFacts, action);
-    const { user } = renderWithTheme(<RouterProvider router={router} />);
-    await user.click(await screen.findByText('Next'));
-    const input = await screen.findByLabelText('Financial costs');
-    await user.clear(input);
-    await user.type(input, '-2');
-    await user.click(await screen.findByText('Back'));
-    expect(input).toHaveValue('-2');
-    await waitFor(() =>
-      expect(screen.getByText('Number should be positive')).toBeInTheDocument()
-    );
-    expect(
-      screen.getByText('B: Owners, equity- and financial service providers')
+      await screen.findByText(
+        'The sum of all percentage values should not be greater than 100.'
+      )
     ).toBeInTheDocument();
   });
 
@@ -691,7 +710,7 @@ describe('CustomersForm', () => {
       `industrySectors.${indexOfAddedIndustrySector}.industryCode`,
       selectedIndustry
     );
-    const amountOfTotalTurnover = 40;
+    const amountOfTotalTurnover = 20;
     await fillNumberField(
       user,
       `industrySectors.${indexOfAddedIndustrySector}.amountOfTotalTurnover`,
@@ -716,6 +735,33 @@ describe('CustomersForm', () => {
       intent: 'updateCompanyFacts',
     });
   }, 10000);
+
+  it('adding industry sectors where the sum of percentage > 100 leads to form error', async () => {
+    const companyFactsMockBuilder = new CompanyFactsMockBuilder();
+    const action = vi.fn().mockResolvedValue(null);
+    const companyFacts = {
+      ...companyFactsMockBuilder.build(),
+      industrySectors: [
+        { industryCode: 'A', description: 'desc', amountOfTotalTurnover: 80 },
+        { industryCode: 'A', description: 'desc', amountOfTotalTurnover: 20 },
+      ],
+    };
+    const router = createRouter(companyFacts, action);
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
+    await user.tripleClick(await screen.findByText('Next'));
+    await fillNumberField(
+      user,
+      `industrySectors.${1}.amountOfTotalTurnover`,
+      30
+    );
+    await saveForm(user);
+    expect(action).not.toHaveBeenCalled();
+    expect(
+      await screen.findByText(
+        'The sum of all percentage values should not be greater than 100.'
+      )
+    ).toBeInTheDocument();
+  });
 });
 
 describe('loader', () => {

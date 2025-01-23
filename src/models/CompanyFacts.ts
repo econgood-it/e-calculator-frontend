@@ -65,7 +65,17 @@ export const CompanyFactsFormSchema = z.object({
         'The sum of all percentage values should not be greater than 100.',
     }
   ),
-  industrySectors: IndustrySectorFormSchema.array(),
+  industrySectors: IndustrySectorFormSchema.array().refine(
+    (is) =>
+      !isSumGreaterThan(
+        is.map((is) => is.amountOfTotalTurnover),
+        100
+      ),
+    {
+      message:
+        'The sum of all percentage values should not be greater than 100.',
+    }
+  ),
   mainOriginOfOtherSuppliers: z.object({
     countryCode: isCountryCode.optional(),
     costs: z.number(),
