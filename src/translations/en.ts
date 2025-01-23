@@ -90,6 +90,7 @@ const EN_WORDS = [
   `Form successfully submitted`,
   'Next',
   'Back',
+  'You must explain in the common good report why this topic has been disabled.',
 ];
 
 export const EN_TRANSLATIONS = {

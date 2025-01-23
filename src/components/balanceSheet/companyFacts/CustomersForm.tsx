@@ -79,6 +79,7 @@ export function CustomersForm({
                   description: '',
                 })
               }
+              disabled={false}
             ></FieldArrayAppendButton>
           </GridItem>
           {industrySectors.map((_, index) => (

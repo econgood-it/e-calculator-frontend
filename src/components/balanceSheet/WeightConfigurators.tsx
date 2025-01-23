@@ -109,7 +109,10 @@ export function WeightConfigurator({
   return (
     <GridContainer spacing={1}>
       {watchedRatings.map(
-        ({ shortName, weight, isWeightSelectedByUser, isPositive, type }, index) =>
+        (
+          { shortName, weight, isWeightSelectedByUser, isPositive, type },
+          index
+        ) =>
           isPositive && (
             <GridItem xs={12} lg={4} key={shortName}>
               <Card>
@@ -176,8 +179,12 @@ export function WeightConfigurator({
                   </GridContainer>
                   {weight === 0 && ( //gerrit edit
                     <Typography>
-                      { type === 'aspect' && ( <Trans>If you can not report on this aspect, you must deselect the topic to assure points are not counted.</Trans> )}
-                      { type === 'topic' && ( <Trans>You must explain in the common good report why this topic has been disabled.</Trans> )}
+                      {type === 'topic' && (
+                        <Trans>
+                          You must explain in the common good report why this
+                          topic has been disabled.
+                        </Trans>
+                      )}
                     </Typography>
                   )}
                 </CardContent>

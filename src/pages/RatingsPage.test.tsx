@@ -259,6 +259,90 @@ describe('WeightConfigurator', () => {
     });
   });
 
+  it('should show warning if a topic is unselected', async () => {
+    const action = vi.fn().mockResolvedValue(null);
+    const ratings = [
+      {
+        shortName: 'B1',
+        name: 'B1 Name',
+        estimations: 0,
+        isPositive: true,
+        type: RatingType.topic,
+        weight: 1,
+        isWeightSelectedByUser: false,
+        maxPoints: 0,
+        points: 0,
+      },
+      {
+        shortName: 'B1.1',
+        name: 'B1.1 Name',
+        estimations: 0,
+        isPositive: true,
+        type: RatingType.aspect,
+        weight: 1,
+        isWeightSelectedByUser: false,
+        maxPoints: 0,
+        points: 0,
+      },
+    ];
+    const router = createRouter(ratings, action, BalanceSheetVersion.v5_1_0);
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
+    await user.click(await screen.findByText('Adapt selection and weighting'));
+    const b1Checkbox = within(screen.getByLabelText('Select B1')).getByRole(
+      'checkbox'
+    );
+    expect(b1Checkbox).toBeChecked();
+    await user.click(b1Checkbox);
+    expect(b1Checkbox).not.toBeChecked();
+    expect(
+      screen.getByText(
+        'You must explain in the common good report why this topic has been disabled.'
+      )
+    ).toBeInTheDocument();
+  });
+
+  it('should show no warning if an aspect is unselected', async () => {
+    const action = vi.fn().mockResolvedValue(null);
+    const ratings = [
+      {
+        shortName: 'B1',
+        name: 'B1 Name',
+        estimations: 0,
+        isPositive: true,
+        type: RatingType.topic,
+        weight: 1,
+        isWeightSelectedByUser: false,
+        maxPoints: 0,
+        points: 0,
+      },
+      {
+        shortName: 'B1.3',
+        name: 'B1.1 Name',
+        estimations: 0,
+        isPositive: true,
+        type: RatingType.aspect,
+        weight: 1,
+        isWeightSelectedByUser: false,
+        maxPoints: 0,
+        points: 0,
+      },
+    ];
+    const router = createRouter(ratings, action, BalanceSheetVersion.v5_1_0);
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
+    await user.click(await screen.findByText('Adapt selection and weighting'));
+    const b13Checkbox = within(screen.getByLabelText('Select B1.3')).getByRole(
+      'checkbox'
+    );
+    expect(b13Checkbox).toBeChecked();
+    await user.click(b13Checkbox);
+    expect(b13Checkbox).not.toBeChecked();
+    expect(
+      screen.queryByText(
+        'You must explain in the common good report why this topic has been disabled.'
+      )
+    ).not.toBeInTheDocument();
+  });
+
   it('should unselect B1.1 if B1.2 is selected', async () => {
     const action = vi.fn().mockResolvedValue(null);
     const ratings = [

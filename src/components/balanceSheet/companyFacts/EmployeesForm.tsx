@@ -85,6 +85,7 @@ export function EmployeesForm({
         <FieldArrayAppendButton
           label={<Trans>Add employees origin</Trans>}
           onClick={() => append({ countryCode: undefined, percentage: 0 })}
+          disabled={false}
         ></FieldArrayAppendButton>
       </GridItem>
       {employeesFractions.map((_, index) => (
