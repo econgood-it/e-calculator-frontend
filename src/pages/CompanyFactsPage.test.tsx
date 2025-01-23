@@ -133,8 +133,7 @@ describe('SuppliersForm', () => {
     );
 
     await user.clear(input);
-    await user.type(input, 'a7');
-    expect(input).toHaveValue('a7');
+    expect(input).toHaveValue('');
     expect(screen.getByText('Number expected')).not.toBeNull();
 
     await user.clear(input);
@@ -327,9 +326,11 @@ describe('SuppliersForm', () => {
     const mainOriginOfOtherSuppliersFieldBeforeUpdate =
       await screen.findByLabelText(`mainOriginOfOtherSuppliers.costs`);
 
-    expect(
-      within(mainOriginOfOtherSuppliersFieldBeforeUpdate).getByRole('textbox')
-    ).toHaveValue((900 - 388 - 54).toString());
+    await waitFor(() =>
+      expect(
+        within(mainOriginOfOtherSuppliersFieldBeforeUpdate).getByRole('textbox')
+      ).toHaveValue((900 - 388 - 54).toString())
+    );
 
     const newCosts = 20;
     for (const index in companyFacts.supplyFractions) {

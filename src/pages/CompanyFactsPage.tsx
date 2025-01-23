@@ -43,7 +43,7 @@ const CompanyFactsPage = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const { t } = useTranslation();
 
-  const { formState, register, trigger, handleSubmit, setValue, control } =
+  const { formState, trigger, handleSubmit, setValue, control } =
     useForm<CompanyFacts>({
       resolver: zodResolver(CompanyFactsFormSchema),
       mode: 'onChange',
@@ -59,7 +59,6 @@ const CompanyFactsPage = () => {
         element: dataIsLoaded && (
           <SuppliersForm
             control={control}
-            register={register}
             setValue={setValue}
             formState={formState}
             regions={data.regions}
@@ -74,7 +73,7 @@ const CompanyFactsPage = () => {
         element: dataIsLoaded && (
           <OwnersAndFinancialServicesForm
             formState={formState}
-            register={register}
+            control={control}
           />
         ),
       },
@@ -83,7 +82,6 @@ const CompanyFactsPage = () => {
         element: dataIsLoaded && (
           <EmployeesForm
             control={control}
-            register={register}
             formState={formState}
             regions={data?.regions}
           />
@@ -94,14 +92,13 @@ const CompanyFactsPage = () => {
         element: dataIsLoaded && (
           <CustomersForm
             control={control}
-            register={register}
             formState={formState}
             industries={data?.industries}
           />
         ),
       },
     ];
-  }, [data, control, register, formState, setValue]);
+  }, [data, control, formState, setValue]);
 
   const maxSteps = Steps.length;
 

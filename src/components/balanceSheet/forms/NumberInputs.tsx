@@ -6,19 +6,21 @@ import {
   OutlinedInput,
 } from '@mui/material';
 import {
+  Control,
+  Controller,
   FieldErrors,
   FieldValues,
   Path,
-  UseFormRegister,
 } from 'react-hook-form';
 import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
+import { NumericFormat } from 'react-number-format';
 
 type PositiveNumberInputProps<T extends FieldValues> = {
   label: ReactElement | string;
   errors: FieldErrors<T>;
-  register: UseFormRegister<T>;
+  control: Control<T>;
   registerKey: Path<T>;
   readOnly?: boolean;
   startAdornment?: ReactElement;
@@ -27,7 +29,7 @@ type PositiveNumberInputProps<T extends FieldValues> = {
 export function NumberInput<T extends FieldValues>({
   label,
   registerKey,
-  register,
+  control,
   errors,
   readOnly,
   startAdornment,
@@ -40,17 +42,23 @@ export function NumberInput<T extends FieldValues>({
   return (
     <FormControl fullWidth={true}>
       <InputLabel htmlFor={id}>{label}</InputLabel>
-      <OutlinedInput
-        readOnly={readOnly}
-        id={id}
-        {...register(registerKey, {
-          valueAsNumber: true,
-          required: true,
-        })}
-        aria-label={registerKey}
-        startAdornment={startAdornment}
-        error={!!error}
-        label={label}
+      <Controller
+        render={({ field }) => (
+          <NumericFormat
+            id={id}
+            customInput={OutlinedInput}
+            value={field.value}
+            onValueChange={(e) => field.onChange(e.floatValue ?? null)}
+            thousandSeparator
+            readOnly={readOnly}
+            startAdornment={startAdornment}
+            aria-label={registerKey}
+            error={!!error}
+            label={label}
+          />
+        )}
+        name={registerKey}
+        control={control}
       />
       <FormHelperText>{!!error && t(`${error?.message}`)}</FormHelperText>
     </FormControl>

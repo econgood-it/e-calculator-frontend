@@ -22,7 +22,7 @@ describe('NumberInput', () => {
     label: string;
   }) {
     const {
-      register,
+      control,
       formState: { errors },
     } = useForm<T>({
       resolver: zodResolver(formSchema),
@@ -32,7 +32,7 @@ describe('NumberInput', () => {
     return (
       <NumberInput
         errors={errors}
-        register={register}
+        control={control}
         label={label}
         registerKey={registerKey}
       />

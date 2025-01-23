@@ -3,12 +3,7 @@ import { Typography } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
 import { CurrencyInput, PercentageInput } from '../forms/NumberInputs';
 import GridContainer from '../../layout/GridContainer';
-import {
-  Control,
-  FormState,
-  useFieldArray,
-  UseFormRegister,
-} from 'react-hook-form';
+import { Control, FormState, useFieldArray } from 'react-hook-form';
 
 import { DEFAULT_CODE, IndustrySelect } from './AutocompleteSelects';
 import SwitchLabel from '../forms/SwitchLabel';
@@ -19,7 +14,6 @@ import { CompanyFacts } from '../../../models/CompanyFacts.ts';
 
 type CustomersFormProps = {
   control: Control<CompanyFacts>;
-  register: UseFormRegister<CompanyFacts>;
   formState: FormState<CompanyFacts>;
   industries: Industry[];
 };
@@ -27,7 +21,6 @@ type CustomersFormProps = {
 export function CustomersForm({
   control,
   industries,
-  register,
   formState: { errors },
 }: CustomersFormProps) {
   const { t } = useTranslation();
@@ -48,7 +41,7 @@ export function CustomersForm({
         <GridContainer spacing={3} alignItems="center">
           <GridItem xs={12} sm={6}>
             <CurrencyInput<CompanyFacts>
-              register={register}
+              control={control}
               errors={errors}
               registerKey={'turnover'}
               label={<Trans>Turnover</Trans>}
@@ -95,7 +88,7 @@ export function CustomersForm({
                 </GridItem>
                 <GridItem xs={12} sm={5}>
                   <PercentageInput<CompanyFacts>
-                    register={register}
+                    control={control}
                     errors={errors}
                     label={<Trans>Amount in %</Trans>}
                     registerKey={`${fieldArrayName}.${index}.amountOfTotalTurnover`}

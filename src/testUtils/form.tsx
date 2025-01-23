@@ -14,8 +14,7 @@ export async function checkNumberFieldValidations(
   user: UserEvent
 ) {
   await user.clear(input);
-  await user.type(input, 'a7');
-  expect(input).toHaveValue('a7');
+  expect(input).toHaveValue('');
   expect(screen.getByText('Number expected')).toBeInTheDocument();
   //
 

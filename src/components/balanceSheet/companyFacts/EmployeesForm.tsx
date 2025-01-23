@@ -6,12 +6,7 @@ import {
   PercentageInput,
 } from '../forms/NumberInputs';
 import GridContainer from '../../layout/GridContainer';
-import {
-  Control,
-  FormState,
-  useFieldArray,
-  UseFormRegister,
-} from 'react-hook-form';
+import { Control, FormState, useFieldArray } from 'react-hook-form';
 import SwitchLabel from '../forms/SwitchLabel';
 
 import { DEFAULT_CODE, RegionSelect } from './AutocompleteSelects';
@@ -22,14 +17,12 @@ import { CompanyFacts } from '../../../models/CompanyFacts.ts';
 
 type EmployeesFormProps = {
   control: Control<CompanyFacts>;
-  register: UseFormRegister<CompanyFacts>;
   formState: FormState<CompanyFacts>;
   regions: Region[];
 };
 
 export function EmployeesForm({
   control,
-  register,
   formState: { errors },
   regions,
 }: EmployeesFormProps) {
@@ -49,8 +42,8 @@ export function EmployeesForm({
       <GridItem xs={12}>
         <GridContainer spacing={3} alignItems="center">
           <GridItem xs={12} sm={3}>
-            <NumberInput<CompanyFacts>
-              register={register}
+            <CurrencyInput<CompanyFacts>
+              control={control}
               errors={errors}
               registerKey={'numberOfEmployees'}
               label={t`Number of employees (full time equivalents)`}
@@ -58,7 +51,7 @@ export function EmployeesForm({
           </GridItem>
           <GridItem xs={12} sm={3}>
             <CurrencyInput<CompanyFacts>
-              register={register}
+              control={control}
               errors={errors}
               registerKey={'totalStaffCosts'}
               label={t`Staff costs (gross without employer contribution)`}
@@ -66,7 +59,7 @@ export function EmployeesForm({
           </GridItem>
           <GridItem xs={12} sm={3}>
             <NumberInput<CompanyFacts>
-              register={register}
+              control={control}
               errors={errors}
               registerKey={'averageJourneyToWorkForStaffInKm'}
               label={t`Average journey to work for staff (in km)`}
@@ -101,7 +94,7 @@ export function EmployeesForm({
             </GridItem>
             <GridItem xs={12} sm={5}>
               <PercentageInput<CompanyFacts>
-                register={register}
+                control={control}
                 errors={errors}
                 label={<Trans>Amount in %</Trans>}
                 registerKey={`${fieldArrayName}.${index}.percentage`}

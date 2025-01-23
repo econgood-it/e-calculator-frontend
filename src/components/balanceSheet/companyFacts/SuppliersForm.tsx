@@ -3,7 +3,6 @@ import {
   Control,
   FormState,
   useFieldArray,
-  UseFormRegister,
   UseFormSetValue,
   useWatch,
 } from 'react-hook-form';
@@ -28,7 +27,6 @@ import { CompanyFacts } from '../../../models/CompanyFacts.ts';
 type SuppliersFormProps = {
   control: Control<CompanyFacts>;
   setValue: UseFormSetValue<CompanyFacts>;
-  register: UseFormRegister<CompanyFacts>;
   formState: FormState<CompanyFacts>;
   regions: Region[];
   industries: Industry[];
@@ -36,7 +34,6 @@ type SuppliersFormProps = {
 
 const SuppliersForm = ({
   control,
-  register,
   setValue,
   formState: { errors },
   regions,
@@ -72,7 +69,7 @@ const SuppliersForm = ({
     <GridContainer spacing={3}>
       <GridItem xs={12}>
         <CurrencyInput<CompanyFacts>
-          register={register}
+          control={control}
           errors={errors}
           label={<Trans>Total purchases from suppliers</Trans>}
           registerKey={'totalPurchaseFromSuppliers'}
@@ -89,7 +86,7 @@ const SuppliersForm = ({
       <GridItem xs={12}>
         <FieldArrayAppendButton
           label={<Trans>Add supplier</Trans>}
-          disabled={ supplyFractions.length >= 5 } //gerrit edit
+          disabled={supplyFractions.length >= 5} //gerrit edit
           onClick={() =>
             append({
               countryCode: undefined,
@@ -102,7 +99,7 @@ const SuppliersForm = ({
       {supplyFractions.map((_, index) => (
         <GridItem key={index} xs={12}>
           <GridContainer spacing={3}>
-            <GridItem xs={12} sm={5}>
+            <GridItem xs={12} sm={4}>
               <IndustrySelect
                 control={control}
                 industries={industries}
@@ -110,7 +107,7 @@ const SuppliersForm = ({
                 name={`${fieldArrayName}.${index}.industryCode`}
               />
             </GridItem>
-            <GridItem xs={12} sm={5}>
+            <GridItem xs={12} sm={4}>
               <RegionSelect
                 control={control}
                 regions={regions}
@@ -118,9 +115,9 @@ const SuppliersForm = ({
                 name={`${fieldArrayName}.${index}.countryCode`}
               />
             </GridItem>
-            <GridItem xs={12} sm={1}>
+            <GridItem xs={12} sm={3}>
               <CurrencyInput<CompanyFacts>
-                register={register}
+                control={control}
                 errors={errors}
                 label={<Trans>Costs</Trans>}
                 registerKey={`${fieldArrayName}.${index}.costs`}
@@ -138,12 +135,12 @@ const SuppliersForm = ({
 
       <GridItem xs={12}>
         <GridContainer spacing={3} alignItems="center">
-          <GridItem xs={12} sm={5}>
+          <GridItem xs={12} sm={4}>
             <Typography variant="body1">
               <Trans>Main origin of the other suppliers</Trans>
             </Typography>
           </GridItem>
-          <GridItem xs={12} sm={5}>
+          <GridItem xs={12} sm={4}>
             <RegionSelect
               control={control}
               regions={regions}
@@ -151,9 +148,9 @@ const SuppliersForm = ({
               name={`mainOriginOfOtherSuppliers.countryCode`}
             />
           </GridItem>
-          <GridItem xs={12} sm={1}>
+          <GridItem xs={12} sm={3}>
             <CurrencyInput
-              register={register}
+              control={control}
               errors={errors}
               label={<Trans>Costs</Trans>}
               readOnly={true}

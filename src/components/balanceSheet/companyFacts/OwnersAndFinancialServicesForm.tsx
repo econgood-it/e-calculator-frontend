@@ -2,16 +2,16 @@ import GridItem from '../../layout/GridItem';
 import { useTranslation } from 'react-i18next';
 import { CurrencyInput } from '../forms/NumberInputs';
 import GridContainer from '../../layout/GridContainer';
-import { FormState, UseFormRegister } from 'react-hook-form';
+import { Control, FormState } from 'react-hook-form';
 import { CompanyFacts } from '../../../models/CompanyFacts.ts';
 
 type OwnersAndFinancialServicesFormProps = {
-  register: UseFormRegister<CompanyFacts>;
+  control: Control<CompanyFacts>;
   formState: FormState<CompanyFacts>;
 };
 
 export function OwnersAndFinancialServicesForm({
-  register,
+  control,
   formState: { errors },
 }: OwnersAndFinancialServicesFormProps) {
   const { t } = useTranslation();
@@ -22,7 +22,7 @@ export function OwnersAndFinancialServicesForm({
         <GridContainer spacing={3}>
           <GridItem xs={12} sm={4}>
             <CurrencyInput<CompanyFacts>
-              register={register}
+              control={control}
               errors={errors}
               registerKey={'profit'}
               label={t`Profit`}
@@ -30,7 +30,7 @@ export function OwnersAndFinancialServicesForm({
           </GridItem>
           <GridItem xs={12} sm={4}>
             <CurrencyInput<CompanyFacts>
-              register={register}
+              control={control}
               errors={errors}
               registerKey={'financialCosts'}
               label={t`Financial costs`}
@@ -38,7 +38,7 @@ export function OwnersAndFinancialServicesForm({
           </GridItem>
           <GridItem xs={12} sm={4}>
             <CurrencyInput<CompanyFacts>
-              register={register}
+              control={control}
               errors={errors}
               registerKey={'incomeFromFinancialInvestments'}
               label={t`Income from financial investments`}
@@ -46,7 +46,7 @@ export function OwnersAndFinancialServicesForm({
           </GridItem>
           <GridItem xs={12} sm={4}>
             <CurrencyInput<CompanyFacts>
-              register={register}
+              control={control}
               errors={errors}
               registerKey={'totalAssets'}
               label={t`Total assets`}
@@ -54,7 +54,7 @@ export function OwnersAndFinancialServicesForm({
           </GridItem>
           <GridItem xs={12} sm={4}>
             <CurrencyInput<CompanyFacts>
-              register={register}
+              control={control}
               errors={errors}
               registerKey={'additionsToFixedAssets'}
               label={t`Additions to fixed assets`}
@@ -62,7 +62,7 @@ export function OwnersAndFinancialServicesForm({
           </GridItem>
           <GridItem xs={12} sm={4}>
             <CurrencyInput<CompanyFacts>
-              register={register}
+              control={control}
               errors={errors}
               registerKey={'financialAssetsAndCashBalance'}
               label={t`Financial assets and cash balance`}
