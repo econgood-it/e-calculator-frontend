@@ -2,8 +2,8 @@ import { z } from 'zod';
 import {
   CompanyFactsPatchRequestBodySchema,
   CompanyFactsResponseBodySchema,
-  EmployeesFractionSchema,
-  IndustrySectorSchema,
+  EmployeesFractionSchemaFrontEnd,
+  IndustrySectorSchemaFrontEnd,
   SupplyFractionSchema,
 } from '@ecogood/e-calculator-schemas/dist/company.facts.dto';
 import {
@@ -32,8 +32,8 @@ export const CompanyFactsFormSchema = z.object({
   averageJourneyToWorkForStaffInKm: isPositiveNumber,
   isB2B: z.boolean(),
   supplyFractions: SupplyFractionSchema,
-  employeesFractions: EmployeesFractionSchema,
-  industrySectors: IndustrySectorSchema,
+  employeesFractions: EmployeesFractionSchemaFrontEnd,
+  industrySectors: IndustrySectorSchemaFrontEnd,
   mainOriginOfOtherSuppliers: z.object({
     countryCode: isCountryCode.optional(),
     costs: z.number(),
