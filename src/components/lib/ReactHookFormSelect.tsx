@@ -15,6 +15,7 @@ type ReactHookFormSelectProps<T extends FieldValues> = {
   label: ReactNode;
   defaultValue: PathValue<T, Path<T>>;
   size?: 'small' | 'medium';
+  disabled?: boolean;
 };
 
 export function ReactHookFormSelect<T extends FieldValues>({
@@ -24,6 +25,7 @@ export function ReactHookFormSelect<T extends FieldValues>({
   defaultValue,
   children,
   size,
+  disabled,
 }: ReactHookFormSelectProps<T> & SelectProps) {
   const labelId = `${name}-label`;
   return (
@@ -37,6 +39,7 @@ export function ReactHookFormSelect<T extends FieldValues>({
             {...field}
             labelId={labelId}
             label={label}
+            disabled={disabled}
           >
             {children}
           </Select>
