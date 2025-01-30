@@ -26,7 +26,7 @@ export const CompanyFactsFormSchema = z.object({
   additionsToFixedAssets: isNumberWithDefaultZero,
   turnover: isPositiveNumber,
   totalAssets: isPositiveNumber,
-  financialAssetsAndCashBalance: isPositiveNumber,
+  financialAssetsAndCashBalance: isNumberWithDefaultZero,
   numberOfEmployees: isPositiveNumber,
   hasCanteen: z.oboolean(),
   averageJourneyToWorkForStaffInKm: isPositiveNumber,
