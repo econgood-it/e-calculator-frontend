@@ -416,7 +416,8 @@ describe('OwnersAndFinancialServicesForm', () => {
   it('should modify financial assets and cash balance field and save changes', async () => {
     await shouldModifyFieldSaveResults(
       'Financial assets and cash balance',
-      'financialAssetsAndCashBalance'
+      'financialAssetsAndCashBalance',
+      false
     );
   });
 });
