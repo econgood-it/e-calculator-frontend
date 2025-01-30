@@ -40,18 +40,14 @@ describe('BalanceSheetCreationDialog', () => {
       })
     );
     const versionOptions = await screen.findAllByRole('option');
-    expect(versionOptions.map((o) => o.textContent)).toEqual([
-      '5.08',
-      '5.09',
-      '5.10',
-    ]);
-    await user.click(versionOptions.find((o) => o.textContent === '5.08')!);
+    expect(versionOptions.map((o) => o.textContent)).toEqual(['5.10']);
+    await user.click(versionOptions.find((o) => o.textContent === '5.10')!);
 
     const saveButton = screen.getByRole('button', { name: 'Save' });
     await user.click(saveButton);
     const expected = {
       type: BalanceSheetType.Compact,
-      version: BalanceSheetVersion.v5_0_8,
+      version: BalanceSheetVersion.v5_1_0,
     };
     await waitFor(() =>
       expect(createBalanceSheetMock).toHaveBeenCalledWith(expected)

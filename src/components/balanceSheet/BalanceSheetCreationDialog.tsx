@@ -98,10 +98,7 @@ export function BalanceSheetCreationForm({
           defaultValue={BalanceSheetVersion.v5_1_0}
           label={t`Select version`}
           name={'version'}
-          disabled={true}
         >
-          <MenuItem value={BalanceSheetVersion.v5_0_8}>5.08</MenuItem>
-          <MenuItem value={BalanceSheetVersion.v5_0_9}>5.09</MenuItem>
           <MenuItem value={BalanceSheetVersion.v5_1_0}>5.10</MenuItem>
         </ReactHookFormSelect>
       </GridItem>
