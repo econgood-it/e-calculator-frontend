@@ -42,7 +42,7 @@ export function EmployeesForm({
       <GridItem xs={12}>
         <GridContainer spacing={3} alignItems="center">
           <GridItem xs={12} sm={3}>
-            <CurrencyInput<CompanyFacts>
+            <NumberInput<CompanyFacts>
               control={control}
               errors={errors}
               registerKey={'numberOfEmployees'}
