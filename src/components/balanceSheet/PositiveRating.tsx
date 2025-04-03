@@ -33,7 +33,7 @@ export default function PositiveRating<T extends FieldValues>({
   const [hover, setHover] = useState<number>(-1);
 
   const getLabel = (currentValue?: number): string => {
-    const defaultValue = evaluationLevels.find((e) => e.level == 4)?.name ?? '';
+    const defaultValue = evaluationLevels.find((e) => e.level == 0)?.name ?? '';
     if (currentValue) {
       const foundLevel = evaluationLevels.find(
         (e) => currentValue >= e.pointsFrom && currentValue <= e.pointsTo
