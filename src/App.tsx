@@ -80,6 +80,11 @@ export const themeOptions: ThemeOptions = {
 };
 const theme = createTheme(themeOptions);
 
+const storeLastPath = () => {
+  const currentPath = window.location.pathname;
+  sessionStorage.setItem('lastPath', currentPath);
+};
+
 // TODO: Make oidcConfig configurable via environment variables
 const oidcConfig: AuthProviderProps = {
   authority: AUTHORITY,
@@ -87,6 +92,14 @@ const oidcConfig: AuthProviderProps = {
   responseType: 'code',
   redirectUri: FRONTEND_URL,
   scope: 'openid email profile',
+  onBeforeSignIn: () => {
+    storeLastPath();
+  },
+  onSignIn: () => {
+    const lastPath = sessionStorage.getItem('lastPath') || '/';
+    sessionStorage.removeItem('lastPath'); // Clean up
+    window.location.href = lastPath;
+  },
 };
 
 const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
