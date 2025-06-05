@@ -1,4 +1,9 @@
-import wretch, { Wretch, WretchOptions, WretchResponse } from 'wretch';
+import wretch, {
+  Wretch,
+  WretchError,
+  WretchOptions,
+  WretchResponse,
+} from 'wretch';
 
 import {
   OrganizationItemsResponseSchema,
@@ -33,8 +38,15 @@ import {
   BalanceSheetType,
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
-import QueryStringAddon from 'wretch/addons/queryString';
 import { makeWorkbook, Workbook } from '../models/Workbook.ts';
+
+import { Audit } from '../models/Audit.ts';
+import {
+  AuditSubmitResponseBodySchema,
+  CertificationAuthorityNames,
+} from '@ecogood/e-calculator-schemas/dist/audit.dto';
+import QueryAddon from 'wretch/addons/queryString';
+import { QueryStringAddon } from 'wretch/addons/queryString';
 
 function language(language: string) {
   return function (
@@ -75,23 +87,26 @@ export function makeWretchInstanceWithAuth(
 }
 
 export function makeWretchInstance(apiUrl: string, language: string) {
-  return wretch(`${apiUrl}/v1?lng=${language}`);
+  return wretch(`${apiUrl}/v1`).addon(QueryAddon).query({ lng: language });
 }
 
-type WretchType = Wretch<unknown, unknown, Promise<WretchResponse>>;
+type WretchType = QueryStringAddon &
+  Wretch<QueryStringAddon, unknown, Promise<WretchResponse>>;
 
 export class AuthApiClient {
-  public constructor(
-    private wretchInstance: Wretch<unknown, unknown, undefined>
-  ) {}
+  public constructor(private wretchInstance: WretchType) {}
 
   async login(email: string, password: string): Promise<User> {
-    const response = this.wretchInstance.post(
+    const response = await this.wretchInstance.post(
       { email, password },
       '/users/token'
     );
     return await response.json();
   }
+}
+
+function isWretchError(error: unknown): error is WretchError {
+  return (error as WretchError).status !== undefined;
 }
 
 export function createApiClient(wretchInstance: WretchType): ApiClient {
@@ -129,7 +144,6 @@ export class ApiClient {
     type: BalanceSheetType
   ): Promise<Workbook> {
     const response = await this.wretchInstance
-      .addon(QueryStringAddon)
       .query({ version, type })
       .get('/workbook');
     return makeWorkbook(
@@ -221,5 +235,32 @@ export class ApiClient {
         )
       : await this.wretchInstance.post(balanceSheet, '/balancesheets');
     return BalanceSheetResponseBodySchema.parse(await response.json());
+  }
+
+  async submitBalanceSheetToAudit(
+    balanceSheetToBeSubmitted: number,
+    certificationAuthority: CertificationAuthorityNames
+  ): Promise<Audit> {
+    const response = await this.wretchInstance.post(
+      { balanceSheetToBeSubmitted, certificationAuthority },
+      '/audit'
+    );
+    return AuditSubmitResponseBodySchema.parse(await response.json());
+  }
+
+  async findAuditByBalanceSheet(
+    submittedBalanceSheetId: number
+  ): Promise<Audit | undefined> {
+    try {
+      const response = await this.wretchInstance
+        .query({ submittedBalanceSheetId: submittedBalanceSheetId })
+        .get(`/audit`);
+      return AuditSubmitResponseBodySchema.parse(await response.json());
+    } catch (error: unknown) {
+      if (isWretchError(error) && error.status === 404) {
+        return undefined;
+      }
+      throw error;
+    }
   }
 }

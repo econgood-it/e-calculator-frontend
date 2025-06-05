@@ -7,7 +7,10 @@ import {
   makeWretchInstanceWithAuth,
 } from './api.client.ts';
 import { UserMocks } from '../testUtils/user';
-import { BalanceSheetMockBuilder } from '../testUtils/balanceSheets';
+import {
+  AuditMockBuilder,
+  BalanceSheetMockBuilder,
+} from '../testUtils/balanceSheets';
 import { WorkbookResponseMocks } from '../testUtils/workbook';
 import { regionsMocks } from '../testUtils/regions';
 import { industriesMocks } from '../testUtils/industries';
@@ -360,6 +363,38 @@ describe('ApiClient', () => {
       const balanceSheet = new BalanceSheetMockBuilder().build();
       mockResource('delete', `${URL}/v1/balancesheets/${balanceSheet.id}`);
       await apiClient.deleteBalanceSheet(balanceSheet.id!);
+    });
+  });
+
+  describe('Audit', () => {
+    it('creates audit', async () => {
+      const auditMockBuilder = new AuditMockBuilder();
+      const requestPromise = mockResource(
+        'post',
+        `${URL}/v1/audit`,
+        new Response(JSON.stringify(auditMockBuilder.buildResponseBody()))
+      );
+      const requestBody = auditMockBuilder.buildRequestBody();
+      const response = await apiClient.submitBalanceSheetToAudit(
+        requestBody.balanceSheetToBeSubmitted,
+        requestBody.certificationAuthority
+      );
+      expect(response).toEqual(auditMockBuilder.build());
+
+      const request = await requestPromise;
+      await expect(request.json()).resolves.toEqual(requestBody);
+    });
+
+    it('does not find audit and returns undefined', async () => {
+      const balanceSheetId = 9;
+
+      mockResource(
+        'get',
+        `${URL}/v1/audit?submittedBalanceSheetId=${balanceSheetId}`,
+        new Response(JSON.stringify({ message: 'error' }), { status: 404 })
+      );
+      const response = await apiClient.findAuditByBalanceSheet(balanceSheetId);
+      expect(response).toBeUndefined();
     });
   });
 });

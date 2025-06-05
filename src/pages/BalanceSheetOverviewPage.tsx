@@ -3,9 +3,16 @@ import GridContainer, {
   FormContainer,
 } from '../components/layout/GridContainer';
 import GridItem from '../components/layout/GridItem';
-import { Avatar, Card, CardContent, Typography, useTheme } from '@mui/material';
+import {
+  Avatar,
+  Button,
+  Card,
+  CardContent,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { Trans } from 'react-i18next';
-import { LoaderFunctionArgs } from 'react-router-dom';
+import { ActionFunctionArgs, json, LoaderFunctionArgs } from 'react-router-dom';
 import {
   createApiClient,
   makeWretchInstanceWithAuth,
@@ -14,10 +21,11 @@ import { API_URL } from '../configuration.ts';
 import { useLoaderData } from 'react-router-typesafe';
 import { HandlerContext } from './handlerContext.ts';
 import { BigNumber } from '../components/lib/BigNumber.tsx';
+import { CertificationAuthorityNames } from '../../../e-calculator-schemas/src/audit.dto.ts';
 
 export function BalanceSheetOverviewPage() {
   const theme = useTheme();
-  const matrix = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
 
   return (
     <FormContainer spacing={2}>
@@ -26,7 +34,7 @@ export function BalanceSheetOverviewPage() {
           <Trans>Matrix representation</Trans>
         </Typography>
       </GridItem>
-      {matrix && (
+      {data?.matrix && (
         <>
           <GridItem>
             <Card>
@@ -47,14 +55,26 @@ export function BalanceSheetOverviewPage() {
                   <GridItem>
                     <BigNumber
                       $color={theme.palette.primary.main}
-                    >{`${matrix.totalPoints.toFixed(0)} / 1000`}</BigNumber>
+                    >{`${data.matrix.totalPoints.toFixed(0)} / 1000`}</BigNumber>
+                  </GridItem>
+                  <GridItem>
+                    {data.audit ? (
+                      <div>
+                        <Trans>Audit process number</Trans>
+                        <div>{data.audit.id}</div>
+                      </div>
+                    ) : (
+                      <Button>
+                        <Trans>Submit to audit</Trans>
+                      </Button>
+                    )}
                   </GridItem>
                 </GridContainer>
               </CardContent>
             </Card>
           </GridItem>
           <GridItem xs={12}>
-            <MatrixView matrix={matrix} />
+            <MatrixView matrix={data.matrix} />
           </GridItem>
         </>
       )}
@@ -73,5 +93,33 @@ export async function loader(
   const apiClient = createApiClient(
     makeWretchInstanceWithAuth(API_URL, userData!.access_token, lng)
   );
-  return await apiClient.getBalanceSheetAsMatrix(Number(params.balanceSheetId));
+  const balanceSheetId = Number(params.balanceSheetId);
+  return {
+    matrix: await apiClient.getBalanceSheetAsMatrix(balanceSheetId),
+    audit: await apiClient.findAuditByBalanceSheet(balanceSheetId),
+  };
+}
+
+export async function action(
+  { params, request }: ActionFunctionArgs,
+  handlerCtx: unknown
+) {
+  const { intent } = await request.json();
+  const { userData, lng } = handlerCtx as HandlerContext;
+
+  if (!userData || !params.balanceSheetId) {
+    return null;
+  }
+  const apiClient = createApiClient(
+    makeWretchInstanceWithAuth(API_URL, userData!.access_token, lng)
+  );
+
+  if (intent === 'submitBalanceSheet') {
+    return await apiClient.submitBalanceSheetToAudit(
+      parseInt(params.balanceSheetId),
+      CertificationAuthorityNames.AUDIT
+    );
+  }
+
+  throw json({ message: 'Invalid intent' }, { status: 400 });
 }

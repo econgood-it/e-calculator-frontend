@@ -11,6 +11,8 @@ import {
   BalanceSheetItem,
 } from '../models/BalanceSheet';
 import _ from 'lodash';
+import { Audit, AuditSubmitRequestBody } from '../models/Audit.ts';
+import { CertificationAuthorityNames } from '../../../e-calculator-schemas/dist/audit.dto';
 
 export const CustomersMocks = {
   customers1: () => ({
@@ -251,5 +253,34 @@ export class BalanceSheetItemsMockBuilder {
 
   public build(): BalanceSheetItem[] {
     return this.balanceSheetItemsBuilder.map((b) => b.build());
+  }
+}
+
+export class AuditMockBuilder {
+  private audit: Audit = {
+    id: 3,
+    submittedAt: new Date(2020, 8, 13, 3, 32).toISOString(),
+  };
+
+  public withId(id: number) {
+    this.audit.id = id;
+    return this;
+  }
+
+  public buildRequestBody(): AuditSubmitRequestBody {
+    return {
+      balanceSheetToBeSubmitted: 5,
+      certificationAuthority: CertificationAuthorityNames.AUDIT,
+    };
+  }
+
+  public buildResponseBody() {
+    return this.build();
+  }
+
+  public build(): Audit {
+    return {
+      ...this.audit,
+    };
   }
 }
