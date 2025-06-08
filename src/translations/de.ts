@@ -104,5 +104,9 @@ export const DE_TRANSLATIONS = {
   Back: 'Zurück',
   'You must explain in the common good report why this topic has been disabled.':
     'Sie müssen im Gemeinwohlbericht erklären, warum dieses Thema deaktiviert wurde.',
+  'Audit process number': 'Audit Prozessnummer',
+  'Peer-Group process number': 'Peer-Gruppen Prozessnummer',
+  'Submit to audit': 'Zum Auditprozess einreichen',
+  'Submit to peer-group': 'Zum Peer-Gruppenprozess einreichen',
   ...DE_ERROR_TRANSLATIONS,
 };

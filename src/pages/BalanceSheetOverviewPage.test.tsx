@@ -1,12 +1,15 @@
 import renderWithTheme from '../testUtils/rendering';
 import { BalanceSheetOverviewPage } from './BalanceSheetOverviewPage';
 import { MatrixMockBuilder } from '../testUtils/matrix';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { loader } from './BalanceSheetOverviewPage.tsx';
+import { action, loader } from './BalanceSheetOverviewPage.tsx';
 import { setupApiMock } from '../testUtils/api.ts';
-import { createMemoryRouter, RouterProvider } from 'react-router-dom';
-import { action } from './BalanceSheetOverviewPage.tsx';
+import {
+  ActionFunctionArgs,
+  createMemoryRouter,
+  RouterProvider,
+} from 'react-router-dom';
 import { CertificationAuthorityNames } from '../../../e-calculator-schemas/dist/audit.dto';
 import { AuditMockBuilder } from '../testUtils/balanceSheets.ts';
 
@@ -36,13 +39,84 @@ describe('BalanceSheetOverviewPage', () => {
       screen.getByText(`${mockedMatrix.totalPoints.toFixed(0)} / 1000`)
     ).toBeInTheDocument();
 
-    expect(
-      screen.queryByText(`Audit process number ${audit.id}`)
-    ).toBeInTheDocument();
+    expect(screen.getByLabelText(`Audit process number`)).toHaveTextContent(
+      audit.id.toString()
+    );
 
     expect(
       screen.queryByRole('button', { name: 'Submit to audit' })
     ).not.toBeInTheDocument();
+  });
+
+  it('should submit balance sheet to audit', async () => {
+    const mockedMatrix = new MatrixMockBuilder().build();
+    const action = vi.fn().mockResolvedValue(null);
+    const router = createMemoryRouter(
+      [
+        {
+          path: '/balancesheet/1/overview',
+          element: <BalanceSheetOverviewPage />,
+          loader: () => ({
+            matrix: mockedMatrix,
+          }),
+          action: async ({ request }: ActionFunctionArgs) =>
+            action(await request.json()),
+        },
+      ],
+      { initialEntries: ['/balancesheet/1/overview'] }
+    );
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
+    const submitButton = await screen.findByRole('button', {
+      name: 'Submit to audit',
+    });
+    await user.click(submitButton);
+
+    await waitFor(() =>
+      expect(action).toHaveBeenCalledWith({
+        authority: 'AUDIT',
+        intent: 'submitBalanceSheet',
+      })
+    );
+  });
+
+  it('should submit balance sheet to peer group', async () => {
+    const mockedMatrix = new MatrixMockBuilder().build();
+    const action = vi.fn().mockResolvedValue(null);
+    const router = createMemoryRouter(
+      [
+        {
+          path: '/balancesheet/1/overview',
+          element: <BalanceSheetOverviewPage />,
+          loader: () => ({
+            matrix: mockedMatrix,
+          }),
+          action: async ({ request }: ActionFunctionArgs) =>
+            action(await request.json()),
+        },
+      ],
+      { initialEntries: ['/balancesheet/1/overview'] }
+    );
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
+    const selectAuthorityButton = await screen.findByLabelText(
+      'select between audit and peer group'
+    );
+    await user.click(selectAuthorityButton);
+
+    const peerGroupSelection = await screen.findByRole('menuitem', {
+      name: 'Submit to peer-group',
+    });
+    await user.click(peerGroupSelection);
+    const submitButton = await screen.getByRole('button', {
+      name: 'Submit to peer-group',
+    });
+    await user.click(submitButton);
+
+    await waitFor(() =>
+      expect(action).toHaveBeenCalledWith({
+        authority: 'PEER_GROUP',
+        intent: 'submitBalanceSheet',
+      })
+    );
   });
 });
 
@@ -83,6 +157,7 @@ describe('actions', () => {
       method: 'post',
       body: JSON.stringify({
         intent: 'submitBalanceSheet',
+        authority: CertificationAuthorityNames.AUDIT,
       }),
     });
 

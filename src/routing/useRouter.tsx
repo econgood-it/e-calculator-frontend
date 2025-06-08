@@ -30,6 +30,7 @@ import { Trans } from 'react-i18next';
 import {
   BalanceSheetOverviewPage,
   loader as matrixLoader,
+  action as submitAction,
 } from '../pages/BalanceSheetOverviewPage';
 import { loader as loaderForRedirect } from './RedirectToActiveOrganization.tsx';
 import {
@@ -96,6 +97,7 @@ export function useRouter() {
                     path: 'overview',
                     element: <BalanceSheetOverviewPage />,
                     loader: matrixLoader,
+                    action: submitAction,
                   },
                   {
                     path: 'settings',

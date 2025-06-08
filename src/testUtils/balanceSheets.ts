@@ -260,6 +260,7 @@ export class AuditMockBuilder {
   private audit: Audit = {
     id: 3,
     submittedAt: new Date(2020, 8, 13, 3, 32).toISOString(),
+    certificationAuthority: CertificationAuthorityNames.AUDIT,
   };
 
   public withId(id: number) {

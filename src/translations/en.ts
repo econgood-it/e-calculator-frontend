@@ -91,6 +91,10 @@ const EN_WORDS = [
   'Next',
   'Back',
   'You must explain in the common good report why this topic has been disabled.',
+  'Audit process number',
+  'Peer-Group process number',
+  'Submit to audit',
+  'Submit to peer-group',
 ];
 
 export const EN_TRANSLATIONS = {

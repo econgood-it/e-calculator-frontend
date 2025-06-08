@@ -3,16 +3,14 @@ import GridContainer, {
   FormContainer,
 } from '../components/layout/GridContainer';
 import GridItem from '../components/layout/GridItem';
-import {
-  Avatar,
-  Button,
-  Card,
-  CardContent,
-  Typography,
-  useTheme,
-} from '@mui/material';
+import { Avatar, Card, CardContent, Typography, useTheme } from '@mui/material';
 import { Trans } from 'react-i18next';
-import { ActionFunctionArgs, json, LoaderFunctionArgs } from 'react-router-dom';
+import {
+  ActionFunctionArgs,
+  json,
+  LoaderFunctionArgs,
+  useSubmit,
+} from 'react-router-dom';
 import {
   createApiClient,
   makeWretchInstanceWithAuth,
@@ -22,10 +20,25 @@ import { useLoaderData } from 'react-router-typesafe';
 import { HandlerContext } from './handlerContext.ts';
 import { BigNumber } from '../components/lib/BigNumber.tsx';
 import { CertificationAuthorityNames } from '../../../e-calculator-schemas/src/audit.dto.ts';
+import { CertificationAuthoritySplitButton } from './CertificationAuthoritySplitButton.tsx';
 
 export function BalanceSheetOverviewPage() {
   const theme = useTheme();
   const data = useLoaderData<typeof loader>();
+
+  const submit = useSubmit();
+  function onBalanceSheetSubmit(authority: CertificationAuthorityNames) {
+    submit(
+      {
+        intent: 'submitBalanceSheet',
+        authority,
+      },
+      {
+        method: 'post',
+        encType: 'application/json',
+      }
+    );
+  }
 
   return (
     <FormContainer spacing={2}>
@@ -57,18 +70,37 @@ export function BalanceSheetOverviewPage() {
                       $color={theme.palette.primary.main}
                     >{`${data.matrix.totalPoints.toFixed(0)} / 1000`}</BigNumber>
                   </GridItem>
-                  <GridItem>
-                    {data.audit ? (
-                      <div>
-                        <Trans>Audit process number</Trans>
-                        <div>{data.audit.id}</div>
-                      </div>
-                    ) : (
-                      <Button>
-                        <Trans>Submit to audit</Trans>
-                      </Button>
-                    )}
-                  </GridItem>
+                  {data.audit ? (
+                    <>
+                      <GridItem>
+                        <Typography variant={'h1'}>
+                          {data.audit.certificationAuthority ===
+                          CertificationAuthorityNames.AUDIT ? (
+                            <Trans>Audit process number</Trans>
+                          ) : (
+                            <Trans>Peer-Group process number</Trans>
+                          )}
+                        </Typography>
+                      </GridItem>
+                      <GridItem>
+                        <BigNumber
+                          aria-label={`Audit process number`}
+                          $color={theme.palette.primary.main}
+                        >{`${data.audit.id.toFixed(0)}`}</BigNumber>
+                      </GridItem>
+                    </>
+                  ) : (
+                    <>
+                      <GridItem>
+                        <CertificationAuthoritySplitButton
+                          onSubmit={(authority) =>
+                            onBalanceSheetSubmit(authority)
+                          }
+                        />
+                      </GridItem>
+                      <GridItem></GridItem>
+                    </>
+                  )}
                 </GridContainer>
               </CardContent>
             </Card>
@@ -104,7 +136,7 @@ export async function action(
   { params, request }: ActionFunctionArgs,
   handlerCtx: unknown
 ) {
-  const { intent } = await request.json();
+  const { intent, authority } = await request.json();
   const { userData, lng } = handlerCtx as HandlerContext;
 
   if (!userData || !params.balanceSheetId) {
@@ -117,7 +149,7 @@ export async function action(
   if (intent === 'submitBalanceSheet') {
     return await apiClient.submitBalanceSheetToAudit(
       parseInt(params.balanceSheetId),
-      CertificationAuthorityNames.AUDIT
+      authority
     );
   }
 
