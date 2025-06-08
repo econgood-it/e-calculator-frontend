@@ -65,7 +65,9 @@ const URL = 'https://calculator.test.ecogood.org';
 const apiClient = new ApiClient(
   makeWretchInstanceWithAuth(URL, UserMocks.default().access_token, 'de')
 );
-const authApiClient = new AuthApiClient(makeWretchInstance(URL, 'en'));
+const authApiClient = new AuthApiClient(
+  makeWretchInstance(URL, 'en').resolve((r) => r.res())
+);
 
 describe('ApiClient', () => {
   beforeAll(() => mswServer.listen({ onUnhandledRequest: 'error' }));

@@ -74,7 +74,7 @@ export function makeWretchInstanceWithAuth(
   apiUrl: string,
   accessToken: string,
   language: string
-) {
+): WretchType {
   return makeWretchInstance(apiUrl, language)
     .headers({ Authorization: `Bearer ${accessToken}` })
     .resolve((r) =>
