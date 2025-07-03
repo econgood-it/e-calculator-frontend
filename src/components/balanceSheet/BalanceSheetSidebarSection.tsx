@@ -14,6 +14,7 @@ import {
 } from '../../models/BalanceSheet';
 import { BalanceSheetCreationDialog } from './BalanceSheetCreationDialog';
 import { BalanceSheetNavigationItem } from './BalanceSheetNavigationItem';
+import { useUser } from '../../authentication/index.ts';
 
 type BalanceSheetSidebarSectionProps = {
   balanceSheetItems: BalanceSheetItem[];
@@ -28,6 +29,10 @@ export function BalanceSheetSidebarSection({
 }: BalanceSheetSidebarSectionProps) {
   const [showBalanceSheetCreationDialog, setShowBalanceSheetCreationDialog] =
     useState<boolean>(false);
+
+  const { isMemberOfCertificationAuthority } = useUser();
+  const memberOfCertificationAuthority = isMemberOfCertificationAuthority();
+
   return (
     <>
       <List
@@ -37,6 +42,7 @@ export function BalanceSheetSidebarSection({
           </ListSubheader>
         }
       >
+        {!memberOfCertificationAuthority ? (
         <ListItem key={'create-balance-sheet'} disablePadding>
           <ListItemButton
             onClick={() => setShowBalanceSheetCreationDialog(true)}
@@ -47,6 +53,7 @@ export function BalanceSheetSidebarSection({
             <ListItemText primary={<Trans>Create balance sheet</Trans>} />
           </ListItemButton>
         </ListItem>
+        ) : null }
       </List>
       <List component="nav">
         {balanceSheetItems.map((b) => (

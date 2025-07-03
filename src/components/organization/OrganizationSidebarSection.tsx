@@ -21,6 +21,7 @@ import {
 import GridContainer from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
 import { OrganizationCreationDialog } from './OrganizationCreationDialog';
+import { useUser } from '../../authentication/index.ts';
 
 type OrganizationSidebarSectionProps = {
   organizationItems: OrganizationItems;
@@ -45,6 +46,9 @@ export function OrganizationSidebarSection({
     navigate(`/organization/${selectedOrgaId}/overview`);
   }
 
+  const { isMemberOfCertificationAuthority } = useUser();
+  const memberOfCertificationAuthority = isMemberOfCertificationAuthority();
+
   return (
     <>
       <GridContainer>
@@ -68,6 +72,7 @@ export function OrganizationSidebarSection({
                 <ListItemText primary={<Trans>Overview</Trans>} />
               </ListItemButton>
             </ListItem>
+            { !memberOfCertificationAuthority ? (
             <ListItem key={'create-organization'} disablePadding>
               <ListItemButton onClick={() => setOrganizationDialogOpen(true)}>
                 <ListItemIcon>
@@ -76,6 +81,7 @@ export function OrganizationSidebarSection({
                 <ListItemText primary={<Trans>Create organization</Trans>} />
               </ListItemButton>
             </ListItem>
+            ) : null }
             {
               <ListItem key={'select-organization'}>
                 <Select

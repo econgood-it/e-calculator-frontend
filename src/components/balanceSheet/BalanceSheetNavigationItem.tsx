@@ -9,6 +9,7 @@ import { Trans } from 'react-i18next';
 import Collapse from '@mui/material/Collapse';
 import BalanceSheetSubNavigation from './BalanceSheetSubNavigation';
 import { BalanceSheetItem } from '../../models/BalanceSheet';
+import { useUser } from '../../authentication/index.ts';
 
 type BalanceSheetNavigationItemProps = {
   balanceSheetItem: BalanceSheetItem;
@@ -22,6 +23,9 @@ export const BalanceSheetNavigationItem = ({
 
   const isSelected = Number(balanceSheetId) === balanceSheetItem.id;
 
+  const { isMemberOfCertificationAuthority } = useUser();
+  const memberOfCertificationAuthority = isMemberOfCertificationAuthority();
+
   useEffect(() => {
     setOpen(isSelected);
   }, [isSelected]);
@@ -29,7 +33,7 @@ export const BalanceSheetNavigationItem = ({
     setOpen(!open);
   };
 
-  return (
+  return !memberOfCertificationAuthority || ( memberOfCertificationAuthority && isSelected ) ? (
     <div>
       <ListItem disablePadding>
         <ListItemButton
@@ -56,5 +60,5 @@ export const BalanceSheetNavigationItem = ({
         <BalanceSheetSubNavigation balanceSheetItem={balanceSheetItem} />
       </Collapse>
     </div>
-  );
+  ) : null;
 };
