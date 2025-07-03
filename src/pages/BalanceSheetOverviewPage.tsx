@@ -18,6 +18,7 @@ import {
 import { API_URL } from '../configuration.ts';
 import { useLoaderData } from 'react-router-typesafe';
 import { HandlerContext } from './handlerContext.ts';
+import { useUser } from '../authentication/index.ts';
 import { BigNumber } from '../components/lib/BigNumber.tsx';
 import { CertificationAuthorityNames } from '../../../e-calculator-schemas/src/audit.dto.ts';
 import { CertificationAuthoritySplitButton } from './CertificationAuthoritySplitButton.tsx';
@@ -25,6 +26,9 @@ import { CertificationAuthoritySplitButton } from './CertificationAuthoritySplit
 export function BalanceSheetOverviewPage() {
   const theme = useTheme();
   const data = useLoaderData<typeof loader>();
+
+  const { isMemberOfCertificationAuthority } = useUser();
+  const memberOfCertificationAuthority = isMemberOfCertificationAuthority();
 
   const submit = useSubmit();
   function onBalanceSheetSubmit(authority: CertificationAuthorityNames) {
@@ -89,18 +93,18 @@ export function BalanceSheetOverviewPage() {
                         >{`${data.audit.id.toFixed(0)}`}</BigNumber>
                       </GridItem>
                     </>
-                  ) : (
-                    <>
-                      <GridItem>
-                        <CertificationAuthoritySplitButton
-                          onSubmit={(authority) =>
-                            onBalanceSheetSubmit(authority)
-                          }
-                        />
-                      </GridItem>
-                      <GridItem></GridItem>
-                    </>
-                  )}
+                  ) : !memberOfCertificationAuthority ? (
+                      <>
+                        <GridItem>
+                          <CertificationAuthoritySplitButton
+                            onSubmit={(authority) =>
+                              onBalanceSheetSubmit(authority)
+                            }
+                          />
+                        </GridItem>
+                        <GridItem></GridItem>
+                      </>
+                  ) : null }
                 </GridContainer>
               </CardContent>
             </Card>
