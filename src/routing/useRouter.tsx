@@ -63,10 +63,10 @@ function ErrorPage() {
 }
 
 export function useRouter() {
-  const { userData, isMemberOfCertificationAuthority } = useUser();
+  const { userData } = useUser();
   const { lng } = useLanguage();
-  console.log( userData );
-  console.log( isMemberOfCertificationAuthority() );
+/*   console.log( userData );
+  console.log( isMemberOfCertificationAuthority() ); */
   return createBrowserRouter(
     [
       {

@@ -10,7 +10,7 @@ import {
   createMemoryRouter,
   RouterProvider,
 } from 'react-router-dom';
-import { CertificationAuthorityNames } from '../../../e-calculator-schemas/dist/audit.dto';
+import { CertificationAuthorityNames } from '../../../e-calculator-schemas/src/audit.dto.ts';
 import { AuditMockBuilder } from '../testUtils/balanceSheets.ts';
 
 describe('BalanceSheetOverviewPage', () => {
