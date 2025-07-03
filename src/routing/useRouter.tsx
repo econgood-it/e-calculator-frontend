@@ -25,7 +25,7 @@ import Sidebar, {
 } from '../pages/Sidebar';
 
 import { Alert, AlertTitle } from '@mui/material';
-import { useAuth } from 'oidc-react';
+import { useUser } from '../authentication/index.ts';
 import { Trans } from 'react-i18next';
 import {
   BalanceSheetOverviewPage,
@@ -63,9 +63,10 @@ function ErrorPage() {
 }
 
 export function useRouter() {
-  const { userData } = useAuth();
+  const { userData, isMemberOfCertificationAuthority } = useUser();
   const { lng } = useLanguage();
-
+  console.log( userData );
+  console.log( isMemberOfCertificationAuthority() );
   return createBrowserRouter(
     [
       {

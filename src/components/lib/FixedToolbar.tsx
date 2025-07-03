@@ -6,7 +6,7 @@ import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { useAuth } from 'oidc-react';
+import { useUser } from '../../authentication/index.ts';
 import { MouseEvent, useState } from 'react';
 import { Trans } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -42,7 +42,7 @@ export function FixedToolbar({
   showCompleteUserMenu,
 }: FixedToolbarProps) {
   const theme = useTheme();
-  const { signOutRedirect } = useAuth();
+  const { signOutRedirect } = useUser();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const { lng, changeLanguage } = useLanguage();
 
