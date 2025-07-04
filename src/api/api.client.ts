@@ -263,4 +263,20 @@ export class ApiClient {
       throw error;
     }
   }
+
+  async findAuditSubmittedId(
+    submittedBalanceSheetId: number
+  ): Promise<Audit | undefined> {
+    try {
+      const response = await this.wretchInstance
+        .query({ submittedBalanceSheetId: submittedBalanceSheetId, requestForAuditor: true })
+        .get(`/audit`);
+      return AuditSubmitResponseBodySchema.parse(await response.json());
+    } catch (error: unknown) {
+      if (isWretchError(error) && error.status === 404) {
+        return undefined;
+      }
+      throw error;
+    }
+  }
 }

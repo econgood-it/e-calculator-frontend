@@ -38,6 +38,8 @@ export default function Sidebar() {
   const drawerWidth = 300;
   const [open, setOpen] = useState<boolean>(true);
   const submit = useSubmit();
+  //we need to change the content of the data to only include the balance sheet requested in the url
+  console.log(data);
 
   async function createOrganization(organization: OrganizationRequestBody) {
     submit(

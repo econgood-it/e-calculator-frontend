@@ -126,13 +126,16 @@ export async function loader(
   if (!userData) {
     return null;
   }
+
+  const memberOfCertificationAuthority = true;
+
   const apiClient = createApiClient(
     makeWretchInstanceWithAuth(API_URL, userData!.access_token, lng)
   );
   const balanceSheetId = Number(params.balanceSheetId);
   return {
     matrix: await apiClient.getBalanceSheetAsMatrix(balanceSheetId),
-    audit: await apiClient.findAuditByBalanceSheet(balanceSheetId),
+    audit: memberOfCertificationAuthority ? await apiClient.findAuditSubmittedId(balanceSheetId) : await apiClient.findAuditByBalanceSheet(balanceSheetId),
   };
 }
 
