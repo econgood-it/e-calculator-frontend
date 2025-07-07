@@ -44,6 +44,8 @@ export function BalanceSheetOverviewPage() {
     );
   }
 
+  console.log('BalanceSheetOverviewPage data', data);
+
   return (
     <FormContainer spacing={2}>
       <GridItem xs={12}>
@@ -127,7 +129,14 @@ export async function loader(
     return null;
   }
 
-  const memberOfCertificationAuthority = true;
+  var memberOfCertificationAuthority = false;
+  const zitadelRoleKey = 'urn:zitadel:iam:org:project:roles';
+  if (userData?.profile?.hasOwnProperty( zitadelRoleKey ) ) {
+    const roles = userData.profile[zitadelRoleKey];
+    if (roles?.hasOwnProperty('auditor') || roles?.hasOwnProperty('peer')) {
+      memberOfCertificationAuthority = true;
+    }
+  }
 
   const apiClient = createApiClient(
     makeWretchInstanceWithAuth(API_URL, userData!.access_token, lng)
