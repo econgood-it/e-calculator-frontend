@@ -27,12 +27,14 @@ type OrganizationSidebarSectionProps = {
   organizationItems: OrganizationItems;
   activeOrganizationId: number;
   onCreateClicked: (organization: OrganizationRequestBody) => Promise<void>;
+  isMemberOfCertificationAuthority: boolean;
 };
 
 export function OrganizationSidebarSection({
   organizationItems,
   activeOrganizationId,
   onCreateClicked,
+  isMemberOfCertificationAuthority
 }: OrganizationSidebarSectionProps) {
   const [organizationDialogOpen, setOrganizationDialogOpen] =
     useState<boolean>(false);
@@ -46,9 +48,6 @@ export function OrganizationSidebarSection({
     navigate(`/organization/${selectedOrgaId}/overview`);
   }
 
-  const { isMemberOfCertificationAuthority } = useUser();
-  const memberOfCertificationAuthority = isMemberOfCertificationAuthority();
-
   return (
     <>
       <GridContainer>
@@ -60,6 +59,7 @@ export function OrganizationSidebarSection({
               </ListSubheader>
             }
           >
+            { !isMemberOfCertificationAuthority ? (
             <ListItem disablePadding>
               <ListItemButton
                 selected={matchOrgaView !== null}
@@ -72,7 +72,8 @@ export function OrganizationSidebarSection({
                 <ListItemText primary={<Trans>Overview</Trans>} />
               </ListItemButton>
             </ListItem>
-            { !memberOfCertificationAuthority ? (
+            ) : null }
+            { !isMemberOfCertificationAuthority ? (
             <ListItem key={'create-organization'} disablePadding>
               <ListItemButton onClick={() => setOrganizationDialogOpen(true)}>
                 <ListItemIcon>

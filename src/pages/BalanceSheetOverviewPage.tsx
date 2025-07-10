@@ -28,7 +28,6 @@ export function BalanceSheetOverviewPage() {
   const data = useLoaderData<typeof loader>();
 
   const { isMemberOfCertificationAuthority } = useUser();
-  const memberOfCertificationAuthority = isMemberOfCertificationAuthority();
 
   const submit = useSubmit();
   function onBalanceSheetSubmit(authority: CertificationAuthorityNames) {
@@ -43,8 +42,6 @@ export function BalanceSheetOverviewPage() {
       }
     );
   }
-
-  console.log('BalanceSheetOverviewPage data', data);
 
   return (
     <FormContainer spacing={2}>
@@ -95,7 +92,7 @@ export function BalanceSheetOverviewPage() {
                         >{`${data.audit.id.toFixed(0)}`}</BigNumber>
                       </GridItem>
                     </>
-                  ) : !memberOfCertificationAuthority ? (
+                  ) : !isMemberOfCertificationAuthority ? (
                       <>
                         <GridItem>
                           <CertificationAuthoritySplitButton
@@ -129,12 +126,12 @@ export async function loader(
     return null;
   }
 
-  var memberOfCertificationAuthority = false;
+  var isMemberOfCertificationAuthority = false;
   const zitadelRoleKey = 'urn:zitadel:iam:org:project:roles';
   if (userData?.profile?.hasOwnProperty( zitadelRoleKey ) ) {
     const roles = userData.profile[zitadelRoleKey];
     if (roles?.hasOwnProperty('auditor') || roles?.hasOwnProperty('peer')) {
-      memberOfCertificationAuthority = true;
+      isMemberOfCertificationAuthority = true;
     }
   }
 
@@ -144,7 +141,7 @@ export async function loader(
   const balanceSheetId = Number(params.balanceSheetId);
   return {
     matrix: await apiClient.getBalanceSheetAsMatrix(balanceSheetId),
-    audit: memberOfCertificationAuthority ? await apiClient.findAuditSubmittedId(balanceSheetId) : await apiClient.findAuditByBalanceSheet(balanceSheetId),
+    audit: isMemberOfCertificationAuthority ? await apiClient.findAuditSubmittedId(balanceSheetId) : await apiClient.findAuditByBalanceSheet(balanceSheetId),
   };
 }
 

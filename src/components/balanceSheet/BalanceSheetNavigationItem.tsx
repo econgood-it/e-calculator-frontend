@@ -13,18 +13,17 @@ import { useUser } from '../../authentication/index.ts';
 
 type BalanceSheetNavigationItemProps = {
   balanceSheetItem: BalanceSheetItem;
+  isMemberOfCertificationAuthority: boolean;
 };
 
 export const BalanceSheetNavigationItem = ({
   balanceSheetItem,
+  isMemberOfCertificationAuthority
 }: BalanceSheetNavigationItemProps) => {
   const [open, setOpen] = useState(false);
   const { balanceSheetId } = useParams();
 
   const isSelected = Number(balanceSheetId) === balanceSheetItem.id;
-
-  const { isMemberOfCertificationAuthority } = useUser();
-  const memberOfCertificationAuthority = isMemberOfCertificationAuthority();
 
   useEffect(() => {
     setOpen(isSelected);
@@ -33,7 +32,7 @@ export const BalanceSheetNavigationItem = ({
     setOpen(!open);
   };
 
-  return !memberOfCertificationAuthority || ( memberOfCertificationAuthority && isSelected ) ? (
+  return !isMemberOfCertificationAuthority || ( isMemberOfCertificationAuthority && isSelected ) ? (
     <div>
       <ListItem disablePadding>
         <ListItemButton

@@ -21,17 +21,16 @@ type BalanceSheetSidebarSectionProps = {
   onCreateBalanceSheet: (
     balanceSheet: BalanceSheetCreateRequestBody
   ) => Promise<void>;
+  isMemberOfCertificationAuthority?: boolean;
 };
 
 export function BalanceSheetSidebarSection({
   balanceSheetItems,
   onCreateBalanceSheet,
+  isMemberOfCertificationAuthority
 }: BalanceSheetSidebarSectionProps) {
   const [showBalanceSheetCreationDialog, setShowBalanceSheetCreationDialog] =
     useState<boolean>(false);
-
-  const { isMemberOfCertificationAuthority } = useUser();
-  const memberOfCertificationAuthority = isMemberOfCertificationAuthority();
 
   return (
     <>
@@ -42,7 +41,7 @@ export function BalanceSheetSidebarSection({
           </ListSubheader>
         }
       >
-        {!memberOfCertificationAuthority ? (
+        {!isMemberOfCertificationAuthority ? (
         <ListItem key={'create-balance-sheet'} disablePadding>
           <ListItemButton
             onClick={() => setShowBalanceSheetCreationDialog(true)}
@@ -57,7 +56,7 @@ export function BalanceSheetSidebarSection({
       </List>
       <List component="nav">
         {balanceSheetItems.map((b) => (
-          <BalanceSheetNavigationItem key={b.id} balanceSheetItem={b} />
+          <BalanceSheetNavigationItem key={b.id} balanceSheetItem={b} isMemberOfCertificationAuthority={isMemberOfCertificationAuthority} />
         ))}
       </List>
       <BalanceSheetCreationDialog

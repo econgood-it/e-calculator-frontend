@@ -38,8 +38,6 @@ export default function Sidebar() {
   const drawerWidth = 300;
   const [open, setOpen] = useState<boolean>(true);
   const submit = useSubmit();
-  //we need to change the content of the data to only include the balance sheet requested in the url
-  console.log(data);
 
   async function createOrganization(organization: OrganizationRequestBody) {
     submit(
@@ -82,6 +80,7 @@ export default function Sidebar() {
                 onCreateClicked={createOrganization}
                 organizationItems={data.organizationItems}
                 activeOrganizationId={data.activeOrganizationId}
+                isMemberOfCertificationAuthority={data.isMemberOfCertificationAuthority}
               />
             )}
           </GridItem>
@@ -93,6 +92,7 @@ export default function Sidebar() {
               <BalanceSheetSidebarSection
                 balanceSheetItems={data.balanceSheetItems}
                 onCreateBalanceSheet={createBalanceSheet}
+                isMemberOfCertificationAuthority={data.isMemberOfCertificationAuthority}
               />
             )}
           </GridItem>
@@ -112,7 +112,7 @@ export async function loader(
   { params }: LoaderFunctionArgs,
   handlerCtx: unknown
 ) {
-  const { userData, lng } = handlerCtx as HandlerContext;
+  const { userData, isMemberOfCertificationAuthority, lng } = handlerCtx as HandlerContext;
 
   if (!params.orgaId || !userData) {
     return null;
@@ -121,9 +121,18 @@ export async function loader(
     makeWretchInstanceWithAuth(API_URL, userData!.access_token, lng)
   );
   const orgaId = Number.parseInt(params.orgaId);
-  const organizationItems = await apiClient.getOrganizations();
-  const balanceSheetItems = await apiClient.getBalanceSheets(orgaId);
-  return { activeOrganizationId: orgaId, organizationItems, balanceSheetItems };
+  var organizationItems = await apiClient.getOrganizations();
+  var balanceSheetItems = await apiClient.getBalanceSheets(orgaId);
+
+  if( isMemberOfCertificationAuthority && params.balanceSheetId ) {
+    const balanceSheetId = Number.parseInt(params.balanceSheetId);
+    const auditBalanceSheet = await apiClient.getBalanceSheetItem(balanceSheetId);
+    balanceSheetItems = [ auditBalanceSheet ];
+    const auditOrganization = await apiClient.getOrganizationItem(orgaId);
+    organizationItems = [ auditOrganization ];
+  }
+
+  return { activeOrganizationId: orgaId, organizationItems, balanceSheetItems, isMemberOfCertificationAuthority };
 }
 
 export async function action(

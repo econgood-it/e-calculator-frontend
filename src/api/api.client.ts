@@ -7,6 +7,7 @@ import wretch, {
 
 import {
   OrganizationItemsResponseSchema,
+  OrganizationItemResponseSchema,
   OrganizationResponseSchema,
 } from '@ecogood/e-calculator-schemas/dist/organization.dto';
 import {
@@ -17,6 +18,7 @@ import {
 } from '../models/BalanceSheet';
 import {
   BalanceSheetItemsResponseSchema,
+  BalanceSheetItemResponseSchema,
   BalanceSheetResponseBodySchema,
 } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { WorkbookResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/workbook.dto';
@@ -27,6 +29,7 @@ import { IndustryResponseBodySchema } from '@ecogood/e-calculator-schemas/dist/i
 import {
   Organization,
   OrganizationItems,
+  OrganizationItem,
   OrganizationRequestBody,
 } from '../models/Organization';
 import { MatrixBodySchema } from '@ecogood/e-calculator-schemas/dist/matrix.dto';
@@ -43,6 +46,7 @@ import { makeWorkbook, Workbook } from '../models/Workbook.ts';
 import { Audit } from '../models/Audit.ts';
 import {
   AuditSubmitResponseBodySchema,
+  AuditSearchResponseBodySchema,
   CertificationAuthorityNames,
 } from '@ecogood/e-calculator-schemas/dist/audit.dto';
 import QueryAddon from 'wretch/addons/queryString';
@@ -177,6 +181,11 @@ export class ApiClient {
     return OrganizationItemsResponseSchema.parse(await response.json());
   }
 
+  async getOrganizationItem(id: number): Promise<OrganizationItem> {
+    const response = await this.wretchInstance.get(`/organization/${id}`);
+    return OrganizationItemResponseSchema.parse(await response.json());
+  }
+
   async getOrganization(id: number): Promise<Organization> {
     const response = await this.wretchInstance.get(`/organization/${id}`);
     return OrganizationResponseSchema.parse(await response.json());
@@ -200,6 +209,11 @@ export class ApiClient {
   async getBalanceSheet(id: number): Promise<BalanceSheet> {
     const response = await this.wretchInstance.get(`/balancesheets/${id}`);
     return BalanceSheetResponseBodySchema.parse(await response.json());
+  }
+
+  async getBalanceSheetItem(id: number): Promise<BalanceSheetItem> {
+    const response = await this.wretchInstance.get(`/balancesheets/${id}`);
+    return BalanceSheetItemResponseSchema.parse(await response.json());
   }
 
   async getBalanceSheetAsMatrix(id: number): Promise<Matrix> {
@@ -271,7 +285,7 @@ export class ApiClient {
       const response = await this.wretchInstance
         .query({ submittedBalanceSheetId: submittedBalanceSheetId, requestForAuditor: true })
         .get(`/audit`);
-      return AuditSubmitResponseBodySchema.parse(await response.json());
+      return AuditSearchResponseBodySchema.parse(await response.json());
     } catch (error: unknown) {
       if (isWretchError(error) && error.status === 404) {
         return undefined;

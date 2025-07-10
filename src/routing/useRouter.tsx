@@ -63,7 +63,7 @@ function ErrorPage() {
 }
 
 export function useRouter() {
-  const { userData } = useUser();
+  const { userData, isMemberOfCertificationAuthority } = useUser();
   const { lng } = useLanguage();
 /*   console.log( userData );
   console.log( isMemberOfCertificationAuthority() ); */
@@ -173,7 +173,7 @@ export function useRouter() {
         return Promise.all(
           matches.map((match) =>
             match.resolve(async (handler) => {
-              const result = await handler({ userData, lng });
+              const result = await handler({ userData, lng, isMemberOfCertificationAuthority });
               return { type: 'data', result };
             })
           )

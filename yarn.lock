@@ -189,10 +189,10 @@
     "@babel/helper-string-parser" "^7.25.9"
     "@babel/helper-validator-identifier" "^7.25.9"
 
-"@ecogood/e-calculator-schemas@^2.7.5":
-  version "2.7.5"
-  resolved "https://registry.yarnpkg.com/@ecogood/e-calculator-schemas/-/e-calculator-schemas-2.7.5.tgz#eb596188be1e7543d461f3b39316a7c6b67a8d00"
-  integrity sha512-6hxpCO4FScBpfkd10REk0bYUKKcdKl2z6qr+3Iq4wdRC6HnixAblcFLA1P0l15Fth/T8vMXzDmB7NJPyQxguyg==
+"@ecogood/e-calculator-schemas@^2.7.7":
+  version "2.7.7"
+  resolved "https://registry.yarnpkg.com/@ecogood/e-calculator-schemas/-/e-calculator-schemas-2.7.7.tgz#aeeca605e9d3ff81dd19bc2126763c35a59cf0c3"
+  integrity sha512-DpY8fPKL7V1Z5db8RfsC+lphjkEBKPzF/19s5NKRvb9fYM+/WMNcY4pZked7WJsAhMNRq7aOh/q2V152DbnrrQ==
   dependencies:
     zod "^3.23.8"
 
@@ -502,6 +502,7 @@
     prop-types "^15.8.1"
 
 "@mui/styled-engine-sc@^6.0.0-alpha.12", "@mui/styled-engine@^5.16.6", "@mui/styled-engine@npm:@mui/styled-engine-sc@latest":
+  name "@mui/styled-engine"
   version "6.1.8"
   resolved "https://registry.yarnpkg.com/@mui/styled-engine-sc/-/styled-engine-sc-6.1.8.tgz#cdd7af86397e412f5991870913eba51997290c20"
   integrity sha512-3IXRRWoaGUfFVsFRj9rpxFsIb9zIMewfGsehbc2d+1UwW5WtuKJFBavdOH6Lp8BH6ZJj0e5sxDKXocul428AcA==
