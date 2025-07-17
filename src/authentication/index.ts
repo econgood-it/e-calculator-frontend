@@ -16,9 +16,10 @@ export function useUser(): UserContext {
     const zitadelRoleKey = 'urn:zitadel:iam:org:project:roles';
     if (
       userData &&
-      Object.prototype.hasOwnProperty.call(userData, zitadelRoleKey)
+      Object.prototype.hasOwnProperty.call(userData.profile, zitadelRoleKey)
     ) {
       const roles = userData.profile[zitadelRoleKey];
+
       return !!(
         roles &&
         (Object.prototype.hasOwnProperty.call(roles, 'auditor') ||
@@ -27,6 +28,7 @@ export function useUser(): UserContext {
     }
     return false;
   }, [userData]);
+
   return {
     userData,
     isLoading,
