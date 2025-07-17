@@ -189,10 +189,10 @@
     "@babel/helper-string-parser" "^7.25.9"
     "@babel/helper-validator-identifier" "^7.25.9"
 
-"@ecogood/e-calculator-schemas@^2.7.7":
-  version "2.7.7"
-  resolved "https://registry.yarnpkg.com/@ecogood/e-calculator-schemas/-/e-calculator-schemas-2.7.7.tgz#aeeca605e9d3ff81dd19bc2126763c35a59cf0c3"
-  integrity sha512-DpY8fPKL7V1Z5db8RfsC+lphjkEBKPzF/19s5NKRvb9fYM+/WMNcY4pZked7WJsAhMNRq7aOh/q2V152DbnrrQ==
+"@ecogood/e-calculator-schemas@^2.7.13":
+  version "2.7.13"
+  resolved "https://registry.yarnpkg.com/@ecogood/e-calculator-schemas/-/e-calculator-schemas-2.7.13.tgz#6a0e87b6af41ceb4b3a9c126d354dad18a0714ec"
+  integrity sha512-URA14eUVmRm2mMlkFPjyKlMNuzfUPgL5unw9zg2AS+ypGjgwHsirjIzZjVD54RNMg7zgUgbnaP0NpB4+STYJFw==
   dependencies:
     zod "^3.23.8"
 

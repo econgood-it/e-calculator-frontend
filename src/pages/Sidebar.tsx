@@ -126,9 +126,9 @@ export async function loader(
 
   if( isMemberOfCertificationAuthority && params.balanceSheetId ) {
     const balanceSheetId = Number.parseInt(params.balanceSheetId);
-    const auditBalanceSheet = await apiClient.getBalanceSheetItem(balanceSheetId);
+    const auditBalanceSheet = await apiClient.getBalanceSheet(balanceSheetId);
     balanceSheetItems = [ auditBalanceSheet ];
-    const auditOrganization = await apiClient.getOrganizationItem(orgaId);
+    const auditOrganization = await apiClient.getOrganization(orgaId);
     organizationItems = [ auditOrganization ];
   }
 
