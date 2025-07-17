@@ -21,7 +21,6 @@ import {
 import GridContainer from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
 import { OrganizationCreationDialog } from './OrganizationCreationDialog';
-import { useUser } from '../../authentication/index.ts';
 
 type OrganizationSidebarSectionProps = {
   organizationItems: OrganizationItems;
@@ -34,7 +33,7 @@ export function OrganizationSidebarSection({
   organizationItems,
   activeOrganizationId,
   onCreateClicked,
-  isMemberOfCertificationAuthority
+  isMemberOfCertificationAuthority,
 }: OrganizationSidebarSectionProps) {
   const [organizationDialogOpen, setOrganizationDialogOpen] =
     useState<boolean>(false);
@@ -59,30 +58,30 @@ export function OrganizationSidebarSection({
               </ListSubheader>
             }
           >
-            { !isMemberOfCertificationAuthority ? (
-            <ListItem disablePadding>
-              <ListItemButton
-                selected={matchOrgaView !== null}
-                component={Link}
-                to={`/organization/${activeOrganizationId}/overview`}
-              >
-                <ListItemIcon>
-                  <FontAwesomeIcon icon={faHouse} />
-                </ListItemIcon>
-                <ListItemText primary={<Trans>Overview</Trans>} />
-              </ListItemButton>
-            </ListItem>
-            ) : null }
-            { !isMemberOfCertificationAuthority ? (
-            <ListItem key={'create-organization'} disablePadding>
-              <ListItemButton onClick={() => setOrganizationDialogOpen(true)}>
-                <ListItemIcon>
-                  <FontAwesomeIcon icon={faPlus} />
-                </ListItemIcon>
-                <ListItemText primary={<Trans>Create organization</Trans>} />
-              </ListItemButton>
-            </ListItem>
-            ) : null }
+            {!isMemberOfCertificationAuthority ? (
+              <ListItem disablePadding>
+                <ListItemButton
+                  selected={matchOrgaView !== null}
+                  component={Link}
+                  to={`/organization/${activeOrganizationId}/overview`}
+                >
+                  <ListItemIcon>
+                    <FontAwesomeIcon icon={faHouse} />
+                  </ListItemIcon>
+                  <ListItemText primary={<Trans>Overview</Trans>} />
+                </ListItemButton>
+              </ListItem>
+            ) : null}
+            {!isMemberOfCertificationAuthority ? (
+              <ListItem key={'create-organization'} disablePadding>
+                <ListItemButton onClick={() => setOrganizationDialogOpen(true)}>
+                  <ListItemIcon>
+                    <FontAwesomeIcon icon={faPlus} />
+                  </ListItemIcon>
+                  <ListItemText primary={<Trans>Create organization</Trans>} />
+                </ListItemButton>
+              </ListItem>
+            ) : null}
             {
               <ListItem key={'select-organization'}>
                 <Select

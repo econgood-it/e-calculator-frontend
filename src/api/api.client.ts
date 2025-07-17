@@ -42,13 +42,11 @@ import { makeWorkbook, Workbook } from '../models/Workbook.ts';
 
 import { Audit } from '../models/Audit.ts';
 import {
-  AuditSubmitResponseBodySchema,
-  AuditSearchResponseBodySchema,
   AuditFullResponseBodySchema,
+  AuditSubmitResponseBodySchema,
   CertificationAuthorityNames,
 } from '@ecogood/e-calculator-schemas/dist/audit.dto';
-import QueryAddon from 'wretch/addons/queryString';
-import { QueryStringAddon } from 'wretch/addons/queryString';
+import QueryAddon, { QueryStringAddon } from 'wretch/addons/queryString';
 
 function language(language: string) {
   return function (
@@ -251,12 +249,15 @@ export class ApiClient {
   }
 
   async findAuditByBalanceSheet(
-    submittedBalanceSheetId: number
+    balanceSheetId: number,
+    searchBy: 'submittedBalanceSheetId' | 'auditCopyId'
   ): Promise<Audit | undefined> {
+    const query =
+      searchBy === 'submittedBalanceSheetId'
+        ? { submittedBalanceSheetId: balanceSheetId }
+        : { auditCopyId: balanceSheetId };
     try {
-      const response = await this.wretchInstance
-        .query({ submittedBalanceSheetId: submittedBalanceSheetId })
-        .get(`/audit`);
+      const response = await this.wretchInstance.query(query).get(`/audit`);
       return AuditSubmitResponseBodySchema.parse(await response.json());
     } catch (error: unknown) {
       if (isWretchError(error) && error.status === 404) {
@@ -266,28 +267,9 @@ export class ApiClient {
     }
   }
 
-  async findAuditSubmittedId(
-    submittedBalanceSheetId: number
-  ): Promise<Audit | undefined> {
+  async getAudit(auditId: number): Promise<Audit | undefined> {
     try {
-      const response = await this.wretchInstance
-        .query({ submittedBalanceSheetId: submittedBalanceSheetId, requestForAuditor: true })
-        .get(`/audit`);
-      return AuditSearchResponseBodySchema.parse(await response.json());
-    } catch (error: unknown) {
-      if (isWretchError(error) && error.status === 404) {
-        return undefined;
-      }
-      throw error;
-    }
-  }
-
-  async getAudit(
-    auditId: number
-  ): Promise<Audit | undefined> {
-    try {
-      const response = await this.wretchInstance
-        .get(`/audit/${auditId}`);
+      const response = await this.wretchInstance.get(`/audit/${auditId}`);
       return AuditFullResponseBodySchema.parse(await response.json());
     } catch (error: unknown) {
       if (isWretchError(error) && error.status === 404) {

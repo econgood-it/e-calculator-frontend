@@ -14,20 +14,19 @@ import {
 } from '../../models/BalanceSheet';
 import { BalanceSheetCreationDialog } from './BalanceSheetCreationDialog';
 import { BalanceSheetNavigationItem } from './BalanceSheetNavigationItem';
-import { useUser } from '../../authentication/index.ts';
 
 type BalanceSheetSidebarSectionProps = {
   balanceSheetItems: BalanceSheetItem[];
   onCreateBalanceSheet: (
     balanceSheet: BalanceSheetCreateRequestBody
   ) => Promise<void>;
-  isMemberOfCertificationAuthority?: boolean;
+  isMemberOfCertificationAuthority: boolean;
 };
 
 export function BalanceSheetSidebarSection({
   balanceSheetItems,
   onCreateBalanceSheet,
-  isMemberOfCertificationAuthority
+  isMemberOfCertificationAuthority,
 }: BalanceSheetSidebarSectionProps) {
   const [showBalanceSheetCreationDialog, setShowBalanceSheetCreationDialog] =
     useState<boolean>(false);
@@ -42,21 +41,25 @@ export function BalanceSheetSidebarSection({
         }
       >
         {!isMemberOfCertificationAuthority ? (
-        <ListItem key={'create-balance-sheet'} disablePadding>
-          <ListItemButton
-            onClick={() => setShowBalanceSheetCreationDialog(true)}
-          >
-            <ListItemIcon>
-              <FontAwesomeIcon icon={faPlus} />
-            </ListItemIcon>
-            <ListItemText primary={<Trans>Create balance sheet</Trans>} />
-          </ListItemButton>
-        </ListItem>
-        ) : null }
+          <ListItem key={'create-balance-sheet'} disablePadding>
+            <ListItemButton
+              onClick={() => setShowBalanceSheetCreationDialog(true)}
+            >
+              <ListItemIcon>
+                <FontAwesomeIcon icon={faPlus} />
+              </ListItemIcon>
+              <ListItemText primary={<Trans>Create balance sheet</Trans>} />
+            </ListItemButton>
+          </ListItem>
+        ) : null}
       </List>
       <List component="nav">
         {balanceSheetItems.map((b) => (
-          <BalanceSheetNavigationItem key={b.id} balanceSheetItem={b} isMemberOfCertificationAuthority={isMemberOfCertificationAuthority} />
+          <BalanceSheetNavigationItem
+            key={b.id}
+            balanceSheetItem={b}
+            isMemberOfCertificationAuthority={isMemberOfCertificationAuthority}
+          />
         ))}
       </List>
       <BalanceSheetCreationDialog

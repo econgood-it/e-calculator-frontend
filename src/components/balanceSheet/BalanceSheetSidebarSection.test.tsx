@@ -18,6 +18,7 @@ describe('BalanceSheetSidebarSection', () => {
             <BalanceSheetSidebarSection
               balanceSheetItems={[]}
               onCreateBalanceSheet={onCreateBalanceSheet}
+              isMemberOfCertificationAuthority={false}
             />
           ),
         },
@@ -53,6 +54,7 @@ describe('BalanceSheetSidebarSection', () => {
             <BalanceSheetSidebarSection
               balanceSheetItems={[]}
               onCreateBalanceSheet={onCreateBalanceSheet}
+              isMemberOfCertificationAuthority={false}
             />
           ),
         },

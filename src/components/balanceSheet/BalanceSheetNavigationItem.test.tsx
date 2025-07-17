@@ -27,6 +27,7 @@ describe('BalanceSheetNavigationItem', () => {
                   version: BalanceSheetVersion.v5_1_0,
                   type: BalanceSheetType.Full,
                 }}
+                isMemberOfCertificationAuthority={false}
               />
             }
           />

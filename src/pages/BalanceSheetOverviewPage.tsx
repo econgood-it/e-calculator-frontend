@@ -90,17 +90,17 @@ export function BalanceSheetOverviewPage() {
                       </GridItem>
                     </>
                   ) : !data.isMemberOfCertificationAuthority ? (
-                      <>
-                        <GridItem>
-                          <CertificationAuthoritySplitButton
-                            onSubmit={(authority) =>
-                              onBalanceSheetSubmit(authority)
-                            }
-                          />
-                        </GridItem>
-                        <GridItem></GridItem>
-                      </>
-                  ) : null }
+                    <>
+                      <GridItem>
+                        <CertificationAuthoritySplitButton
+                          onSubmit={(authority) =>
+                            onBalanceSheetSubmit(authority)
+                          }
+                        />
+                      </GridItem>
+                      <GridItem></GridItem>
+                    </>
+                  ) : null}
                 </GridContainer>
               </CardContent>
             </Card>
@@ -118,7 +118,8 @@ export async function loader(
   { params }: LoaderFunctionArgs,
   handlerCtx: unknown
 ) {
-  const { userData, isMemberOfCertificationAuthority, lng } = handlerCtx as HandlerContext;
+  const { userData, isMemberOfCertificationAuthority, lng } =
+    handlerCtx as HandlerContext;
   if (!userData) {
     return null;
   }
@@ -129,7 +130,12 @@ export async function loader(
   const balanceSheetId = Number(params.balanceSheetId);
   return {
     matrix: await apiClient.getBalanceSheetAsMatrix(balanceSheetId),
-    audit: isMemberOfCertificationAuthority ? await apiClient.findAuditSubmittedId(balanceSheetId) : await apiClient.findAuditByBalanceSheet(balanceSheetId),
+    audit: isMemberOfCertificationAuthority
+      ? await apiClient.findAuditByBalanceSheet(balanceSheetId, 'auditCopyId')
+      : await apiClient.findAuditByBalanceSheet(
+          balanceSheetId,
+          'submittedBalanceSheetId'
+        ),
     isMemberOfCertificationAuthority: isMemberOfCertificationAuthority,
   };
 }

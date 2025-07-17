@@ -144,11 +144,21 @@ describe('loader', () => {
         params: { balanceSheetId: '3' },
         request: new Request(new URL('http://localhost')),
       },
-      { userData: { access_token: 'token' }, isMemberOfCertificationAuthority: false }
+      {
+        userData: { access_token: 'token' },
+        isMemberOfCertificationAuthority: false,
+      }
     );
-    expect(result).toEqual({ matrix, audit, isMemberOfCertificationAuthority: false });
+    expect(result).toEqual({
+      matrix,
+      audit,
+      isMemberOfCertificationAuthority: false,
+    });
     expect(mockApi.getBalanceSheetAsMatrix).toHaveBeenCalledWith(3);
-    expect(mockApi.findAuditByBalanceSheet).toHaveBeenCalledWith(3);
+    expect(mockApi.findAuditByBalanceSheet).toHaveBeenCalledWith(
+      3,
+      'submittedBalanceSheetId'
+    );
   });
 });
 

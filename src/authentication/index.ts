@@ -10,15 +10,27 @@ export type UserContext = {
   isMemberOfCertificationAuthority: boolean;
 };
 
-export function useUser() : UserContext {
+export function useUser(): UserContext {
   const { userData, isLoading, signOutRedirect } = useAuth();
   const isMemberOfCertificationAuthority = useMemo(() => {
     const zitadelRoleKey = 'urn:zitadel:iam:org:project:roles';
-    if (userData?.profile?.hasOwnProperty( zitadelRoleKey ) ) {
+    if (
+      userData &&
+      Object.prototype.hasOwnProperty.call(userData, zitadelRoleKey)
+    ) {
       const roles = userData.profile[zitadelRoleKey];
-      return ( roles?.hasOwnProperty('auditor') || roles?.hasOwnProperty('peer') )?? false;
+      return !!(
+        roles &&
+        (Object.prototype.hasOwnProperty.call(roles, 'auditor') ||
+          Object.prototype.hasOwnProperty.call(roles, 'peer'))
+      );
     }
     return false;
-  }, [userData?.profile]);
-  return { userData, isLoading, signOutRedirect, isMemberOfCertificationAuthority };
+  }, [userData]);
+  return {
+    userData,
+    isLoading,
+    signOutRedirect,
+    isMemberOfCertificationAuthority,
+  };
 }
