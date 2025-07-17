@@ -16,6 +16,7 @@ export function useUser(): UserContext {
     const zitadelRoleKey = 'urn:zitadel:iam:org:project:roles';
     if (
       userData &&
+      userData.profile &&
       Object.prototype.hasOwnProperty.call(userData.profile, zitadelRoleKey)
     ) {
       const roles = userData.profile[zitadelRoleKey];
