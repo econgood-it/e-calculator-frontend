@@ -12,6 +12,29 @@ import {
 } from 'react-router-dom';
 import { CertificationAuthorityNames } from '../../../e-calculator-schemas/src/audit.dto.ts';
 import { AuditMockBuilder } from '../testUtils/balanceSheets.ts';
+import { AuthProvider, AuthProviderProps } from 'oidc-react';
+import { AUTHORITY, CLIENT_ID, FRONTEND_URL } from '../configuration';
+
+const storeLastPath = () => {
+  const currentPath = window.location.pathname;
+  sessionStorage.setItem('lastPath', currentPath);
+};
+
+const oidcConfig: AuthProviderProps = {
+  authority: AUTHORITY,
+  clientId: CLIENT_ID,
+  responseType: 'code',
+  redirectUri: FRONTEND_URL,
+  scope: 'openid email profile',
+  onBeforeSignIn: () => {
+    storeLastPath();
+  },
+  onSignIn: () => {
+    const lastPath = sessionStorage.getItem('lastPath') || '/';
+    sessionStorage.removeItem('lastPath'); // Clean up
+    window.location.href = lastPath;
+  },
+};
 
 describe('BalanceSheetOverviewPage', () => {
   it('renders overview page', async () => {
@@ -21,7 +44,7 @@ describe('BalanceSheetOverviewPage', () => {
       [
         {
           path: '/balancesheet/1/overview',
-          element: <BalanceSheetOverviewPage />,
+          element: <AuthProvider {...oidcConfig}><BalanceSheetOverviewPage /></AuthProvider>,
           loader: () => ({
             matrix: mockedMatrix,
             audit,
@@ -55,7 +78,7 @@ describe('BalanceSheetOverviewPage', () => {
       [
         {
           path: '/balancesheet/1/overview',
-          element: <BalanceSheetOverviewPage />,
+          element: <AuthProvider {...oidcConfig}><BalanceSheetOverviewPage /></AuthProvider >,
           loader: () => ({
             matrix: mockedMatrix,
           }),
@@ -86,7 +109,7 @@ describe('BalanceSheetOverviewPage', () => {
       [
         {
           path: '/balancesheet/1/overview',
-          element: <BalanceSheetOverviewPage />,
+          element: <AuthProvider {...oidcConfig}><BalanceSheetOverviewPage /></AuthProvider>,
           loader: () => ({
             matrix: mockedMatrix,
           }),

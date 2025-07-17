@@ -9,7 +9,6 @@ import { Trans } from 'react-i18next';
 import Collapse from '@mui/material/Collapse';
 import BalanceSheetSubNavigation from './BalanceSheetSubNavigation';
 import { BalanceSheetItem } from '../../models/BalanceSheet';
-import { useUser } from '../../authentication/index.ts';
 
 type BalanceSheetNavigationItemProps = {
   balanceSheetItem: BalanceSheetItem;

@@ -121,18 +121,9 @@ export async function loader(
   { params }: LoaderFunctionArgs,
   handlerCtx: unknown
 ) {
-  const { userData, lng } = handlerCtx as HandlerContext;
+  const { userData, isMemberOfCertificationAuthority, lng } = handlerCtx as HandlerContext;
   if (!userData) {
     return null;
-  }
-
-  var isMemberOfCertificationAuthority = false;
-  const zitadelRoleKey = 'urn:zitadel:iam:org:project:roles';
-  if (userData?.profile?.hasOwnProperty( zitadelRoleKey ) ) {
-    const roles = userData.profile[zitadelRoleKey];
-    if (roles?.hasOwnProperty('auditor') || roles?.hasOwnProperty('peer')) {
-      isMemberOfCertificationAuthority = true;
-    }
   }
 
   const apiClient = createApiClient(
