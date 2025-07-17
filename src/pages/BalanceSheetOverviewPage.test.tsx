@@ -12,29 +12,6 @@ import {
 } from 'react-router-dom';
 import { CertificationAuthorityNames } from '../../../e-calculator-schemas/src/audit.dto.ts';
 import { AuditMockBuilder } from '../testUtils/balanceSheets.ts';
-import { AuthProvider, AuthProviderProps } from 'oidc-react';
-import { AUTHORITY, CLIENT_ID, FRONTEND_URL } from '../configuration';
-
-const storeLastPath = () => {
-  const currentPath = window.location.pathname;
-  sessionStorage.setItem('lastPath', currentPath);
-};
-
-const oidcConfig: AuthProviderProps = {
-  authority: AUTHORITY,
-  clientId: CLIENT_ID,
-  responseType: 'code',
-  redirectUri: FRONTEND_URL,
-  scope: 'openid email profile',
-  onBeforeSignIn: () => {
-    storeLastPath();
-  },
-  onSignIn: () => {
-    const lastPath = sessionStorage.getItem('lastPath') || '/';
-    sessionStorage.removeItem('lastPath'); // Clean up
-    window.location.href = lastPath;
-  },
-};
 
 describe('BalanceSheetOverviewPage', () => {
   it('renders overview page', async () => {
@@ -44,10 +21,11 @@ describe('BalanceSheetOverviewPage', () => {
       [
         {
           path: '/balancesheet/1/overview',
-          element: <AuthProvider {...oidcConfig}><BalanceSheetOverviewPage /></AuthProvider>,
+          element: <BalanceSheetOverviewPage />,
           loader: () => ({
             matrix: mockedMatrix,
             audit,
+            isMemberOfCertificationAuthority: false,
           }),
         },
       ],
@@ -78,9 +56,10 @@ describe('BalanceSheetOverviewPage', () => {
       [
         {
           path: '/balancesheet/1/overview',
-          element: <AuthProvider {...oidcConfig}><BalanceSheetOverviewPage /></AuthProvider >,
+          element: <BalanceSheetOverviewPage />,
           loader: () => ({
             matrix: mockedMatrix,
+            isMemberOfCertificationAuthority: false,
           }),
           action: async ({ request }: ActionFunctionArgs) =>
             action(await request.json()),
@@ -109,9 +88,10 @@ describe('BalanceSheetOverviewPage', () => {
       [
         {
           path: '/balancesheet/1/overview',
-          element: <AuthProvider {...oidcConfig}><BalanceSheetOverviewPage /></AuthProvider>,
+          element: <BalanceSheetOverviewPage />,
           loader: () => ({
             matrix: mockedMatrix,
+            isMemberOfCertificationAuthority: false,
           }),
           action: async ({ request }: ActionFunctionArgs) =>
             action(await request.json()),
@@ -164,9 +144,9 @@ describe('loader', () => {
         params: { balanceSheetId: '3' },
         request: new Request(new URL('http://localhost')),
       },
-      { userData: { access_token: 'token' } }
+      { userData: { access_token: 'token' }, isMemberOfCertificationAuthority: false }
     );
-    expect(result).toEqual({ matrix, audit });
+    expect(result).toEqual({ matrix, audit, isMemberOfCertificationAuthority: false });
     expect(mockApi.getBalanceSheetAsMatrix).toHaveBeenCalledWith(3);
     expect(mockApi.findAuditByBalanceSheet).toHaveBeenCalledWith(3);
   });
