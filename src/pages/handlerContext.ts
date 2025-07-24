@@ -1,3 +1,3 @@
 import { User } from 'oidc-react';
 
-export type HandlerContext = { userData: User; lng: string };
+export type HandlerContext = { userData: User; lng: string; isMemberOfCertificationAuthority: boolean };

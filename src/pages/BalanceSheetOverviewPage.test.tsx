@@ -10,7 +10,7 @@ import {
   createMemoryRouter,
   RouterProvider,
 } from 'react-router-dom';
-import { CertificationAuthorityNames } from '../../../e-calculator-schemas/dist/audit.dto';
+import { CertificationAuthorityNames } from '../../../e-calculator-schemas/src/audit.dto.ts';
 import { AuditMockBuilder } from '../testUtils/balanceSheets.ts';
 
 describe('BalanceSheetOverviewPage', () => {
@@ -25,6 +25,7 @@ describe('BalanceSheetOverviewPage', () => {
           loader: () => ({
             matrix: mockedMatrix,
             audit,
+            isMemberOfCertificationAuthority: false,
           }),
         },
       ],
@@ -58,6 +59,7 @@ describe('BalanceSheetOverviewPage', () => {
           element: <BalanceSheetOverviewPage />,
           loader: () => ({
             matrix: mockedMatrix,
+            isMemberOfCertificationAuthority: false,
           }),
           action: async ({ request }: ActionFunctionArgs) =>
             action(await request.json()),
@@ -89,6 +91,7 @@ describe('BalanceSheetOverviewPage', () => {
           element: <BalanceSheetOverviewPage />,
           loader: () => ({
             matrix: mockedMatrix,
+            isMemberOfCertificationAuthority: false,
           }),
           action: async ({ request }: ActionFunctionArgs) =>
             action(await request.json()),
@@ -141,11 +144,21 @@ describe('loader', () => {
         params: { balanceSheetId: '3' },
         request: new Request(new URL('http://localhost')),
       },
-      { userData: { access_token: 'token' } }
+      {
+        userData: { access_token: 'token' },
+        isMemberOfCertificationAuthority: false,
+      }
     );
-    expect(result).toEqual({ matrix, audit });
+    expect(result).toEqual({
+      matrix,
+      audit,
+      isMemberOfCertificationAuthority: false,
+    });
     expect(mockApi.getBalanceSheetAsMatrix).toHaveBeenCalledWith(3);
-    expect(mockApi.findAuditByBalanceSheet).toHaveBeenCalledWith(3);
+    expect(mockApi.findAuditByBalanceSheet).toHaveBeenCalledWith(
+      3,
+      'submittedBalanceSheetId'
+    );
   });
 });
 

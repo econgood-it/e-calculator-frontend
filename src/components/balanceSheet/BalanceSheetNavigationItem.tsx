@@ -12,10 +12,12 @@ import { BalanceSheetItem } from '../../models/BalanceSheet';
 
 type BalanceSheetNavigationItemProps = {
   balanceSheetItem: BalanceSheetItem;
+  isMemberOfCertificationAuthority: boolean;
 };
 
 export const BalanceSheetNavigationItem = ({
   balanceSheetItem,
+  isMemberOfCertificationAuthority
 }: BalanceSheetNavigationItemProps) => {
   const [open, setOpen] = useState(false);
   const { balanceSheetId } = useParams();
@@ -29,7 +31,7 @@ export const BalanceSheetNavigationItem = ({
     setOpen(!open);
   };
 
-  return (
+  return !isMemberOfCertificationAuthority || ( isMemberOfCertificationAuthority && isSelected ) ? (
     <div>
       <ListItem disablePadding>
         <ListItemButton
@@ -56,5 +58,5 @@ export const BalanceSheetNavigationItem = ({
         <BalanceSheetSubNavigation balanceSheetItem={balanceSheetItem} />
       </Collapse>
     </div>
-  );
+  ) : null;
 };

@@ -395,7 +395,10 @@ describe('ApiClient', () => {
         `${URL}/v1/audit?submittedBalanceSheetId=${balanceSheetId}`,
         new Response(JSON.stringify({ message: 'error' }), { status: 404 })
       );
-      const response = await apiClient.findAuditByBalanceSheet(balanceSheetId);
+      const response = await apiClient.findAuditByBalanceSheet(
+        balanceSheetId,
+        'submittedBalanceSheetId'
+      );
       expect(response).toBeUndefined();
     });
   });

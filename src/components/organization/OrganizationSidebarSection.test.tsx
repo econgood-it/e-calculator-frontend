@@ -20,6 +20,7 @@ describe('OrganizationSidebarSection', () => {
               onCreateClicked={onCreateClicked}
               activeOrganizationId={3}
               organizationItems={OrganizationItemsMocks.default()}
+              isMemberOfCertificationAuthority={false}
             />
           ),
         },

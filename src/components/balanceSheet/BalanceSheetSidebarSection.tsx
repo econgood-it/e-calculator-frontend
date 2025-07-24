@@ -20,14 +20,17 @@ type BalanceSheetSidebarSectionProps = {
   onCreateBalanceSheet: (
     balanceSheet: BalanceSheetCreateRequestBody
   ) => Promise<void>;
+  isMemberOfCertificationAuthority: boolean;
 };
 
 export function BalanceSheetSidebarSection({
   balanceSheetItems,
   onCreateBalanceSheet,
+  isMemberOfCertificationAuthority,
 }: BalanceSheetSidebarSectionProps) {
   const [showBalanceSheetCreationDialog, setShowBalanceSheetCreationDialog] =
     useState<boolean>(false);
+
   return (
     <>
       <List
@@ -37,20 +40,26 @@ export function BalanceSheetSidebarSection({
           </ListSubheader>
         }
       >
-        <ListItem key={'create-balance-sheet'} disablePadding>
-          <ListItemButton
-            onClick={() => setShowBalanceSheetCreationDialog(true)}
-          >
-            <ListItemIcon>
-              <FontAwesomeIcon icon={faPlus} />
-            </ListItemIcon>
-            <ListItemText primary={<Trans>Create balance sheet</Trans>} />
-          </ListItemButton>
-        </ListItem>
+        {!isMemberOfCertificationAuthority ? (
+          <ListItem key={'create-balance-sheet'} disablePadding>
+            <ListItemButton
+              onClick={() => setShowBalanceSheetCreationDialog(true)}
+            >
+              <ListItemIcon>
+                <FontAwesomeIcon icon={faPlus} />
+              </ListItemIcon>
+              <ListItemText primary={<Trans>Create balance sheet</Trans>} />
+            </ListItemButton>
+          </ListItem>
+        ) : null}
       </List>
       <List component="nav">
         {balanceSheetItems.map((b) => (
-          <BalanceSheetNavigationItem key={b.id} balanceSheetItem={b} />
+          <BalanceSheetNavigationItem
+            key={b.id}
+            balanceSheetItem={b}
+            isMemberOfCertificationAuthority={isMemberOfCertificationAuthority}
+          />
         ))}
       </List>
       <BalanceSheetCreationDialog

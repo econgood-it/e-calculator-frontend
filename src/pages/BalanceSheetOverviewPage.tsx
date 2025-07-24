@@ -89,7 +89,7 @@ export function BalanceSheetOverviewPage() {
                         >{`${data.audit.id.toFixed(0)}`}</BigNumber>
                       </GridItem>
                     </>
-                  ) : (
+                  ) : !data.isMemberOfCertificationAuthority ? (
                     <>
                       <GridItem>
                         <CertificationAuthoritySplitButton
@@ -100,7 +100,7 @@ export function BalanceSheetOverviewPage() {
                       </GridItem>
                       <GridItem></GridItem>
                     </>
-                  )}
+                  ) : null}
                 </GridContainer>
               </CardContent>
             </Card>
@@ -118,17 +118,25 @@ export async function loader(
   { params }: LoaderFunctionArgs,
   handlerCtx: unknown
 ) {
-  const { userData, lng } = handlerCtx as HandlerContext;
+  const { userData, isMemberOfCertificationAuthority, lng } =
+    handlerCtx as HandlerContext;
   if (!userData) {
     return null;
   }
+
   const apiClient = createApiClient(
     makeWretchInstanceWithAuth(API_URL, userData!.access_token, lng)
   );
   const balanceSheetId = Number(params.balanceSheetId);
   return {
     matrix: await apiClient.getBalanceSheetAsMatrix(balanceSheetId),
-    audit: await apiClient.findAuditByBalanceSheet(balanceSheetId),
+    audit: isMemberOfCertificationAuthority
+      ? await apiClient.findAuditByBalanceSheet(balanceSheetId, 'auditCopyId')
+      : await apiClient.findAuditByBalanceSheet(
+          balanceSheetId,
+          'submittedBalanceSheetId'
+        ),
+    isMemberOfCertificationAuthority: isMemberOfCertificationAuthority,
   };
 }
 

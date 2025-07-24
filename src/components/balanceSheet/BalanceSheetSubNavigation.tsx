@@ -18,7 +18,7 @@ import {
 } from '../../api/api.client.ts';
 import { API_URL } from '../../configuration.ts';
 import { useLanguage } from '../../i18n.ts';
-import { useAuth } from 'oidc-react';
+import { useUser } from '../../authentication/index.ts';
 import { Workbook } from '../../models/Workbook.ts';
 import { StakholderShortNames } from '../../models/Rating.ts';
 
@@ -63,7 +63,7 @@ const BalanceSheetSubNavigation = ({
     `organization/:id/balancesheet/${balanceSheetItem.id}/:navItem`
   );
   const { lng } = useLanguage();
-  const { userData } = useAuth();
+  const { userData } = useUser();
   const [workbook, setWorkbook] = useState<Workbook | undefined>();
 
   useEffect(() => {
