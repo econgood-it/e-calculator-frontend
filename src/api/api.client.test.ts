@@ -401,5 +401,18 @@ describe('ApiClient', () => {
       );
       expect(response).toBeUndefined();
     });
+
+    it('does delete audit', async () => {
+      const auditId = 9;
+
+      mockResource(
+        'delete',
+        `${URL}/v1/audit/${auditId}`,
+        new Response(JSON.stringify({ message: 'Successful deletion' }), {
+          status: 200,
+        })
+      );
+      await apiClient.deleteAudit(auditId);
+    });
   });
 });
