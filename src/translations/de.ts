@@ -108,5 +108,8 @@ export const DE_TRANSLATIONS = {
   'Peer-Group process number': 'Peer-Gruppen Prozessnummer',
   'Submit to audit': 'Zum Auditprozess einreichen',
   'Submit to peer-group': 'Zum Peer-Gruppenprozess einreichen',
+  'Reset audit process': 'Auditprozess zurücksetzen',
+  'Once you reset a audit process, there is no going back. Please be certain.':
+    'Wenn Sie einen Auditprozess einmal zurückgesetz haben, gibt es kein Zurück mehr. Bitte seien Sie sicher.',
   ...DE_ERROR_TRANSLATIONS,
 };

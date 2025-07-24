@@ -3,7 +3,19 @@ import GridContainer, {
   FormContainer,
 } from '../components/layout/GridContainer';
 import GridItem from '../components/layout/GridItem';
-import { Avatar, Card, CardContent, Typography, useTheme } from '@mui/material';
+import {
+  Avatar,
+  Button,
+  Card,
+  CardContent,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Typography,
+  useTheme,
+} from '@mui/material';
 import { Trans } from 'react-i18next';
 import {
   ActionFunctionArgs,
@@ -16,15 +28,26 @@ import {
   makeWretchInstanceWithAuth,
 } from '../api/api.client.ts';
 import { API_URL } from '../configuration.ts';
-import { useLoaderData } from 'react-router-typesafe';
+import { redirect, useLoaderData } from 'react-router-typesafe';
 import { HandlerContext } from './handlerContext.ts';
 import { BigNumber } from '../components/lib/BigNumber.tsx';
 import { CertificationAuthorityNames } from '../../../e-calculator-schemas/src/audit.dto.ts';
 import { CertificationAuthoritySplitButton } from './CertificationAuthoritySplitButton.tsx';
+import { enqueueSnackbar } from 'notistack';
+import { useState } from 'react';
 
 export function BalanceSheetOverviewPage() {
   const theme = useTheme();
   const data = useLoaderData<typeof loader>();
+  const [open, setOpen] = useState<boolean>(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const submit = useSubmit();
   function onBalanceSheetSubmit(authority: CertificationAuthorityNames) {
@@ -35,6 +58,19 @@ export function BalanceSheetOverviewPage() {
       },
       {
         method: 'post',
+        encType: 'application/json',
+      }
+    );
+  }
+
+  function onResetAudit() {
+    submit(
+      {
+        intent: 'deleteAudit',
+        auditId: data!.audit!.id,
+      },
+      {
+        method: 'delete',
         encType: 'application/json',
       }
     );
@@ -88,6 +124,17 @@ export function BalanceSheetOverviewPage() {
                           $color={theme.palette.primary.main}
                         >{`${data.audit.id.toFixed(0)}`}</BigNumber>
                       </GridItem>
+                      {data.isMemberOfCertificationAuthority && (
+                        <GridItem>
+                          <Button
+                            variant={'outlined'}
+                            color={'error'}
+                            onClick={handleClickOpen}
+                          >
+                            <Trans>Reset audit process</Trans>
+                          </Button>
+                        </GridItem>
+                      )}
                     </>
                   ) : !data.isMemberOfCertificationAuthority ? (
                     <>
@@ -110,6 +157,32 @@ export function BalanceSheetOverviewPage() {
           </GridItem>
         </>
       )}
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle>
+          <Trans>Reset audit process</Trans>
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            <Trans>
+              Once you reset a audit process, there is no going back. Please be
+              certain.
+            </Trans>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>
+            <Trans>Cancel</Trans>
+          </Button>
+          <Button onClick={onResetAudit} autoFocus>
+            <Trans>Ok</Trans>
+          </Button>
+        </DialogActions>
+      </Dialog>
     </FormContainer>
   );
 }
@@ -144,8 +217,9 @@ export async function action(
   { params, request }: ActionFunctionArgs,
   handlerCtx: unknown
 ) {
-  const { intent, authority } = await request.json();
-  const { userData, lng } = handlerCtx as HandlerContext;
+  const { intent, ...rest } = await request.json();
+  const { userData, isMemberOfCertificationAuthority, lng } =
+    handlerCtx as HandlerContext;
 
   if (!userData || !params.balanceSheetId) {
     return null;
@@ -157,8 +231,27 @@ export async function action(
   if (intent === 'submitBalanceSheet') {
     return await apiClient.submitBalanceSheetToAudit(
       parseInt(params.balanceSheetId),
-      authority
+      rest.authority
     );
+  }
+
+  if (intent === 'deleteAudit') {
+    if (isMemberOfCertificationAuthority) {
+      await apiClient.deleteAudit(parseInt(rest.auditId));
+      const message =
+        lng === 'en'
+          ? `Successfully reset audit with id ${rest.auditId}`
+          : `Audit mit ID ${rest.auditId} erfolgreich zurückgesetzt.`;
+      enqueueSnackbar(message, {
+        variant: 'success',
+      });
+      return redirect(`/`);
+    } else {
+      throw json(
+        { message: 'You are not allowed to delete audits' },
+        { status: 403 }
+      );
+    }
   }
 
   throw json({ message: 'Invalid intent' }, { status: 400 });

@@ -278,4 +278,7 @@ export class ApiClient {
       throw error;
     }
   }
+  async deleteAudit(id: number) {
+    await this.wretchInstance.delete(`/audit/${id}`);
+  }
 }

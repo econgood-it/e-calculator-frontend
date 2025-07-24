@@ -95,6 +95,8 @@ const EN_WORDS = [
   'Peer-Group process number',
   'Submit to audit',
   'Submit to peer-group',
+  'Reset audit process',
+  'Once you reset a audit process, there is no going back. Please be certain.',
 ];
 
 export const EN_TRANSLATIONS = {

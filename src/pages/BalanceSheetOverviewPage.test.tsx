@@ -1,7 +1,7 @@
 import renderWithTheme from '../testUtils/rendering';
 import { BalanceSheetOverviewPage } from './BalanceSheetOverviewPage';
 import { MatrixMockBuilder } from '../testUtils/matrix';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { action, loader } from './BalanceSheetOverviewPage.tsx';
 import { setupApiMock } from '../testUtils/api.ts';
@@ -12,6 +12,7 @@ import {
 } from 'react-router-dom';
 import { CertificationAuthorityNames } from '../../../e-calculator-schemas/src/audit.dto.ts';
 import { AuditMockBuilder } from '../testUtils/balanceSheets.ts';
+import { auditFactory } from '../testUtils/audit.ts';
 
 describe('BalanceSheetOverviewPage', () => {
   it('renders overview page', async () => {
@@ -121,6 +122,45 @@ describe('BalanceSheetOverviewPage', () => {
       })
     );
   });
+
+  it('should reset audit', async () => {
+    const mockedMatrix = new MatrixMockBuilder().build();
+    const action = vi.fn().mockResolvedValue(null);
+    const mockAudit = auditFactory.build();
+    const router = createMemoryRouter(
+      [
+        {
+          path: '/balancesheet/1/overview',
+          element: <BalanceSheetOverviewPage />,
+          loader: () => ({
+            matrix: mockedMatrix,
+            isMemberOfCertificationAuthority: true,
+            audit: mockAudit,
+          }),
+          action: async ({ request }: ActionFunctionArgs) =>
+            action(await request.json()),
+        },
+      ],
+      { initialEntries: ['/balancesheet/1/overview'] }
+    );
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
+    const resetAuditButton = await screen.findByRole('button', {
+      name: 'Reset audit process',
+    });
+    await user.click(resetAuditButton);
+
+    const dialog = await screen.findByRole('dialog', {
+      name: 'Reset audit process',
+    });
+    await user.click(within(dialog).getByRole('button', { name: 'Ok' }));
+
+    await waitFor(() =>
+      expect(action).toHaveBeenCalledWith({
+        intent: 'deleteAudit',
+        auditId: mockAudit.id,
+      })
+    );
+  });
 });
 
 const mockApi = setupApiMock();
@@ -130,6 +170,18 @@ vi.mock('../api/api.client.ts', async () => {
   return {
     ...originalModule,
     createApiClient: () => mockApi,
+  };
+});
+
+const mocks = vi.hoisted(() => ({
+  mockEnqueueSnackbar: vi.fn(),
+}));
+
+vi.mock('notistack', async () => {
+  const originalModule = await vi.importActual('notistack');
+  return {
+    ...originalModule,
+    enqueueSnackbar: mocks.mockEnqueueSnackbar,
   };
 });
 
@@ -182,6 +234,37 @@ describe('actions', () => {
     expect(mockApi.submitBalanceSheetToAudit).toHaveBeenCalledWith(
       4,
       CertificationAuthorityNames.AUDIT
+    );
+  });
+
+  it('delete audit', async () => {
+    mockApi.deleteAudit.mockResolvedValue({ status: 200 });
+    const auditId = 4;
+    const request = new Request(new URL('http://localhost'), {
+      method: 'delete',
+      body: JSON.stringify({
+        intent: 'deleteAudit',
+        auditId,
+      }),
+    });
+
+    const result: Response = (await action(
+      { params: { orgaId: '1', balanceSheetId: '4' }, request },
+      {
+        userData: {
+          access_token: 'token',
+        },
+        isMemberOfCertificationAuthority: true,
+        lng: 'de',
+      }
+    )) as Response;
+
+    expect(mockApi.deleteAudit).toHaveBeenCalledWith(auditId);
+    expect(result!.status).toEqual(302);
+    expect(result!.headers.get('Location')).toEqual(`/`);
+    expect(mocks.mockEnqueueSnackbar).toHaveBeenCalledWith(
+      `Audit mit ID 4 erfolgreich zurückgesetzt.`,
+      { variant: 'success' }
     );
   });
 });
