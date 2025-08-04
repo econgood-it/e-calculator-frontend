@@ -2,7 +2,7 @@ import { DE_ERROR_TRANSLATIONS } from '@ecogood/e-calculator-schemas/dist/transl
 
 export const DE_TRANSLATIONS = {
   'Balance sheet {{id}}': 'Bilanz {{id}}',
-  'Company Facts': 'Fakten zum Unternehmen',
+  'Facts about the organisation': 'Fakten zur Organisation',
   Ratings: 'Selbsteinschätzung',
   Delete: 'Löschen',
   'Total purchases from suppliers': 'Gesamt-Ausgaben an Lieferanten',
@@ -42,8 +42,8 @@ export const DE_TRANSLATIONS = {
   'Amount in %': 'Anteil in %',
   'Are your customers mainly other companies?':
     'Haben Sie nahezu ausschließlich Unternehmen als Kunden?',
-  'Enter the 3 most important industry sectors which your company is active in, including a rough share of turnover':
-    'Tragen Sie nachstehend, bitte die 3 wichtigsten Branchen ein, in denen Ihr Unternehmen tätig ist, inklusive ungefährem Umsatzanteil',
+  'Enter the 3 most important industry sectors which your organization is active in, including a rough share of turnover':
+    'Tragen Sie nachstehend, bitte die 3 wichtigsten Branchen ein, in denen Ihre Organisation tätig ist, inklusive ungefährem Umsatzanteil',
   Turnover: 'Umsatz',
   Customers: 'Kund*nnen und Mitunternehmen',
   Estimation: 'Einschätzung',

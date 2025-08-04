@@ -2,7 +2,7 @@ import { EN_ERROR_TRANSLATIONS } from '@ecogood/e-calculator-schemas/dist/transl
 
 const EN_WORDS = [
   'Balance sheet {{id}}',
-  'Company Facts',
+  'Facts about the organisation',
   'Ratings',
   'Delete',
   'Total purchases from suppliers',
@@ -34,7 +34,7 @@ const EN_WORDS = [
   'Add employees origin',
   'Amount in %',
   'Are your customers mainly other companies?',
-  'Enter the 3 most important industry sectors which your company is active in, including a rough share of turnover',
+  'Enter the 3 most important industry sectors which your organization is active in, including a rough share of turnover',
   'Turnover',
   'Add industry sector',
   'Customers',

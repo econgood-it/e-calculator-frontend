@@ -109,7 +109,7 @@ const BalanceSheetSubNavigation = ({
           <ListItemIcon>
             <FontAwesomeIcon icon={faBuilding} />
           </ListItemIcon>
-          <ListItemText primary={<Trans>Company Facts</Trans>} />
+          <ListItemText primary={<Trans>Facts about the organisation</Trans>} />
         </ListItemButton>
       </ListItem>
       <GridItem xs={12}>

@@ -57,7 +57,7 @@ export function CustomersForm({
           <GridItem xs={12}>
             <Typography variant={'h2'}>
               <Trans>
-                Enter the 3 most important industry sectors which your company
+                Enter the 3 most important industry sectors which your organization
                 is active in, including a rough share of turnover
               </Trans>
             </Typography>
