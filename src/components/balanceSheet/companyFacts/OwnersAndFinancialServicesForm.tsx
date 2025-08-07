@@ -25,7 +25,7 @@ export function OwnersAndFinancialServicesForm({
               control={control}
               errors={errors}
               registerKey={'profit'}
-              label={t`Profit`}
+              label={t`EBIT (Earnings Before Interest and Taxes)`}
             />
           </GridItem>
           <GridItem xs={12} sm={4}>
