@@ -2,7 +2,7 @@ import { DE_ERROR_TRANSLATIONS } from '@ecogood/e-calculator-schemas/dist/transl
 
 export const DE_TRANSLATIONS = {
   'Balance sheet {{id}}': 'Bilanz {{id}}',
-  'Facts about the organisation': 'Fakten zur Organisation',
+  'Facts about the organization': 'Fakten zur Organisation',
   Ratings: 'Selbsteinschätzung',
   Delete: 'Löschen',
   'Total purchases from suppliers': 'Gesamt-Ausgaben an Lieferanten',

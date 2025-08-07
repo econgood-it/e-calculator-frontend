@@ -2,7 +2,7 @@ import { EN_ERROR_TRANSLATIONS } from '@ecogood/e-calculator-schemas/dist/transl
 
 const EN_WORDS = [
   'Balance sheet {{id}}',
-  'Facts about the organisation',
+  'Facts about the organization',
   'Ratings',
   'Delete',
   'Total purchases from suppliers',
