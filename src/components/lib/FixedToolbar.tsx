@@ -1,20 +1,12 @@
 import { faBars, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  AppBar,
-  Badge,
-  Chip,
-  MenuItem,
-  Popover,
-  Select,
-  useTheme,
-} from '@mui/material';
+import { AppBar, MenuItem, Popover, Select, useTheme } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { useUser } from '../../authentication/index.ts';
+import { useUser } from '../../authentication';
 import { MouseEvent, useState } from 'react';
 import { Trans } from 'react-i18next';
 import { Link } from 'react-router-dom';

@@ -385,8 +385,12 @@ describe('OwnersAndFinancialServicesForm', () => {
     });
   }
 
-  it('should modify profit field and save changes', async () => {
-    await shouldModifyFieldSaveResults('Profit', 'profit', false);
+  it('should modify EBIT (Earnings Before Interest and Taxes) field and save changes', async () => {
+    await shouldModifyFieldSaveResults(
+      'EBIT (Earnings Before Interest and Taxes)',
+      'profit',
+      false
+    );
   });
 
   it('should modify financial costs field and save changes', async () => {

@@ -128,7 +128,9 @@ describe('BalanceSheetSubNavigation', () => {
       </MemoryRouter>
     );
 
-    const companyFactsButton = await screen.findByText('Company Facts');
+    const companyFactsButton = await screen.findByText(
+      'Facts about the organization'
+    );
 
     await user.click(companyFactsButton);
 

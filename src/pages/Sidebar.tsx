@@ -22,7 +22,6 @@ import { API_URL } from '../configuration';
 import { OrganizationRequestBody } from '../models/Organization';
 import { BalanceSheetCreateRequestBody } from '../models/BalanceSheet.ts';
 import { HandlerContext } from './handlerContext.ts';
-import { Trans } from 'react-i18next';
 
 const DrawerWithFixedWidth = styled(Drawer)<{ $drawerWidth: number }>`
   & .MuiDrawer-paper {
