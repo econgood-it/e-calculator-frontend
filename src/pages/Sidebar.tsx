@@ -23,7 +23,6 @@ import { OrganizationRequestBody } from '../models/Organization';
 import { BalanceSheetCreateRequestBody } from '../models/BalanceSheet.ts';
 import { HandlerContext } from './handlerContext.ts';
 import { Trans } from 'react-i18next';
-import packageJson from '../../package.json';
 
 const DrawerWithFixedWidth = styled(Drawer)<{ $drawerWidth: number }>`
   & .MuiDrawer-paper {
@@ -40,8 +39,6 @@ export default function Sidebar() {
   const drawerWidth = 300;
   const [open, setOpen] = useState<boolean>(true);
   const submit = useSubmit();
-
-  const version = packageJson.version;
 
   async function createOrganization(organization: OrganizationRequestBody) {
     submit(
@@ -105,9 +102,6 @@ export default function Sidebar() {
             )}
           </GridItem>
         </GridContainer>
-        <Box sx={{ position: 'fixed', bottom: 0, width: 300, bgcolor: 'white', padding: '0 16px', fontSize: '0.875rem', zIndex: 1 }}>
-          <Trans>Version</Trans> {version}
-        </Box>
       </DrawerWithFixedWidth>
       <Box>
         <Toolbar />

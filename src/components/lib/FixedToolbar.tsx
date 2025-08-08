@@ -1,6 +1,14 @@
 import { faBars, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { AppBar, MenuItem, Popover, Select, useTheme } from '@mui/material';
+import {
+  AppBar,
+  Badge,
+  Chip,
+  MenuItem,
+  Popover,
+  Select,
+  useTheme,
+} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -12,6 +20,9 @@ import { Trans } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { useLanguage } from '../../i18n.ts';
+import packageJson from '../../../package.json';
+import GridContainer from '../layout/GridContainer.tsx';
+import GridItem from '../layout/GridItem.tsx';
 
 const FixedAppBar = styled(AppBar)`
   z-index: ${(props) => props.theme.zIndex.drawer + 1};
@@ -45,6 +56,7 @@ export function FixedToolbar({
   const { signOutRedirect } = useUser();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const { lng, changeLanguage } = useLanguage();
+  const version = packageJson.version;
 
   const openUserNavigationMenu = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -78,12 +90,19 @@ export function FixedToolbar({
             icon={faBars}
           />
         </IconButton>
-        <ApplicationName
-          variant="h3"
-          color={theme.palette.primary.contrastText}
-        >
-          <Trans>ECG Calculator</Trans>
-        </ApplicationName>
+        <GridContainer spacing={2} alignItems="bottom">
+          <GridItem>
+            <ApplicationName
+              variant="h3"
+              color={theme.palette.primary.contrastText}
+            >
+              <Trans>ECG Calculator</Trans>
+            </ApplicationName>
+          </GridItem>
+          <GridItem>
+            <Typography variant="h3">{version}</Typography>
+          </GridItem>
+        </GridContainer>
         <LanguageSelect
           variant={'standard'}
           disableUnderline={true}
