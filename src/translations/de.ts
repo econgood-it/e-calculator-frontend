@@ -111,5 +111,6 @@ export const DE_TRANSLATIONS = {
   'Reset audit process': 'Auditprozess zurücksetzen',
   'Once you reset a audit process, there is no going back. Please be certain.':
     'Wenn Sie einen Auditprozess einmal zurückgesetz haben, gibt es kein Zurück mehr. Bitte seien Sie sicher.',
+  'Version': 'Version',
   ...DE_ERROR_TRANSLATIONS,
 };

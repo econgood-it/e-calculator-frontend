@@ -22,6 +22,7 @@ import { API_URL } from '../configuration';
 import { OrganizationRequestBody } from '../models/Organization';
 import { BalanceSheetCreateRequestBody } from '../models/BalanceSheet.ts';
 import { HandlerContext } from './handlerContext.ts';
+import { Trans } from 'react-i18next';
 
 const DrawerWithFixedWidth = styled(Drawer)<{ $drawerWidth: number }>`
   & .MuiDrawer-paper {
@@ -89,7 +90,7 @@ export default function Sidebar() {
           <GridItem xs={12}>
             <Divider variant="middle" />
           </GridItem>
-          <GridItem xs={12}>
+          <GridItem xs={12} sx={{ paddingBottom: '16px' }}>
             {data && (
               <BalanceSheetSidebarSection
                 balanceSheetItems={data.balanceSheetItems}
