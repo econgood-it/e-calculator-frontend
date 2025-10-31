@@ -14,6 +14,8 @@ import {
   BalanceSheetVersion,
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { FormTextField } from './forms/FormTextField.tsx';
+import ReactHookFormDatePicker from '../lib/ReactHookFormDatePicker.tsx';
 
 type OrganizationDialogProps = {
   open: boolean;
@@ -55,6 +57,7 @@ type BalanceSheetCreationFormProps = {
 const FormInputSchema = BalanceSheetCreateRequestBodySchema.pick({
   type: true,
   version: true,
+  generalInformation: true,
 });
 type FormInput = z.infer<typeof FormInputSchema>;
 
@@ -62,7 +65,12 @@ export function BalanceSheetCreationForm({
   onSave,
 }: BalanceSheetCreationFormProps) {
   const { t } = useTranslation();
-  const { control, handleSubmit } = useForm<FormInput>({
+  const {
+    control,
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm<FormInput>({
     resolver: zodResolver(FormInputSchema),
     mode: 'onChange',
   });
@@ -73,6 +81,44 @@ export function BalanceSheetCreationForm({
 
   return (
     <FormContainer spacing={3} justifyContent="space-between">
+      <GridItem xs={12} sm={6}>
+        <FormTextField
+          label={<Trans>Company name</Trans>}
+          errors={errors}
+          register={register}
+          registerKey={'generalInformation.company.name'}
+        />
+      </GridItem>
+      <GridItem xs={12} sm={6}>
+        <FormTextField
+          label={<Trans>Contact name</Trans>}
+          errors={errors}
+          register={register}
+          registerKey={'generalInformation.contactPerson.name'}
+        />
+      </GridItem>
+      <GridItem xs={12} sm={6}>
+        <FormTextField
+          label={<Trans>Contact email</Trans>}
+          errors={errors}
+          register={register}
+          registerKey={'generalInformation.contactPerson.email'}
+        />
+      </GridItem>
+      <GridItem xs={12} sm={6}>
+        <ReactHookFormDatePicker
+          label={<Trans>period start</Trans>}
+          control={control}
+          name={'generalInformation.period.start'}
+        />
+      </GridItem>
+      <GridItem xs={12} sm={6}>
+        <ReactHookFormDatePicker
+          label={<Trans>period end</Trans>}
+          control={control}
+          name={'generalInformation.period.end'}
+        />
+      </GridItem>
       <GridItem xs={12} sm={6}>
         <ReactHookFormSelect
           fullWidth

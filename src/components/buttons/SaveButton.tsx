@@ -31,6 +31,7 @@ export function SaveButton({
       fullWidth={true}
       size={'large'}
       onClick={handleSubmit(onSaveClick, (errors) => {
+        console.log(errors);
         handleErrors(errors);
       })}
       variant={'contained'}
