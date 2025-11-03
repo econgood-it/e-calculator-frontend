@@ -34,12 +34,45 @@ import { BigNumber } from '../components/lib/BigNumber.tsx';
 import { CertificationAuthorityNames } from '../../../e-calculator-schemas/src/audit.dto.ts';
 import { CertificationAuthoritySplitButton } from './CertificationAuthoritySplitButton.tsx';
 import { enqueueSnackbar } from 'notistack';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import ReactHookFormDatePicker from '../components/lib/ReactHookFormDatePicker.tsx';
+import { FormTextField } from '../components/balanceSheet/forms/FormTextField.tsx';
+import { BalanceSheetCreateRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
+import { GeneralInformationSchema } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
+
+const FormInputSchema = BalanceSheetCreateRequestBodySchema.pick({
+  generalInformation: true,
+});
+
+type FormInput = z.infer<typeof FormInputSchema>;
 
 export function BalanceSheetOverviewPage() {
   const theme = useTheme();
   const data = useLoaderData<typeof loader>();
   const [open, setOpen] = useState<boolean>(false);
+  const generalInformationContent = data?.generalInformation;
+
+  const {
+    control,
+    handleSubmit,
+    register,
+    formState: { errors },
+    reset,
+  } = useForm<FormInput>({
+    resolver: zodResolver(FormInputSchema),
+    mode: 'onChange',
+  });
+
+  useEffect(() => {
+    if (generalInformationContent) {
+      reset({
+        generalInformation: generalInformationContent,
+      });
+    }
+  }, [generalInformationContent, reset]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -82,6 +115,44 @@ export function BalanceSheetOverviewPage() {
         <Typography variant="h1">
           <Trans>Matrix representation</Trans>
         </Typography>
+      </GridItem>
+      <GridItem xs={12} sm={6}>
+        <FormTextField
+          label={<Trans>Company name</Trans>}
+          errors={errors}
+          register={register}
+          registerKey={'generalInformation.company.name'}
+        />
+      </GridItem>
+      <GridItem xs={12} sm={6}>
+        <FormTextField
+          label={<Trans>Contact name</Trans>}
+          errors={errors}
+          register={register}
+          registerKey={'generalInformation.contactPerson.name'}
+        />
+      </GridItem>
+      <GridItem xs={12} sm={6}>
+        <FormTextField
+          label={<Trans>Contact email</Trans>}
+          errors={errors}
+          register={register}
+          registerKey={'generalInformation.contactPerson.email'}
+        />
+      </GridItem>
+      <GridItem xs={12} sm={6}>
+        <ReactHookFormDatePicker
+          label={<Trans>period start</Trans>}
+          control={control}
+          name={'generalInformation.period.start'}
+        />
+      </GridItem>
+      <GridItem xs={12} sm={6}>
+        <ReactHookFormDatePicker
+          label={<Trans>period end</Trans>}
+          control={control}
+          name={'generalInformation.period.end'}
+        />
       </GridItem>
       {data?.matrix && (
         <>
@@ -210,6 +281,8 @@ export async function loader(
           'submittedBalanceSheetId'
         ),
     isMemberOfCertificationAuthority: isMemberOfCertificationAuthority,
+    generalInformation:
+      await apiClient.getBalanceSheetGeneralInformation(balanceSheetId),
   };
 }
 

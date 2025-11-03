@@ -47,6 +47,8 @@ import {
   CertificationAuthorityNames,
 } from '@ecogood/e-calculator-schemas/dist/audit.dto';
 import QueryAddon, { QueryStringAddon } from 'wretch/addons/queryString';
+import { GeneralInformationSchema } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
+import { z } from 'zod';
 
 function language(language: string) {
   return function (
@@ -207,6 +209,13 @@ export class ApiClient {
       `/balancesheets/${id}/matrix`
     );
     return MatrixBodySchema.parse(await response.json());
+  }
+
+  async getBalanceSheetGeneralInformation(
+    id: number
+  ): Promise<z.infer<typeof GeneralInformationSchema>> {
+    const response = await this.getBalanceSheet(id);
+    return response.generalInformation;
   }
 
   async updateBalanceSheet(
