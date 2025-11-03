@@ -41,10 +41,40 @@ import { z } from 'zod';
 import ReactHookFormDatePicker from '../components/lib/ReactHookFormDatePicker.tsx';
 import { FormTextField } from '../components/balanceSheet/forms/FormTextField.tsx';
 import { BalanceSheetCreateRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
-import { GeneralInformationSchema } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
+
+const isValidDateString = (val: string) => {
+  console.log('Validating date:', val);
+  return !isNaN(Date.parse(val));
+};
+
+const LocalGeneralInformationSchema = z.object({
+  company: z.object({
+    name: z.string().min(3, { message: 'Company name is required' }),
+  }),
+  contactPerson: z.object({
+    name: z.string().min(3, { message: 'Contact person name is required' }),
+    email: z.string().email({ message: 'Invalid email address' }),
+  }),
+  period: z.object({
+    start: z
+      .string()
+      .min(1, { message: 'Period start is required' })
+      .refine(isValidDateString, {
+        message: 'Period start must be a valid date',
+      }),
+    end: z
+      .string()
+      .min(1, { message: 'Period end is required' })
+      .refine(isValidDateString, {
+        message: 'Period end must be a valid date',
+      }),
+  }),
+});
 
 const FormInputSchema = BalanceSheetCreateRequestBodySchema.pick({
   generalInformation: true,
+}).extend({
+  generalInformation: LocalGeneralInformationSchema,
 });
 
 type FormInput = z.infer<typeof FormInputSchema>;
@@ -54,6 +84,7 @@ export function BalanceSheetOverviewPage() {
   const data = useLoaderData<typeof loader>();
   const [open, setOpen] = useState<boolean>(false);
   const generalInformationContent = data?.generalInformation;
+  console.log(generalInformationContent);
 
   const {
     control,
@@ -142,14 +173,14 @@ export function BalanceSheetOverviewPage() {
       </GridItem>
       <GridItem xs={12} sm={6}>
         <ReactHookFormDatePicker
-          label={<Trans>period start</Trans>}
+          label={<Trans>period start *</Trans>}
           control={control}
           name={'generalInformation.period.start'}
         />
       </GridItem>
       <GridItem xs={12} sm={6}>
         <ReactHookFormDatePicker
-          label={<Trans>period end</Trans>}
+          label={<Trans>period end *</Trans>}
           control={control}
           name={'generalInformation.period.end'}
         />

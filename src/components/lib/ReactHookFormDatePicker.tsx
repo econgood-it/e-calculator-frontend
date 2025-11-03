@@ -19,7 +19,7 @@ export default function ReactHookFormDatePicker<T extends FieldValues>({
   return (
     <FormControl fullWidth>
       <Controller
-        render={({ field }) => (
+        render={({ field, fieldState: { error } }) => (
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               label={label}
@@ -27,6 +27,13 @@ export default function ReactHookFormDatePicker<T extends FieldValues>({
               onChange={(newValue) =>
                 field.onChange(newValue ? newValue.toISOString() : '')
               }
+              slotProps={{
+                textField: {
+                  variant: 'outlined',
+                  error: !!error,
+                  helperText: error?.message,
+                },
+              }}
             />
           </LocalizationProvider>
         )}
