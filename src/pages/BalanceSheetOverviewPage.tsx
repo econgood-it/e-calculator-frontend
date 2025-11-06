@@ -34,48 +34,17 @@ import { BigNumber } from '../components/lib/BigNumber.tsx';
 import { CertificationAuthorityNames } from '../../../e-calculator-schemas/src/audit.dto.ts';
 import { CertificationAuthoritySplitButton } from './CertificationAuthoritySplitButton.tsx';
 import { enqueueSnackbar } from 'notistack';
-import { useEffect, useState } from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useState } from 'react';
+import { FieldValues, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import ReactHookFormDatePicker from '../components/lib/ReactHookFormDatePicker.tsx';
 import { FormTextField } from '../components/balanceSheet/forms/FormTextField.tsx';
 import { BalanceSheetCreateRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
-
-const isValidDateString = (val: string) => {
-  console.log('Validating date:', val);
-  return !isNaN(Date.parse(val));
-};
-
-const LocalGeneralInformationSchema = z.object({
-  company: z.object({
-    name: z.string().min(3, { message: 'Company name is required' }),
-  }),
-  contactPerson: z.object({
-    name: z.string().min(3, { message: 'Contact person name is required' }),
-    email: z.string().email({ message: 'Invalid email address' }),
-  }),
-  period: z.object({
-    start: z
-      .string()
-      .min(1, { message: 'Period start is required' })
-      .refine(isValidDateString, {
-        message: 'Period start must be a valid date',
-      }),
-    end: z
-      .string()
-      .min(1, { message: 'Period end is required' })
-      .refine(isValidDateString, {
-        message: 'Period end must be a valid date',
-      }),
-  }),
-  certificationAuthority: z.string(),
-});
+import { GeneralInformationSchema } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
 
 const FormInputSchema = BalanceSheetCreateRequestBodySchema.pick({
   generalInformation: true,
-}).extend({
-  generalInformation: LocalGeneralInformationSchema,
 });
 
 type FormInput = z.infer<typeof FormInputSchema>;
@@ -84,27 +53,21 @@ export function BalanceSheetOverviewPage() {
   const theme = useTheme();
   const data = useLoaderData<typeof loader>();
   const [open, setOpen] = useState<boolean>(false);
-  const generalInformationContent = data?.generalInformation;
 
   const {
     control,
     handleSubmit,
     register,
-    setValue,
     formState: { errors },
-    reset,
   } = useForm<FormInput>({
     resolver: zodResolver(FormInputSchema),
     mode: 'onChange',
+    values: data?.generalInformation
+      ? {
+          generalInformation: data.generalInformation,
+        }
+      : undefined,
   });
-
-  useEffect(() => {
-    if (generalInformationContent) {
-      reset({
-        generalInformation: generalInformationContent,
-      });
-    }
-  }, [generalInformationContent, reset]);
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -115,13 +78,20 @@ export function BalanceSheetOverviewPage() {
   };
 
   const submit = useSubmit();
-  function onBalanceSheetSubmit(authority: CertificationAuthorityNames) {
-    alert('hupla');
-    return;
+  function onBalanceSheetSubmit(
+    authority: CertificationAuthorityNames,
+    formData: FieldValues
+  ) {
+    const body = {
+      authority,
+      generalInformation: GeneralInformationSchema.parse(
+        formData.generalInformation
+      ),
+    };
     submit(
       {
         intent: 'submitBalanceSheet',
-        authority,
+        ...body,
       },
       {
         method: 'post',
@@ -143,61 +113,75 @@ export function BalanceSheetOverviewPage() {
     );
   }
 
-  const onSubmit: SubmitHandler<FormInput> = (data) => console.log(data);
-
   return (
     <FormContainer spacing={2}>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        /*         onSubmit={(authority: CertificationAuthorityNames) =>
-          onBalanceSheetSubmit(authority)
-        } */
-      >
-        <GridItem xs={12}>
-          <Typography variant="h1">
-            <Trans>Matrix representation</Trans>
-          </Typography>
-        </GridItem>
-        <GridItem xs={12} sm={6}>
-          <FormTextField
-            label={<Trans>Company name</Trans>}
-            errors={errors}
-            register={register}
-            registerKey={'generalInformation.company.name'}
-          />
-        </GridItem>
-        <GridItem xs={12} sm={6}>
-          <FormTextField
-            label={<Trans>Contact name</Trans>}
-            errors={errors}
-            register={register}
-            registerKey={'generalInformation.contactPerson.name'}
-          />
-        </GridItem>
-        <GridItem xs={12} sm={6}>
-          <FormTextField
-            label={<Trans>Contact email</Trans>}
-            errors={errors}
-            register={register}
-            registerKey={'generalInformation.contactPerson.email'}
-          />
-        </GridItem>
-        <GridItem xs={12} sm={6}>
-          <ReactHookFormDatePicker
-            label={<Trans>period start *</Trans>}
-            control={control}
-            name={'generalInformation.period.start'}
-          />
-        </GridItem>
-        <GridItem xs={12} sm={6}>
-          <ReactHookFormDatePicker
-            label={<Trans>period end *</Trans>}
-            control={control}
-            name={'generalInformation.period.end'}
-          />
-        </GridItem>
+      <GridItem xs={12}>
+        <Typography variant="h1">
+          <Trans>General information</Trans>
+        </Typography>
+      </GridItem>
+      <GridItem xs={12}>
+        <GridContainer spacing={2}>
+          <GridItem xs={12} sm={4}>
+            <FormTextField
+              label={<Trans>Organization name</Trans>}
+              errors={errors}
+              register={register}
+              registerKey={'generalInformation.company.name'}
+            />
+          </GridItem>
+          <GridItem xs={12} sm={4}>
+            <FormTextField
+              label={<Trans>Contact name</Trans>}
+              errors={errors}
+              register={register}
+              registerKey={'generalInformation.contactPerson.name'}
+            />
+          </GridItem>
+          <GridItem xs={12} sm={4}>
+            <FormTextField
+              label={<Trans>Contact email</Trans>}
+              errors={errors}
+              register={register}
+              registerKey={'generalInformation.contactPerson.email'}
+            />
+          </GridItem>
+          <GridItem xs={12}>
+            <GridContainer spacing={2}>
+              <GridItem xs={12} sm={4}>
+                <ReactHookFormDatePicker
+                  label={<Trans>Start of reporting period</Trans>}
+                  control={control}
+                  name={'generalInformation.period.start'}
+                />
+              </GridItem>
+              <GridItem xs={12} sm={4}>
+                <ReactHookFormDatePicker
+                  label={<Trans>End of reporting period</Trans>}
+                  control={control}
+                  name={'generalInformation.period.end'}
+                />
+              </GridItem>
+            </GridContainer>
+          </GridItem>
+          {!data?.audit && !data?.isMemberOfCertificationAuthority && (
+            <GridItem xs={12}>
+              <CertificationAuthoritySplitButton
+                handleSubmit={handleSubmit}
+                onClick={onBalanceSheetSubmit}
+              />
+            </GridItem>
+          )}
+        </GridContainer>
+      </GridItem>
+      <GridItem xs={12}>
+        <Typography variant="h1">
+          <Trans>Matrix representation</Trans>
+        </Typography>
+      </GridItem>
+      <GridItem>
         {data?.matrix && (
-          <>
+          <GridContainer spacing={2}>
             <GridItem>
               <Card>
                 <CardContent>
@@ -249,16 +233,6 @@ export function BalanceSheetOverviewPage() {
                           </GridItem>
                         )}
                       </>
-                    ) : !data.isMemberOfCertificationAuthority ? (
-                      <>
-                        <GridItem>
-                          <CertificationAuthoritySplitButton
-                            register={register}
-                            setValue={setValue}
-                          />
-                        </GridItem>
-                        <GridItem></GridItem>
-                      </>
                     ) : null}
                   </GridContainer>
                 </CardContent>
@@ -267,35 +241,35 @@ export function BalanceSheetOverviewPage() {
             <GridItem xs={12}>
               <MatrixView matrix={data.matrix} />
             </GridItem>
-          </>
+          </GridContainer>
         )}
-        <Dialog
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle>
-            <Trans>Reset audit process</Trans>
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              <Trans>
-                Once you reset a audit process, there is no going back. Please
-                be certain.
-              </Trans>
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleClose}>
-              <Trans>Cancel</Trans>
-            </Button>
-            <Button onClick={onResetAudit} autoFocus>
-              <Trans>Ok</Trans>
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </form>
+      </GridItem>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle>
+          <Trans>Reset audit process</Trans>
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            <Trans>
+              Once you reset a audit process, there is no going back. Please be
+              certain.
+            </Trans>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>
+            <Trans>Cancel</Trans>
+          </Button>
+          <Button onClick={onResetAudit} autoFocus>
+            <Trans>Ok</Trans>
+          </Button>
+        </DialogActions>
+      </Dialog>
     </FormContainer>
   );
 }
@@ -344,10 +318,11 @@ export async function action(
   );
 
   if (intent === 'submitBalanceSheet') {
-    return await apiClient.submitBalanceSheetToAudit(
-      parseInt(params.balanceSheetId),
-      rest.authority
-    );
+    const id = parseInt(params.balanceSheetId);
+    await apiClient.updateBalanceSheet(id, {
+      generalInformation: rest.generalInformation,
+    });
+    return await apiClient.submitBalanceSheetToAudit(id, rest.authority);
   }
 
   if (intent === 'deleteAudit') {

@@ -12,6 +12,10 @@ import { AuthProvider, AuthProviderProps } from 'oidc-react';
 import { MaterialDesignContent, SnackbarProvider } from 'notistack';
 
 import { AUTHORITY, CLIENT_ID, FRONTEND_URL } from './configuration';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { useLanguage } from './i18n.ts';
+import 'dayjs/locale/de';
 
 const primaryColor = '#94a231';
 const secondaryColor = '#00828b';
@@ -128,7 +132,7 @@ function App() {
 
 function Routes() {
   const router = useRouter();
-
+  const { lng } = useLanguage();
   return (
     <div>
       <SnackbarProvider
@@ -141,7 +145,9 @@ function Routes() {
           error: StyledMaterialDesignContent,
         }}
       >
-        <RouterProvider router={router} />
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={lng}>
+          <RouterProvider router={router} />
+        </LocalizationProvider>
       </SnackbarProvider>
     </div>
   );

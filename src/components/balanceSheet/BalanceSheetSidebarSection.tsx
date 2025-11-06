@@ -16,6 +16,8 @@ import { BalanceSheetCreationDialog } from './BalanceSheetCreationDialog';
 import { BalanceSheetNavigationItem } from './BalanceSheetNavigationItem';
 
 type BalanceSheetSidebarSectionProps = {
+  user: { email: string; name: string };
+  organizationName: string;
   balanceSheetItems: BalanceSheetItem[];
   onCreateBalanceSheet: (
     balanceSheet: BalanceSheetCreateRequestBody
@@ -24,6 +26,8 @@ type BalanceSheetSidebarSectionProps = {
 };
 
 export function BalanceSheetSidebarSection({
+  user,
+  organizationName,
   balanceSheetItems,
   onCreateBalanceSheet,
   isMemberOfCertificationAuthority,
@@ -63,6 +67,8 @@ export function BalanceSheetSidebarSection({
         ))}
       </List>
       <BalanceSheetCreationDialog
+        user={user}
+        organizationName={organizationName}
         onSave={onCreateBalanceSheet}
         open={showBalanceSheetCreationDialog}
         onClose={() => setShowBalanceSheetCreationDialog(false)}

@@ -17,17 +17,21 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FormTextField } from './forms/FormTextField.tsx';
 import ReactHookFormDatePicker from '../lib/ReactHookFormDatePicker.tsx';
 
-type OrganizationDialogProps = {
+type BalanceSheetCreationDialogProps = {
+  user: { email: string; name: string };
+  organizationName: string;
   open: boolean;
   onClose: () => void;
   onSave: (balancesheet: BalanceSheetCreateRequestBody) => Promise<void>;
 };
 
 export function BalanceSheetCreationDialog({
+  user,
+  organizationName,
   open,
   onClose,
   onSave,
-}: OrganizationDialogProps) {
+}: BalanceSheetCreationDialogProps) {
   async function onSaveClicked(balanceSheet: BalanceSheetCreateRequestBody) {
     await onSave(balanceSheet);
     onClose();
@@ -42,7 +46,11 @@ export function BalanceSheetCreationDialog({
         <DialogContent>
           <GridContainer spacing={3}>
             <GridItem xs={12}>
-              <BalanceSheetCreationForm onSave={onSaveClicked} />
+              <BalanceSheetCreationForm
+                company={{ name: organizationName }}
+                contactPerson={user}
+                onSave={onSaveClicked}
+              />
             </GridItem>
           </GridContainer>
         </DialogContent>
@@ -52,6 +60,8 @@ export function BalanceSheetCreationDialog({
 }
 
 type BalanceSheetCreationFormProps = {
+  contactPerson: { email: string; name: string };
+  company: { name: string };
   onSave: (balancesheet: BalanceSheetCreateRequestBody) => Promise<void>;
 };
 const FormInputSchema = BalanceSheetCreateRequestBodySchema.pick({
@@ -62,6 +72,8 @@ const FormInputSchema = BalanceSheetCreateRequestBodySchema.pick({
 type FormInput = z.infer<typeof FormInputSchema>;
 
 export function BalanceSheetCreationForm({
+  company,
+  contactPerson,
   onSave,
 }: BalanceSheetCreationFormProps) {
   const { t } = useTranslation();
@@ -72,6 +84,11 @@ export function BalanceSheetCreationForm({
     formState: { errors },
   } = useForm<FormInput>({
     resolver: zodResolver(FormInputSchema),
+    defaultValues: {
+      type: BalanceSheetType.Full,
+      version: BalanceSheetVersion.v5_1_0,
+      generalInformation: { company, contactPerson },
+    },
     mode: 'onChange',
   });
 

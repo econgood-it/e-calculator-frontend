@@ -75,11 +75,11 @@ export default function Sidebar() {
         <Toolbar />
         <GridContainer spacing={2}>
           <GridItem mt={2} xs={12}>
-            {data && (
+            {data && data.activeOrganization && (
               <OrganizationSidebarSection
                 onCreateClicked={createOrganization}
                 organizationItems={data.organizationItems}
-                activeOrganizationId={data.activeOrganizationId}
+                activeOrganizationId={data.activeOrganization.id}
                 isMemberOfCertificationAuthority={
                   data.isMemberOfCertificationAuthority
                 }
@@ -90,8 +90,10 @@ export default function Sidebar() {
             <Divider variant="middle" />
           </GridItem>
           <GridItem xs={12} sx={{ paddingBottom: '16px' }}>
-            {data && (
+            {data && data.activeOrganization && (
               <BalanceSheetSidebarSection
+                user={data.user}
+                organizationName={data.activeOrganization.name}
                 balanceSheetItems={data.balanceSheetItems}
                 onCreateBalanceSheet={createBalanceSheet}
                 isMemberOfCertificationAuthority={
@@ -138,10 +140,11 @@ export async function loader(
   }
 
   return {
-    activeOrganizationId: orgaId,
+    activeOrganization: organizationItems.find((o) => o.id === orgaId),
     organizationItems,
     balanceSheetItems,
     isMemberOfCertificationAuthority,
+    user: { email: userData.profile.email!, name: userData.profile.name! },
   };
 }
 

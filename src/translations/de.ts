@@ -113,5 +113,10 @@ export const DE_TRANSLATIONS = {
     'Wenn Sie einen Auditprozess einmal zurückgesetz haben, gibt es kein Zurück mehr. Bitte seien Sie sicher.',
   'EBIT (Earnings Before Interest and Taxes)':
     'Gewinn vor Zinsen und Steuern (EBIT)',
+  'Contact name': 'Kontaktname',
+  'Contact email': 'Kontakt-E-Mail',
+  'Start of reporting period': 'Anfang des Berichtszeitraums',
+  'End of reporting period': 'Ende des Berichtszeitraums',
+  'General information': 'Allgemeine Informationen',
   ...DE_ERROR_TRANSLATIONS,
 };

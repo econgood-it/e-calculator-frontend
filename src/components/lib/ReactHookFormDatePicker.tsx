@@ -1,8 +1,7 @@
 import { FormControl } from '@mui/material';
 import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 import { ReactNode } from 'react';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 
 type ReactHookFormDatePickerProps<T extends FieldValues> = {
@@ -20,22 +19,21 @@ export default function ReactHookFormDatePicker<T extends FieldValues>({
     <FormControl fullWidth>
       <Controller
         render={({ field, fieldState: { error } }) => (
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label={label}
-              value={field.value ? dayjs(field.value) : null}
-              onChange={(newValue) =>
-                field.onChange(newValue ? newValue.toISOString() : '')
-              }
-              slotProps={{
-                textField: {
-                  variant: 'outlined',
-                  error: !!error,
-                  helperText: error?.message,
-                },
-              }}
-            />
-          </LocalizationProvider>
+          <DatePicker
+            label={label}
+            value={field.value ? dayjs(field.value) : null}
+            onChange={(newValue) =>
+              field.onChange(newValue ? newValue.toISOString() : '')
+            }
+            slotProps={{
+              textField: {
+                required: true,
+                variant: 'outlined',
+                error: !!error,
+                helperText: error?.message,
+              },
+            }}
+          />
         )}
         name={name}
         control={control}

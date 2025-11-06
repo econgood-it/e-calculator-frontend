@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, ButtonGroup, Menu, MenuItem } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
 import { CertificationAuthorityNames } from '@ecogood/e-calculator-schemas/dist/audit.dto';
 import { useTranslation } from 'react-i18next';
+import { SaveButton } from '../components/buttons/SaveButton.tsx';
+import { FieldValues, UseFormHandleSubmit } from 'react-hook-form';
 
 type SplitButtonProps = {
-  onSubmit: (authority: CertificationAuthorityNames) => void;
-  register: any;
-  setValue: (name: string, value: any) => void;
+  handleSubmit: UseFormHandleSubmit<FieldValues>;
+  onClick: (authority: CertificationAuthorityNames, data: FieldValues) => void;
 };
 
 export function CertificationAuthoritySplitButton({
-  onSubmit,
-  register,
-  setValue,
+  handleSubmit,
+  onClick,
 }: SplitButtonProps) {
   const [anchorEl, setAnchorEl] = useState<
     (EventTarget & HTMLButtonElement) | null
@@ -30,13 +30,12 @@ export function CertificationAuthoritySplitButton({
   const [selectedAuthority, setSelectedAuthority] =
     useState<CertificationAuthorityNames>(CertificationAuthorityNames.AUDIT);
 
-  const handleClick = () => {
-    //  onSubmit(selectedAuthority);
+  const handleClick = (data: FieldValues) => {
+    onClick(selectedAuthority, data);
   };
 
   const handleMenuItemClick = (authority: CertificationAuthorityNames) => {
     setSelectedAuthority(authority);
-    setValue('generalInformation.certificationAuthority', authority);
     setAnchorEl(null);
   };
 
@@ -50,15 +49,13 @@ export function CertificationAuthoritySplitButton({
     setAnchorEl(null);
   };
 
-  useEffect(() => {
-    setValue('generalInformation.certificationAuthority', selectedAuthority);
-  }, [setValue, selectedAuthority]);
-
   return (
     <ButtonGroup variant="contained">
-      <Button size="large" type="submit" onClick={handleClick}>
-        {options.find((o) => o.key === selectedAuthority)?.label}
-      </Button>
+      <SaveButton
+        handleSubmit={handleSubmit}
+        onSaveClick={handleClick}
+        label={options.find((o) => o.key === selectedAuthority)?.label}
+      />
       <Button
         size="small"
         aria-controls={anchorEl ? 'split-button-menu' : undefined}
@@ -93,11 +90,6 @@ export function CertificationAuthoritySplitButton({
           </MenuItem>
         ))}
       </Menu>
-      <input
-        type="hidden"
-        {...register(`generalInformation.certificationAuthority`)}
-        value={selectedAuthority}
-      />
     </ButtonGroup>
   );
 }
