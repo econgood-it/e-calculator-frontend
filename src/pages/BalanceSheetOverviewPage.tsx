@@ -35,7 +35,7 @@ import { CertificationAuthorityNames } from '../../../e-calculator-schemas/src/a
 import { CertificationAuthoritySplitButton } from './CertificationAuthoritySplitButton.tsx';
 import { enqueueSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import ReactHookFormDatePicker from '../components/lib/ReactHookFormDatePicker.tsx';
@@ -69,6 +69,7 @@ const LocalGeneralInformationSchema = z.object({
         message: 'Period end must be a valid date',
       }),
   }),
+  certificationAuthority: z.string(),
 });
 
 const FormInputSchema = BalanceSheetCreateRequestBodySchema.pick({
@@ -89,6 +90,7 @@ export function BalanceSheetOverviewPage() {
     control,
     handleSubmit,
     register,
+    setValue,
     formState: { errors },
     reset,
   } = useForm<FormInput>({
@@ -141,151 +143,159 @@ export function BalanceSheetOverviewPage() {
     );
   }
 
+  const onSubmit: SubmitHandler<FormInput> = (data) => console.log(data);
+
   return (
     <FormContainer spacing={2}>
-      <GridItem xs={12}>
-        <Typography variant="h1">
-          <Trans>Matrix representation</Trans>
-        </Typography>
-      </GridItem>
-      <GridItem xs={12} sm={6}>
-        <FormTextField
-          label={<Trans>Company name</Trans>}
-          errors={errors}
-          register={register}
-          registerKey={'generalInformation.company.name'}
-        />
-      </GridItem>
-      <GridItem xs={12} sm={6}>
-        <FormTextField
-          label={<Trans>Contact name</Trans>}
-          errors={errors}
-          register={register}
-          registerKey={'generalInformation.contactPerson.name'}
-        />
-      </GridItem>
-      <GridItem xs={12} sm={6}>
-        <FormTextField
-          label={<Trans>Contact email</Trans>}
-          errors={errors}
-          register={register}
-          registerKey={'generalInformation.contactPerson.email'}
-        />
-      </GridItem>
-      <GridItem xs={12} sm={6}>
-        <ReactHookFormDatePicker
-          label={<Trans>period start *</Trans>}
-          control={control}
-          name={'generalInformation.period.start'}
-        />
-      </GridItem>
-      <GridItem xs={12} sm={6}>
-        <ReactHookFormDatePicker
-          label={<Trans>period end *</Trans>}
-          control={control}
-          name={'generalInformation.period.end'}
-        />
-      </GridItem>
-      {data?.matrix && (
-        <>
-          <GridItem>
-            <Card>
-              <CardContent>
-                <GridContainer
-                  alignItems={'center'}
-                  justifyContent="space-between"
-                  spacing={2}
-                >
-                  <GridItem>
-                    <Avatar src="/icon_ECG_seeds.png" />
-                  </GridItem>
-                  <GridItem>
-                    <Typography variant={'h1'}>
-                      <Trans>Total points:</Trans>
-                    </Typography>
-                  </GridItem>
-                  <GridItem>
-                    <BigNumber
-                      $color={theme.palette.primary.main}
-                    >{`${data.matrix.totalPoints.toFixed(0)} / 1000`}</BigNumber>
-                  </GridItem>
-                  {data.audit ? (
-                    <>
-                      <GridItem>
-                        <Typography variant={'h1'}>
-                          {data.audit.certificationAuthority ===
-                          CertificationAuthorityNames.AUDIT ? (
-                            <Trans>Audit process number</Trans>
-                          ) : (
-                            <Trans>Peer-Group process number</Trans>
-                          )}
-                        </Typography>
-                      </GridItem>
-                      <GridItem>
-                        <BigNumber
-                          aria-label={`Audit process number`}
-                          $color={theme.palette.primary.main}
-                        >{`${data.audit.id.toFixed(0)}`}</BigNumber>
-                      </GridItem>
-                      {data.isMemberOfCertificationAuthority && (
-                        <GridItem>
-                          <Button
-                            variant={'outlined'}
-                            color={'error'}
-                            onClick={handleClickOpen}
-                          >
-                            <Trans>Reset audit process</Trans>
-                          </Button>
-                        </GridItem>
-                      )}
-                    </>
-                  ) : !data.isMemberOfCertificationAuthority ? (
-                    <>
-                      <GridItem>
-                        <CertificationAuthoritySplitButton
-                          onSubmit={(authority: CertificationAuthorityNames) =>
-                            onBalanceSheetSubmit(authority)
-                          }
-                        />
-                      </GridItem>
-                      <GridItem></GridItem>
-                    </>
-                  ) : null}
-                </GridContainer>
-              </CardContent>
-            </Card>
-          </GridItem>
-          <GridItem xs={12}>
-            <MatrixView matrix={data.matrix} />
-          </GridItem>
-        </>
-      )}
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        /*         onSubmit={(authority: CertificationAuthorityNames) =>
+          onBalanceSheetSubmit(authority)
+        } */
       >
-        <DialogTitle>
-          <Trans>Reset audit process</Trans>
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            <Trans>
-              Once you reset a audit process, there is no going back. Please be
-              certain.
-            </Trans>
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>
-            <Trans>Cancel</Trans>
-          </Button>
-          <Button onClick={onResetAudit} autoFocus>
-            <Trans>Ok</Trans>
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <GridItem xs={12}>
+          <Typography variant="h1">
+            <Trans>Matrix representation</Trans>
+          </Typography>
+        </GridItem>
+        <GridItem xs={12} sm={6}>
+          <FormTextField
+            label={<Trans>Company name</Trans>}
+            errors={errors}
+            register={register}
+            registerKey={'generalInformation.company.name'}
+          />
+        </GridItem>
+        <GridItem xs={12} sm={6}>
+          <FormTextField
+            label={<Trans>Contact name</Trans>}
+            errors={errors}
+            register={register}
+            registerKey={'generalInformation.contactPerson.name'}
+          />
+        </GridItem>
+        <GridItem xs={12} sm={6}>
+          <FormTextField
+            label={<Trans>Contact email</Trans>}
+            errors={errors}
+            register={register}
+            registerKey={'generalInformation.contactPerson.email'}
+          />
+        </GridItem>
+        <GridItem xs={12} sm={6}>
+          <ReactHookFormDatePicker
+            label={<Trans>period start *</Trans>}
+            control={control}
+            name={'generalInformation.period.start'}
+          />
+        </GridItem>
+        <GridItem xs={12} sm={6}>
+          <ReactHookFormDatePicker
+            label={<Trans>period end *</Trans>}
+            control={control}
+            name={'generalInformation.period.end'}
+          />
+        </GridItem>
+        {data?.matrix && (
+          <>
+            <GridItem>
+              <Card>
+                <CardContent>
+                  <GridContainer
+                    alignItems={'center'}
+                    justifyContent="space-between"
+                    spacing={2}
+                  >
+                    <GridItem>
+                      <Avatar src="/icon_ECG_seeds.png" />
+                    </GridItem>
+                    <GridItem>
+                      <Typography variant={'h1'}>
+                        <Trans>Total points:</Trans>
+                      </Typography>
+                    </GridItem>
+                    <GridItem>
+                      <BigNumber
+                        $color={theme.palette.primary.main}
+                      >{`${data.matrix.totalPoints.toFixed(0)} / 1000`}</BigNumber>
+                    </GridItem>
+                    {data.audit ? (
+                      <>
+                        <GridItem>
+                          <Typography variant={'h1'}>
+                            {data.audit.certificationAuthority ===
+                            CertificationAuthorityNames.AUDIT ? (
+                              <Trans>Audit process number</Trans>
+                            ) : (
+                              <Trans>Peer-Group process number</Trans>
+                            )}
+                          </Typography>
+                        </GridItem>
+                        <GridItem>
+                          <BigNumber
+                            aria-label={`Audit process number`}
+                            $color={theme.palette.primary.main}
+                          >{`${data.audit.id.toFixed(0)}`}</BigNumber>
+                        </GridItem>
+                        {data.isMemberOfCertificationAuthority && (
+                          <GridItem>
+                            <Button
+                              variant={'outlined'}
+                              color={'error'}
+                              onClick={handleClickOpen}
+                            >
+                              <Trans>Reset audit process</Trans>
+                            </Button>
+                          </GridItem>
+                        )}
+                      </>
+                    ) : !data.isMemberOfCertificationAuthority ? (
+                      <>
+                        <GridItem>
+                          <CertificationAuthoritySplitButton
+                            register={register}
+                            setValue={setValue}
+                          />
+                        </GridItem>
+                        <GridItem></GridItem>
+                      </>
+                    ) : null}
+                  </GridContainer>
+                </CardContent>
+              </Card>
+            </GridItem>
+            <GridItem xs={12}>
+              <MatrixView matrix={data.matrix} />
+            </GridItem>
+          </>
+        )}
+        <Dialog
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle>
+            <Trans>Reset audit process</Trans>
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              <Trans>
+                Once you reset a audit process, there is no going back. Please
+                be certain.
+              </Trans>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>
+              <Trans>Cancel</Trans>
+            </Button>
+            <Button onClick={onResetAudit} autoFocus>
+              <Trans>Ok</Trans>
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </form>
     </FormContainer>
   );
 }

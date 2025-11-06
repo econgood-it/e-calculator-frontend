@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, ButtonGroup, Menu, MenuItem } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCaretDown } from '@fortawesome/free-solid-svg-icons';
@@ -7,10 +7,14 @@ import { useTranslation } from 'react-i18next';
 
 type SplitButtonProps = {
   onSubmit: (authority: CertificationAuthorityNames) => void;
+  register: any;
+  setValue: (name: string, value: any) => void;
 };
 
 export function CertificationAuthoritySplitButton({
   onSubmit,
+  register,
+  setValue,
 }: SplitButtonProps) {
   const [anchorEl, setAnchorEl] = useState<
     (EventTarget & HTMLButtonElement) | null
@@ -27,11 +31,12 @@ export function CertificationAuthoritySplitButton({
     useState<CertificationAuthorityNames>(CertificationAuthorityNames.AUDIT);
 
   const handleClick = () => {
-    onSubmit(selectedAuthority);
+    //  onSubmit(selectedAuthority);
   };
 
   const handleMenuItemClick = (authority: CertificationAuthorityNames) => {
     setSelectedAuthority(authority);
+    setValue('generalInformation.certificationAuthority', authority);
     setAnchorEl(null);
   };
 
@@ -45,9 +50,13 @@ export function CertificationAuthoritySplitButton({
     setAnchorEl(null);
   };
 
+  useEffect(() => {
+    setValue('generalInformation.certificationAuthority', selectedAuthority);
+  }, [setValue, selectedAuthority]);
+
   return (
     <ButtonGroup variant="contained">
-      <Button size="large" onClick={handleClick}>
+      <Button size="large" type="submit" onClick={handleClick}>
         {options.find((o) => o.key === selectedAuthority)?.label}
       </Button>
       <Button
@@ -84,6 +93,11 @@ export function CertificationAuthoritySplitButton({
           </MenuItem>
         ))}
       </Menu>
+      <input
+        type="hidden"
+        {...register(`generalInformation.certificationAuthority`)}
+        value={selectedAuthority}
+      />
     </ButtonGroup>
   );
 }
