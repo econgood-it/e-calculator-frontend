@@ -84,7 +84,6 @@ export function BalanceSheetOverviewPage() {
   const data = useLoaderData<typeof loader>();
   const [open, setOpen] = useState<boolean>(false);
   const generalInformationContent = data?.generalInformation;
-  console.log(generalInformationContent);
 
   const {
     control,
@@ -115,6 +114,8 @@ export function BalanceSheetOverviewPage() {
 
   const submit = useSubmit();
   function onBalanceSheetSubmit(authority: CertificationAuthorityNames) {
+    alert('hupla');
+    return;
     submit(
       {
         intent: 'submitBalanceSheet',
@@ -242,7 +243,7 @@ export function BalanceSheetOverviewPage() {
                     <>
                       <GridItem>
                         <CertificationAuthoritySplitButton
-                          onSubmit={(authority) =>
+                          onSubmit={(authority: CertificationAuthorityNames) =>
                             onBalanceSheetSubmit(authority)
                           }
                         />
