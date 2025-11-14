@@ -189,7 +189,7 @@
 
 "@ecogood/e-calculator-schemas@^2.7.16":
   version "2.7.16"
-  resolved "https://registry.yarnpkg.com/@ecogood/e-calculator-schemas/-/e-calculator-schemas-2.7.16.tgz#dd9de2bfedf4ec7cac6ef5eb9d9bbf2882f2a11d"
+  resolved "https://registry.npmjs.org/@ecogood/e-calculator-schemas/-/e-calculator-schemas-2.7.16.tgz"
   integrity sha512-0cvyolCjFIuDMqa3d4v4S7JVVPQQEwn+OiweoeLjGpZWUe/c0XCinexjxx342jxRY2NjYcx3chn3uxjmQT40ZA==
   dependencies:
     zod "^3.23.8"

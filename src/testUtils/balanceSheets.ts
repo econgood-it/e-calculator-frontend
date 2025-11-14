@@ -13,6 +13,7 @@ import {
 import _ from 'lodash';
 import { Audit, AuditSubmitRequestBody } from '../models/Audit.ts';
 import { CertificationAuthorityNames } from '../../../e-calculator-schemas/dist/audit.dto';
+import { GeneralInformationSchema } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
 
 export const CustomersMocks = {
   customers1: () => ({
@@ -170,6 +171,19 @@ export class BalanceSheetMockBuilder {
     companyFacts: new CompanyFactsMockBuilder(),
     ratings: new RatingsMockBuilder(),
     stakeholderWeights: [],
+    generalInformation: {
+      contactPerson: {
+        name: 'John Doe',
+        email: 'john@example.com',
+      },
+      company: {
+        name: 'Test Company',
+      },
+      period: {
+        start: new Date('2025-01-01').toISOString(),
+        end: new Date('2026-01-01').toISOString(),
+      },
+    },
   };
 
   public withId(id: number) {
