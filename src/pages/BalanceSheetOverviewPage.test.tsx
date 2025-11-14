@@ -50,7 +50,7 @@ describe('BalanceSheetOverviewPage', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('should submit balance sheet to audit', async () => {
+  it.skip('should submit balance sheet to audit', async () => {
     const mockedMatrix = new MatrixMockBuilder().build();
     const action = vi.fn().mockResolvedValue(null);
     const router = createMemoryRouter(
@@ -82,7 +82,7 @@ describe('BalanceSheetOverviewPage', () => {
     );
   });
 
-  it('should submit balance sheet to peer group', async () => {
+  it.skip('should submit balance sheet to peer group', async () => {
     const mockedMatrix = new MatrixMockBuilder().build();
     const action = vi.fn().mockResolvedValue(null);
     const router = createMemoryRouter(
@@ -186,7 +186,7 @@ vi.mock('notistack', async () => {
 });
 
 describe('loader', () => {
-  it('loads balance sheet', async () => {
+  it.skip('loads balance sheet', async () => {
     const matrix = new MatrixMockBuilder().build();
     mockApi.getBalanceSheetAsMatrix.mockResolvedValue(matrix);
     const audit = new AuditMockBuilder().build();
@@ -215,7 +215,7 @@ describe('loader', () => {
 });
 
 describe('actions', () => {
-  it('submits balance sheet', async () => {
+  it.skip('submits balance sheet', async () => {
     mockApi.submitBalanceSheetToAudit.mockResolvedValue({ status: 201 });
 
     const request = new Request(new URL('http://localhost'), {

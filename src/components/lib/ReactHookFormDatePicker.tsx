@@ -22,9 +22,9 @@ export default function ReactHookFormDatePicker<T extends FieldValues>({
           <DatePicker
             label={label}
             value={field.value ? dayjs(field.value) : null}
-            onChange={(newValue) =>
-              field.onChange(newValue ? newValue.toISOString() : '')
-            }
+            onChange={(newValue) => {
+              return field.onChange(newValue ? newValue.toISOString() : '');
+            }}
             slotProps={{
               textField: {
                 required: true,

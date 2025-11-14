@@ -14,9 +14,10 @@ import {
 } from '../../models/BalanceSheet';
 import { BalanceSheetCreationDialog } from './BalanceSheetCreationDialog';
 import { BalanceSheetNavigationItem } from './BalanceSheetNavigationItem';
+import { UserInformation } from '../../models/User.ts';
 
 type BalanceSheetSidebarSectionProps = {
-  user: { email: string; name: string };
+  user: UserInformation;
   organizationName: string;
   balanceSheetItems: BalanceSheetItem[];
   onCreateBalanceSheet: (

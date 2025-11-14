@@ -72,6 +72,8 @@ export function OrganizationOverviewPage() {
       <GridItem xs={12}>
         {data && (
           <BalanceSheetList
+            user={data.user}
+            organizationName={data.organization.name}
             balanceSheetItems={data?.balanceSheetItems}
             onCreateBalanceSheet={onCreateBalanceSheet}
           />
@@ -103,7 +105,11 @@ export async function loader(
   const orgaId = Number.parseInt(params.orgaId);
   const organization = await apiClient.getOrganization(orgaId);
   const balanceSheetItems = await apiClient.getBalanceSheets(orgaId);
-  return { organization, balanceSheetItems };
+  return {
+    organization,
+    balanceSheetItems,
+    user: { email: userData.profile.email!, name: userData.profile.name! },
+  };
 }
 
 export async function action(

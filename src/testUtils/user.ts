@@ -1,4 +1,6 @@
 import { User } from '../authentication/User';
+import { Factory } from 'fishery';
+import { UserInformation } from '../models/User.ts';
 
 export const exampleUser = {
   token: 'fjdlksajrklejwlqjfkljkl',
@@ -14,3 +16,8 @@ export const UserMocks = {
   defaultOld: (): User => ({ ...exampleUser }),
   withId: (id: number): User => ({ ...exampleUser, user: id }),
 };
+
+export const userInformationFactory = Factory.define<UserInformation>(() => ({
+  email: 'test@example.com',
+  name: 'Alice Wonderland',
+}));

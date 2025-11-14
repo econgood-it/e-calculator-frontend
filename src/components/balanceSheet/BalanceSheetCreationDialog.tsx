@@ -16,9 +16,10 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormTextField } from './forms/FormTextField.tsx';
 import ReactHookFormDatePicker from '../lib/ReactHookFormDatePicker.tsx';
+import { UserInformation } from '../../models/User.ts';
 
 type BalanceSheetCreationDialogProps = {
-  user: { email: string; name: string };
+  user: UserInformation;
   organizationName: string;
   open: boolean;
   onClose: () => void;
@@ -124,14 +125,14 @@ export function BalanceSheetCreationForm({
       </GridItem>
       <GridItem xs={12} sm={6}>
         <ReactHookFormDatePicker
-          label={<Trans>period start</Trans>}
+          label={<Trans>Start of reporting period</Trans>}
           control={control}
           name={'generalInformation.period.start'}
         />
       </GridItem>
       <GridItem xs={12} sm={6}>
         <ReactHookFormDatePicker
-          label={<Trans>period end</Trans>}
+          label={<Trans>End of reporting period</Trans>}
           control={control}
           name={'generalInformation.period.end'}
         />

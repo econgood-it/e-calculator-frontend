@@ -15,8 +15,11 @@ import {
 import GridContainer from '../layout/GridContainer.tsx';
 import GridItem from '../layout/GridItem.tsx';
 import { BalanceSheetCreationDialog } from './BalanceSheetCreationDialog.tsx';
+import { UserInformation } from '../../models/User.ts';
 
 type BalanceSheetListProps = {
+  user: UserInformation;
+  organizationName: string;
   balanceSheetItems: BalanceSheetItem[];
   onCreateBalanceSheet: (
     balanceSheet: BalanceSheetCreateRequestBody
@@ -24,6 +27,8 @@ type BalanceSheetListProps = {
 };
 
 export function BalanceSheetList({
+  user,
+  organizationName,
   balanceSheetItems,
   onCreateBalanceSheet,
 }: BalanceSheetListProps) {
@@ -62,6 +67,8 @@ export function BalanceSheetList({
         </GridItem>
       ))}
       <BalanceSheetCreationDialog
+        user={user}
+        organizationName={organizationName}
         open={showBalanceSheetCreationDialog}
         onClose={() => setShowBalanceSheetCreationDialog(false)}
         onSave={onCreateBalanceSheet}

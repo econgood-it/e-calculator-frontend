@@ -10,6 +10,8 @@ import { themeOptions } from '../App';
 import { FC, ReactElement, ReactNode } from 'react';
 import userEvent from '@testing-library/user-event';
 import { SnackbarProvider } from 'notistack';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 
 const theme = createTheme({ ...themeOptions });
 
@@ -17,7 +19,11 @@ export const AllTheProviders: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <MuiThemeProvider theme={theme}>
       <ThemeProvider theme={theme}>
-        <SnackbarProvider>{children}</SnackbarProvider>
+        <SnackbarProvider>
+          <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={'en'}>
+            {children}
+          </LocalizationProvider>
+        </SnackbarProvider>
       </ThemeProvider>
     </MuiThemeProvider>
   );
