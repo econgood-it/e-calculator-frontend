@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import renderWithTheme from '../../testUtils/rendering';
 
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
