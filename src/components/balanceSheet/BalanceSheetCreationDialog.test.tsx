@@ -7,8 +7,11 @@ import {
 } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 import { BalanceSheetCreationDialog } from './BalanceSheetCreationDialog';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { userInformationFactory } from '../../testUtils/user.ts';
 
 describe('BalanceSheetCreationDialog', () => {
+  const userInformation = userInformationFactory.build();
+  const organizationName = 'orgaName';
   afterEach(() => {
     vi.resetAllMocks();
   });
@@ -19,6 +22,8 @@ describe('BalanceSheetCreationDialog', () => {
     const onClose = vi.fn();
     const { user } = renderWithTheme(
       <BalanceSheetCreationDialog
+        user={userInformation}
+        organizationName={organizationName}
         open={true}
         onClose={onClose}
         onSave={createBalanceSheetMock}
@@ -60,6 +65,8 @@ describe('BalanceSheetCreationDialog', () => {
     const createBalanceSheetMock = vi.fn();
     const { user } = renderWithTheme(
       <BalanceSheetCreationDialog
+        user={userInformation}
+        organizationName={organizationName}
         open={true}
         onClose={onClose}
         onSave={createBalanceSheetMock}
