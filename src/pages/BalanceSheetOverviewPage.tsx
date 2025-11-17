@@ -42,6 +42,7 @@ import ReactHookFormDatePicker from '../components/lib/ReactHookFormDatePicker.t
 import { FormTextField } from '../components/balanceSheet/forms/FormTextField.tsx';
 import { BalanceSheetCreateRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { GeneralInformationSchema } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
+import { SaveButton } from '../components/buttons/SaveButton.tsx';
 
 const FormInputSchema = BalanceSheetCreateRequestBodySchema.pick({
   generalInformation: true,
@@ -91,6 +92,24 @@ export function BalanceSheetOverviewPage() {
     submit(
       {
         intent: 'submitBalanceSheet',
+        ...body,
+      },
+      {
+        method: 'post',
+        encType: 'application/json',
+      }
+    );
+  }
+
+  function onSaveClick(data: FieldValues) {
+    const body = {
+      generalInformation: GeneralInformationSchema.parse(
+        data.generalInformation
+      ),
+    };
+    submit(
+      {
+        intent: 'updateBalanceSheet',
         ...body,
       },
       {
@@ -169,6 +188,14 @@ export function BalanceSheetOverviewPage() {
               <CertificationAuthoritySplitButton
                 handleSubmit={handleSubmit}
                 onClick={onBalanceSheetSubmit}
+              />
+            </GridItem>
+          )}
+          {data?.audit && data?.isMemberOfCertificationAuthority && (
+            <GridItem xs={3}>
+              <SaveButton
+                handleSubmit={handleSubmit}
+                onSaveClick={onSaveClick}
               />
             </GridItem>
           )}
@@ -323,6 +350,18 @@ export async function action(
       generalInformation: rest.generalInformation,
     });
     return await apiClient.submitBalanceSheetToAudit(id, rest.authority);
+  }
+
+  if (intent === 'updateBalanceSheet') {
+    const id = parseInt(params.balanceSheetId);
+    const message =
+      lng === 'en' ? `Saved succesfully` : `Speichern erfolgreich`;
+    enqueueSnackbar(message, {
+      variant: 'success',
+    });
+    return await apiClient.updateBalanceSheet(id, {
+      generalInformation: rest.generalInformation,
+    });
   }
 
   if (intent === 'deleteAudit') {
