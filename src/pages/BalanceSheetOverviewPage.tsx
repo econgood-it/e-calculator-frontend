@@ -79,19 +79,21 @@ export function BalanceSheetOverviewPage() {
   };
 
   const submit = useSubmit();
-  function onBalanceSheetSubmit(
-    authority: CertificationAuthorityNames,
-    formData: FieldValues
+
+  function submitBalanceSheetRequest(
+    intent: string,
+    formData: FieldValues,
+    authority?: CertificationAuthorityNames
   ) {
     const body = {
-      authority,
+      ...(authority && { authority }),
       generalInformation: GeneralInformationSchema.parse(
         formData.generalInformation
       ),
     };
     submit(
       {
-        intent: 'submitBalanceSheet',
+        intent: intent,
         ...body,
       },
       {
@@ -101,22 +103,15 @@ export function BalanceSheetOverviewPage() {
     );
   }
 
-  function onSaveClick(data: FieldValues) {
-    const body = {
-      generalInformation: GeneralInformationSchema.parse(
-        data.generalInformation
-      ),
-    };
-    submit(
-      {
-        intent: 'updateBalanceSheet',
-        ...body,
-      },
-      {
-        method: 'post',
-        encType: 'application/json',
-      }
-    );
+  function onBalanceSheetSubmit(
+    authority: CertificationAuthorityNames,
+    formData: FieldValues
+  ) {
+    submitBalanceSheetRequest('submitBalanceSheet', formData, authority);
+  }
+
+  function onSaveGeneralInformation(formData: FieldValues) {
+    submitBalanceSheetRequest('updateBalanceSheet', formData);
   }
 
   function onResetAudit() {
@@ -195,7 +190,7 @@ export function BalanceSheetOverviewPage() {
             <GridItem xs={3}>
               <SaveButton
                 handleSubmit={handleSubmit}
-                onSaveClick={onSaveClick}
+                onSaveClick={onSaveGeneralInformation}
               />
             </GridItem>
           )}
@@ -209,7 +204,7 @@ export function BalanceSheetOverviewPage() {
       <GridItem>
         {data?.matrix && (
           <GridContainer spacing={2}>
-            <GridItem>
+            <GridItem xs={12}>
               <Card>
                 <CardContent>
                   <GridContainer
@@ -349,6 +344,7 @@ export async function action(
     await apiClient.updateBalanceSheet(id, {
       generalInformation: rest.generalInformation,
     });
+
     return await apiClient.submitBalanceSheetToAudit(id, rest.authority);
   }
 
