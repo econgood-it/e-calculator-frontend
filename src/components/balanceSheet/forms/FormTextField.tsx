@@ -14,6 +14,7 @@ type FormTextFieldProps<T extends FieldValues> = {
   errors: FieldErrors<T>;
   register: UseFormRegister<T>;
   registerKey: Path<T>;
+  disabled?: boolean;
 };
 
 export function FormTextField<T extends FieldValues>({
@@ -21,6 +22,7 @@ export function FormTextField<T extends FieldValues>({
   registerKey,
   register,
   errors,
+  disabled = false,
 }: FormTextFieldProps<T>) {
   const splitKey = registerKey.split('.');
   const error = _.get(errors, splitKey);
@@ -28,6 +30,7 @@ export function FormTextField<T extends FieldValues>({
   const { t } = useTranslation();
   return (
     <TextField
+      disabled={disabled}
       fullWidth
       required
       label={label}

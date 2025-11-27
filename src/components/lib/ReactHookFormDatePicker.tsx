@@ -8,18 +8,21 @@ type ReactHookFormDatePickerProps<T extends FieldValues> = {
   control: Control<T>;
   name: Path<T>;
   label: ReactNode;
+  disabled?: boolean;
 };
 
 export default function ReactHookFormDatePicker<T extends FieldValues>({
   name,
   label,
   control,
+  disabled = false,
 }: ReactHookFormDatePickerProps<T>) {
   return (
     <FormControl fullWidth>
       <Controller
         render={({ field, fieldState: { error } }) => (
           <DatePicker
+            disabled={disabled}
             label={label}
             value={
               field.value && dayjs(field.value).isValid()

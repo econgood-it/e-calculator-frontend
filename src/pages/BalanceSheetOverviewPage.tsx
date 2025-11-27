@@ -43,6 +43,7 @@ import { FormTextField } from '../components/balanceSheet/forms/FormTextField.ts
 import { BalanceSheetCreateRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
 import { GeneralInformationSchema } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
 import { SaveButton } from '../components/buttons/SaveButton.tsx';
+import { LoadingPage } from './LoadingPage.tsx';
 
 const FormInputSchema = BalanceSheetCreateRequestBodySchema.pick({
   generalInformation: true,
@@ -127,6 +128,13 @@ export function BalanceSheetOverviewPage() {
     );
   }
 
+  if (!data) {
+    return <LoadingPage></LoadingPage>;
+  }
+
+  const disableGeneralInformationForm =
+    data.audit && !data.isMemberOfCertificationAuthority;
+
   return (
     <FormContainer spacing={2}>
       <GridItem xs={12}>
@@ -138,6 +146,7 @@ export function BalanceSheetOverviewPage() {
         <GridContainer spacing={2}>
           <GridItem xs={12} sm={4}>
             <FormTextField
+              disabled={disableGeneralInformationForm}
               label={<Trans>Organization name</Trans>}
               errors={errors}
               register={register}
@@ -146,6 +155,7 @@ export function BalanceSheetOverviewPage() {
           </GridItem>
           <GridItem xs={12} sm={4}>
             <FormTextField
+              disabled={disableGeneralInformationForm}
               label={<Trans>Contact name</Trans>}
               errors={errors}
               register={register}
@@ -154,6 +164,7 @@ export function BalanceSheetOverviewPage() {
           </GridItem>
           <GridItem xs={12} sm={4}>
             <FormTextField
+              disabled={disableGeneralInformationForm}
               label={<Trans>Contact email</Trans>}
               errors={errors}
               register={register}
@@ -164,6 +175,7 @@ export function BalanceSheetOverviewPage() {
             <GridContainer spacing={2}>
               <GridItem xs={12} sm={4}>
                 <ReactHookFormDatePicker
+                  disabled={disableGeneralInformationForm}
                   label={<Trans>Start of reporting period</Trans>}
                   control={control}
                   name={'generalInformation.period.start'}
@@ -171,6 +183,7 @@ export function BalanceSheetOverviewPage() {
               </GridItem>
               <GridItem xs={12} sm={4}>
                 <ReactHookFormDatePicker
+                  disabled={disableGeneralInformationForm}
                   label={<Trans>End of reporting period</Trans>}
                   control={control}
                   name={'generalInformation.period.end'}
@@ -178,19 +191,20 @@ export function BalanceSheetOverviewPage() {
               </GridItem>
             </GridContainer>
           </GridItem>
-          {!data?.audit && !data?.isMemberOfCertificationAuthority && (
-            <GridItem xs={12}>
-              <CertificationAuthoritySplitButton
-                handleSubmit={handleSubmit}
-                onClick={onBalanceSheetSubmit}
-              />
-            </GridItem>
-          )}
-          {data?.audit && data?.isMemberOfCertificationAuthority && (
-            <GridItem xs={3}>
+          {((data.audit && data.isMemberOfCertificationAuthority) ||
+            (!data.audit && !data.isMemberOfCertificationAuthority)) && (
+            <GridItem xs={12} sm={3}>
               <SaveButton
                 handleSubmit={handleSubmit}
                 onSaveClick={onSaveGeneralInformation}
+              />
+            </GridItem>
+          )}
+          {!data.audit && !data.isMemberOfCertificationAuthority && (
+            <GridItem xs={12} sm={3}>
+              <CertificationAuthoritySplitButton
+                handleSubmit={handleSubmit}
+                onClick={onBalanceSheetSubmit}
               />
             </GridItem>
           )}
@@ -202,7 +216,7 @@ export function BalanceSheetOverviewPage() {
         </Typography>
       </GridItem>
       <GridItem>
-        {data?.matrix && (
+        {data.matrix && (
           <GridContainer spacing={2}>
             <GridItem xs={12}>
               <Card>
