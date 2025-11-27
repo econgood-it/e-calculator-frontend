@@ -61,16 +61,16 @@ describe('CompanyFactsPage', () => {
     expect(await screen.findByText('A: Suppliers')).toBeInTheDocument();
     await user.click(screen.getByText('Next'));
     expect(
-      await screen.findByText(
-        'B: Owners, equity- and financial service providers'
-      )
+      await screen.findByText('B: Owners and financial partners')
     ).toBeInTheDocument();
     await user.click(screen.getByText('Next'));
-    expect(await screen.findByText('C: Employees')).toBeInTheDocument();
+    expect(
+      await screen.findByText('C: Employees and Co-Workers')
+    ).toBeInTheDocument();
     await user.click(screen.getByText('Next'));
 
     expect(
-      await screen.findByText('D: Customers and other companies')
+      await screen.findByText('D: Customers and business partners')
     ).toBeInTheDocument();
   });
 
@@ -113,7 +113,7 @@ describe('CompanyFactsPage', () => {
     ).toHaveLength(2);
 
     expect(
-      screen.getByText('B: Owners, equity- and financial service providers')
+      screen.getByText('B: Owners and financial partners')
     ).toBeInTheDocument();
   });
 });
