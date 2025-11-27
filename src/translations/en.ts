@@ -102,6 +102,10 @@ const EN_WORDS = [
   'Start of reporting period',
   'End of reporting period',
   'General information',
+  'A: Suppliers',
+  'B: Owners and financial partners',
+  'C: Employees and Co-Workers',
+  'D: Customers and business partners',
 ];
 
 export const EN_TRANSLATIONS = {

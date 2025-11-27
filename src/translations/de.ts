@@ -118,5 +118,11 @@ export const DE_TRANSLATIONS = {
   'Start of reporting period': 'Anfang des Berichtszeitraums',
   'End of reporting period': 'Ende des Berichtszeitraums',
   'General information': 'Allgemeine Informationen',
+  'A: Suppliers': 'A. Lieferant\\*innen',
+  'B: Owners and financial partners':
+    'B. Eigentümer\\*innen, Eigenkapital- und Finanzpartner\\*innen',
+  'C: Employees and Co-Workers': 'C. Mitarbeitende und Arbeitspartner\\*innen',
+  'D: Customers and business partners':
+    'D. Kund\\*innen und Geschäftspartner\\*innen',
   ...DE_ERROR_TRANSLATIONS,
 };

@@ -67,9 +67,7 @@ const CompanyFactsPage = () => {
         ),
       },
       {
-        label: (
-          <Trans>B: Owners, equity- and financial service providers</Trans>
-        ),
+        label: <Trans>B: Owners and financial partners</Trans>,
         element: dataIsLoaded && (
           <OwnersAndFinancialServicesForm
             formState={formState}
@@ -78,7 +76,7 @@ const CompanyFactsPage = () => {
         ),
       },
       {
-        label: <Trans>C: Employees</Trans>,
+        label: <Trans>C: Employees and Co-Workers</Trans>,
         element: dataIsLoaded && (
           <EmployeesForm
             control={control}
@@ -88,7 +86,7 @@ const CompanyFactsPage = () => {
         ),
       },
       {
-        label: 'D: Customers and other companies',
+        label: <Trans>D: Customers and business partners</Trans>,
         element: dataIsLoaded && (
           <CustomersForm
             control={control}
