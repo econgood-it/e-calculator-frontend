@@ -10,7 +10,7 @@ import {
   createMemoryRouter,
   RouterProvider,
 } from 'react-router-dom';
-import { CertificationAuthorityNames } from '@ecogood/e-calculator-schemas/dist/audit.dto.ts';
+import { CertificationAuthorityNames } from '@ecogood/e-calculator-schemas/dist/audit.dto';
 import { AuditMockBuilder } from '../testUtils/balanceSheets.ts';
 import { auditFactory } from '../testUtils/audit.ts';
 
