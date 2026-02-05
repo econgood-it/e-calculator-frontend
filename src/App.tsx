@@ -16,6 +16,13 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { useLanguage } from './i18n.ts';
 import 'dayjs/locale/de';
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const primaryColor = '#94a231';
 const secondaryColor = '#00828b';
