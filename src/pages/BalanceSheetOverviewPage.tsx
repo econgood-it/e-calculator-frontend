@@ -31,7 +31,7 @@ import { API_URL } from '../configuration.ts';
 import { redirect, useLoaderData } from 'react-router-typesafe';
 import { HandlerContext } from './handlerContext.ts';
 import { BigNumber } from '../components/lib/BigNumber.tsx';
-import { CertificationAuthorityNames } from '../../../e-calculator-schemas/src/audit.dto.ts';
+import { CertificationAuthorityNames } from '@ecogood/e-calculator-schemas/dist/audit.dto';
 import { CertificationAuthoritySplitButton } from './CertificationAuthoritySplitButton.tsx';
 import { enqueueSnackbar } from 'notistack';
 import { useState } from 'react';
