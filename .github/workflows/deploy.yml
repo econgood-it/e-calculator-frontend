@@ -1,0 +1,44 @@
+name: Deploy
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'test'
+        type: choice
+        options:
+          - test
+          - prod
+
+env:
+  NODE_VERSION: 18.7.0
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn install
+
+
+      - name: Build
+        run: GENERATE_SOURCEMAP=false yarn build
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy to server
+        run: |
+          ssh-keyscan ${{ vars.HOST_URL }} >> ~/.ssh/known_hosts
+          scp -r dist/* root@${{ vars.HOST_URL }}:${{vars.APP_DIR}}/volumes/www/
+ 

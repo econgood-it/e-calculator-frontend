@@ -1,0 +1,53 @@
+name: Reusable workflow
+
+on:
+  push:
+    branches: [ 'main' ]
+  pull_request:
+    branches: [ 'main' ]
+
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn install
+      - name: Run lint
+        run: yarn lint
+
+  check-ts:
+    name: 'Check typescript'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn install
+      - name: Run check-ts
+        run: yarn check-ts
+
+  tests:
+    name: 'Tests'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn install
+      - name: Run tests
+        run: yarn run test:ci
+
