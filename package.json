@@ -8,7 +8,7 @@
     "build": "tsc && vite build",
     "check-ts": "tsc --noEmit",
     "test": "vitest --maxWorkers=4",
-    "test:ci": "CI=true test",
+    "test:ci": "CI=true npm run test",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
