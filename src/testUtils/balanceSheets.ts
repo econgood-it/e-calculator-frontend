@@ -12,7 +12,7 @@ import {
 } from '../models/BalanceSheet';
 import _ from 'lodash';
 import { Audit, AuditSubmitRequestBody } from '../models/Audit.ts';
-import { CertificationAuthorityNames } from '../../../e-calculator-schemas/dist/audit.dto';
+import { CertificationAuthorityNames } from '@ecogood/e-calculator-schemas/dist/audit.dto';
 
 export const CustomersMocks = {
   customers1: () => ({
