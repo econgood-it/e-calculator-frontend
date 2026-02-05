@@ -30,7 +30,7 @@ jobs:
 
 
       - name: Build
-        run: GENERATE_SOURCEMAP=false yarn build
+        run: VITE_BACKEND_DOMAIN=${{ env.VITE_BACKEND_DOMAIN }} VITE_ZITADEL_AUTHORITY_URL=${{ env.VITE_ZITADEL_AUTHORITY_URL }} VITE_ZITADEL_CLIENT_ID=${{ env.VITE_ZITADEL_CLIENT_ID }} VITE_FRONTEND_DOMAIN=${{ env.VITE_FRONTEND_DOMAIN }} GENERATE_SOURCEMAP=false yarn build
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.4
