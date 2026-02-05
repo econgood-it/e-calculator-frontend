@@ -6,6 +6,13 @@ import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { BalanceSheetSidebarSection } from './BalanceSheetSidebarSection';
 import { userInformationFactory } from '../../testUtils/user.ts';
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 describe('BalanceSheetSidebarSection', () => {
   afterEach(() => {
@@ -56,6 +63,7 @@ describe('BalanceSheetSidebarSection', () => {
   it(
     'should call onCreateBalanceSheet',
     async () => {
+      dayjs.tz.setDefault('UTC');
       const initialPath = '/sidebar-section';
       const onCreateBalanceSheet = vi.fn();
 
@@ -122,8 +130,8 @@ describe('BalanceSheetSidebarSection', () => {
           company: { name: organizationName },
           contactPerson: userInformation,
           period: {
-            start: '2024-09-30T22:00:00.000Z',
-            end: '2024-10-13T22:00:00.000Z',
+            start: '2024-10-01T00:00:00.000Z',
+            end: '2024-10-14T00:00:00.000Z',
           },
         },
       });
