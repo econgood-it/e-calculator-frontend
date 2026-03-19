@@ -13,7 +13,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  MenuItem,
   Typography,
   useTheme,
 } from '@mui/material';
@@ -48,7 +47,7 @@ import {
 } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
 import { SaveButton } from '../components/buttons/SaveButton.tsx';
 import { LoadingPage } from './LoadingPage.tsx';
-import { ReactHookFormSelect } from '../components/lib/ReactHookFormSelect.tsx';
+import { CurrencySelector } from '../components/balanceSheet/forms/CurrencySelect.tsx';
 
 const FormInputSchema = BalanceSheetCreateRequestBodySchema.pick({
   generalInformation: true,

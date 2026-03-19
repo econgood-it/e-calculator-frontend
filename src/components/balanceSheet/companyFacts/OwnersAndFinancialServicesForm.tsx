@@ -4,15 +4,18 @@ import { CurrencyInput } from '../forms/NumberInputs';
 import GridContainer from '../../layout/GridContainer';
 import { Control, FormState } from 'react-hook-form';
 import { CompanyFacts } from '../../../models/CompanyFacts.ts';
+import { Currency } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
 
 type OwnersAndFinancialServicesFormProps = {
   control: Control<CompanyFacts>;
   formState: FormState<CompanyFacts>;
+  currency: Currency;
 };
 
 export function OwnersAndFinancialServicesForm({
   control,
   formState: { errors },
+  currency,
 }: OwnersAndFinancialServicesFormProps) {
   const { t } = useTranslation();
 
@@ -22,6 +25,7 @@ export function OwnersAndFinancialServicesForm({
         <GridContainer spacing={3}>
           <GridItem xs={12} sm={4}>
             <CurrencyInput<CompanyFacts>
+              currency={currency}
               control={control}
               errors={errors}
               registerKey={'profit'}
@@ -30,6 +34,7 @@ export function OwnersAndFinancialServicesForm({
           </GridItem>
           <GridItem xs={12} sm={4}>
             <CurrencyInput<CompanyFacts>
+              currency={currency}
               control={control}
               errors={errors}
               registerKey={'financialCosts'}
@@ -38,6 +43,7 @@ export function OwnersAndFinancialServicesForm({
           </GridItem>
           <GridItem xs={12} sm={4}>
             <CurrencyInput<CompanyFacts>
+              currency={currency}
               control={control}
               errors={errors}
               registerKey={'incomeFromFinancialInvestments'}
@@ -46,6 +52,7 @@ export function OwnersAndFinancialServicesForm({
           </GridItem>
           <GridItem xs={12} sm={4}>
             <CurrencyInput<CompanyFacts>
+              currency={currency}
               control={control}
               errors={errors}
               registerKey={'totalAssets'}
@@ -54,6 +61,7 @@ export function OwnersAndFinancialServicesForm({
           </GridItem>
           <GridItem xs={12} sm={4}>
             <CurrencyInput<CompanyFacts>
+              currency={currency}
               control={control}
               errors={errors}
               registerKey={'additionsToFixedAssets'}
@@ -62,6 +70,7 @@ export function OwnersAndFinancialServicesForm({
           </GridItem>
           <GridItem xs={12} sm={4}>
             <CurrencyInput<CompanyFacts>
+              currency={currency}
               control={control}
               errors={errors}
               registerKey={'financialAssetsAndCashBalance'}

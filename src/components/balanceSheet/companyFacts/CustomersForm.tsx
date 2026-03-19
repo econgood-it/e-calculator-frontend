@@ -11,8 +11,10 @@ import { FieldArrayAppendButton } from '../forms/FieldArrayAppendButton';
 import { FieldArrayRemoveButton } from '../forms/FieldArrayRemoveButton';
 import { Industry } from '../../../models/Industry';
 import { CompanyFacts } from '../../../models/CompanyFacts.ts';
+import { Currency } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
 
 type CustomersFormProps = {
+  currency: Currency;
   control: Control<CompanyFacts>;
   formState: FormState<CompanyFacts>;
   industries: Industry[];
@@ -22,6 +24,7 @@ export function CustomersForm({
   control,
   industries,
   formState: { errors },
+  currency,
 }: CustomersFormProps) {
   const { t } = useTranslation();
 
@@ -41,6 +44,7 @@ export function CustomersForm({
         <GridContainer spacing={3} alignItems="center">
           <GridItem xs={12} sm={6}>
             <CurrencyInput<CompanyFacts>
+              currency={currency}
               control={control}
               errors={errors}
               registerKey={'turnover'}
@@ -57,8 +61,8 @@ export function CustomersForm({
           <GridItem xs={12}>
             <Typography variant={'h2'}>
               <Trans>
-                Enter the 3 most important industry sectors which your organization
-                is active in, including a rough share of turnover
+                Enter the 3 most important industry sectors which your
+                organization is active in, including a rough share of turnover
               </Trans>
             </Typography>
           </GridItem>

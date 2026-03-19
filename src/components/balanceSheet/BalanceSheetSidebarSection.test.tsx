@@ -10,6 +10,7 @@ import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 
 import utc from 'dayjs/plugin/utc';
+import { Currency } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -133,6 +134,7 @@ describe('BalanceSheetSidebarSection', () => {
             start: '2024-10-01T00:00:00.000Z',
             end: '2024-10-14T00:00:00.000Z',
           },
+          currency: Currency.EUR,
         },
       });
     },

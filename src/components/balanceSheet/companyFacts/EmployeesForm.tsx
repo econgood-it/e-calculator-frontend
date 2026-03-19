@@ -14,17 +14,20 @@ import { FieldArrayAppendButton } from '../forms/FieldArrayAppendButton';
 import { FieldArrayRemoveButton } from '../forms/FieldArrayRemoveButton';
 import { Region } from '../../../models/Region';
 import { CompanyFacts } from '../../../models/CompanyFacts.ts';
+import { Currency } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
 
 type EmployeesFormProps = {
   control: Control<CompanyFacts>;
   formState: FormState<CompanyFacts>;
   regions: Region[];
+  currency: Currency;
 };
 
 export function EmployeesForm({
   control,
   formState: { errors },
   regions,
+  currency,
 }: EmployeesFormProps) {
   const { t } = useTranslation();
   const fieldArrayName = 'employeesFractions';
@@ -51,6 +54,7 @@ export function EmployeesForm({
           </GridItem>
           <GridItem xs={12} sm={3}>
             <CurrencyInput<CompanyFacts>
+              currency={currency}
               control={control}
               errors={errors}
               registerKey={'totalStaffCosts'}

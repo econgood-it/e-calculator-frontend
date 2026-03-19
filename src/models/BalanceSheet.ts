@@ -4,6 +4,7 @@ import {
   BalanceSheetPatchRequestBodySchema,
   BalanceSheetResponseBodySchema,
 } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
+import { Currency } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
 import { z } from 'zod';
 
 export type BalanceSheetItem = z.infer<typeof BalanceSheetItemResponseSchema>;

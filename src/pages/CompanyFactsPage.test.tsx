@@ -30,8 +30,9 @@ import {
   selectRegion,
 } from '../testUtils/form.tsx';
 import '@testing-library/jest-dom';
+import { BalanceSheet } from '../models/BalanceSheet.ts';
 
-function createRouter(companyFacts: CompanyFacts, action: Mock) {
+function createRouter(balanceSheet: BalanceSheet, action: Mock) {
   const initialPathForRouting = '/organization/3/balance-sheet/7';
   return createMemoryRouter(
     [
@@ -39,7 +40,8 @@ function createRouter(companyFacts: CompanyFacts, action: Mock) {
         path: initialPathForRouting,
         element: <CompanyFactsPage />,
         loader: () => ({
-          companyFacts,
+          generalInformation: balanceSheet.generalInformation,
+          companyFacts: balanceSheet.companyFacts,
           regions: regionsMocks.regions1(),
           industries: industriesMocks.industries1(),
         }),
@@ -56,7 +58,7 @@ describe('CompanyFactsPage', () => {
     const balanceSheet = new BalanceSheetMockBuilder().build();
 
     const action = vi.fn().mockResolvedValue(null);
-    const router = createRouter(balanceSheet.companyFacts, action);
+    const router = createRouter(balanceSheet, action);
     const { user } = renderWithTheme(<RouterProvider router={router} />);
     expect(await screen.findByText('A: Suppliers')).toBeInTheDocument();
     await user.click(screen.getByText('Next'));
@@ -75,12 +77,12 @@ describe('CompanyFactsPage', () => {
   });
 
   it('does not switch to the next form page if the current form has validation errors', async () => {
-    const companyFactsMockBuilder = new CompanyFactsMockBuilder();
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
     const action = vi.fn().mockResolvedValue(null);
-    const companyFacts = {
-      ...companyFactsMockBuilder.build(),
+    const balanceSheet = {
+      ...balanceSheetMockBuilder.build(),
     };
-    const router = createRouter(companyFacts, action);
+    const router = createRouter(balanceSheet, action);
     const { user } = renderWithTheme(<RouterProvider router={router} />);
 
     const addSupplierButton = await screen.findByRole('button', {
@@ -95,12 +97,12 @@ describe('CompanyFactsPage', () => {
   });
 
   it('does not switch to the previous form page if the current form has validation errors', async () => {
-    const companyFactsMockBuilder = new CompanyFactsMockBuilder();
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
     const action = vi.fn().mockResolvedValue(null);
-    const companyFacts = {
-      ...companyFactsMockBuilder.build(),
+    const balanceSheet = {
+      ...balanceSheetMockBuilder.build(),
     };
-    const router = createRouter(companyFacts, action);
+    const router = createRouter(balanceSheet, action);
     const { user } = renderWithTheme(<RouterProvider router={router} />);
     await user.click(await screen.findByText('Next'));
     const input = await screen.findByLabelText('Financial costs');
@@ -120,16 +122,19 @@ describe('CompanyFactsPage', () => {
 
 describe('SuppliersForm', () => {
   it('should set default value and validate all modifications for the field total purchase from suppliers', async () => {
-    const companyFactsMockBuilder = new CompanyFactsMockBuilder();
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
     const action = vi.fn().mockResolvedValue(null);
-    const router = createRouter(companyFactsMockBuilder.build(), action);
+    const balanceSheet = {
+      ...balanceSheetMockBuilder.build(),
+    };
+    const router = createRouter(balanceSheet, action);
     const { user } = renderWithTheme(<RouterProvider router={router} />);
 
     const input = await screen.findByLabelText(
       'Total purchases from suppliers'
     );
     expect(input).toHaveValue(
-      companyFactsMockBuilder.build().totalPurchaseFromSuppliers.toString()
+      balanceSheet.companyFacts.totalPurchaseFromSuppliers.toString()
     );
 
     await user.clear(input);
@@ -149,13 +154,12 @@ describe('SuppliersForm', () => {
   });
 
   it('saves changes on total purchase from suppliers field', async () => {
-    const companyFactsMockBuilder = new CompanyFactsMockBuilder();
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
     const action = vi.fn().mockResolvedValue(null);
-    const companyFacts = {
-      ...companyFactsMockBuilder.build(),
-      ...SuppliersMocks.suppliers1(),
+    const balanceSheet = {
+      ...balanceSheetMockBuilder.build(),
     };
-    const router = createRouter(companyFacts, action);
+    const router = createRouter(balanceSheet, action);
     const { user } = renderWithTheme(<RouterProvider router={router} />);
 
     const input = await screen.findByLabelText(
@@ -168,7 +172,7 @@ describe('SuppliersForm', () => {
     await saveForm(user);
     expect(action).toHaveBeenCalledWith({
       companyFacts: {
-        ...companyFacts,
+        ...balanceSheet.companyFacts,
         totalPurchaseFromSuppliers: 800,
         mainOriginOfOtherSuppliers:
           SuppliersMocks.suppliers1().mainOriginOfOtherSuppliers.countryCode,
@@ -178,12 +182,15 @@ describe('SuppliersForm', () => {
   });
 
   it('renders supply fractions', async () => {
-    const companyFacts = new CompanyFactsMockBuilder().build();
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
     const action = vi.fn().mockResolvedValue(null);
-    const router = createRouter(companyFacts, action);
+    const balanceSheet = {
+      ...balanceSheetMockBuilder.build(),
+    };
+    const router = createRouter(balanceSheet, action);
     renderWithTheme(<RouterProvider router={router} />);
 
-    for (const index in companyFacts.supplyFractions) {
+    for (const index in balanceSheet.companyFacts.supplyFractions) {
       expect(
         await screen.findByLabelText(`supplyFractions.${index}.costs`)
       ).toBeInTheDocument();
@@ -197,25 +204,26 @@ describe('SuppliersForm', () => {
   });
 
   it('saves changes of the supply fractions costs', async () => {
-    const companyFactsMockBuilder = new CompanyFactsMockBuilder();
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
     const action = vi.fn().mockResolvedValue(null);
-    const companyFacts = {
-      ...companyFactsMockBuilder.build(),
-      ...SuppliersMocks.suppliers1(),
+    const balanceSheet = {
+      ...balanceSheetMockBuilder.build(),
     };
-    const router = createRouter(companyFacts, action);
+    const router = createRouter(balanceSheet, action);
     const { user } = renderWithTheme(<RouterProvider router={router} />);
     const newCosts = 20;
-    for (const index in companyFacts.supplyFractions) {
+    for (const index in balanceSheet.companyFacts.supplyFractions) {
       await fillNumberField(user, `supplyFractions.${index}.costs`, newCosts);
     }
 
+    const companyFactsMockBuilder = new CompanyFactsMockBuilder();
     const saveButton = screen.getByRole('button', { name: 'Save' });
     await user.click(saveButton);
     expect(action).toHaveBeenCalledWith({
       companyFacts: {
-        ...companyFacts,
-        totalPurchaseFromSuppliers: companyFacts.totalPurchaseFromSuppliers,
+        ...balanceSheet.companyFacts,
+        totalPurchaseFromSuppliers:
+          balanceSheet.companyFacts.totalPurchaseFromSuppliers,
         supplyFractions: companyFactsMockBuilder
           .build()
           .supplyFractions.map((s) => ({ ...s, costs: newCosts })),
@@ -229,12 +237,19 @@ describe('SuppliersForm', () => {
 
   it('adding supply fraction without region selected leads to form error', async () => {
     const action = vi.fn().mockResolvedValue(null);
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
     const companyFacts = {
       ...new CompanyFactsMockBuilder().build(),
       ...SuppliersMocks.suppliers1(),
       supplyFractions: [],
     };
-    const router = createRouter(companyFacts, action);
+
+    const balanceSheet = {
+      ...balanceSheetMockBuilder.build(),
+      companyFacts,
+    };
+    const router = createRouter(balanceSheet, action);
+
     const { user } = renderWithTheme(<RouterProvider router={router} />);
 
     const addSupplierButton = await screen.findByRole('button', {
@@ -247,12 +262,12 @@ describe('SuppliersForm', () => {
   });
 
   it('saves changes of main origin region', async () => {
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
     const action = vi.fn().mockResolvedValue(null);
-    const companyFacts = {
-      ...new CompanyFactsMockBuilder().build(),
-      ...SuppliersMocks.suppliers1(),
+    const balanceSheet = {
+      ...balanceSheetMockBuilder.build(),
     };
-    const router = createRouter(companyFacts, action);
+    const router = createRouter(balanceSheet, action);
     const { user } = renderWithTheme(<RouterProvider router={router} />);
 
     const selectedRegion = regionsMocks.regions1()[3];
@@ -265,7 +280,7 @@ describe('SuppliersForm', () => {
 
     expect(action).toHaveBeenCalledWith({
       companyFacts: {
-        ...companyFacts,
+        ...balanceSheet.companyFacts,
         mainOriginOfOtherSuppliers: selectedRegion.countryCode,
       },
       intent: 'updateCompanyFacts',
@@ -273,12 +288,12 @@ describe('SuppliersForm', () => {
   });
 
   it('removes supply fraction and saves changes', async () => {
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
     const action = vi.fn().mockResolvedValue(null);
-    const companyFacts = {
-      ...new CompanyFactsMockBuilder().build(),
-      ...SuppliersMocks.suppliers1(),
+    const balanceSheet = {
+      ...balanceSheetMockBuilder.build(),
     };
-    const router = createRouter(companyFacts, action);
+    const router = createRouter(balanceSheet, action);
     const { user } = renderWithTheme(<RouterProvider router={router} />);
 
     const removeSupplierButton = await screen.findByRole('button', {
@@ -286,26 +301,28 @@ describe('SuppliersForm', () => {
     });
     await user.click(removeSupplierButton);
     await saveForm(user);
-    const expectedSupplyFractions = [...companyFacts.supplyFractions.slice(1)];
+    const expectedSupplyFractions = [
+      ...balanceSheet.companyFacts.supplyFractions.slice(1),
+    ];
     expect(action).toHaveBeenCalledWith({
       companyFacts: {
-        ...companyFacts,
+        ...balanceSheet.companyFacts,
         totalPurchaseFromSuppliers: 900,
         supplyFractions: expectedSupplyFractions,
         mainOriginOfOtherSuppliers:
-          companyFacts.mainOriginOfOtherSuppliers.countryCode,
+          balanceSheet.companyFacts.mainOriginOfOtherSuppliers.countryCode,
       },
       intent: 'updateCompanyFacts',
     });
   });
 
   it('main origin of other suppliers field is readonly', async () => {
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
     const action = vi.fn().mockResolvedValue(null);
-    const companyFacts = {
-      ...new CompanyFactsMockBuilder().build(),
-      ...SuppliersMocks.suppliers1(),
+    const balanceSheet = {
+      ...balanceSheetMockBuilder.build(),
     };
-    const router = createRouter(companyFacts, action);
+    const router = createRouter(balanceSheet, action);
     renderWithTheme(<RouterProvider router={router} />);
     const mainOriginOfOtherSuppliersFieldBeforeUpdate =
       await screen.findByLabelText(`mainOriginOfOtherSuppliers.costs`);
@@ -316,12 +333,12 @@ describe('SuppliersForm', () => {
   });
 
   it('main origin of other suppliers updates if costs of supply fraction change', async () => {
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
     const action = vi.fn().mockResolvedValue(null);
-    const companyFacts = {
-      ...new CompanyFactsMockBuilder().build(),
-      ...SuppliersMocks.suppliers1(),
+    const balanceSheet = {
+      ...balanceSheetMockBuilder.build(),
     };
-    const router = createRouter(companyFacts, action);
+    const router = createRouter(balanceSheet, action);
     const { user } = renderWithTheme(<RouterProvider router={router} />);
     const mainOriginOfOtherSuppliersFieldBeforeUpdate =
       await screen.findByLabelText(`mainOriginOfOtherSuppliers.costs`);
@@ -333,7 +350,7 @@ describe('SuppliersForm', () => {
     );
 
     const newCosts = 20;
-    for (const index in companyFacts.supplyFractions) {
+    for (const index in balanceSheet.companyFacts.supplyFractions) {
       await fillNumberField(user, `supplyFractions.${index}.costs`, newCosts);
     }
     const mainOriginOfOtherSuppliersField = screen.getByLabelText(
@@ -343,7 +360,10 @@ describe('SuppliersForm', () => {
     expect(
       within(mainOriginOfOtherSuppliersField).getByRole('textbox')
     ).toHaveValue(
-      (900 - newCosts * companyFacts.supplyFractions.length).toString()
+      (
+        900 -
+        newCosts * balanceSheet.companyFacts.supplyFractions.length
+      ).toString()
     );
   });
 });
@@ -360,7 +380,12 @@ describe('OwnersAndFinancialServicesForm', () => {
       ...companyFactsMockBuilder.build(),
       ...OwnersAndFinancialServicesMocks.ownersAndFinancialServices1(),
     };
-    const router = createRouter(companyFacts, action);
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
+    const balanceSheet = {
+      ...balanceSheetMockBuilder.build(),
+      companyFacts,
+    };
+    const router = createRouter(balanceSheet, action);
 
     const { user } = renderWithTheme(<RouterProvider router={router} />);
     await user.click(await screen.findByText('Next'));
@@ -448,7 +473,12 @@ describe('EmployeesForm', () => {
       ...companyFactsMockBuilder.build(),
       ...EmployeesMocks.employees1(),
     };
-    const router = createRouter(companyFacts, action);
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
+    const balanceSheet = {
+      ...balanceSheetMockBuilder.build(),
+      companyFacts,
+    };
+    const router = createRouter(balanceSheet, action);
     const { user } = renderWithTheme(<RouterProvider router={router} />);
     await user.dblClick(await screen.findByText('Next'));
     const input = await screen.findByLabelText(fieldLabel);
@@ -500,7 +530,12 @@ describe('EmployeesForm', () => {
       ...companyFactsMockBuilder.build(),
       ...EmployeesMocks.employees1(),
     };
-    const router = createRouter(companyFacts, action);
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
+    const balanceSheet = {
+      ...balanceSheetMockBuilder.build(),
+      companyFacts,
+    };
+    const router = createRouter(balanceSheet, action);
     const { user } = renderWithTheme(<RouterProvider router={router} />);
     await user.dblClick(await screen.findByText('Next'));
     const switchField = screen.getByRole('checkbox', {
@@ -528,7 +563,12 @@ describe('EmployeesForm', () => {
       ...companyFactsMockBuilder.build(),
       ...EmployeesMocks.employees1(),
     };
-    const router = createRouter(companyFacts, action);
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
+    const balanceSheet = {
+      ...balanceSheetMockBuilder.build(),
+      companyFacts,
+    };
+    const router = createRouter(balanceSheet, action);
     const { user } = renderWithTheme(<RouterProvider router={router} />);
     await user.dblClick(await screen.findByText('Next'));
     const addEmployeesOriginButton = screen.getByRole('button', {
@@ -550,7 +590,12 @@ describe('EmployeesForm', () => {
         { countryCode: 'BEL', percentage: 20 },
       ],
     };
-    const router = createRouter(companyFacts, action);
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
+    const balanceSheet = {
+      ...balanceSheetMockBuilder.build(),
+      companyFacts,
+    };
+    const router = createRouter(balanceSheet, action);
     const { user } = renderWithTheme(<RouterProvider router={router} />);
     await user.dblClick(await screen.findByText('Next'));
     await fillNumberField(user, `employeesFractions.${1}.percentage`, 30);
@@ -570,7 +615,12 @@ describe('EmployeesForm', () => {
       ...companyFactsMockBuilder.build(),
       ...EmployeesMocks.employees1(),
     };
-    const router = createRouter(companyFacts, action);
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
+    const balanceSheet = {
+      ...balanceSheetMockBuilder.build(),
+      companyFacts,
+    };
+    const router = createRouter(balanceSheet, action);
     const { user } = renderWithTheme(<RouterProvider router={router} />);
     await user.dblClick(await screen.findByText('Next'));
     const addEmployeesOriginButton = screen.getByRole('button', {
@@ -614,7 +664,13 @@ describe('EmployeesForm', () => {
       ...companyFactsMockBuilder.build(),
       ...EmployeesMocks.employees1(),
     };
-    const router = createRouter(companyFacts, action);
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
+    const balanceSheet = {
+      ...balanceSheetMockBuilder.build(),
+      companyFacts,
+    };
+    const router = createRouter(balanceSheet, action);
+
     const { user } = renderWithTheme(<RouterProvider router={router} />);
     await user.dblClick(await screen.findByText('Next'));
     const removeEmployeesFractionButton = screen.getByRole('button', {
@@ -643,7 +699,11 @@ describe('CustomersForm', () => {
       ...companyFactsMockBuilder.build(),
       ...CustomersMocks.customers1(),
     };
-    const router = createRouter(companyFacts, action);
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
+    const balanceSheet = {
+      ...balanceSheetMockBuilder.build(),
+    };
+    const router = createRouter(balanceSheet, action);
     const { user } = renderWithTheme(<RouterProvider router={router} />);
 
     await user.tripleClick(await screen.findByText('Next'));
@@ -674,7 +734,12 @@ describe('CustomersForm', () => {
       ...companyFactsMockBuilder.build(),
       ...CustomersMocks.customers1(),
     };
-    const router = createRouter(companyFacts, action);
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
+    const balanceSheet = {
+      ...balanceSheetMockBuilder.build(),
+      companyFacts,
+    };
+    const router = createRouter(balanceSheet, action);
     const { user } = renderWithTheme(<RouterProvider router={router} />);
     await user.tripleClick(await screen.findByText('Next'));
     const switchField = screen.getByRole('checkbox', {
@@ -701,7 +766,12 @@ describe('CustomersForm', () => {
       ...companyFactsMockBuilder.build(),
       ...CustomersMocks.customers1(),
     };
-    const router = createRouter(companyFacts, action);
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
+    const balanceSheet = {
+      ...balanceSheetMockBuilder.build(),
+      companyFacts,
+    };
+    const router = createRouter(balanceSheet, action);
     const { user } = renderWithTheme(<RouterProvider router={router} />);
     await user.tripleClick(await screen.findByText('Next'));
     const addIndustrySectorButton = screen.getByRole('button', {
@@ -752,7 +822,12 @@ describe('CustomersForm', () => {
         { industryCode: 'A', description: 'desc', amountOfTotalTurnover: 20 },
       ],
     };
-    const router = createRouter(companyFacts, action);
+    const balanceSheetMockBuilder = new BalanceSheetMockBuilder();
+    const balanceSheet = {
+      ...balanceSheetMockBuilder.build(),
+      companyFacts,
+    };
+    const router = createRouter(balanceSheet, action);
     const { user } = renderWithTheme(<RouterProvider router={router} />);
     await user.tripleClick(await screen.findByText('Next'));
     await fillNumberField(

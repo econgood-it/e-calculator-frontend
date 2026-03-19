@@ -23,6 +23,7 @@ import { FieldArrayRemoveButton } from '../forms/FieldArrayRemoveButton';
 import { Region } from '../../../models/Region';
 import { Industry } from '../../../models/Industry';
 import { CompanyFacts } from '../../../models/CompanyFacts.ts';
+import { Currency } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
 
 type SuppliersFormProps = {
   control: Control<CompanyFacts>;
@@ -30,6 +31,7 @@ type SuppliersFormProps = {
   formState: FormState<CompanyFacts>;
   regions: Region[];
   industries: Industry[];
+  currency: Currency;
 };
 
 const SuppliersForm = ({
@@ -38,6 +40,7 @@ const SuppliersForm = ({
   formState: { errors },
   regions,
   industries,
+  currency,
 }: SuppliersFormProps) => {
   const fieldArrayName = 'supplyFractions';
   const {
@@ -69,6 +72,7 @@ const SuppliersForm = ({
     <GridContainer spacing={3}>
       <GridItem xs={12}>
         <CurrencyInput<CompanyFacts>
+          currency={currency}
           control={control}
           errors={errors}
           label={<Trans>Total purchases from suppliers</Trans>}
@@ -117,6 +121,7 @@ const SuppliersForm = ({
             </GridItem>
             <GridItem xs={12} sm={3}>
               <CurrencyInput<CompanyFacts>
+                currency={currency}
                 control={control}
                 errors={errors}
                 label={<Trans>Costs</Trans>}
@@ -132,7 +137,6 @@ const SuppliersForm = ({
           </GridContainer>
         </GridItem>
       ))}
-
       <GridItem xs={12}>
         <GridContainer spacing={3} alignItems="center">
           <GridItem xs={12} sm={4}>
@@ -150,6 +154,7 @@ const SuppliersForm = ({
           </GridItem>
           <GridItem xs={12} sm={3}>
             <CurrencyInput
+              currency={currency}
               control={control}
               errors={errors}
               label={<Trans>Costs</Trans>}
