@@ -196,21 +196,11 @@ export function BalanceSheetOverviewPage() {
             </GridContainer>
           </GridItem>
           <GridItem xs={12} sm={1}>
-            <ReactHookFormSelect
+            <CurrencySelector
               control={control}
-              name={`generalInformation.currency`}
-              label={<Trans>Currency</Trans>}
+              name={'generalInformation.currency'}
               defaultValue={Currency.EUR}
-            >
-              {[
-                { value: Currency.USD, symbol: '$' },
-                { value: Currency.EUR, symbol: '€' },
-              ].map(({ value, symbol }) => (
-                <MenuItem key={value} value={value}>
-                  {symbol}
-                </MenuItem>
-              ))}
-            </ReactHookFormSelect>
+            />
           </GridItem>
           <GridItem xs={12}>
             <GridContainer spacing={2}>
