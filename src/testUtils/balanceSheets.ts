@@ -13,6 +13,7 @@ import {
 import _ from 'lodash';
 import { Audit, AuditSubmitRequestBody } from '../models/Audit.ts';
 import { CertificationAuthorityNames } from '@ecogood/e-calculator-schemas/dist/audit.dto';
+import { Currency } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
 
 export const CustomersMocks = {
   customers1: () => ({
@@ -182,6 +183,7 @@ export class BalanceSheetMockBuilder {
         start: new Date('2025-01-01').toISOString(),
         end: new Date('2026-01-01').toISOString(),
       },
+      currency: Currency.EUR,
     },
   };
 

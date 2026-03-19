@@ -17,6 +17,8 @@ import { useTranslation } from 'react-i18next';
 import * as _ from 'lodash';
 import { NumericFormat } from 'react-number-format';
 import { useLanguage } from '../../../i18n.ts';
+import { Currency } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
+import { BalanceSheetCurrencies } from '../../../models/BalanceSheet.ts';
 
 type PositiveNumberInputProps<T extends FieldValues> = {
   label: ReactElement | string;
@@ -70,12 +72,16 @@ export function NumberInput<T extends FieldValues>({
 }
 
 export function CurrencyInput<T extends FieldValues>(
-  props: PositiveNumberInputProps<T>
+  props: PositiveNumberInputProps<T> & { currency: Currency }
 ) {
   return (
     <NumberInput
       {...props}
-      startAdornment={<InputAdornment position="start">€</InputAdornment>}
+      startAdornment={
+        <InputAdornment position="start">
+          {BalanceSheetCurrencies[props.currency]}
+        </InputAdornment>
+      }
     />
   );
 }

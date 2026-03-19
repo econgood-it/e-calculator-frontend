@@ -63,6 +63,7 @@ const CompanyFactsPage = () => {
             formState={formState}
             regions={data.regions}
             industries={data.industries}
+            currency={data.generalInformation.currency}
           />
         ),
       },
@@ -72,6 +73,7 @@ const CompanyFactsPage = () => {
           <OwnersAndFinancialServicesForm
             formState={formState}
             control={control}
+            currency={data.generalInformation.currency}
           />
         ),
       },
@@ -82,6 +84,7 @@ const CompanyFactsPage = () => {
             control={control}
             formState={formState}
             regions={data?.regions}
+            currency={data.generalInformation.currency}
           />
         ),
       },
@@ -92,6 +95,7 @@ const CompanyFactsPage = () => {
             control={control}
             formState={formState}
             industries={data?.industries}
+            currency={data.generalInformation.currency}
           />
         ),
       },
@@ -194,7 +198,7 @@ const CompanyFactsPage = () => {
           />
         </GridItem>
       </FixedBarItemWithContainer>
-      <GridItem marginTop={10}>
+      <GridItem marginTop={12}>
         <FormContainer>{Steps[activeStep].element}</FormContainer>
       </GridItem>
     </GridContainer>
@@ -221,7 +225,12 @@ export async function loader(
   );
   const regions = await apiClient.getRegions();
   const industries = await apiClient.getIndustries();
-  return { companyFacts: balanceSheet.companyFacts, regions, industries };
+  return {
+    generalInformation: balanceSheet.generalInformation,
+    companyFacts: balanceSheet.companyFacts,
+    regions,
+    industries,
+  };
 }
 
 export async function action(

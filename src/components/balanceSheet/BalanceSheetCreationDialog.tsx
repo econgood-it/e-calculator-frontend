@@ -17,6 +17,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { FormTextField } from './forms/FormTextField.tsx';
 import ReactHookFormDatePicker from '../lib/ReactHookFormDatePicker.tsx';
 import { UserInformation } from '../../models/User.ts';
+import { CurrencySelector } from './forms/CurrencySelect.tsx';
+import { Currency } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
 
 type BalanceSheetCreationDialogProps = {
   user: UserInformation;
@@ -121,6 +123,13 @@ export function BalanceSheetCreationForm({
           errors={errors}
           register={register}
           registerKey={'generalInformation.contactPerson.email'}
+        />
+      </GridItem>
+      <GridItem xs={12} sm={6}>
+        <CurrencySelector
+          control={control}
+          name={'generalInformation.currency'}
+          defaultValue={Currency.EUR}
         />
       </GridItem>
       <GridItem xs={12} sm={6}>

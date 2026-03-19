@@ -41,9 +41,13 @@ import { z } from 'zod';
 import ReactHookFormDatePicker from '../components/lib/ReactHookFormDatePicker.tsx';
 import { FormTextField } from '../components/balanceSheet/forms/FormTextField.tsx';
 import { BalanceSheetCreateRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
-import { GeneralInformationSchema } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
+import {
+  Currency,
+  GeneralInformationSchema,
+} from '@ecogood/e-calculator-schemas/dist/general.information.dto';
 import { SaveButton } from '../components/buttons/SaveButton.tsx';
 import { LoadingPage } from './LoadingPage.tsx';
+import { CurrencySelector } from '../components/balanceSheet/forms/CurrencySelect.tsx';
 
 const FormInputSchema = BalanceSheetCreateRequestBodySchema.pick({
   generalInformation: true,
@@ -171,9 +175,9 @@ export function BalanceSheetOverviewPage() {
               registerKey={'generalInformation.contactPerson.email'}
             />
           </GridItem>
-          <GridItem xs={12}>
+          <GridItem xs={12} sm={8}>
             <GridContainer spacing={2}>
-              <GridItem xs={12} sm={4}>
+              <GridItem xs={12} sm={6}>
                 <ReactHookFormDatePicker
                   disabled={disableGeneralInformationForm}
                   label={<Trans>Start of reporting period</Trans>}
@@ -181,7 +185,7 @@ export function BalanceSheetOverviewPage() {
                   name={'generalInformation.period.start'}
                 />
               </GridItem>
-              <GridItem xs={12} sm={4}>
+              <GridItem xs={12} sm={6}>
                 <ReactHookFormDatePicker
                   disabled={disableGeneralInformationForm}
                   label={<Trans>End of reporting period</Trans>}
@@ -191,23 +195,34 @@ export function BalanceSheetOverviewPage() {
               </GridItem>
             </GridContainer>
           </GridItem>
-          {((data.audit && data.isMemberOfCertificationAuthority) ||
-            (!data.audit && !data.isMemberOfCertificationAuthority)) && (
-            <GridItem xs={12} sm={3}>
-              <SaveButton
-                handleSubmit={handleSubmit}
-                onSaveClick={onSaveGeneralInformation}
-              />
-            </GridItem>
-          )}
-          {!data.audit && !data.isMemberOfCertificationAuthority && (
-            <GridItem xs={12} sm={3}>
-              <CertificationAuthoritySplitButton
-                handleSubmit={handleSubmit}
-                onClick={onBalanceSheetSubmit}
-              />
-            </GridItem>
-          )}
+          <GridItem xs={12} sm={1}>
+            <CurrencySelector
+              control={control}
+              name={'generalInformation.currency'}
+              defaultValue={Currency.EUR}
+            />
+          </GridItem>
+          <GridItem xs={12}>
+            <GridContainer spacing={2}>
+              {((data.audit && data.isMemberOfCertificationAuthority) ||
+                (!data.audit && !data.isMemberOfCertificationAuthority)) && (
+                <GridItem xs={12} sm={3}>
+                  <SaveButton
+                    handleSubmit={handleSubmit}
+                    onSaveClick={onSaveGeneralInformation}
+                  />
+                </GridItem>
+              )}
+              {!data.audit && !data.isMemberOfCertificationAuthority && (
+                <GridItem xs={12} sm={3}>
+                  <CertificationAuthoritySplitButton
+                    handleSubmit={handleSubmit}
+                    onClick={onBalanceSheetSubmit}
+                  />
+                </GridItem>
+              )}
+            </GridContainer>
+          </GridItem>
         </GridContainer>
       </GridItem>
       <GridItem xs={12}>
