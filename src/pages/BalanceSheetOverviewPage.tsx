@@ -200,6 +200,7 @@ export function BalanceSheetOverviewPage() {
               control={control}
               name={'generalInformation.currency'}
               defaultValue={Currency.EUR}
+              disabled={disableGeneralInformationForm}
             />
           </GridItem>
           <GridItem xs={12}>

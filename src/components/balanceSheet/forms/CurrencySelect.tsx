@@ -8,12 +8,14 @@ type CurrencySelectorProps<T extends FieldValues> = {
   control: Control<T>;
   name: Path<T>;
   defaultValue: PathValue<T, Path<T>>;
+  disabled?: boolean;
 };
 
 export function CurrencySelector<T extends FieldValues>({
   control,
   name,
   defaultValue,
+  disabled,
 }: CurrencySelectorProps<T>) {
   return (
     <ReactHookFormSelect
@@ -21,6 +23,7 @@ export function CurrencySelector<T extends FieldValues>({
       name={name}
       label={<Trans>Currency</Trans>}
       defaultValue={defaultValue}
+      disabled={disabled}
     >
       {Object.entries(BalanceSheetCurrencies).map(([value, symbol]) => (
         <MenuItem key={value} value={value}>
