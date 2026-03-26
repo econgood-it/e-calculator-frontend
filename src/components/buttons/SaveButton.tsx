@@ -16,6 +16,7 @@ type SaveButtonProps = {
   onSaveClick: SubmitHandler<FieldValues>;
   label?: React.ReactNode;
   disabled?: boolean;
+  icon?: React.ReactNode;
 };
 
 export function SaveButton({
@@ -23,6 +24,7 @@ export function SaveButton({
   handleSubmit,
   label,
   disabled,
+  icon,
 }: SaveButtonProps) {
   const handleErrors = useErrorHandling();
   return (
@@ -35,7 +37,7 @@ export function SaveButton({
         handleErrors(errors);
       })}
       variant={'contained'}
-      startIcon={<FontAwesomeIcon icon={faSave} />}
+      startIcon={icon ?? <FontAwesomeIcon icon={faSave} />}
     >
       {label ? label : <Trans>Save</Trans>}
     </Button>

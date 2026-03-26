@@ -32,7 +32,6 @@ import { redirect, useLoaderData } from 'react-router-typesafe';
 import { HandlerContext } from './handlerContext.ts';
 import { BigNumber } from '../components/lib/BigNumber.tsx';
 import { CertificationAuthorityNames } from '@ecogood/e-calculator-schemas/dist/audit.dto';
-import { CertificationAuthoritySplitButton } from './CertificationAuthoritySplitButton.tsx';
 import { enqueueSnackbar } from 'notistack';
 import { useState } from 'react';
 import { FieldValues, useForm } from 'react-hook-form';
@@ -48,6 +47,9 @@ import {
 import { SaveButton } from '../components/buttons/SaveButton.tsx';
 import { LoadingPage } from './LoadingPage.tsx';
 import { CurrencySelector } from '../components/balanceSheet/forms/CurrencySelect.tsx';
+import { faPeopleGroup } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faAward } from '@fortawesome/free-solid-svg-icons/faAward';
 
 const FormInputSchema = BalanceSheetCreateRequestBodySchema.pick({
   generalInformation: true,
@@ -215,12 +217,34 @@ export function BalanceSheetOverviewPage() {
                 </GridItem>
               )}
               {!data.audit && !data.isMemberOfCertificationAuthority && (
-                <GridItem xs={12} sm={3}>
-                  <CertificationAuthoritySplitButton
-                    handleSubmit={handleSubmit}
-                    onClick={onBalanceSheetSubmit}
-                  />
-                </GridItem>
+                <>
+                  <GridItem xs={12} sm={3}>
+                    <SaveButton
+                      handleSubmit={handleSubmit}
+                      label={<Trans>Submit to audit</Trans>}
+                      onSaveClick={(data: FieldValues) =>
+                        onBalanceSheetSubmit(
+                          CertificationAuthorityNames.AUDIT,
+                          data
+                        )
+                      }
+                      icon={<FontAwesomeIcon icon={faAward} />}
+                    />
+                  </GridItem>
+                  <GridItem xs={12} sm={3}>
+                    <SaveButton
+                      handleSubmit={handleSubmit}
+                      label={<Trans>Submit to peer-group</Trans>}
+                      onSaveClick={(data: FieldValues) =>
+                        onBalanceSheetSubmit(
+                          CertificationAuthorityNames.PEER_GROUP,
+                          data
+                        )
+                      }
+                      icon={<FontAwesomeIcon icon={faPeopleGroup} />}
+                    />
+                  </GridItem>
+                </>
               )}
             </GridContainer>
           </GridItem>
