@@ -18,4 +18,5 @@ export type BalanceSheetPatchRequestBody = z.input<
 export const BalanceSheetCurrencies = {
   [Currency.EUR]: '€',
   [Currency.USD]: '$',
+  [Currency.CHF]: 'CHF',
 };

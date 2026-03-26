@@ -209,7 +209,7 @@ export function BalanceSheetOverviewPage() {
             <GridContainer spacing={2}>
               {((data.audit && data.isMemberOfCertificationAuthority) ||
                 (!data.audit && !data.isMemberOfCertificationAuthority)) && (
-                <GridItem xs={12} sm={3}>
+                <GridItem sm={12} lg={2}>
                   <SaveButton
                     handleSubmit={handleSubmit}
                     onSaveClick={onSaveGeneralInformation}
@@ -218,7 +218,7 @@ export function BalanceSheetOverviewPage() {
               )}
               {!data.audit && !data.isMemberOfCertificationAuthority && (
                 <>
-                  <GridItem xs={12} sm={3}>
+                  <GridItem sm={12} lg={5}>
                     <SaveButton
                       handleSubmit={handleSubmit}
                       label={<Trans>Submit to audit</Trans>}
@@ -231,7 +231,7 @@ export function BalanceSheetOverviewPage() {
                       icon={<FontAwesomeIcon icon={faAward} />}
                     />
                   </GridItem>
-                  <GridItem xs={12} sm={3}>
+                  <GridItem sm={12} lg={5}>
                     <SaveButton
                       handleSubmit={handleSubmit}
                       label={<Trans>Submit to peer-group</Trans>}
