@@ -173,6 +173,7 @@ export function BalanceSheetCreationForm({
           name={'version'}
         >
           <MenuItem value={BalanceSheetVersion.v5_1_0}>5.10</MenuItem>
+          <MenuItem value={BalanceSheetVersion.v5_2_0}>5.20</MenuItem>
         </ReactHookFormSelect>
       </GridItem>
       <GridItem xs={12}>
