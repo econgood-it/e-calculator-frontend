@@ -8,6 +8,7 @@ import {
   Button,
   Card,
   CardContent,
+  Chip,
   Dialog,
   DialogActions,
   DialogContent,
@@ -70,9 +71,9 @@ export function BalanceSheetOverviewPage() {
   } = useForm<FormInput>({
     resolver: zodResolver(FormInputSchema),
     mode: 'onChange',
-    values: data?.generalInformation
+    values: data?.balanceSheet.generalInformation
       ? {
-          generalInformation: data.generalInformation,
+          generalInformation: data.balanceSheet.generalInformation,
         }
       : undefined,
   });
@@ -144,12 +145,25 @@ export function BalanceSheetOverviewPage() {
   return (
     <FormContainer spacing={2}>
       <GridItem xs={12}>
-        <Typography variant="h1">
-          <Trans>General information</Trans>
-        </Typography>
+        <GridContainer spacing={2} alignItems="center">
+          <GridItem>
+            <Typography variant="h1">
+              <Trans>General information</Trans>
+            </Typography>
+          </GridItem>
+          <GridItem>
+            <Chip
+              label={
+                <Typography variant="h4">
+                  {data.balanceSheet.version}
+                </Typography>
+              }
+            />
+          </GridItem>
+        </GridContainer>
       </GridItem>
       <GridItem xs={12}>
-        <GridContainer spacing={2}>
+        <GridContainer spacing={2} alignItems="center">
           <GridItem xs={12} sm={4}>
             <FormTextField
               disabled={disableGeneralInformationForm}
@@ -373,8 +387,7 @@ export async function loader(
           'submittedBalanceSheetId'
         ),
     isMemberOfCertificationAuthority: isMemberOfCertificationAuthority,
-    generalInformation:
-      await apiClient.getBalanceSheetGeneralInformation(balanceSheetId),
+    balanceSheet: await apiClient.getBalanceSheet(balanceSheetId),
   };
 }
 

@@ -152,10 +152,10 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.25.9"
 
-"@babel/runtime@^7.12.5", "@babel/runtime@^7.23.2", "@babel/runtime@^7.23.9", "@babel/runtime@^7.26.0", "@babel/runtime@^7.28.4", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.7":
-  version "7.28.4"
-  resolved "https://registry.npmjs.org/@babel/runtime/-/runtime-7.28.4.tgz"
-  integrity sha512-Q/N6JNWvIvPnLDvjlE1OUBLPQHH6l3CltCEsHIujp45zQUSSh8K+gHnaEX45yAT1nyngnINhvWtzN+Nb9D8RAQ==
+"@babel/runtime@^7.12.5", "@babel/runtime@^7.23.2", "@babel/runtime@^7.23.9", "@babel/runtime@^7.26.0", "@babel/runtime@^7.28.4", "@babel/runtime@^7.29.2", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.7":
+  version "7.29.2"
+  resolved "https://registry.npmjs.org/@babel/runtime/-/runtime-7.29.2.tgz"
+  integrity sha512-JiDShH45zKHWyGe4ZNVRrCjBz8Nh9TMmZG1kh4QTK8hCBTWBi8Da+i7s1fJw7/lYpM4ccepSNfqzZ/QvABBi5g==
 
 "@babel/template@^7.25.9":
   version "7.25.9"
@@ -188,9 +188,9 @@
     "@babel/helper-validator-identifier" "^7.25.9"
 
 "@ecogood/e-calculator-schemas@^2.7.24":
-  version "2.7.24"
-  resolved "https://registry.yarnpkg.com/@ecogood/e-calculator-schemas/-/e-calculator-schemas-2.7.24.tgz#a54835dcbb44c8830e7b031d1f0220da18050ac8"
-  integrity sha512-OIIF2s5KSrWe4iIIbgkACK+MsLMs+eiTwq8b6R+WT49LS1Rr9jCCo7tgfbDCC6FfYKSOKouj7L/vDG1y5rNrPA==
+  version "2.7.25"
+  resolved "https://registry.npmjs.org/@ecogood/e-calculator-schemas/-/e-calculator-schemas-2.7.25.tgz"
+  integrity sha512-tMb+mIWZXGhwxJ2YZ1zlpwdGxhOCDXtyA7btFrqr8AUEPdzKM+RZKysMGR97m0RUl68iG8XanzcJZ27ECncuIg==
   dependencies:
     zod "^3.23.8"
 
@@ -511,13 +511,13 @@
     prop-types "^15.8.1"
 
 "@mui/styled-engine@^5.16.6", "@mui/styled-engine@npm:@mui/styled-engine-sc@latest":
-  version "7.3.3"
-  resolved "https://registry.npmjs.org/@mui/styled-engine-sc/-/styled-engine-sc-7.3.3.tgz"
-  integrity sha512-R0JEFzS8HpYUurZQdSdvXQRPcIwTRM7iqIDrQpcsa366ED4EWckxRBV8hDf6kA9uFonui3VSrMyz7jaLjCSGCA==
+  version "9.0.0"
+  resolved "https://registry.npmjs.org/@mui/styled-engine-sc/-/styled-engine-sc-9.0.0.tgz"
+  integrity sha512-uhM1UCtgrfTLopCJm51gmwE0Brdtj7Wkff/3NnAzmuRjH85mte3tuf/ouJV1SYMQLGVvu2CXzwfsFCzkzaVNsQ==
   dependencies:
-    "@babel/runtime" "^7.28.4"
+    "@babel/runtime" "^7.29.2"
     "@types/hoist-non-react-statics" "^3.3.7"
-    csstype "^3.1.3"
+    csstype "^3.2.3"
     hoist-non-react-statics "^3.3.2"
     prop-types "^15.8.1"
 
@@ -1460,6 +1460,11 @@ csstype@3.1.3, csstype@^3.0.2, csstype@^3.1.3:
   version "3.1.3"
   resolved "https://registry.npmjs.org/csstype/-/csstype-3.1.3.tgz"
   integrity sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==
+
+csstype@^3.2.3:
+  version "3.2.3"
+  resolved "https://registry.npmjs.org/csstype/-/csstype-3.2.3.tgz"
+  integrity sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==
 
 data-urls@^5.0.0:
   version "5.0.0"

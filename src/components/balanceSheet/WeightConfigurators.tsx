@@ -23,7 +23,7 @@ import {
   faSquare,
   faSquareCheck,
 } from '@fortawesome/free-solid-svg-icons';
-import { gte } from '@mr42/version-comparator/dist/version.comparator';
+import { eq } from '@mr42/version-comparator/dist/version.comparator';
 
 import { RatingsFormInput } from './RatingsForm.tsx';
 
@@ -57,7 +57,7 @@ export function WeightConfigurator({
   const shouldEnableExclusiveOptions = useCallback(
     (shortName: string) => {
       return (
-        gte(version, BalanceSheetVersion.v5_1_0) &&
+        eq(version, BalanceSheetVersion.v5_1_0) &&
         exclusiveOptions.includes(shortName)
       );
     },
