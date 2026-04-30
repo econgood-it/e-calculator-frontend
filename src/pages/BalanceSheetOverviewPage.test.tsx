@@ -13,6 +13,7 @@ import {
 import { CertificationAuthorityNames } from '@ecogood/e-calculator-schemas/dist/audit.dto';
 import { AuditMockBuilder } from '../testUtils/balanceSheets.ts';
 import { auditFactory } from '../testUtils/audit.ts';
+import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 describe('BalanceSheetOverviewPage', () => {
   it('renders overview page', async () => {
@@ -27,6 +28,7 @@ describe('BalanceSheetOverviewPage', () => {
             matrix: mockedMatrix,
             audit,
             isMemberOfCertificationAuthority: false,
+            balanceSheet: { version: BalanceSheetVersion.v5_2_0 },
           }),
         },
       ],
@@ -136,6 +138,7 @@ describe('BalanceSheetOverviewPage', () => {
             matrix: mockedMatrix,
             isMemberOfCertificationAuthority: true,
             audit: mockAudit,
+            balanceSheet: { version: BalanceSheetVersion.v5_2_0 },
           }),
           action: async ({ request }: ActionFunctionArgs) =>
             action(await request.json()),
