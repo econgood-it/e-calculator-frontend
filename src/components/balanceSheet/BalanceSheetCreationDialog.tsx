@@ -4,7 +4,8 @@ import { ClosableDialog } from '../lib/ClosableDialog';
 import GridContainer, { FormContainer } from '../layout/GridContainer';
 import GridItem from '../layout/GridItem';
 import { z } from 'zod';
-import { FieldValues, useForm } from 'react-hook-form';
+import { FieldValues, useForm, useWatch } from 'react-hook-form';
+import { useEffect } from 'react';
 import { SaveButton } from '../buttons/SaveButton.tsx';
 import { BalanceSheetCreateRequestBody } from '../../models/BalanceSheet';
 import { BalanceSheetCreateRequestBodySchema } from '@ecogood/e-calculator-schemas/dist/balance.sheet.dto';
@@ -84,6 +85,7 @@ export function BalanceSheetCreationForm({
     control,
     handleSubmit,
     register,
+    setValue,
     formState: { errors },
   } = useForm<FormInput>({
     resolver: zodResolver(FormInputSchema),
@@ -94,6 +96,15 @@ export function BalanceSheetCreationForm({
     },
     mode: 'onChange',
   });
+
+  const selectedVersion = useWatch({ control, name: 'version' });
+  const isV5_2_0 = selectedVersion === BalanceSheetVersion.v5_2_0;
+
+  useEffect(() => {
+    if (isV5_2_0) {
+      setValue('type', BalanceSheetType.Full);
+    }
+  }, [isV5_2_0, setValue]);
 
   async function onSaveClick(data: FieldValues) {
     await onSave(FormInputSchema.parse(data));
@@ -154,6 +165,7 @@ export function BalanceSheetCreationForm({
           defaultValue={BalanceSheetType.Full}
           label={t`Select type`}
           name={'type'}
+          disabled={isV5_2_0}
         >
           <MenuItem value={BalanceSheetType.Compact}>
             <Trans>Compact</Trans>
