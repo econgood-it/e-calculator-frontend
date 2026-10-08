@@ -21,7 +21,7 @@ export function CurrencySelector<T extends FieldValues>({
     <ReactHookFormSelect
       control={control}
       name={name}
-      label={<Trans>Currency</Trans>}
+      label={<Trans>Monetary Unit</Trans>}
       defaultValue={defaultValue}
       disabled={disabled}
     >

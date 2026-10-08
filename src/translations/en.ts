@@ -106,6 +106,7 @@ const EN_WORDS = [
   'B: Owners and financial partners',
   'C: Employees and Co-Workers',
   'D: Customers and business partners',
+  'Monetary Unit',
 ];
 
 export const EN_TRANSLATIONS = {

@@ -124,5 +124,6 @@ export const DE_TRANSLATIONS = {
   'C: Employees and Co-Workers': 'C. Mitarbeitende und Arbeitspartner\\*innen',
   'D: Customers and business partners':
     'D. Kund\\*innen und Geschäftspartner\\*innen',
+  'Monetary Unit': 'Währungseinheit',
   ...DE_ERROR_TRANSLATIONS,
 };
