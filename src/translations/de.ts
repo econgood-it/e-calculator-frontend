@@ -21,7 +21,7 @@ export const DE_TRANSLATIONS = {
   'Form data is invalid': 'Formulardaten sind invalide',
   'Owners, equity- and financial service providers':
     'Eigentümer*innen und Finanzpartner*innen',
-  'Financial costs': 'Finanzierungskosten',
+  'Cost of financing': 'Finanzierungskosten',
   'Add supplier': 'Lieferant hinzufügen',
   'Add industry sector': 'Branche hinzufügen',
   'Enter the 5 most important industry sectors whose products or services you use.':
@@ -111,8 +111,7 @@ export const DE_TRANSLATIONS = {
   'Reset audit process': 'Auditprozess zurücksetzen',
   'Once you reset a audit process, there is no going back. Please be certain.':
     'Wenn Sie einen Auditprozess einmal zurückgesetz haben, gibt es kein Zurück mehr. Bitte seien Sie sicher.',
-  'EBIT (Earnings Before Interest and Taxes)':
-    'Gewinn vor Zinsen und Steuern (EBIT)',
+  'Net income': 'Nettogewinn',
   'Contact name': 'Kontaktname',
   'Contact email': 'Kontakt-E-Mail',
   'Start of reporting period': 'Anfang des Berichtszeitraums',

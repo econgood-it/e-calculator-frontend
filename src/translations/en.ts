@@ -21,7 +21,7 @@ const EN_WORDS = [
   'Add supplier',
   'Add industry sector',
   'Enter the 5 most important industry sectors whose products or services you use.',
-  'Financial costs',
+  'Cost of financing',
   'Owners, equity- and financial service providers',
   'Income from financial investments',
   'Total assets',

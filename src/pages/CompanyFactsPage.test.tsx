@@ -105,7 +105,7 @@ describe('CompanyFactsPage', () => {
     const router = createRouter(balanceSheet, action);
     const { user } = renderWithTheme(<RouterProvider router={router} />);
     await user.click(await screen.findByText('Next'));
-    const input = await screen.findByLabelText('Financial costs');
+    const input = await screen.findByLabelText('Cost of financing');
     await user.clear(input);
     await user.type(input, '-2');
     await user.click(await screen.findByText('Back'));
@@ -411,15 +411,11 @@ describe('OwnersAndFinancialServicesForm', () => {
   }
 
   it('should modify EBIT (Earnings Before Interest and Taxes) field and save changes', async () => {
-    await shouldModifyFieldSaveResults(
-      'EBIT (Earnings Before Interest and Taxes)',
-      'profit',
-      false
-    );
+    await shouldModifyFieldSaveResults('Net income', 'profit', false);
   });
 
   it('should modify financial costs field and save changes', async () => {
-    await shouldModifyFieldSaveResults('Financial costs', 'financialCosts');
+    await shouldModifyFieldSaveResults('Cost of financing', 'financialCosts');
   });
 
   it('should modify income from financial investments field and save changes', async () => {
