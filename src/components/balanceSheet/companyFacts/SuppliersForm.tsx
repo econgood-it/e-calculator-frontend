@@ -124,7 +124,7 @@ const SuppliersForm = ({
                 currency={currency}
                 control={control}
                 errors={errors}
-                label={<Trans>Costs</Trans>}
+                label={<Trans>Purchase volume</Trans>}
                 registerKey={`${fieldArrayName}.${index}.costs`}
               />
             </GridItem>
@@ -157,7 +157,7 @@ const SuppliersForm = ({
               currency={currency}
               control={control}
               errors={errors}
-              label={<Trans>Costs</Trans>}
+              label={<Trans>Purchase volume</Trans>}
               readOnly={true}
               registerKey={'mainOriginOfOtherSuppliers.costs'}
             />

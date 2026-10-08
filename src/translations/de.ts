@@ -8,7 +8,7 @@ export const DE_TRANSLATIONS = {
   'Total purchases from suppliers': 'Gesamt-Ausgaben an Lieferanten',
   'Enter the 5 most important industry sectors whose products or services you use':
     'Geben Sie die 5 wichtigsten Wirtschaftszweige an, deren Produkte oder Dienstleistungen Sie nutzen.',
-  Costs: 'Kosten',
+  'Purchase volume': 'Einkaufsvolumen',
   Save: 'Speichern',
   Edit: 'Bearbeiten',
   'Modifications saved': 'Änderungen gespeichert',

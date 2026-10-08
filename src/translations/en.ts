@@ -7,7 +7,7 @@ const EN_WORDS = [
   'Delete',
   'Total purchases from suppliers',
   'Enter the 5 most important industry sectors whose products or services you use',
-  'Costs',
+  'Purchase volume',
   'Save',
   'Edit',
   'Modifications saved',
