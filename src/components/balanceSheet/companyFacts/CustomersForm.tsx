@@ -55,7 +55,7 @@ export function CustomersForm({
             <SwitchLabel<CompanyFacts>
               control={control}
               registerKey={'isB2B'}
-              label={t`Are your customers mainly other organisations?`}
+              label={t`Are your customers mainly other organizations?`}
             />
           </GridItem>
           <GridItem xs={12}>

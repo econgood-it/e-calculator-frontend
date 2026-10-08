@@ -33,7 +33,7 @@ const EN_WORDS = [
   'Is there a canteen for the majority of staff?',
   'Add employees origin',
   'Amount in %',
-  'Are your customers mainly other organisations?',
+  'Are your customers mainly other organizations?',
   'Enter the 3 most important industry sectors which your organization is active in, including a rough share of turnover',
   'Turnover',
   'Add industry sector',

@@ -743,7 +743,7 @@ describe('CustomersForm', () => {
     const { user } = renderWithTheme(<RouterProvider router={router} />);
     await user.tripleClick(await screen.findByText('Next'));
     const switchField = screen.getByRole('checkbox', {
-      name: 'Are your customers mainly other organisations?',
+      name: 'Are your customers mainly other organizations?',
     });
     expect((switchField as HTMLInputElement).checked).toBeFalsy();
     await user.click(switchField);
