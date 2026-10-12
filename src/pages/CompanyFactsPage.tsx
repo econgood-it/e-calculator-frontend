@@ -43,7 +43,7 @@ const CompanyFactsPage = () => {
   const [activeStep, setActiveStep] = useState<number>(0);
   const { t } = useTranslation();
 
-  const { formState, trigger, handleSubmit, setValue, control } =
+  const { formState, trigger, handleSubmit, setValue, control, getValues } =
     useForm<CompanyFacts>({
       resolver: zodResolver(CompanyFactsFormSchema),
       mode: 'onChange',
@@ -109,6 +109,36 @@ const CompanyFactsPage = () => {
   const { enqueueSnackbar } = useSnackbar();
   const handleErrors = useErrorHandling();
 
+  // Pass a step to validate only that step's field; omit it to validate all steps.
+  const validateNonZeroFields = (step?: number): boolean => {
+    const values = getValues();
+    const checks = [
+      {
+        step: 0,
+        value: values.totalPurchaseFromSuppliers,
+        message: t`Total purchase from suppliers cannot be zero`,
+      },
+      {
+        step: 1,
+        value: values.profit,
+        message: t`Net income cannot be zero`,
+      },
+      {
+        step: 3,
+        value: values.turnover,
+        message: t`Turnover cannot be zero`,
+      },
+    ];
+    const failed = checks.find(
+      (check) => (step === undefined || check.step === step) && check.value == 0
+    );
+    if (failed) {
+      enqueueSnackbar(failed.message, { variant: 'error' });
+      return false;
+    }
+    return true;
+  };
+
   const onSaveClick = async (data: FieldValues) => {
     const newCompanyFacts = CompanyFactsFormSchema.parse(data);
     const companyFacts = CompanyFactsPatchRequestBodySchema.parse({
@@ -127,6 +157,7 @@ const CompanyFactsPage = () => {
       mainOriginOfOtherSuppliers:
         newCompanyFacts.mainOriginOfOtherSuppliers.countryCode,
     });
+    if (!validateNonZeroFields(activeStep)) return;
     submit(
       { companyFacts, intent: 'updateCompanyFacts' },
       { method: 'patch', encType: 'application/json' }
@@ -147,6 +178,7 @@ const CompanyFactsPage = () => {
   );
 
   const handleNext = async () => {
+    if (!validateNonZeroFields(activeStep)) return;
     await callIfValid(() =>
       setActiveStep((prevActiveStep) => prevActiveStep + 1)
     );

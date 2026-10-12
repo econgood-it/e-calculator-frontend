@@ -124,5 +124,9 @@ export const DE_TRANSLATIONS = {
   'D: Customers and business partners':
     'D. Kund\\*innen und Geschäftspartner\\*innen',
   'Monetary Unit': 'Währungseinheit',
+  'Total purchase from suppliers cannot be zero':
+    'Die Gesamteinkäufe von Lieferanten dürfen nicht null sein',
+  'Net income cannot be zero': 'Der Nettogewinn darf nicht null sein',
+  'Turnover cannot be zero': 'Der Umsatz darf nicht null sein',
   ...DE_ERROR_TRANSLATIONS,
 };

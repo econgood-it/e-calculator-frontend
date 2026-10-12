@@ -107,6 +107,9 @@ const EN_WORDS = [
   'C: Employees and Co-Workers',
   'D: Customers and business partners',
   'Monetary Unit',
+  'Total purchase from suppliers cannot be zero',
+  'Net income cannot be zero',
+  'Turnover cannot be zero',
 ];
 
 export const EN_TRANSLATIONS = {
