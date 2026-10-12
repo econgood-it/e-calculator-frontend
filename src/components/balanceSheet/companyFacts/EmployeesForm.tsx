@@ -15,12 +15,14 @@ import { FieldArrayRemoveButton } from '../forms/FieldArrayRemoveButton';
 import { Region } from '../../../models/Region';
 import { CompanyFacts } from '../../../models/CompanyFacts.ts';
 import { Currency } from '@ecogood/e-calculator-schemas/dist/general.information.dto';
+import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 type EmployeesFormProps = {
   control: Control<CompanyFacts>;
   formState: FormState<CompanyFacts>;
   regions: Region[];
   currency: Currency;
+  version: BalanceSheetVersion;
 };
 
 export function EmployeesForm({
@@ -28,6 +30,7 @@ export function EmployeesForm({
   formState: { errors },
   regions,
   currency,
+  version,
 }: EmployeesFormProps) {
   const { t } = useTranslation();
   const fieldArrayName = 'employeesFractions';
@@ -78,41 +81,45 @@ export function EmployeesForm({
           </GridItem>
         </GridContainer>
       </GridItem>
-      <GridItem xs={12}>
-        <FieldArrayAppendButton
-          label={<Trans>Add employees origin</Trans>}
-          onClick={() => append({ countryCode: undefined, percentage: 0 })}
-          disabled={false}
-        ></FieldArrayAppendButton>
-      </GridItem>
-      {employeesFractions.map((_, index) => (
-        <GridItem key={index} xs={12}>
-          <GridContainer spacing={3}>
-            <GridItem xs={12} sm={6}>
-              <RegionSelect
-                control={control}
-                regions={regions}
-                defaultValue={DEFAULT_CODE}
-                name={`${fieldArrayName}.${index}.countryCode`}
-              />
+      {version !== BalanceSheetVersion.v5_2_0 && (
+        <>
+          <GridItem xs={12}>
+            <FieldArrayAppendButton
+              label={<Trans>Add employees origin</Trans>}
+              onClick={() => append({ countryCode: undefined, percentage: 0 })}
+              disabled={false}
+            ></FieldArrayAppendButton>
+          </GridItem>
+          {employeesFractions.map((_, index) => (
+            <GridItem key={index} xs={12}>
+              <GridContainer spacing={3}>
+                <GridItem xs={12} sm={6}>
+                  <RegionSelect
+                    control={control}
+                    regions={regions}
+                    defaultValue={DEFAULT_CODE}
+                    name={`${fieldArrayName}.${index}.countryCode`}
+                  />
+                </GridItem>
+                <GridItem xs={12} sm={5}>
+                  <PercentageInput<CompanyFacts>
+                    control={control}
+                    errors={errors}
+                    label={<Trans>Amount in %</Trans>}
+                    registerKey={`${fieldArrayName}.${index}.percentage`}
+                  />
+                </GridItem>
+                <GridItem xs={12} sm={1}>
+                  <FieldArrayRemoveButton
+                    onClick={() => remove(index)}
+                    ariaLabel={`Remove ${fieldArrayName} with ${index}`}
+                  />
+                </GridItem>
+              </GridContainer>
             </GridItem>
-            <GridItem xs={12} sm={5}>
-              <PercentageInput<CompanyFacts>
-                control={control}
-                errors={errors}
-                label={<Trans>Amount in %</Trans>}
-                registerKey={`${fieldArrayName}.${index}.percentage`}
-              />
-            </GridItem>
-            <GridItem xs={12} sm={1}>
-              <FieldArrayRemoveButton
-                onClick={() => remove(index)}
-                ariaLabel={`Remove ${fieldArrayName} with ${index}`}
-              />
-            </GridItem>
-          </GridContainer>
-        </GridItem>
-      ))}
+          ))}
+        </>
+      )}
     </GridContainer>
   );
 }

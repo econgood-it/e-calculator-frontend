@@ -31,6 +31,7 @@ import {
 } from '../testUtils/form.tsx';
 import '@testing-library/jest-dom';
 import { BalanceSheet } from '../models/BalanceSheet.ts';
+import { BalanceSheetVersion } from '@ecogood/e-calculator-schemas/dist/shared.schemas';
 
 function createRouter(balanceSheet: BalanceSheet, action: Mock) {
   const initialPathForRouting = '/organization/3/balance-sheet/7';
@@ -42,6 +43,7 @@ function createRouter(balanceSheet: BalanceSheet, action: Mock) {
         loader: () => ({
           generalInformation: balanceSheet.generalInformation,
           companyFacts: balanceSheet.companyFacts,
+          version: balanceSheet.version,
           regions: regionsMocks.regions1(),
           industries: industriesMocks.industries1(),
         }),
@@ -458,6 +460,24 @@ vi.mock('../api/api.client.ts', async () => {
 });
 
 describe('EmployeesForm', () => {
+  it('hides employee origin fields for version 5.2.0', async () => {
+    const balanceSheet = {
+      ...new BalanceSheetMockBuilder().build(),
+      version: BalanceSheetVersion.v5_2_0,
+    };
+    const router = createRouter(balanceSheet, vi.fn());
+    const { user } = renderWithTheme(<RouterProvider router={router} />);
+
+    await user.dblClick(await screen.findByText('Next'));
+
+    expect(
+      screen.queryByRole('button', { name: 'Add employees origin' })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByLabelText('Number of employees (full time equivalents)')
+    ).toBeInTheDocument();
+  });
+
   async function shouldModifyFieldSaveResults(
     fieldLabel: string,
     fieldKey: string,

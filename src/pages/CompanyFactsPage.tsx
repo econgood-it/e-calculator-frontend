@@ -85,6 +85,7 @@ const CompanyFactsPage = () => {
             formState={formState}
             regions={data?.regions}
             currency={data.generalInformation.currency}
+            version={data.version}
           />
         ),
       },
@@ -228,6 +229,7 @@ export async function loader(
   return {
     generalInformation: balanceSheet.generalInformation,
     companyFacts: balanceSheet.companyFacts,
+    version: balanceSheet.version,
     regions,
     industries,
   };
