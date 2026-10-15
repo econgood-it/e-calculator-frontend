@@ -14,6 +14,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Grid,
   Typography,
   useTheme,
 } from '@mui/material';
@@ -264,6 +265,21 @@ export function BalanceSheetOverviewPage() {
           </GridItem>
         </GridContainer>
       </GridItem>
+      {!data.audit && !data.isMemberOfCertificationAuthority && (
+        <GridItem xs={12}>
+          <GridContainer spacing={2}>
+            <GridItem xs={0} lg={2}></GridItem>
+            <GridItem xs={11} lg={10}>
+              <Typography color="error">
+                <Trans>
+                  Please speak to your consultant or auditor before submitting,
+                  because this process can not be undone.
+                </Trans>
+              </Typography>
+            </GridItem>
+          </GridContainer>
+        </GridItem>
+      )}
       <GridItem xs={12}>
         <Typography variant="h1">
           <Trans>Matrix representation</Trans>

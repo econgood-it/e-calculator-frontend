@@ -110,6 +110,7 @@ const EN_WORDS = [
   'Total purchase from suppliers cannot be zero',
   'Net income cannot be zero',
   'Turnover cannot be zero',
+  'Please speak to your consultant or auditor before submitting, because this process can not be undone.',
 ];
 
 export const EN_TRANSLATIONS = {

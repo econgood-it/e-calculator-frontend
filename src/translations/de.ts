@@ -128,5 +128,7 @@ export const DE_TRANSLATIONS = {
     'Die Gesamteinkäufe von Lieferanten dürfen nicht null sein',
   'Net income cannot be zero': 'Der Nettogewinn darf nicht null sein',
   'Turnover cannot be zero': 'Der Umsatz darf nicht null sein',
+  'Please speak to your consultant or auditor before submitting, because this process can not be undone.':
+    'Bitte sprechen Sie mit Ihrem Berater oder Auditor, bevor Sie einreichen, da dieser Prozess nicht rückgängig gemacht werden kann.',
   ...DE_ERROR_TRANSLATIONS,
 };
